@@ -11,6 +11,7 @@ import { DEIWhoWeServe } from "@/components/dei-who-we-serve"
 import { TestimonialsSection } from "@/components/dei-testimonials-section"
 import { MidPageCTA } from "@/components/dei-mid-page-cta"
 import { ApplySection } from "@/components/dei-apply-section"
+import { TimelineSection } from "@/components/timeline-section"
 
 export default function Home() {
   return (
@@ -30,7 +31,10 @@ export default function Home() {
       {/* 5. How It Works - 3-step process */}
       <HowItWorks />
 
-      {/* 6. Benefits - Business owner benefits */}
+      {/* 6. Timeline Section - Implementation timeline */}
+      <TimelineSection />
+
+      {/* 7. Benefits - Business owner benefits */}
       <Benefits />
 
       {/* 7. Mid Page CTA - Floating sticky CTA */}

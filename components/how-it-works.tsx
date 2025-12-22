@@ -88,6 +88,7 @@ export function HowItWorks() {
 
   return (
     <section
+      id="how-it-works"
       ref={sectionRef}
       className="relative py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 overflow-hidden"
     >

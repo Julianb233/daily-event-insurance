@@ -4,14 +4,11 @@ import { motion } from "framer-motion"
 import { ArrowRight, Shield, Users, TrendingUp, CheckCircle, Mountain, Award, Clock, Zap } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { SparkleOverlay } from "@/components/sparkle-overlay"
 
 // Hero Section
 function ClimbingHeroSection() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900">
-      {/* Sparkle Effects */}
-      <SparkleOverlay count={15} />
 
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -399,7 +396,6 @@ function StatsSection() {
 
   return (
     <section className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 py-20 md:py-32">
-      <SparkleOverlay count={10} />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         <motion.div

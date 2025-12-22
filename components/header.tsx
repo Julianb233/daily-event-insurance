@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Phone } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -63,7 +63,7 @@ export default function Header() {
     { label: "How It Works", href: "#how-it-works" },
     { label: "Who We Serve", href: "#who-we-serve" },
     { label: "Benefits", href: "#benefits" },
-    { label: "FAQ", href: "#faq" },
+    { label: "Pricing", href: "/pricing" },
   ]
 
   return (
@@ -74,12 +74,12 @@ export default function Header() {
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-md"
-            : "bg-white/80 backdrop-blur-sm"
+            ? "bg-white shadow-[0_1px_3px_0_rgb(0,0,0,0.1),0_1px_2px_-1px_rgb(0,0,0,0.1)]"
+            : "bg-white border-b border-gray-100"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -87,11 +87,11 @@ export default function Header() {
               transition={{ delay: 0.2 }}
             >
               <a
-                href="#home"
-                onClick={(e) => handleNavClick(e, "#home")}
+                href="/"
+                onClick={(e) => handleNavClick(e, "/")}
                 className="flex items-center gap-2 group"
               >
-                <span className="text-xl md:text-2xl font-bold text-[#1E293B] group-hover:text-[#14B8A6] transition-colors">
+                <span className="text-lg font-semibold text-slate-900 tracking-tight">
                   Daily Event Insurance
                 </span>
               </a>
@@ -102,7 +102,7 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="hidden lg:flex items-center gap-8"
+              className="hidden lg:flex items-center gap-1"
             >
               {navigationLinks.map((link, index) => (
                 <motion.a
@@ -112,38 +112,44 @@ export default function Header() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="text-sm font-medium text-[#1E293B] hover:text-[#14B8A6] transition-colors relative group"
+                  className="px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#14B8A6] group-hover:w-full transition-all duration-300" />
                 </motion.a>
               ))}
             </motion.nav>
 
-            {/* CTA & Mobile Menu Button */}
+            {/* Right Side Actions */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
               className="flex items-center gap-4"
             >
+              {/* Phone Number - Desktop Only */}
+              <a
+                href="tel:+18005551234"
+                className="hidden xl:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                <span>(800) 555-1234</span>
+              </a>
+
               {/* CTA Button */}
               <motion.a
-                href="#get-started"
-                onClick={(e) => handleNavClick(e, "#get-started")}
-                whileHover={{ scale: 1.05 }}
+                href="#apply"
+                onClick={(e) => handleNavClick(e, "#apply")}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="hidden sm:flex items-center px-6 py-2.5 bg-[#14B8A6] text-white font-semibold text-sm rounded-lg hover:bg-[#14B8A6]/90 transition-all shadow-sm hover:shadow-md"
+                className="hidden sm:flex items-center px-5 py-2 bg-[#14B8A6] text-white font-medium text-[15px] rounded-md hover:bg-[#0F9F90] transition-all"
               >
-                Get Started
+                Get Demo
               </motion.a>
 
               {/* Mobile Menu Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="lg:hidden p-2 bg-transparent border border-[#14B8A6]/20 hover:border-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-lg transition-all text-[#1E293B]"
+                className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-all"
                 aria-label="Toggle menu"
               >
                 {menuOpen ? (
@@ -151,7 +157,7 @@ export default function Header() {
                 ) : (
                   <Menu className="w-6 h-6" />
                 )}
-              </motion.button>
+              </button>
             </motion.div>
           </div>
         </div>
@@ -175,8 +181,8 @@ export default function Header() {
               variants={{
                 open: {
                   transition: {
-                    staggerChildren: 0.1,
-                    delayChildren: 0.2
+                    staggerChildren: 0.07,
+                    delayChildren: 0.15
                   }
                 },
                 closed: {
@@ -186,21 +192,21 @@ export default function Header() {
                   }
                 },
               }}
-              className="flex flex-col items-center justify-center h-full px-4"
+              className="flex flex-col h-full px-6 pt-20"
             >
-              <motion.ul className="space-y-6 text-center w-full">
+              <motion.ul className="space-y-1">
                 {navigationLinks.map((link) => (
                   <motion.li
                     key={link.label}
                     variants={{
-                      open: { opacity: 1, y: 0 },
-                      closed: { opacity: 0, y: 20 },
+                      open: { opacity: 1, x: 0 },
+                      closed: { opacity: 0, x: -20 },
                     }}
                   >
                     <a
                       href={link.href}
                       onClick={(e) => handleNavClick(e, link.href)}
-                      className="block text-2xl font-semibold text-[#1E293B] hover:text-[#14B8A6] transition-colors py-2"
+                      className="block px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
                     >
                       {link.label}
                     </a>
@@ -208,36 +214,41 @@ export default function Header() {
                 ))}
               </motion.ul>
 
-              {/* Mobile CTA */}
+              {/* Mobile Actions */}
               <motion.div
                 variants={{
-                  open: { opacity: 1, y: 0 },
-                  closed: { opacity: 0, y: 20 },
+                  open: { opacity: 1, x: 0 },
+                  closed: { opacity: 0, x: -20 },
                 }}
-                className="mt-12 w-full max-w-xs"
+                className="mt-8 space-y-4"
               >
                 <a
-                  href="#get-started"
-                  onClick={(e) => handleNavClick(e, "#get-started")}
-                  className="block w-full px-8 py-4 bg-[#14B8A6] text-white font-semibold text-lg rounded-lg hover:bg-[#14B8A6]/90 transition-all shadow-lg text-center"
+                  href="tel:+18005551234"
+                  className="flex items-center gap-2 px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
                 >
-                  Get Started
+                  <Phone className="w-4 h-4" />
+                  <span>(800) 555-1234</span>
+                </a>
+
+                <a
+                  href="#apply"
+                  onClick={(e) => handleNavClick(e, "#apply")}
+                  className="block px-6 py-3 bg-[#14B8A6] text-white font-medium text-base rounded-md hover:bg-[#0F9F90] transition-all text-center"
+                >
+                  Get Demo
                 </a>
               </motion.div>
 
-              {/* Additional Info */}
+              {/* Professional Tagline */}
               <motion.div
                 variants={{
-                  open: { opacity: 1, y: 0 },
-                  closed: { opacity: 0, y: 20 },
+                  open: { opacity: 1, x: 0 },
+                  closed: { opacity: 0, x: -20 },
                 }}
-                className="mt-8 text-center"
+                className="mt-auto mb-8 px-4"
               >
-                <p className="text-sm text-[#1E293B]/60 font-medium">
-                  Professional Event Coverage
-                </p>
-                <p className="text-xs text-[#1E293B]/40 mt-1">
-                  Simple. Fast. Reliable.
+                <p className="text-sm text-slate-500">
+                  Enterprise event insurance made simple
                 </p>
               </motion.div>
             </motion.nav>

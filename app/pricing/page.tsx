@@ -4,176 +4,161 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { ArrowLeft, Check, Sparkles, Zap, Crown, Rocket, ChevronRight, Star } from "lucide-react"
+import { ArrowLeft, Check, Shield, Building2, Mountain, Bike, Zap, ChevronRight, Star, DollarSign } from "lucide-react"
 import Link from "next/link"
 
-// Pricing tiers - Content can be updated from Notion
+// Pricing tiers - Insurance commission structure
 const pricingTiers = [
   {
     id: 1,
-    name: "Discovery Session",
-    tagline: "Start Your AI Journey",
-    price: "Free",
-    priceDetail: "One-time consultation",
-    description: "Perfect for businesses exploring AI automation and wanting to understand the possibilities.",
-    icon: Sparkles,
+    name: "Starter Partner",
+    tagline: "Perfect for Small Operations",
+    commission: "25%",
+    commissionDetail: "Commission per policy",
+    description: "Ideal for independent studios, single-location gyms, and small rental operations just starting out.",
+    icon: Shield,
     features: [
-      "60-minute strategy session",
-      "AI readiness assessment",
-      "Custom roadmap outline",
-      "Technology recommendations",
-      "Q&A with AI expert",
+      "25% commission on every policy sold",
+      "Simple API integration or standalone portal",
+      "Member dashboard for easy sign-ups",
+      "Same-day coverage activation",
+      "Email & chat support",
+      "Monthly payout reports",
     ],
-    cta: "Book Free Session",
+    businessTypes: "Perfect for: Yoga studios, personal training, small gyms",
+    cta: "Start Earning",
     featured: false,
-    gradient: "from-[#0D6B4F]/50 to-[#0A4D3C]/50",
+    gradient: "from-teal-500/20 to-teal-600/10",
   },
   {
     id: 2,
-    name: "AI Automation Starter",
-    tagline: "Automate Your First Workflow",
-    price: "$5,000",
-    priceDetail: "One-time project",
-    description: "Implement your first AI-powered workflow and start seeing immediate ROI.",
-    icon: Zap,
+    name: "Growth Partner",
+    tagline: "For Expanding Facilities",
+    commission: "30%",
+    commissionDetail: "Commission per policy",
+    description: "Best for growing businesses with multiple locations or high member volume.",
+    icon: Building2,
     features: [
-      "1 custom AI workflow automation",
-      "Integration with existing tools",
-      "30 days of support & optimization",
-      "Team training session",
-      "Documentation & handoff",
-      "Performance analytics dashboard",
+      "30% commission on every policy sold",
+      "Priority API integration support",
+      "Custom branding options",
+      "Advanced analytics dashboard",
+      "Dedicated account manager",
+      "Weekly payout options",
+      "Marketing materials & templates",
+      "Phone support",
     ],
+    businessTypes: "Perfect for: Multi-location gyms, climbing facilities, fitness chains",
     cta: "Get Started",
-    featured: false,
-    gradient: "from-[#0D6B4F]/60 to-[#0A4D3C]/60",
+    featured: true,
+    gradient: "from-teal-500/30 to-teal-600/20",
   },
   {
     id: 3,
-    name: "Growth Accelerator",
-    tagline: "Scale With AI Agents",
-    price: "$15,000",
-    priceDetail: "Monthly retainer",
-    description: "Deploy multiple AI agents and automation workflows to transform your entire operation.",
-    icon: Crown,
+    name: "Premium Partner",
+    tagline: "For High-Volume Operations",
+    commission: "35%",
+    commissionDetail: "Commission per policy",
+    description: "Designed for high-traffic facilities and equipment rental businesses processing hundreds of policies monthly.",
+    icon: Mountain,
     features: [
-      "3-5 AI agent implementations",
-      "Custom BottleneckBots deployment",
-      "Unlimited workflow automations",
-      "Priority support (24/7)",
-      "Weekly optimization sessions",
-      "Advanced analytics & reporting",
-      "Dedicated success manager",
-      "Integration with all major platforms",
+      "35% commission on every policy sold",
+      "White-label insurance platform",
+      "Custom integration with your systems",
+      "Real-time reporting & analytics",
+      "Priority 24/7 support",
+      "Bi-weekly or weekly payouts",
+      "Co-marketing opportunities",
+      "Training for your staff",
+      "Custom policy types available",
     ],
-    cta: "Transform Your Business",
-    featured: true,
-    gradient: "from-[#D4A84B]/30 to-[#0D6B4F]/50",
+    businessTypes: "Perfect for: Adventure parks, large rental companies, resort facilities",
+    cta: "Partner With Us",
+    featured: false,
+    gradient: "from-teal-500/40 to-teal-600/30",
   },
   {
     id: 4,
-    name: "Enterprise AI",
-    tagline: "Full AI Transformation",
-    price: "Custom",
-    priceDetail: "Tailored to your needs",
-    description: "Complete AI transformation with custom solutions, dedicated team, and ongoing strategic partnership.",
-    icon: Rocket,
+    name: "Enterprise Partner",
+    tagline: "Custom Solutions",
+    commission: "Up to 40%",
+    commissionDetail: "Custom terms available",
+    description: "Tailored solutions for enterprise organizations, franchise networks, and large-scale operations.",
+    icon: Bike,
     features: [
-      "Unlimited AI agents & workflows",
-      "Custom AI model development",
-      "Enterprise-grade security & compliance",
-      "Dedicated AI team & support",
-      "Strategic planning & consultation",
-      "White-label solutions available",
-      "API access & custom integrations",
+      "Up to 40% commission on policies",
+      "Fully custom integration & branding",
+      "Dedicated technical team",
+      "Custom policy development",
+      "API access for full automation",
+      "Real-time payouts available",
+      "Joint marketing campaigns",
+      "Franchise rollout support",
       "SLA guarantees",
       "Quarterly business reviews",
     ],
+    businessTypes: "Perfect for: Franchise networks, enterprise chains, resort portfolios",
     cta: "Let's Talk",
     featured: false,
-    gradient: "from-[#0D6B4F]/70 to-[#0A4D3C]/70",
+    gradient: "from-teal-500/50 to-teal-600/40",
   },
 ]
 
-// Add-on services
-const addons = [
+// Value propositions
+const valueProps = [
   {
-    name: "Training & Workshops",
-    description: "Custom AI training sessions for your team",
-    price: "Starting at $2,500",
+    title: "No Setup Fees",
+    description: "Get started with zero upfront costs. Only pay when you earn.",
+    icon: DollarSign,
   },
   {
-    name: "AI Audit",
-    description: "Comprehensive analysis of AI opportunities in your business",
-    price: "$3,500",
+    title: "No Long-Term Contracts",
+    description: "Month-to-month partnership. Cancel anytime, no penalties.",
+    icon: Check,
   },
   {
-    name: "Priority Support",
-    description: "24/7 dedicated support with 1-hour response time",
-    price: "$1,500/month",
+    title: "Fast Implementation",
+    description: "Most partners are up and running within 48 hours of signing.",
+    icon: Zap,
   },
 ]
 
-// Sparkles animation
-const sparkles = [
-  { left: "5%", top: "15%", delay: 0, size: "lg" },
-  { left: "92%", top: "20%", delay: 0.5, size: "md" },
-  { left: "8%", top: "75%", delay: 0.3, size: "lg" },
-  { left: "88%", top: "70%", delay: 0.8, size: "md" },
-  { left: "50%", top: "10%", delay: 0.2, size: "sm" },
-  { left: "95%", top: "45%", delay: 0.7, size: "lg" },
-  { left: "3%", top: "50%", delay: 1.0, size: "md" },
-  { left: "15%", top: "35%", delay: 0.4, size: "sm" },
-  { left: "85%", top: "85%", delay: 0.9, size: "lg" },
-  { left: "40%", top: "5%", delay: 1.1, size: "md" },
-  { left: "70%", top: "60%", delay: 0.6, size: "sm" },
-  { left: "25%", top: "90%", delay: 1.2, size: "md" },
+// Floating shields animation
+const floatingShields = [
+  { left: "10%", top: "20%", delay: 0, duration: 4 },
+  { left: "85%", top: "15%", delay: 0.5, duration: 5 },
+  { left: "15%", top: "70%", delay: 0.3, duration: 4.5 },
+  { left: "90%", top: "75%", delay: 0.8, duration: 4.2 },
+  { left: "50%", top: "10%", delay: 0.2, duration: 5.5 },
+  { left: "5%", top: "50%", delay: 1.0, duration: 4.8 },
 ]
-
-const getSparkleSize = (size: string) => {
-  switch (size) {
-    case "lg":
-      return "w-4 h-4 md:w-6 md:h-6"
-    case "md":
-      return "w-3 h-3 md:w-4 md:h-4"
-    default:
-      return "w-2 h-2 md:w-3 md:h-3"
-  }
-}
 
 export default function PricingPage() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
   return (
-    <main className="relative min-h-screen bg-[#0A4D3C] overflow-x-hidden">
+    <main className="relative min-h-screen bg-white overflow-x-hidden">
       <Header />
 
-      {/* Golden Sparkles */}
-      {sparkles.map((sparkle, i) => (
+      {/* Floating Shields Background */}
+      {floatingShields.map((shield, i) => (
         <motion.div
           key={i}
-          className={`absolute ${getSparkleSize(sparkle.size)} z-10 pointer-events-none`}
-          style={{ left: sparkle.left, top: sparkle.top }}
-          initial={{ opacity: 0, scale: 0 }}
+          className="absolute w-12 h-12 z-0 pointer-events-none opacity-5"
+          style={{ left: shield.left, top: shield.top }}
+          initial={{ opacity: 0, y: 0 }}
           animate={{
-            opacity: [0, 1, 0.7, 1, 0],
-            scale: [0, 1.3, 0.9, 1.3, 0],
-            rotate: [0, 180, 360],
+            opacity: [0, 0.05, 0],
+            y: [0, -30, 0],
           }}
           transition={{
-            duration: 3.5,
-            delay: sparkle.delay,
+            duration: shield.duration,
+            delay: shield.delay,
             repeat: Infinity,
-            repeatDelay: 1.2,
+            repeatDelay: 1,
           }}
         >
-          <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-            <path
-              d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z"
-              fill="#D4A84B"
-              style={{ filter: "drop-shadow(0 0 10px rgba(212,168,75,0.95))" }}
-            />
-          </svg>
+          <Shield className="w-full h-full text-teal-500" />
         </motion.div>
       ))}
 
@@ -187,7 +172,7 @@ export default function PricingPage() {
           >
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-[#D4A84B] hover:text-[#E8C55A] transition-all duration-300 mb-8 group"
+              className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-500 transition-all duration-300 mb-8 group"
             >
               <motion.div
                 whileHover={{ x: -4 }}
@@ -207,58 +192,48 @@ export default function PricingPage() {
             className="mb-16 text-center"
           >
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4A84B]/10 rounded-full mb-6 border border-[#D4A84B]/30"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full mb-6 border border-teal-200"
               animate={{
                 boxShadow: [
-                  "0 0 20px rgba(212,168,75,0.2)",
-                  "0 0 30px rgba(212,168,75,0.4)",
-                  "0 0 20px rgba(212,168,75,0.2)",
+                  "0 0 20px rgba(20,184,166,0.1)",
+                  "0 0 30px rgba(20,184,166,0.2)",
+                  "0 0 20px rgba(20,184,166,0.1)",
                 ],
               }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              <Crown className="w-5 h-5 text-[#D4A84B]" />
-              <span className="text-[#D4A84B] font-bold text-sm uppercase tracking-wider">Investment in Your Future</span>
+              <Shield className="w-5 h-5 text-teal-600" />
+              <span className="text-teal-700 font-bold text-sm uppercase tracking-wider">Partner Commission Structure</span>
             </motion.div>
 
             <motion.h1
-              className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight leading-tight mb-6"
-              animate={{
-                textShadow: [
-                  "0 0 20px rgba(212,168,75,0.3)",
-                  "0 0 40px rgba(212,168,75,0.5)",
-                  "0 0 20px rgba(212,168,75,0.3)"
-                ]
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
+              className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight leading-tight mb-6 text-slate-900"
             >
-              <span className="block text-[#FDF8E8]">PRICING &</span>
+              <span className="block">INSURANCE</span>
               <motion.span
-                className="block text-[#D4A84B]"
+                className="block text-teal-500"
                 animate={{ scale: [1, 1.02, 1] }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
-                Packages
+                Pricing
               </motion.span>
             </motion.h1>
             <motion.p
-              className="text-lg md:text-xl text-[#F0D98C] max-w-3xl mx-auto mb-4"
+              className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Choose the perfect package to transform your business with AI automation. Every journey starts with a conversation.
+              Earn commission on every policy your members purchase. No setup fees, no long-term contracts.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4A84B]/20 border border-[#D4A84B]/40 rounded-full"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border border-teal-200 rounded-full"
             >
-              <svg className="w-4 h-4 text-[#D4A84B]" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-              </svg>
-              <span className="text-[#D4A84B] text-sm font-semibold">Currently booking 4-6 weeks out</span>
+              <DollarSign className="w-4 h-4 text-teal-600" />
+              <span className="text-teal-700 text-sm font-semibold">247 partners earning $2,400/month average</span>
             </motion.div>
           </motion.div>
 
@@ -276,34 +251,34 @@ export default function PricingPage() {
                 onMouseLeave={() => setHoveredCard(null)}
               >
                 <motion.div
-                  className={`relative h-full bg-gradient-to-br ${tier.gradient} rounded-3xl overflow-hidden border ${
-                    tier.featured ? 'border-[#D4A84B] border-2' : 'border-[#D4A84B]/20'
-                  } transition-all duration-500`}
+                  className={`relative h-full bg-gradient-to-br ${tier.gradient} bg-white rounded-3xl overflow-hidden border ${
+                    tier.featured ? 'border-teal-500 border-2' : 'border-slate-200'
+                  } transition-all duration-500 shadow-lg`}
                   whileHover={{
                     rotateY: 5,
                     rotateX: -5,
                     scale: tier.featured ? 1.02 : 1.05,
                     boxShadow: tier.featured
-                      ? "0 30px 60px rgba(212,168,75,0.4)"
-                      : "0 25px 50px rgba(212,168,75,0.25)"
+                      ? "0 30px 60px rgba(20,184,166,0.3)"
+                      : "0 25px 50px rgba(20,184,166,0.15)"
                   }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
                   {/* Featured badge */}
                   {tier.featured && (
                     <motion.div
-                      className="absolute top-0 left-0 right-0 py-2 bg-gradient-to-r from-[#D4A84B] to-[#E8C55A] text-[#0A4D3C] text-center font-bold text-sm uppercase tracking-wider"
+                      className="absolute top-0 left-0 right-0 py-2 bg-gradient-to-r from-teal-500 to-teal-400 text-white text-center font-bold text-sm uppercase tracking-wider"
                       animate={{
                         boxShadow: [
-                          "0 0 20px rgba(212,168,75,0.5)",
-                          "0 0 30px rgba(212,168,75,0.7)",
-                          "0 0 20px rgba(212,168,75,0.5)",
+                          "0 0 20px rgba(20,184,166,0.5)",
+                          "0 0 30px rgba(20,184,166,0.7)",
+                          "0 0 20px rgba(20,184,166,0.5)",
                         ]
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
                       <Star className="w-4 h-4 inline-block mr-1" />
-                      Most Popular • 90% Start Here
+                      Most Popular • 65% Start Here
                     </motion.div>
                   )}
 
@@ -319,34 +294,41 @@ export default function PricingPage() {
                       transition={{ duration: 0.5 }}
                     >
                       <div className={`inline-flex p-3 rounded-xl ${
-                        tier.featured ? 'bg-[#D4A84B]/20' : 'bg-[#D4A84B]/10'
+                        tier.featured ? 'bg-teal-50' : 'bg-slate-50'
                       }`}>
-                        <tier.icon className="w-8 h-8 text-[#D4A84B]" />
+                        <tier.icon className="w-8 h-8 text-teal-500" />
                       </div>
                     </motion.div>
 
                     {/* Tier name and tagline */}
-                    <h3 className="text-2xl font-black text-[#FDF8E8] mb-1">
+                    <h3 className="text-2xl font-black text-slate-900 mb-1">
                       {tier.name}
                     </h3>
-                    <p className="text-[#D4A84B] text-sm font-medium mb-4">
+                    <p className="text-teal-600 text-sm font-medium mb-4">
                       {tier.tagline}
                     </p>
 
-                    {/* Price */}
+                    {/* Commission */}
                     <div className="mb-4">
-                      <div className="text-4xl font-black text-[#D4A84B] mb-1">
-                        {tier.price}
+                      <div className="text-4xl font-black text-teal-500 mb-1">
+                        {tier.commission}
                       </div>
-                      <div className="text-[#FDF8E8]/60 text-sm">
-                        {tier.priceDetail}
+                      <div className="text-slate-500 text-sm">
+                        {tier.commissionDetail}
                       </div>
                     </div>
 
                     {/* Description */}
-                    <p className="text-[#FDF8E8]/70 text-sm leading-relaxed mb-6">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
                       {tier.description}
                     </p>
+
+                    {/* Business Types */}
+                    <div className="mb-6 p-3 bg-teal-50 rounded-lg border border-teal-100">
+                      <p className="text-xs text-teal-700 font-medium">
+                        {tier.businessTypes}
+                      </p>
+                    </div>
 
                     {/* Features */}
                     <ul className="space-y-3 mb-8">
@@ -356,9 +338,9 @@ export default function PricingPage() {
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.5 + i * 0.05 }}
-                          className="flex items-start gap-2 text-[#FDF8E8]/80 text-sm"
+                          className="flex items-start gap-2 text-slate-700 text-sm"
                         >
-                          <Check className="w-5 h-5 text-[#D4A84B] flex-shrink-0 mt-0.5" />
+                          <Check className="w-5 h-5 text-teal-500 flex-shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </motion.li>
                       ))}
@@ -366,13 +348,13 @@ export default function PricingPage() {
 
                     {/* CTA Button */}
                     <motion.a
-                      href="#apply"
+                      href="/#apply"
                       className={`block w-full py-3 px-6 rounded-xl font-bold text-center transition-all duration-300 ${
                         tier.featured
-                          ? 'bg-gradient-to-r from-[#D4A84B] to-[#E8C55A] text-[#0A4D3C]'
-                          : 'bg-[#0A4D3C]/50 text-[#D4A84B] border border-[#D4A84B]/30 hover:border-[#D4A84B]/60'
+                          ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/30'
+                          : 'bg-slate-50 text-teal-600 border border-slate-200 hover:border-teal-500 hover:bg-teal-50'
                       }`}
-                      whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(212,168,75,0.4)" }}
+                      whileHover={{ scale: 1.05, boxShadow: tier.featured ? "0 0 20px rgba(20,184,166,0.4)" : "0 0 10px rgba(20,184,166,0.2)" }}
                       whileTap={{ scale: 0.98 }}
                     >
                       {tier.cta}
@@ -381,7 +363,7 @@ export default function PricingPage() {
 
                   {/* Shimmer effect */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-[#D4A84B]/10 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/5 to-transparent pointer-events-none"
                     initial={{ x: "-100%" }}
                     animate={{ x: "200%" }}
                     transition={{
@@ -396,7 +378,7 @@ export default function PricingPage() {
             ))}
           </div>
 
-          {/* Add-ons Section */}
+          {/* Value Props Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -404,32 +386,32 @@ export default function PricingPage() {
             transition={{ duration: 0.6 }}
             className="mb-20"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#D4A84B] mb-8 text-center">
-              Add-On Services
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8 text-center">
+              Why Partner With Us?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {addons.map((addon, index) => (
+              {valueProps.map((prop, index) => (
                 <motion.div
-                  key={addon.name}
+                  key={prop.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{
                     y: -8,
-                    boxShadow: "0 20px 40px rgba(212,168,75,0.2)"
+                    boxShadow: "0 20px 40px rgba(20,184,166,0.15)"
                   }}
-                  className="bg-[#0D6B4F]/30 rounded-2xl p-6 border border-[#D4A84B]/20 hover:border-[#D4A84B]/60 transition-all duration-500"
+                  className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-teal-300 transition-all duration-500 shadow-lg"
                 >
-                  <h3 className="text-xl font-bold text-[#FDF8E8] mb-2">
-                    {addon.name}
-                  </h3>
-                  <p className="text-[#FDF8E8]/70 text-sm mb-4">
-                    {addon.description}
-                  </p>
-                  <div className="text-[#D4A84B] font-bold">
-                    {addon.price}
+                  <div className="inline-flex p-3 rounded-xl bg-teal-50 mb-4">
+                    <prop.icon className="w-8 h-8 text-teal-500" />
                   </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    {prop.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm">
+                    {prop.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -443,12 +425,12 @@ export default function PricingPage() {
             transition={{ duration: 0.6 }}
             className="relative overflow-hidden"
           >
-            <div className="relative py-16 px-8 bg-gradient-to-br from-[#0D6B4F]/50 via-[#0D6B4F]/30 to-[#0A4D3C]/50 rounded-3xl border border-[#D4A84B]/30">
+            <div className="relative py-16 px-8 bg-gradient-to-br from-teal-50 to-white rounded-3xl border border-teal-200 shadow-xl">
               {/* Animated border glow */}
               <motion.div
                 className="absolute inset-0 rounded-3xl"
                 style={{
-                  background: "linear-gradient(90deg, transparent, rgba(212,168,75,0.3), transparent)",
+                  background: "linear-gradient(90deg, transparent, rgba(20,184,166,0.15), transparent)",
                   backgroundSize: "200% 100%",
                 }}
                 animate={{
@@ -470,36 +452,28 @@ export default function PricingPage() {
                   transition={{ duration: 4, repeat: Infinity }}
                   className="inline-block mb-6"
                 >
-                  <Sparkles className="w-12 h-12 text-[#D4A84B]" />
+                  <Shield className="w-12 h-12 text-teal-500" />
                 </motion.div>
 
                 <motion.h3
-                  className="text-3xl md:text-4xl font-black text-[#FDF8E8] mb-4 uppercase"
-                  animate={{
-                    textShadow: [
-                      "0 0 10px rgba(212,168,75,0.2)",
-                      "0 0 30px rgba(212,168,75,0.4)",
-                      "0 0 10px rgba(212,168,75,0.2)"
-                    ]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-3xl md:text-4xl font-black text-slate-900 mb-4 uppercase"
                 >
-                  Not Sure Which Package <span className="text-[#D4A84B]">Fits?</span>
+                  Ready to Start <span className="text-teal-500">Earning?</span>
                 </motion.h3>
-                <p className="text-[#F0D98C] mb-8 text-lg">
-                  Book a free discovery session and we'll create a custom solution tailored to your specific needs and goals.
+                <p className="text-slate-600 mb-8 text-lg">
+                  Schedule a demo to see how easy it is to add insurance to your member experience and start generating passive revenue today.
                 </p>
 
                 <motion.a
-                  href="#apply"
-                  className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#D4A84B] to-[#E8C55A] text-[#0A4D3C] font-bold text-lg rounded-xl transition-all duration-300 shadow-xl"
+                  href="/#apply"
+                  className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-bold text-lg rounded-full transition-all duration-300 shadow-xl shadow-teal-500/30"
                   whileHover={{
                     scale: 1.05,
-                    boxShadow: "0 0 40px rgba(212,168,75,0.6)"
+                    boxShadow: "0 0 40px rgba(20,184,166,0.4)"
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Schedule Free Consultation
+                  Schedule a Demo
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1, repeat: Infinity }}
@@ -507,20 +481,24 @@ export default function PricingPage() {
                     <ChevronRight className="w-6 h-6" />
                   </motion.div>
                 </motion.a>
+
+                <p className="mt-6 text-sm text-slate-500">
+                  No credit card required • 15-minute demo • Get started in 48 hours
+                </p>
               </div>
 
               {/* Floating particles */}
               {[...Array(6)].map((_, i) => (
                 <motion.div
                   key={`cta-particle-${i}`}
-                  className="absolute w-2 h-2 bg-[#D4A84B] rounded-full"
+                  className="absolute w-2 h-2 bg-teal-400 rounded-full opacity-40"
                   style={{
                     left: `${15 + i * 14}%`,
                     top: `${25 + (i % 3) * 25}%`,
                   }}
                   animate={{
                     y: [0, -25, 0],
-                    opacity: [0.3, 0.8, 0.3],
+                    opacity: [0.2, 0.6, 0.2],
                     scale: [0.8, 1.3, 0.8],
                   }}
                   transition={{

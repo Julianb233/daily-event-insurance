@@ -57,7 +57,7 @@ const cardVariants = {
 
 export default function Benefits() {
   return (
-    <section className="relative w-full py-20 md:py-28 lg:py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <section id="benefits" className="relative w-full py-20 md:py-28 lg:py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-0 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl" />
