@@ -1,51 +1,209 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Building2, Mountain, Bike, Waves, ArrowRight } from "lucide-react"
-import Image from "next/image"
+import { Building2, Mountain, Bike, Waves, ArrowRight, Users, Snowflake, Plane, Sparkles, HeartPulse, Activity, Award, Building, GraduationCap } from "lucide-react"
+import { useState } from "react"
+import { UrgencyBanner } from "./urgency-banner"
 
 const markets = [
   {
     icon: Building2,
     title: "Gyms & Fitness Centers",
-    description: "Offer instant coverage for personal training, group classes, and specialized fitness activities. Protect your members while earning commission.",
-    features: ["Day pass coverage", "Equipment liability", "Personal training protection"],
-    gradient: "from-teal-600 to-teal-500",
-    image: "/images/partner-gym.png",
-    imageAlt: "Modern gym facility with state-of-the-art fitness equipment",
+    description: "Offer instant coverage for personal training, group classes, and specialized fitness activities.",
+    revenue: "$2,400+/mo",
   },
   {
     icon: Mountain,
     title: "Rock Climbing Facilities",
-    description: "Same-day insurance for climbing sessions, belay certifications, and courses. Give your climbers peace of mind before they hit the wall.",
-    features: ["Climbing session insurance", "Course coverage", "Membership add-on"],
-    gradient: "from-teal-500 to-cyan-500",
-    image: "/images/partner-climbing.png",
-    imageAlt: "Indoor rock climbing wall with safety equipment and climbers",
+    description: "Same-day insurance for climbing sessions, belay certifications, and courses.",
+    revenue: "$3,200+/mo",
+  },
+  {
+    icon: Snowflake,
+    title: "Ski Resorts & Snow Sports",
+    description: "Day passes, lessons, and equipment rentals with massive commission potential.",
+    revenue: "$15,000+/mo",
+  },
+  {
+    icon: Plane,
+    title: "Skydiving & Aerial Sports",
+    description: "Essential protection for tandem jumps, solo certifications, and aerial adventures.",
+    revenue: "$8,500+/mo",
   },
   {
     icon: Bike,
     title: "Equipment Rentals",
-    description: "Coverage for bike rentals, water sports equipment, and adventure gear. Protect both your inventory and your customers.",
-    features: ["Rental protection", "Damage coverage", "Theft insurance"],
-    gradient: "from-cyan-500 to-sky-500",
-    image: "/images/partner-rentals.png",
-    imageAlt: "Premium outdoor adventure equipment and bike rentals",
+    description: "Coverage for bike rentals, water sports equipment, and adventure gear.",
+    revenue: "$4,100+/mo",
   },
   {
     icon: Waves,
-    title: "Adventure Sports",
-    description: "Comprehensive protection for kayaking, surfing, zip lines, obstacle courses, and outdoor activities. Adventure awaits—safely.",
-    features: ["Activity-specific coverage", "Group packages", "Event insurance"],
-    gradient: "from-sky-500 to-blue-500",
-    image: "/images/partner-adventure.png",
-    imageAlt: "Thrilling adventure sports activities including kayaking and water sports",
+    title: "Water Sports & Adventure",
+    description: "Comprehensive protection for kayaking, surfing, zip lines, and outdoor activities.",
+    revenue: "$5,600+/mo",
+  },
+  {
+    icon: Sparkles,
+    title: "MediSpas & Aesthetic Centers",
+    description: "Coverage for cosmetic procedures, IV therapy, and wellness treatments.",
+    revenue: "$6,800+/mo",
+  },
+  {
+    icon: HeartPulse,
+    title: "Wellness & Recovery",
+    description: "From cryotherapy to float tanks, infrared saunas to hyperbaric chambers.",
+    revenue: "$3,900+/mo",
+  },
+  {
+    icon: Activity,
+    title: "Race Directors / Running Events",
+    description: "Complete event coverage for road races, trail runs, and community running events.",
+    revenue: "$7,200+/mo",
+  },
+  {
+    icon: Bike,
+    title: "Cycling Events / Bike Races",
+    description: "Protection for criteriums, gran fondos, mountain bike races, and cycling events.",
+    revenue: "$6,500+/mo",
+  },
+  {
+    icon: Waves,
+    title: "Triathlons / Multi-Sport",
+    description: "Comprehensive coverage for triathlons, duathlons, and multi-sport competitions.",
+    revenue: "$9,800+/mo",
+  },
+  {
+    icon: Mountain,
+    title: "Obstacle Course Races (OCR)",
+    description: "Specialized insurance for Spartan races, Tough Mudder, and adventure racing events.",
+    revenue: "$8,200+/mo",
+  },
+  {
+    icon: Award,
+    title: "Marathons & Fun Runs",
+    description: "Event insurance for marathons, half marathons, 5Ks, and charity fun runs.",
+    revenue: "$10,500+/mo",
+  },
+  {
+    icon: Building,
+    title: "Corporate Wellness Events",
+    description: "Coverage for corporate team building, wellness challenges, and company fitness events.",
+    revenue: "$5,400+/mo",
+  },
+  {
+    icon: GraduationCap,
+    title: "Schools & Universities",
+    description: "Protection for campus recreation, intramural sports, and student activity programs.",
+    revenue: "$12,000+/mo",
   },
 ]
+
+// Clean Market Card
+function MarketCard({ market, index }: { market: typeof markets[0]; index: number }) {
+  const [isHovered, setIsHovered] = useState(false)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+      viewport={{ once: true }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
+        className="relative h-full bg-white rounded-2xl border border-teal-500/20 overflow-hidden cursor-pointer p-8 flex flex-col"
+        whileHover={{ scale: 1.02, y: -4 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Subtle gradient background on hover */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-teal-50 to-cyan-50 opacity-0"
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 flex-1 flex flex-col">
+          {/* Icon */}
+          <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/25">
+            <market.icon className="w-8 h-8 text-white" />
+          </div>
+
+          {/* Title */}
+          <h3 className="text-xl font-bold text-slate-900 mb-3 leading-tight">
+            {market.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+            {market.description}
+          </p>
+
+          {/* Revenue Badge */}
+          <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">Earn up to</span>
+              <span className="text-base font-bold text-teal-600">{market.revenue}</span>
+            </div>
+
+            {/* Arrow on hover */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ArrowRight className="w-5 h-5 text-teal-500" />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Hover shadow effect */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl shadow-xl shadow-teal-500/10 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+    </motion.div>
+  )
+}
 
 export function DEIWhoWeServe() {
   return (
     <section id="who-we-serve" className="relative bg-slate-50 py-20 md:py-32 overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-1/4 -left-20 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 30, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 -right-20 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            x: [0, -30, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `linear-gradient(to right, #14B8A6 1px, transparent 1px), linear-gradient(to bottom, #14B8A6 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }}
+        />
+      </div>
+
       <div className="max-w-6xl mx-auto px-6 md:px-12 relative">
         {/* Header */}
         <motion.div
@@ -55,8 +213,19 @@ export function DEIWhoWeServe() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full border border-teal-200 mb-6"
+          >
+            <Users className="w-4 h-4 text-teal-600" />
+            <span className="text-sm font-medium text-teal-700">Industries We Serve</span>
+          </motion.div>
+
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-slate-900 leading-tight tracking-tight">
-            Who We <span className="text-teal-600">Serve</span>
+            Who We <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Serve</span>
           </h2>
           <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
             Daily Event Insurance is built for active lifestyle businesses that want to protect their members
@@ -65,67 +234,9 @@ export function DEIWhoWeServe() {
         </motion.div>
 
         {/* Markets Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {markets.map((market, index) => (
-            <motion.div
-              key={market.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.02 }}
-              className="group relative rounded-2xl overflow-hidden cursor-pointer min-h-[300px] md:min-h-[400px]"
-            >
-              {/* Background Image */}
-              <div className="absolute inset-0 z-0">
-                <Image
-                  src={market.image}
-                  alt={market.imageAlt}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  priority={index < 2}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-
-              {/* Dark Overlay - lightens on hover to reveal more image */}
-              <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/90 via-black/70 to-black/60 group-hover:from-black/70 group-hover:via-black/50 group-hover:to-black/40 transition-all duration-300" />
-
-              {/* Gradient Accent - preserves brand colors with subtle overlay */}
-              <div className={`absolute inset-0 z-[2] bg-gradient-to-br ${market.gradient} opacity-30 group-hover:opacity-20 transition-opacity duration-300`} />
-
-              {/* Content Layer */}
-              <div className="relative z-10 p-6 md:p-8 h-full flex flex-col justify-between">
-                <div>
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
-                    <market.icon className="w-7 h-7 text-white" />
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-2xl md:text-3xl font-black uppercase text-white mb-3">{market.title}</h3>
-
-                  {/* Description */}
-                  <p className="text-white/90 text-base leading-relaxed mb-4">{market.description}</p>
-
-                  {/* Features */}
-                  <ul className="space-y-2 mb-4">
-                    {market.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2 text-white/90 text-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Arrow - Appears on Hover */}
-                <div className="flex items-center gap-2 text-white opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                  <span className="text-sm font-semibold">Learn More</span>
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </motion.div>
+            <MarketCard key={market.title} market={market} index={index} />
           ))}
         </div>
 
@@ -137,11 +248,16 @@ export function DEIWhoWeServe() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
+          {/* Urgency Banner */}
+          <div className="mb-8 max-w-2xl mx-auto">
+            <UrgencyBanner variant="early-bird" />
+          </div>
+
           <p className="text-slate-600 mb-6">Don't see your industry? We're always expanding our coverage options.</p>
           <motion.a
-            href="#get-started"
-            className="inline-flex items-center gap-3 px-8 py-4 bg-teal-600 text-white font-bold text-lg rounded-xl hover:bg-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-            whileHover={{ scale: 1.02 }}
+            href="#apply"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/40 transition-all duration-300"
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
           >
             Get Started Today

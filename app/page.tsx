@@ -7,11 +7,13 @@ import { HowItWorks } from "@/components/how-it-works"
 import Benefits from "@/components/benefits"
 import { DEIIntroSection } from "@/components/dei-intro-section"
 import { DEITrustBadges } from "@/components/dei-trust-badges"
+import { FounderStory } from "@/components/founder-story"
 import { DEIWhoWeServe } from "@/components/dei-who-we-serve"
 import { TestimonialsSection } from "@/components/dei-testimonials-section"
 import { MidPageCTA } from "@/components/dei-mid-page-cta"
 import { ApplySection } from "@/components/dei-apply-section"
 import { TimelineSection } from "@/components/timeline-section"
+import { RevenueCalculator } from "@/components/revenue-calculator"
 
 export default function Home() {
   return (
@@ -25,31 +27,37 @@ export default function Home() {
       {/* 3. DEI Trust Badges - Stats and partner types */}
       <DEITrustBadges />
 
-      {/* 4. DEI Who We Serve - Animated market cards */}
+      {/* 4. Founder Story - Epiphany Bridge origin story */}
+      <FounderStory />
+
+      {/* 5. DEI Who We Serve - Animated market cards */}
       <DEIWhoWeServe />
 
-      {/* 5. How It Works - 3-step process */}
+      {/* 6. Revenue Calculator - Interactive earnings calculator */}
+      <RevenueCalculator />
+
+      {/* 7. How It Works - 3-step process */}
       <HowItWorks />
 
-      {/* 6. Timeline Section - Implementation timeline */}
+      {/* 8. Timeline Section - Implementation timeline */}
       <TimelineSection />
 
-      {/* 7. Benefits - Business owner benefits */}
+      {/* 9. Benefits - Business owner benefits */}
       <Benefits />
 
-      {/* 7. Mid Page CTA - Floating sticky CTA */}
+      {/* 10. Mid Page CTA - Floating sticky CTA */}
       <MidPageCTA />
 
-      {/* 8. Testimonials Section - Customer reviews */}
+      {/* 11. Testimonials Section - Customer reviews */}
       <TestimonialsSection />
 
-      {/* 9. FAQ - Frequently asked questions */}
+      {/* 12. FAQ - Frequently asked questions */}
       <FAQSection />
 
-      {/* 10. Apply Section - Partner application form */}
+      {/* 13. Apply Section - Partner application form */}
       <ApplySection />
 
-      {/* 11. Footer */}
+      {/* 14. Footer */}
       <Footer />
     </main>
   )

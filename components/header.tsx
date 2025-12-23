@@ -1,13 +1,31 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
+
+interface IndustryLink {
+  label: string
+  href: string
+  description: string
+}
+
+const industries: IndustryLink[] = [
+  { label: "Race Directors", href: "/industries/race-directors", description: "Insurance solutions for race organizers" },
+  { label: "Cycling Events", href: "/industries/cycling-events", description: "Comprehensive coverage for cycling competitions" },
+  { label: "Triathlons", href: "/industries/triathlons", description: "Multi-sport event insurance coverage" },
+  { label: "Obstacle Courses", href: "/industries/obstacle-courses", description: "Protection for challenging events" },
+  { label: "Marathons & Fun Runs", href: "/industries/marathons", description: "Coverage for running events of all sizes" },
+  { label: "Corporate Wellness", href: "/industries/corporate-wellness", description: "Employee wellness event insurance" },
+  { label: "Schools & Universities", href: "/industries/schools-universities", description: "Educational institution event coverage" },
+]
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [industriesOpen, setIndustriesOpen] = useState(false)
+  const [mobileIndustriesOpen, setMobileIndustriesOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -28,9 +46,25 @@ export default function Header() {
     }
   }, [menuOpen])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIndustriesOpen(false)
+    }
+
+    if (industriesOpen) {
+      document.addEventListener("click", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [industriesOpen])
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
     setMenuOpen(false)
+    setIndustriesOpen(false)
 
     // If it's a page link (not a hash), navigate to it
     if (!href.startsWith("#")) {
@@ -62,8 +96,8 @@ export default function Header() {
   const navigationLinks = [
     { label: "How It Works", href: "#how-it-works" },
     { label: "Who We Serve", href: "#who-we-serve" },
+    { label: "How You Can Earn", href: "/#revenue-calculator" },
     { label: "Benefits", href: "#benefits" },
-    { label: "Pricing", href: "/pricing" },
   ]
 
   return (
@@ -117,6 +151,59 @@ export default function Header() {
                   {link.label}
                 </motion.a>
               ))}
+
+              {/* Industries Dropdown */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  onClick={() => setIndustriesOpen(!industriesOpen)}
+                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
+                  aria-expanded={industriesOpen}
+                  aria-haspopup="true"
+                >
+                  Industries
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      industriesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </motion.button>
+
+                <AnimatePresence>
+                  {industriesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden"
+                    >
+                      <div className="py-2">
+                        {industries.map((industry, idx) => (
+                          <motion.a
+                            key={industry.href}
+                            href={industry.href}
+                            onClick={(e) => handleNavClick(e, industry.href)}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="block px-4 py-3 hover:bg-[#14B8A6]/5 transition-colors group"
+                          >
+                            <div className="font-medium text-slate-900 text-sm group-hover:text-[#14B8A6] transition-colors">
+                              {industry.label}
+                            </div>
+                            <div className="text-xs text-slate-500 mt-0.5">
+                              {industry.description}
+                            </div>
+                          </motion.a>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.nav>
 
             {/* Right Side Actions */}
@@ -162,7 +249,7 @@ export default function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-white z-40 lg:hidden"
+            className="fixed inset-0 bg-white z-40 lg:hidden overflow-y-auto"
             onClick={() => setMenuOpen(false)}
           >
             <motion.nav
@@ -184,6 +271,7 @@ export default function Header() {
                 },
               }}
               className="flex flex-col h-full px-6 pt-20"
+              onClick={(e) => e.stopPropagation()}
             >
               <motion.ul className="space-y-1">
                 {navigationLinks.map((link) => (
@@ -203,6 +291,52 @@ export default function Header() {
                     </a>
                   </motion.li>
                 ))}
+
+                {/* Mobile Industries Accordion */}
+                <motion.li
+                  variants={{
+                    open: { opacity: 1, x: 0 },
+                    closed: { opacity: 0, x: -20 },
+                  }}
+                >
+                  <button
+                    onClick={() => setMobileIndustriesOpen(!mobileIndustriesOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
+                    aria-expanded={mobileIndustriesOpen}
+                  >
+                    Industries
+                    <ChevronDown
+                      className={`w-5 h-5 transition-transform duration-200 ${
+                        mobileIndustriesOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileIndustriesOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 py-2 space-y-1">
+                          {industries.map((industry) => (
+                            <a
+                              key={industry.href}
+                              href={industry.href}
+                              onClick={(e) => handleNavClick(e, industry.href)}
+                              className="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-md transition-colors"
+                            >
+                              {industry.label}
+                            </a>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.li>
               </motion.ul>
 
               {/* Mobile Actions */}

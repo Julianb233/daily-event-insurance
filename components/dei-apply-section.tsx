@@ -4,6 +4,9 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { UrgencyBanner } from "./urgency-banner"
+import { RevenueGuarantee } from "./revenue-guarantee"
+import { ValueStack } from "./value-stack"
 
 const PORTRAIT_URL = "/images/hiqor-logo.png"
 
@@ -199,17 +202,27 @@ export function ApplySection() {
           viewport={{ once: true }}
         >
           <span className="text-teal-600 text-sm font-semibold tracking-[0.3em] uppercase mb-2 block">
-            Ready to Get Started?
+            Your Competitors Are Already Doing This
           </span>
           <h2 className="font-[family-name:var(--font-oswald)] text-4xl md:text-6xl font-bold uppercase text-slate-900 tracking-tighter mb-4">
-            START EARNING IN 48 HOURS
+            CLAIM YOUR EXCLUSIVE TERRITORY
           </h2>
           <p className="text-slate-700 text-lg md:text-xl max-w-2xl mx-auto mb-2">
-            Go Live This Week with Zero Setup Fees
+            Limited partnerships available in your area. Lock in your spot before competitors do.
           </p>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            Join 247 facilities earning commissions with embedded insurance. Simple integration, dedicated support, white-label solution.
+            247 facilities already earning. Setup takes 48 hours. Zero setup fees.
           </p>
+        </motion.div>
+
+        {/* Urgency Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-8 max-w-3xl mx-auto"
+        >
+          <UrgencyBanner variant="limited-spots" />
         </motion.div>
 
         {/* Trust Elements */}
@@ -241,9 +254,15 @@ export function ApplySection() {
             <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm font-semibold">White-Label Solution</span>
+            <span className="text-sm font-semibold">Live in 48 Hours</span>
           </div>
         </motion.div>
+
+        {/* Revenue Guarantee - Positioned prominently above the form */}
+        <RevenueGuarantee />
+
+        {/* Value Stack - Show what they get for FREE */}
+        <ValueStack />
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left side - Options */}
@@ -293,13 +312,9 @@ export function ApplySection() {
             {/* Testimonial Quote - Insurance Context */}
             <div className="pt-6 border-t border-teal-200 mt-8">
               <div className="bg-white/5 rounded-lg p-6 border border-teal-500/20">
-                <div className="flex gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
+                <svg className="w-8 h-8 text-teal-500/40 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
                 <p className="text-slate-700 text-sm italic mb-3">
                   "We've been offering Daily Event Insurance for 6 months and our members love it. Easy to implement and we earn extra revenue on every policy sold."
                 </p>
@@ -438,9 +453,12 @@ export function ApplySection() {
                         </svg>
                       </div>
                       <h3 className="text-2xl font-bold text-slate-900 mb-2">Become a Partner</h3>
-                      <p className="text-slate-500">
+                      <p className="text-slate-500 mb-4">
                         Join the Daily Event Insurance partner network and start earning commissions today.
                       </p>
+
+                      {/* Compact Urgency Indicator */}
+                      <UrgencyBanner variant="fast-review" compact />
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -562,9 +580,9 @@ export function ApplySection() {
                 ) : (
                   <>
                     <div className="text-center mb-6">
-                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Start Earning in 48 Hours</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">See How It Works in 15 Minutes</h3>
                       <p className="text-slate-600 mb-4">
-                        Schedule a 15-minute demo and go live this week
+                        Quick demo. Live in 48 hours. $4,200/month average revenue.
                       </p>
 
                       {/* Quick Stats */}
@@ -613,7 +631,7 @@ export function ApplySection() {
                         <div className="w-full border-t border-teal-200"></div>
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="px-4 bg-slate-900 text-slate-400">or fill out the form below</span>
+                        <span className="px-4 bg-teal-900 text-slate-400">or fill out the form below</span>
                       </div>
                     </div>
 

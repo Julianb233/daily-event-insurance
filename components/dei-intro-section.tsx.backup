@@ -37,9 +37,9 @@ export function DEIIntroSection() {
         className="absolute inset-0 z-0"
         animate={{
           background: [
-            "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
-            "radial-gradient(ellipse at 70% 30%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
-            "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
+            "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+            "radial-gradient(ellipse at 70% 30%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
+            "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.05) 0%, transparent 50%), linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
           ],
         }}
         transition={{
@@ -97,16 +97,15 @@ export function DEIIntroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-3xl md:text-5xl lg:text-7xl font-black uppercase text-slate-900 text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
+          className="text-3xl md:text-5xl lg:text-7xl font-black uppercase text-white text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
           style={{
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
           }}
         >
-          How Gyms Are Adding{" "}
-          <span className="text-teal-500">
-            $4,200/Month
+          Turn Every Check-In Into{" "}
+          <span className="text-teal-400" style={{ textShadow: "0 0 40px rgba(20,184,166,0.6)" }}>
+            Revenue
           </span>
-          {" "}With Zero Overhead
         </motion.h1>
 
         {/* Tagline */}
@@ -114,9 +113,9 @@ export function DEIIntroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
+          className="text-lg md:text-2xl lg:text-3xl text-slate-300 text-center max-w-4xl font-medium px-4"
         >
-          Turn your member check-ins into passive revenue streams. No inventory. No staff training. Just pure profit.
+          Protect your members and boost your bottom line with insurance that sells itself.
         </motion.p>
 
         {/* Subtagline */}
@@ -124,9 +123,9 @@ export function DEIIntroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-base md:text-xl text-teal-600 text-center max-w-3xl mt-4 font-semibold"
+          className="text-base md:text-xl text-teal-400 text-center max-w-3xl mt-4 font-semibold"
         >
-          247 facilities already earning. Setup takes 48 hours. Limited spots available in your area.
+          Join 247 facilities earning an average of $2,400/month in passive revenue.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -139,7 +138,7 @@ export function DEIIntroSection() {
           {/* Primary CTA */}
           <motion.a
             href="#get-started"
-            className="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all duration-300 text-center text-base md:text-lg pointer-events-auto"
+            className="flex-1 bg-teal-500 hover:bg-teal-400 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all duration-300 text-center text-base md:text-lg pointer-events-auto"
             whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(20,184,166,0.4)" }}
             whileTap={{ scale: 0.95 }}
           >
@@ -149,7 +148,7 @@ export function DEIIntroSection() {
           {/* Secondary CTA */}
           <motion.a
             href="#how-it-works"
-            className="flex-1 border-2 border-slate-300 hover:border-teal-500 text-slate-700 hover:text-teal-600 font-bold px-6 md:px-8 py-3 md:py-4 rounded-full transition-all duration-300 text-center text-base md:text-lg pointer-events-auto hover:bg-teal-50"
+            className="flex-1 border-2 border-teal-400 hover:border-teal-300 text-teal-400 hover:text-teal-300 font-bold px-6 md:px-8 py-3 md:py-4 rounded-full transition-all duration-300 text-center text-base md:text-lg pointer-events-auto hover:bg-teal-400/10"
             whileHover={{ scale: 1.02, borderColor: "rgba(94,234,212,1)" }}
             whileTap={{ scale: 0.98 }}
           >
@@ -182,16 +181,16 @@ export function DEIIntroSection() {
         animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
         transition={{ delay: 1.2, duration: 0.8 }}
       >
-        <span className="text-teal-600 text-[10px] md:text-xs font-medium tracking-[0.25em] uppercase drop-shadow-lg">
+        <span className="text-teal-400 text-[10px] md:text-xs font-medium tracking-[0.25em] uppercase drop-shadow-lg">
           Scroll to Explore
         </span>
         <motion.div
-          className="w-5 h-8 md:w-6 md:h-10 border-2 border-teal-500/50 rounded-full flex justify-center pt-1.5 md:pt-2"
+          className="w-5 h-8 md:w-6 md:h-10 border-2 border-teal-400/70 rounded-full flex justify-center pt-1.5 md:pt-2"
           animate={{ borderColor: ["rgba(20,184,166,0.5)", "rgba(20,184,166,0.9)", "rgba(20,184,166,0.5)"] }}
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
         >
           <motion.div
-            className="w-1 h-2 md:w-1.5 md:h-2.5 bg-teal-500 rounded-full"
+            className="w-1 h-2 md:w-1.5 md:h-2.5 bg-teal-400 rounded-full"
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
           />
@@ -199,12 +198,12 @@ export function DEIIntroSection() {
       </motion.div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-slate-900 to-transparent z-10 pointer-events-none" />
     </>
   )
 
   return (
-    <section id="home" ref={sectionRef} className="relative w-full min-h-screen h-[100dvh] overflow-hidden bg-white">
+    <section id="home" ref={sectionRef} className="relative w-full min-h-screen h-[100dvh] overflow-hidden bg-slate-900">
       <HeroContent />
     </section>
   )

@@ -310,4 +310,136 @@ body {
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+
+  /* Premium 3D Card Effects */
+  .shadow-premium {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 10px 20px -5px rgba(0, 0, 0, 0.04),
+      0 0 0 1px rgba(0, 0, 0, 0.02);
+  }
+
+  .shadow-premium-hover {
+    box-shadow:
+      0 20px 40px -15px rgba(20, 184, 166, 0.15),
+      0 10px 20px -10px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(20, 184, 166, 0.1);
+  }
+
+  .shadow-premium-teal {
+    box-shadow:
+      0 10px 40px -10px rgba(20, 184, 166, 0.25),
+      0 4px 20px -5px rgba(20, 184, 166, 0.15);
+  }
+
+  /* Glassmorphism Effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Shimmer Animation */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .shimmer-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent
+    );
+    transform: translateX(-100%);
+    transition: transform 0s;
+  }
+
+  .shimmer-effect:hover::after {
+    animation: shimmer 0.8s ease-in-out;
+  }
+
+  /* 3D Card Container */
+  .card-3d-container {
+    perspective: 1000px;
+  }
+
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
+
+  /* Gradient Border Animation */
+  @keyframes gradient-rotate {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(20, 184, 166, 0.5),
+      rgba(14, 165, 233, 0.5),
+      rgba(20, 184, 166, 0.5)
+    );
+    background-size: 200% 200%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+    animation: gradient-rotate 3s linear infinite;
+  }
 }

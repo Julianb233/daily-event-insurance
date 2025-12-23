@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { ArrowLeft, Check, Shield, Building2, Mountain, Bike, Zap, ChevronRight, Star, DollarSign } from "lucide-react"
+import { ArrowLeft, Check, Shield, Building2, Mountain, Bike, Zap, ChevronRight, DollarSign, BadgeCheck } from "lucide-react"
 import Link from "next/link"
 
 // Pricing tiers - Insurance commission structure
@@ -209,13 +209,13 @@ export default function PricingPage() {
             <motion.h1
               className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight leading-tight mb-6 text-slate-900"
             >
-              <span className="block">INSURANCE</span>
+              <span className="block">Partner</span>
               <motion.span
                 className="block text-teal-500"
                 animate={{ scale: [1, 1.02, 1] }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
-                Pricing
+                Revenue
               </motion.span>
             </motion.h1>
             <motion.p
@@ -277,8 +277,8 @@ export default function PricingPage() {
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
-                      <Star className="w-4 h-4 inline-block mr-1" />
-                      Most Popular • 65% Start Here
+                      <BadgeCheck className="w-4 h-4 inline-block mr-1" />
+                      Verified Partner • 65% Start Here
                     </motion.div>
                   )}
 

@@ -76,7 +76,7 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Industries */}
+          {/* Industries We Serve */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -84,14 +84,17 @@ export default function Footer() {
             viewport={{ once: true }}
           >
             <h4 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider mb-4">
-              Industries
+              Industries We Serve
             </h4>
             <ul className="space-y-3">
               {[
-                { name: "Gyms & Fitness", href: "/for-gyms" },
-                { name: "Climbing Gyms", href: "/for-climbing" },
-                { name: "Adventure Sports", href: "/for-adventure" },
-                { name: "Equipment Rentals", href: "/for-rentals" },
+                { name: "Race Directors", href: "/industries/race-directors" },
+                { name: "Cycling Events", href: "/industries/cycling-events" },
+                { name: "Triathlons", href: "/industries/triathlons" },
+                { name: "Obstacle Courses", href: "/industries/obstacle-courses" },
+                { name: "Marathons & Fun Runs", href: "/industries/marathons" },
+                { name: "Corporate Wellness", href: "/industries/corporate-wellness" },
+                { name: "Schools & Universities", href: "/industries/schools-universities" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link

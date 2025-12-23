@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { ArrowRight, PlayCircle } from "lucide-react"
+import { UrgencyBanner } from "./urgency-banner"
 
 export default function HeroSection() {
   return (
@@ -126,11 +127,9 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              {/* Social Proof Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 border border-teal-200 rounded-lg">
-                <span className="text-sm font-semibold text-teal-900">
-                  Join 127+ facilities already earning passive revenue
-                </span>
+              {/* Urgency Banner - Compact */}
+              <div className="max-w-xl mx-auto lg:mx-0">
+                <UrgencyBanner variant="social-proof" compact />
               </div>
             </motion.div>
           </motion.div>

@@ -99,7 +99,7 @@ export function AIAgent3DCard({
             transformStyle: "preserve-3d",
           }}
         >
-          <div className="relative w-full h-full bg-gradient-to-br from-wizard-dark-navy via-wizard-deep-navy to-black border border-wizard-cyan/30 rounded-3xl overflow-hidden group">
+          <div className="relative w-full h-full bg-gradient-to-br from-teal-900 via-teal-800 to-black border border-wizard-cyan/30 rounded-3xl overflow-hidden group">
             {/* Animated gradient border glow */}
             <motion.div
               className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -124,7 +124,7 @@ export function AIAgent3DCard({
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <motion.div
-                    className="w-12 h-12 rounded-full bg-gradient-to-br from-wizard-cyan to-wizard-bright-pink flex items-center justify-center font-bold text-wizard-dark-navy text-lg"
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-wizard-cyan to-wizard-bright-pink flex items-center justify-center font-bold text-teal-900 text-lg"
                     animate={{
                       boxShadow: isHovered
                         ? [
@@ -168,7 +168,7 @@ export function AIAgent3DCard({
                 <Image src={image || "/placeholder.svg"} alt={name} fill className="object-cover" />
 
                 {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-wizard-dark-navy via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-teal-900 via-transparent to-transparent" />
 
                 {/* Floating icon */}
                 <motion.div
@@ -248,7 +248,7 @@ export function AIAgent3DCard({
             transformStyle: "preserve-3d",
           }}
         >
-          <div className="relative w-full h-full bg-gradient-to-br from-wizard-cyan/10 via-wizard-deep-navy to-wizard-bright-pink/10 border border-wizard-bright-pink/30 rounded-3xl overflow-hidden p-8">
+          <div className="relative w-full h-full bg-gradient-to-br from-wizard-cyan/10 via-teal-800 to-wizard-bright-pink/10 border border-wizard-bright-pink/30 rounded-3xl overflow-hidden p-8">
             {/* Back content */}
             <div className="relative z-10 h-full flex flex-col">
               {/* Back header */}
@@ -327,7 +327,7 @@ export function AIAgent3DCard({
 
               {/* CTA Button */}
               <motion.button
-                className="w-full mt-6 py-3 rounded-full bg-gradient-to-r from-wizard-cyan to-wizard-bright-pink text-wizard-dark-navy font-bold text-sm uppercase tracking-wider shadow-lg"
+                className="w-full mt-6 py-3 rounded-full bg-gradient-to-r from-wizard-cyan to-wizard-bright-pink text-teal-900 font-bold text-sm uppercase tracking-wider shadow-lg"
                 whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(0, 255, 255, 0.5)" }}
                 whileTap={{ scale: 0.98 }}
               >

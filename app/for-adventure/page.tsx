@@ -77,7 +77,7 @@ export default function ForAdventurePage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative bg-slate-900 pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+      <section className="relative bg-teal-900 pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
         {/* Animated background */}
         <motion.div
           className="absolute inset-0 z-0"
@@ -381,7 +381,7 @@ export default function ForAdventurePage() {
       </section>
 
       {/* Benefits */}
-      <section className="py-20 md:py-32 bg-slate-900 relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-teal-900 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] opacity-10">
           <svg viewBox="0 0 200 200" className="w-full h-full">
@@ -501,7 +501,7 @@ export default function ForAdventurePage() {
       </section>
 
       {/* Demo Form */}
-      <section id="demo" className="py-20 md:py-32 bg-slate-900">
+      <section id="demo" className="py-20 md:py-32 bg-teal-900">
         <div className="max-w-4xl mx-auto px-6 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

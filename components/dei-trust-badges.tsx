@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion"
-import { Shield, Users, Timer } from "lucide-react"
+import { Shield, Users, Timer, Dumbbell, Mountain, Waves, Bike, Package, Award, CheckCircle2, Lock } from "lucide-react"
 import { useEffect, useRef } from "react"
 
 interface StatItem {
@@ -45,11 +45,29 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: strin
   return <div ref={ref}>0{suffix}</div>
 }
 
-const partnerTypes = [
-  { name: "Gyms", icon: "GYM" },
-  { name: "Climbing", icon: "CLB" },
-  { name: "Rentals", icon: "RNT" },
-  { name: "Adventure", icon: "ADV" },
+const industryTypes = [
+  { name: "Fitness & Gyms", icon: Dumbbell, color: "from-orange-500 to-red-500" },
+  { name: "Rock Climbing", icon: Mountain, color: "from-teal-500 to-cyan-500" },
+  { name: "Ski Resorts", icon: Mountain, color: "from-blue-500 to-indigo-500" },
+  { name: "Adventure Sports", icon: Bike, color: "from-purple-500 to-pink-500" },
+  { name: "Equipment Rentals", icon: Package, color: "from-green-500 to-emerald-500" },
+  { name: "Water Sports", icon: Waves, color: "from-cyan-500 to-blue-500" },
+]
+
+const partnerLogos = [
+  { name: "PowerHouse CrossFit", industry: "Fitness" },
+  { name: "Summit Climbing Co.", industry: "Climbing" },
+  { name: "Alpine Peak Resort", industry: "Ski Resort" },
+  { name: "Adventure Rentals Pro", industry: "Equipment" },
+  { name: "Coastal Water Sports", industry: "Water Sports" },
+  { name: "Urban Fitness Hub", industry: "Fitness" },
+]
+
+const trustIndicators = [
+  { icon: Award, text: "A-Rated Insurance Carriers", subtext: "Top-tier coverage" },
+  { icon: CheckCircle2, text: "Licensed in All 50 States", subtext: "Nationwide protection" },
+  { icon: Lock, text: "SOC 2 Compliant", subtext: "Enterprise security" },
+  { icon: Shield, text: "24/7 Claims Support", subtext: "Always available" },
 ]
 
 
@@ -79,8 +97,8 @@ export function DEITrustBadges() {
               transition={{ delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="flex justify-center mb-3">
-                <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
+              <div className="flex items-center justify-center mb-3">
+                <div className="flex items-center justify-center p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
                   <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-teal-400" />
                 </div>
               </div>
@@ -105,48 +123,123 @@ export function DEITrustBadges() {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-10" />
+        <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-12" />
 
-        {/* Partner Types Section */}
-        <div className="text-center">
-          <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-6">
-            Serving Active Lifestyle Businesses
+        {/* Trusted By Leading Facilities Section */}
+        <div className="text-center mb-12">
+          <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8">
+            Trusted by Leading Facilities In
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-            {partnerTypes.map((partner, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+            {industryTypes.map((industry, index) => {
+              const IconComponent = industry.icon
+              return (
+                <motion.div
+                  key={industry.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="group relative"
+                >
+                  <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/10">
+                    {/* Icon with gradient background */}
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${industry.color} opacity-20 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center`}>
+                      <IconComponent className="w-7 h-7 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    {/* Grayscale icon overlay */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
+                      <IconComponent className="w-7 h-7 text-slate-400" />
+                    </div>
+                    <span className="text-xs md:text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors text-center">
+                      {industry.name}
+                    </span>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-12" />
+
+        {/* Featured Partner Logos */}
+        <div className="text-center mb-12">
+          <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8">
+            Featured Partner Facilities
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {partnerLogos.map((partner, index) => (
               <motion.div
                 key={partner.name}
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ y: -4 }}
+                className="group"
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center font-bold text-xs md:text-sm text-teal-400">
-                  {partner.icon}
+                <div className="relative h-24 rounded-lg bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/10 flex flex-col items-center justify-center p-4 overflow-hidden">
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Logo placeholder - using first letters */}
+                  <div className="relative z-10 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 group-hover:bg-gradient-to-br group-hover:from-teal-400 group-hover:to-cyan-400 transition-all duration-300 flex items-center justify-center">
+                      <span className="text-slate-400 group-hover:text-white font-bold text-sm transition-colors duration-300">
+                        {partner.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Partner name */}
+                  <div className="relative z-10 text-xs font-semibold text-slate-600 group-hover:text-teal-600 transition-colors text-center leading-tight">
+                    {partner.name}
+                  </div>
+
+                  {/* Industry tag */}
+                  <div className="relative z-10 text-[10px] text-slate-400 group-hover:text-teal-400 transition-colors mt-1">
+                    {partner.industry}
+                  </div>
                 </div>
-                <span className="font-semibold text-sm md:text-base hidden md:inline">
-                  {partner.name}
-                </span>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Response Time Guarantee */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-10 text-center"
-        >
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-teal-500/10 border border-teal-500/30">
-            <Shield className="w-5 h-5 text-teal-400" />
-            <span className="text-slate-700 font-medium text-sm">
-              <span className="text-teal-400 font-bold">Licensed & Insured</span> — A-rated carriers with nationwide coverage
-            </span>
-          </div>
-        </motion.div>
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-10" />
+
+        {/* Trust Indicators */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {trustIndicators.map((indicator, index) => {
+            const IconComponent = indicator.icon
+            return (
+              <motion.div
+                key={indicator.text}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group"
+              >
+                <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-md">
+                  <div className="w-12 h-12 rounded-full bg-teal-500/10 group-hover:bg-teal-500/20 transition-colors duration-300 flex items-center justify-center mb-3">
+                    <IconComponent className="w-6 h-6 text-teal-400 group-hover:text-teal-500 transition-colors duration-300" />
+                  </div>
+                  <div className="text-sm font-bold text-slate-900 mb-1">
+                    {indicator.text}
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    {indicator.subtext}
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

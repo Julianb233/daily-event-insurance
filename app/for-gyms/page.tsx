@@ -175,7 +175,7 @@ function ProblemSolutionSection() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative bg-slate-900 rounded-2xl p-8 overflow-hidden"
+            className="relative bg-teal-900 rounded-2xl p-8 overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl" />
             <div className="relative z-10">
@@ -354,7 +354,7 @@ function GymBenefitsSection() {
   ]
 
   return (
-    <section className="relative bg-slate-900 py-20 md:py-32 overflow-hidden">
+    <section className="relative bg-teal-900 py-20 md:py-32 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -391,7 +391,7 @@ function GymBenefitsSection() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="relative bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-teal-500/20 overflow-hidden group"
+              className="relative bg-teal-800/50 backdrop-blur-sm rounded-2xl p-8 border border-teal-500/20 overflow-hidden group"
             >
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-teal-600/0 to-teal-500/0 group-hover:from-teal-600/10 group-hover:to-teal-500/10 transition-all duration-300" />
@@ -649,7 +649,7 @@ function TestimonialSection() {
 // Demo Form Section
 function DemoFormSection() {
   return (
-    <section id="demo-form" className="relative bg-slate-900 py-20 md:py-32">
+    <section id="demo-form" className="relative bg-teal-900 py-20 md:py-32">
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -675,7 +675,7 @@ function DemoFormSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
+          className="bg-teal-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
         >
           <form className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -790,15 +790,15 @@ function DemoFormSection() {
           viewport={{ once: true }}
           className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center"
         >
-          <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+          <div className="bg-teal-800/30 rounded-xl p-6 border border-teal-700">
             <div className="text-3xl font-black text-teal-400 mb-2">127+</div>
             <div className="text-slate-300 text-sm">Gyms Using DEI</div>
           </div>
-          <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+          <div className="bg-teal-800/30 rounded-xl p-6 border border-teal-700">
             <div className="text-3xl font-black text-teal-400 mb-2">$485K+</div>
             <div className="text-slate-300 text-sm">Earned by Partners</div>
           </div>
-          <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+          <div className="bg-teal-800/30 rounded-xl p-6 border border-teal-700">
             <div className="text-3xl font-black text-teal-400 mb-2">4.9/5</div>
             <div className="text-slate-300 text-sm">Partner Satisfaction</div>
           </div>

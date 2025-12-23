@@ -295,7 +295,7 @@ function CoverageTypesSection() {
   ]
 
   return (
-    <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 md:py-32">
+    <section className="relative bg-gradient-to-br from-teal-900 via-teal-800 to-teal-900 py-20 md:py-32">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -329,7 +329,7 @@ function CoverageTypesSection() {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-teal-500/20 hover:border-teal-500/40 transition-all"
+              className="bg-teal-800/50 backdrop-blur-sm rounded-2xl p-6 border border-teal-500/20 hover:border-teal-500/40 transition-all"
             >
               <type.icon className="w-10 h-10 text-teal-400 mb-4" />
               <h3 className="text-xl font-black uppercase text-white mb-2">
@@ -503,7 +503,7 @@ function CTASection() {
   }
 
   return (
-    <section id="demo-form" className="relative bg-slate-900 py-20 md:py-32">
+    <section id="demo-form" className="relative bg-teal-900 py-20 md:py-32">
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -528,7 +528,7 @@ function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
+          className="bg-teal-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
