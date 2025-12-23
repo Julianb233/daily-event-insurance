@@ -94,10 +94,12 @@ export default function Header() {
   }
 
   const navigationLinks = [
+    { label: "Connect", href: "/connect" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Who We Serve", href: "#who-we-serve" },
     { label: "How You Can Earn", href: "/#revenue-calculator" },
     { label: "Benefits", href: "#benefits" },
+    { label: "Pricing", href: "/pricing" },
   ]
 
   return (

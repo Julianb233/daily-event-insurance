@@ -1,0 +1,36 @@
+{
+  "version": "2.0",
+  "project": "daily-event-insurance",
+  "lastUpdated": "2025-12-23T20:36:00Z",
+  "expiresAt": "2025-12-27T20:36:00Z",
+  "swarmId": "bubba_multiproject_001",
+  "swarmStatus": "active",
+  "currentWork": {
+    "description": "Complete branding assets and clean up Wizard-of-AI remnants",
+    "status": "in_progress",
+    "phase": "Asset Creation"
+  },
+  "agents": {
+    "Bella-Branding": {"tasks": ["DEI-001", "DEI-002", "DEI-003", "DEI-004"], "status": "ready"},
+    "Fiona-Frontend": {"tasks": ["DEI-005"], "status": "ready"},
+    "Tyler-TypeScript": {"tasks": ["DEI-006"], "status": "ready"},
+    "Helena-Memory": {"tasks": ["DEI-007"], "status": "ready"}
+  },
+  "taskRegistry": {
+    "DEI-001": {"title": "Create branding assets", "owner": "Bella-Branding", "status": "pending", "blockers": []},
+    "DEI-002": {"title": "Create OG/Twitter images", "owner": "Bella-Branding", "status": "pending", "blockers": []},
+    "DEI-003": {"title": "Create hero graphic", "owner": "Bella-Branding", "status": "pending", "blockers": []},
+    "DEI-004": {"title": "Generate partner photos", "owner": "Bella-Branding", "status": "pending", "blockers": []},
+    "DEI-005": {"title": "Create process/benefit icons", "owner": "Fiona-Frontend", "status": "pending", "blockers": []},
+    "DEI-006": {"title": "Delete Wizard remnant files", "owner": "Tyler-TypeScript", "status": "pending", "blockers": []},
+    "DEI-007": {"title": "State file created", "owner": "Helena-Memory", "status": "completed", "blockers": []}
+  },
+  "filesToDelete": [
+    "public/24-hour-support-bot.png", "public/ai-accountant.png", "public/ai-content-creation-marketing-futuristic.jpg",
+    "public/wizard-of-ai-logo.png", "public/yellow-brick-road.png", "public/3d/", "public/images/lorenzo-*",
+    "public/images/helmet-*", "public/images/wizard-*", "public/images/golden-ticket.*"
+  ],
+  "autonomousMode": true,
+  "coordinationNamespace": "tasks",
+  "taskKey": "daily-event-insurance-tasks"
+}
