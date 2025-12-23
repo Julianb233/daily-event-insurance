@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, Phone } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 
@@ -126,15 +126,6 @@ export default function Header() {
               transition={{ delay: 0.3 }}
               className="flex items-center gap-4"
             >
-              {/* Phone Number - Desktop Only */}
-              <a
-                href="tel:+18005551234"
-                className="hidden xl:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                <span>(800) 555-1234</span>
-              </a>
-
               {/* CTA Button */}
               <motion.a
                 href="#apply"
@@ -222,14 +213,6 @@ export default function Header() {
                 }}
                 className="mt-8 space-y-4"
               >
-                <a
-                  href="tel:+18005551234"
-                  className="flex items-center gap-2 px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
-                >
-                  <Phone className="w-4 h-4" />
-                  <span>(800) 555-1234</span>
-                </a>
-
                 <a
                   href="#apply"
                   onClick={(e) => handleNavClick(e, "#apply")}

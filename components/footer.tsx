@@ -47,7 +47,7 @@ export default function Footer() {
             </motion.div>
           </div>
 
-          {/* Company Links */}
+          {/* Quick Links */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -55,14 +55,14 @@ export default function Footer() {
             viewport={{ once: true }}
           >
             <h4 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider mb-4">
-              Company
+              Quick Links
             </h4>
             <ul className="space-y-3">
               {[
-                { name: "About", href: "/about" },
-                { name: "How It Works", href: "/how-it-works" },
-                { name: "Benefits", href: "/benefits" },
-                { name: "FAQ", href: "/faq" },
+                { name: "How It Works", href: "/#how-it-works" },
+                { name: "Who We Serve", href: "/#who-we-serve" },
+                { name: "Benefits", href: "/#benefits" },
+                { name: "Pricing", href: "/pricing" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -76,7 +76,7 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Legal Links */}
+          {/* Industries */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -84,13 +84,14 @@ export default function Footer() {
             viewport={{ once: true }}
           >
             <h4 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider mb-4">
-              Legal
+              Industries
             </h4>
             <ul className="space-y-3">
               {[
-                { name: "Privacy Policy", href: "/privacy" },
-                { name: "Terms of Service", href: "/terms" },
-                { name: "Insurance Disclosure", href: "/insurance-disclosure" },
+                { name: "Gyms & Fitness", href: "/for-gyms" },
+                { name: "Climbing Gyms", href: "/for-climbing" },
+                { name: "Adventure Sports", href: "/for-adventure" },
+                { name: "Equipment Rentals", href: "/for-rentals" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -104,7 +105,7 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Contact Links */}
+          {/* Get Started */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -112,31 +113,19 @@ export default function Footer() {
             viewport={{ once: true }}
           >
             <h4 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider mb-4">
-              Contact
+              Get Started
             </h4>
-            <ul className="space-y-3">
-              {[
-                { name: "Contact Us", href: "/contact" },
-                { name: "Partner Portal", href: "/partners" },
-              ].map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-[#64748B] hover:text-[#14B8A6] transition-colors text-sm font-medium"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <p className="text-sm text-[#64748B] mb-6">
+              Ready to start earning commission? Sign up today—no contracts, no setup fees.
+            </p>
 
             {/* CTA Button */}
-            <motion.div className="mt-8">
+            <motion.div>
               <Link
-                href="/get-quote"
+                href="/#apply"
                 className="inline-flex items-center gap-2 bg-[#14B8A6] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0D9488] transition-colors text-sm"
               >
-                Get a Quote
+                Get Started Today
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -147,11 +136,24 @@ export default function Footer() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 5l7 7-7 7"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
               </Link>
             </motion.div>
+
+            {/* Contact */}
+            <div className="mt-6">
+              <p className="text-sm text-[#64748B]">
+                Questions? Email us at{" "}
+                <a
+                  href="mailto:partners@dailyeventinsurance.com"
+                  className="text-[#14B8A6] hover:text-[#0D9488] font-medium"
+                >
+                  partners@dailyeventinsurance.com
+                </a>
+              </p>
+            </div>
           </motion.div>
         </div>
 
@@ -160,8 +162,21 @@ export default function Footer() {
           {/* Bottom bar */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-[#64748B] font-medium">
-              © 2024 Daily Event Insurance. All rights reserved.
+              © {new Date().getFullYear()} Daily Event Insurance. All rights reserved.
             </p>
+
+            {/* Legal Links */}
+            <div className="flex items-center gap-6 text-sm text-[#64748B]">
+              <Link href="/privacy" className="hover:text-[#14B8A6] transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-[#14B8A6] transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/insurance-disclosure" className="hover:text-[#14B8A6] transition-colors">
+                Insurance Disclosure
+              </Link>
+            </div>
 
             <div className="flex items-center gap-2 text-sm text-[#64748B]">
               <span>Powered by</span>
