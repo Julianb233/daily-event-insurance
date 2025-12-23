@@ -102,11 +102,11 @@ export function DEIIntroSection() {
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
           }}
         >
-          How Gyms Are Adding{" "}
+          Earn Extra Revenue{" "}
           <span className="text-teal-500">
-            $4,200/Month
+            While Protecting
           </span>
-          {" "}With Zero Overhead
+          {" "}Your Business
         </motion.h1>
 
         {/* Tagline */}
@@ -116,7 +116,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
         >
-          Turn your member check-ins into passive revenue streams. No inventory. No staff training. Just pure profit.
+          Add a new revenue stream AND reduce your liability exposure. Two problems, one simple solution.
         </motion.p>
 
         {/* Subtagline */}

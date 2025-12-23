@@ -557,6 +557,646 @@ export const industrySectors: Record<string, IndustrySector> = {
       { label: "Student Take Rate", value: "35%" },
       { label: "Greek Event Take Rate", value: "52%" }
     ]
+  },
+
+  "gyms-fitness": {
+    slug: "gyms-fitness",
+    title: "Gym & Fitness Center Event Insurance",
+    shortTitle: "Gyms & Fitness Centers",
+    metaTitle: "Gym Event Insurance | Same Day Coverage for Fitness Challenges",
+    metaDescription: "Instant insurance for fitness challenges, CrossFit competitions, boot camps, and gym member events. Protect participants and earn revenue on every challenge.",
+    heroTitle: "Fitness Center Event Insurance",
+    heroSubtitle: "Comprehensive coverage for fitness challenges, CrossFit competitions, gym tournaments, and member appreciation events.",
+    icon: "Dumbbell",
+    benefits: [
+      {
+        title: "Challenge Event Revenue",
+        description: "Fitness challenges and transformation contests drive member engagement and retention. Add insurance as a premium option to boost revenue per participant.",
+        icon: "TrendingUp"
+      },
+      {
+        title: "High-Intensity Coverage",
+        description: "CrossFit WODs, HIIT classes, powerlifting meets, and intense training sessions carry elevated injury risk. Specialized coverage addresses liability concerns.",
+        icon: "Flame"
+      },
+      {
+        title: "Member Value Addition",
+        description: "Offering participant insurance differentiates your gym from competitors. Shows commitment to member safety beyond standard facility liability coverage.",
+        icon: "Award"
+      },
+      {
+        title: "Recurring Challenge Revenue",
+        description: "Monthly or quarterly challenges become predictable commission opportunities. Turn your challenge calendar into a consistent revenue stream.",
+        icon: "Calendar"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Challenge Registration",
+        description: "Add insurance during sign-up for transformation challenges, partner competitions, team events, and fitness tournaments. Seamless integration with MindBody, Zen Planner, and gym management software."
+      },
+      {
+        title: "Participant Protection",
+        description: "Members get coverage for training injuries, competition accidents, and emergency medical expenses during the challenge period. Active from day one through final weigh-in."
+      },
+      {
+        title: "Commission Per Event",
+        description: "Earn 25-30% on every policy sold. For a 60-person transformation challenge with 45% take rate, that's $202-$243 in passive revenue per challenge."
+      }
+    ],
+    faqs: [
+      {
+        question: "What types of fitness events can offer this insurance?",
+        answer: "All gym events including transformation challenges, CrossFit competitions, powerlifting meets, partner WOD competitions, boot camp challenges, nutrition challenges with workouts, and member appreciation athletic events."
+      },
+      {
+        question: "Does coverage extend beyond competition day?",
+        answer: "Yes, for multi-week challenges, coverage spans the entire challenge period from start date through final event. Protects participants during all training sessions and competition components."
+      },
+      {
+        question: "How does this work with gym liability insurance?",
+        answer: "Participant insurance is complementary to your facility liability coverage. It protects individual members for medical costs while your gym insurance covers facility and organizational liability."
+      },
+      {
+        question: "Can we offer insurance for personal training sessions?",
+        answer: "Currently our focus is on group events and challenges. For ongoing personal training, members should consider individual fitness insurance policies rather than event-specific coverage."
+      },
+      {
+        question: "What about virtual fitness challenges?",
+        answer: "Yes, virtual and hybrid fitness challenges qualify. Members completing workouts at home or any location can purchase protection for challenge-related injuries."
+      }
+    ],
+    stats: [
+      { label: "Per Challenge Revenue", value: "$225" },
+      { label: "Fitness Take Rate", value: "44%" },
+      { label: "Avg. Challenge Size", value: "48" }
+    ],
+    testimonial: {
+      quote: "We run quarterly transformation challenges and started offering Daily Event Insurance six months ago. It's generated over $800 in commission while giving our members added peace of mind during intense training.",
+      author: "Sarah Mitchell",
+      role: "Owner",
+      company: "Elevate Fitness CrossFit"
+    }
+  },
+
+  "rock-climbing": {
+    slug: "rock-climbing",
+    title: "Rock Climbing Facility Insurance",
+    shortTitle: "Climbing Gyms",
+    metaTitle: "Climbing Gym Insurance | Coverage for Bouldering & Rope Events",
+    metaDescription: "Same-day insurance for climbing competitions, bouldering challenges, and facility events. Protect climbers on high-risk activities while generating revenue.",
+    heroTitle: "Climbing Facility Event Insurance",
+    heroSubtitle: "Specialized coverage for climbing competitions, bouldering leagues, youth climbing events, and facility challenges.",
+    icon: "Mountain",
+    benefits: [
+      {
+        title: "High-Risk Activity Protection",
+        description: "Lead climbing, bouldering, speed climbing, and auto-belay usage carry inherent fall risk. Comprehensive coverage addresses the unique liability of vertical sports.",
+        icon: "AlertTriangle"
+      },
+      {
+        title: "Competition Event Revenue",
+        description: "Climbing comps, bouldering leagues, and route-setting challenges attract serious athletes willing to invest in proper protection. Premium pricing reflects activity risk.",
+        icon: "Trophy"
+      },
+      {
+        title: "Youth Climber Coverage",
+        description: "Parents expect robust safety measures for youth climbing teams and junior competitions. Participant insurance demonstrates professional risk management.",
+        icon: "Users"
+      },
+      {
+        title: "Outdoor Trip Protection",
+        description: "Facility-organized outdoor climbing trips and guided sessions benefit from extended coverage. Protects participants at remote crag locations.",
+        icon: "Map"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Event Registration",
+        description: "Offer insurance during competition registration, league sign-up, or facility challenge enrollment. Clear explanation of climbing-specific coverage increases uptake."
+      },
+      {
+        title: "Comprehensive Fall Coverage",
+        description: "Protection includes fall injuries, belaying accidents, bouldering impacts, equipment failures, and emergency medical transport from climbing facilities or outdoor locations."
+      },
+      {
+        title: "Premium Commission",
+        description: "Earn 30-35% on climbing event policies due to elevated risk category. A 40-climber competition with 60% take rate generates $336-$392 in revenue."
+      }
+    ],
+    faqs: [
+      {
+        question: "Does coverage include both indoor and outdoor climbing?",
+        answer: "Yes, coverage extends to indoor facility events and facility-organized outdoor trips. Both gym climbing and outdoor crag sessions are protected under the same policy."
+      },
+      {
+        question: "What climbing disciplines are covered?",
+        answer: "All climbing types including bouldering, top-rope, lead climbing, speed climbing, auto-belay routes, and outdoor sport climbing or traditional climbing on facility-organized trips."
+      },
+      {
+        question: "How does pricing reflect climbing risk levels?",
+        answer: "Climbing insurance typically ranges $14-24 per participant depending on event type and duration. Higher risk activities like outdoor lead climbing command premium pricing and higher commission."
+      },
+      {
+        question: "Can youth climbing teams purchase coverage?",
+        answer: "Absolutely. Youth team competitions and junior league events are covered with parental consent integration. Many gyms require insurance for youth competitive teams."
+      },
+      {
+        question: "What about liability for equipment failure?",
+        answer: "Participant insurance covers medical expenses resulting from equipment failures. It complements but doesn't replace your facility's equipment liability insurance and safety inspection protocols."
+      }
+    ],
+    stats: [
+      { label: "Competition Revenue", value: "$365" },
+      { label: "Climber Take Rate", value: "58%" },
+      { label: "Premium Per Policy", value: "$18" }
+    ],
+    testimonial: {
+      quote: "Our monthly bouldering competitions have become a significant revenue source beyond entry fees. Daily Event Insurance adds $300-400 per month in commission while giving our climbers professional-grade protection.",
+      author: "Alex Chen",
+      role: "General Manager",
+      company: "Summit Climbing Collective"
+    }
+  },
+
+  "ski-resorts": {
+    slug: "ski-resorts",
+    title: "Ski Resort Event Insurance",
+    shortTitle: "Ski Resorts & Snow Sports",
+    metaTitle: "Ski Resort Insurance | Coverage for Races & Snow Sport Events",
+    metaDescription: "Instant insurance for ski races, snowboard competitions, and mountain events. Protect participants in high-risk snow sports while earning commission revenue.",
+    heroTitle: "Ski Resort Event Insurance",
+    heroSubtitle: "Comprehensive coverage for ski races, snowboard competitions, terrain park events, and winter sport challenges.",
+    icon: "Snowflake",
+    benefits: [
+      {
+        title: "Winter Sport Risk Coverage",
+        description: "Skiing, snowboarding, and mountain events carry substantial injury risk. Specialized coverage addresses high-speed collisions, lift accidents, and mountain emergency evacuations.",
+        icon: "AlertCircle"
+      },
+      {
+        title: "Race Series Revenue",
+        description: "NASTAR races, boardercross competitions, and resort race series run throughout the season. Insurance creates recurring commission revenue across your event calendar.",
+        icon: "TrendingUp"
+      },
+      {
+        title: "Terrain Park Events",
+        description: "Freestyle competitions, rail jams, and big air events attract participants seeking comprehensive coverage. Premium policies reflect extreme sport risk levels.",
+        icon: "Sparkles"
+      },
+      {
+        title: "International Visitor Coverage",
+        description: "Destination ski resorts attract international visitors who may lack U.S. medical coverage. Participant insurance fills critical gaps for foreign competitors.",
+        icon: "Globe"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Event Registration",
+        description: "Add insurance to race registration, competition sign-up, or event series enrollment. Integration with resort POS and registration systems makes offering seamless."
+      },
+      {
+        title: "Mountain Emergency Protection",
+        description: "Coverage includes on-mountain injuries, ski patrol response, emergency sledding, helicopter evacuation, and hospital treatment. Active from event start through award ceremony."
+      },
+      {
+        title: "Seasonal Commission Revenue",
+        description: "Winter season events generate cumulative commission. A resort running 20 weekend races at $400 each generates $8,000 in annual insurance revenue."
+      }
+    ],
+    faqs: [
+      {
+        question: "What types of ski resort events can offer insurance?",
+        answer: "All winter events including ski races (GS, slalom, downhill), snowboard competitions, terrain park contests, rail jams, NASTAR races, adaptive skiing events, and mountain festivals with athletic components."
+      },
+      {
+        question: "Does coverage include helicopter evacuation costs?",
+        answer: "Yes, emergency medical evacuation is included up to policy limits. Mountain helicopter rescues can cost $3,000-$10,000, making this coverage extremely valuable for participants."
+      },
+      {
+        question: "How does this work with ski patrol services?",
+        answer: "Participant insurance covers the cost of ski patrol response, emergency sledding, and medical treatment. It complements resort operations and protects participants from unexpected medical bills."
+      },
+      {
+        question: "Can resorts offer insurance for terrain park sessions?",
+        answer: "Currently our focus is on organized competitions and events. General terrain park usage would fall under individual season-long policies rather than event-specific coverage."
+      },
+      {
+        question: "What about multi-day competition series?",
+        answer: "Multi-day events are fully covered. Weekend competition series, week-long training camps, and multi-stage competitions receive appropriate extended coverage periods."
+      }
+    ],
+    stats: [
+      { label: "Race Series Revenue", value: "$8,200" },
+      { label: "Winter Sport Take Rate", value: "51%" },
+      { label: "Avg. Policy Premium", value: "$22" }
+    ],
+    testimonial: {
+      quote: "We added participant insurance to our NASTAR race program and terrain park competitions. It's generated over $6,000 this season while addressing a major concern for international racers who lack U.S. coverage.",
+      author: "Tom Harrison",
+      role: "Events Director",
+      company: "Alpine Peak Resort"
+    }
+  },
+
+  "skydiving": {
+    slug: "skydiving",
+    title: "Skydiving & Aerial Sports Insurance",
+    shortTitle: "Skydiving & Aerial Sports",
+    metaTitle: "Skydiving Event Insurance | Coverage for Aerial Sport Competitions",
+    metaDescription: "Same-day insurance for skydiving competitions, BASE jumping events, and aerial sport challenges. Specialized coverage for extreme air sports with premium revenue.",
+    heroTitle: "Skydiving & Aerial Sports Event Insurance",
+    heroSubtitle: "Specialized coverage for skydiving competitions, formation flying events, wingsuit challenges, and aerial sport exhibitions.",
+    icon: "Plane",
+    benefits: [
+      {
+        title: "Extreme Sport Specialization",
+        description: "Skydiving, BASE jumping, and aerial sports represent the highest risk category. Our specialized coverage addresses parachute malfunctions, landing injuries, and mid-air incidents.",
+        icon: "AlertOctagon"
+      },
+      {
+        title: "Premium Policy Revenue",
+        description: "Extreme sport insurance commands highest premiums in the industry due to risk profile. Higher policy values translate to substantial commission per participant.",
+        icon: "DollarSign"
+      },
+      {
+        title: "Competition Event Focus",
+        description: "Formation skydiving, canopy piloting, wingsuit competitions, and accuracy challenges attract serious athletes who understand insurance value and actively seek coverage.",
+        icon: "Target"
+      },
+      {
+        title: "International Event Coverage",
+        description: "Major skydiving competitions draw international participants. Coverage extends to foreign competitors participating in U.S.-based aerial sport events.",
+        icon: "Globe"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Competition Registration",
+        description: "Offer insurance during event sign-up with clear explanation of aerial sport coverage. Most participants understand risk profile and actively seek comprehensive protection."
+      },
+      {
+        title: "Comprehensive Aerial Coverage",
+        description: "Protection includes parachute malfunctions, landing injuries, mid-air collisions, equipment failures, emergency medical transport, and specialized trauma care."
+      },
+      {
+        title: "Maximum Commission Potential",
+        description: "Earn 35-40% on premium skydiving policies. A 30-person formation flying competition with 70% take rate generates $735-$840 in event revenue."
+      }
+    ],
+    faqs: [
+      {
+        question: "What aerial sports does this coverage include?",
+        answer: "Skydiving (all disciplines), formation flying, canopy piloting, wingsuit flying, BASE jumping events, paragliding competitions, paramotoring, and other aerial sports conducted as organized events."
+      },
+      {
+        question: "How much does skydiving event insurance cost?",
+        answer: "Skydiving insurance typically ranges $35-60 per participant for competition events, reflecting the extreme risk category. Premium pricing enables substantial commission revenue."
+      },
+      {
+        question: "Does coverage include experienced and novice jumpers?",
+        answer: "Coverage is designed for licensed skydivers participating in competitions. Tandem jumps and student training would fall under different insurance categories specific to drop zone operations."
+      },
+      {
+        question: "What about multi-day skydiving festivals?",
+        answer: "Multi-day competitions and week-long skydiving events receive extended coverage periods. Policy premiums adjust for event duration and total number of jumps planned."
+      },
+      {
+        question: "How does this work with USPA requirements?",
+        answer: "Participant insurance is complementary to USPA event requirements and drop zone liability coverage. It provides additional protection for individual competitors beyond organizational insurance."
+      }
+    ],
+    stats: [
+      { label: "Event Commission Avg.", value: "$785" },
+      { label: "Skydiver Take Rate", value: "68%" },
+      { label: "Premium Per Policy", value: "$45" }
+    ],
+    testimonial: {
+      quote: "Our annual formation skydiving competition now offers Daily Event Insurance. Nearly 70% of competitors purchase coverage, generating $1,500 in commission while addressing their biggest concern about medical costs.",
+      author: "Jennifer Larson",
+      role: "Competition Director",
+      company: "Vertical Dreams Skydiving Center"
+    }
+  },
+
+  "equipment-rentals": {
+    slug: "equipment-rentals",
+    title: "Equipment Rental Event Insurance",
+    shortTitle: "Equipment Rentals",
+    metaTitle: "Equipment Rental Insurance | Coverage for Activity Rental Events",
+    metaDescription: "Instant insurance for bike rentals, kayak outfitters, gear rental events, and adventure equipment. Protect customers and reduce liability while earning revenue.",
+    heroTitle: "Equipment Rental Event Insurance",
+    heroSubtitle: "Coverage for bike rental tours, kayak outfitters, adventure gear rentals, and equipment-based recreational events.",
+    icon: "Package",
+    benefits: [
+      {
+        title: "Customer Liability Reduction",
+        description: "When renters carry their own insurance, your equipment damage liability decreases. Participant coverage supplements your rental agreement and reduces dispute risk.",
+        icon: "ShieldCheck"
+      },
+      {
+        title: "Rental Upsell Revenue",
+        description: "Add insurance at point of rental for $3-8 per customer. On 50 daily rentals at 40% take rate, that's $180-$320 additional weekly revenue with zero overhead.",
+        icon: "TrendingUp"
+      },
+      {
+        title: "Event & Tour Coverage",
+        description: "Guided bike tours, group kayak outings, multi-day adventure rentals, and equipment-based events all benefit from participant protection during usage period.",
+        icon: "Map"
+      },
+      {
+        title: "Damage Waiver Alternative",
+        description: "Offer insurance as an alternative to equipment damage waivers. Provides broader coverage while creating commission revenue instead of just reducing liability.",
+        icon: "RefreshCw"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Point of Rental Integration",
+        description: "Add insurance option during rental checkout process. Integrates with rental management software including FareHarbor, Peek Pro, and Checkfront."
+      },
+      {
+        title: "Usage Period Protection",
+        description: "Renters receive coverage for personal injury during equipment usage, medical expenses from accidents, and protection during the full rental period."
+      },
+      {
+        title: "Daily Commission Revenue",
+        description: "Earn 25-30% on every insurance add-on. High-volume rental operations can generate $400-$1,200 monthly in passive commission revenue."
+      }
+    ],
+    faqs: [
+      {
+        question: "What types of rental businesses can offer this insurance?",
+        answer: "Bike rentals, kayak and paddleboard outfitters, ski and snowboard rentals, climbing gear rentals, camping equipment, adventure tour operators, and any recreational equipment rental operation."
+      },
+      {
+        question: "Does coverage include equipment damage protection?",
+        answer: "Primary focus is participant medical protection during equipment usage. Equipment damage coverage can be added as an optional upgrade depending on rental type and value."
+      },
+      {
+        question: "How does this differ from standard damage waivers?",
+        answer: "Traditional damage waivers only reduce renter liability for equipment damage. Participant insurance provides comprehensive medical coverage plus optional equipment protection, creating more customer value."
+      },
+      {
+        question: "Can we offer insurance for multi-day rentals?",
+        answer: "Yes, coverage extends for the full rental period whether that's hourly, daily, or multi-day. Pricing adjusts based on rental duration and equipment type."
+      },
+      {
+        question: "What about guided tour operations?",
+        answer: "Guided bike tours, kayak excursions, and adventure outings are excellent use cases. Participants appreciate having their own coverage beyond the tour operator's liability insurance."
+      }
+    ],
+    stats: [
+      { label: "Monthly Revenue Avg.", value: "$840" },
+      { label: "Rental Take Rate", value: "41%" },
+      { label: "Per Transaction Fee", value: "$6" }
+    ],
+    testimonial: {
+      quote: "We run a bike rental and tour business on the waterfront. Adding Daily Event Insurance to our checkout process was seamless and now generates $600-800 monthly in commission. Customers love having the option.",
+      author: "David Park",
+      role: "Owner",
+      company: "Coastal Bike & Kayak Rentals"
+    }
+  },
+
+  "water-sports": {
+    slug: "water-sports",
+    title: "Water Sports & Adventure Event Insurance",
+    shortTitle: "Water Sports & Adventure",
+    metaTitle: "Water Sports Insurance | Coverage for Kayaking, SUP & Adventure Events",
+    metaDescription: "Same-day insurance for kayak races, SUP competitions, open water swims, and water sport events. Protect participants and earn revenue from aquatic activities.",
+    heroTitle: "Water Sports Event Insurance",
+    heroSubtitle: "Comprehensive coverage for kayak races, SUP competitions, open water swimming, surf contests, and aquatic adventure events.",
+    icon: "Waves",
+    benefits: [
+      {
+        title: "Open Water Risk Coverage",
+        description: "Open water swimming, ocean paddling, river kayaking, and surf competitions carry unique drowning and water-related risks. Specialized coverage addresses aquatic emergency scenarios.",
+        icon: "AlertTriangle"
+      },
+      {
+        title: "Multi-Sport Event Revenue",
+        description: "Paddleboard races, kayak competitions, swim challenges, and beach festivals often feature multiple water sport categories. Insurance revenue compounds across event disciplines.",
+        icon: "Trophy"
+      },
+      {
+        title: "Safety Boat Coordination",
+        description: "Participant insurance complements safety boat operations and lifeguard coverage. Demonstrates comprehensive risk management to permits and venue authorities.",
+        icon: "Anchor"
+      },
+      {
+        title: "Destination Event Appeal",
+        description: "Beach races, island paddle events, and destination water sport competitions attract participants willing to invest in comprehensive protection for travel and participation.",
+        icon: "MapPin"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Registration Integration",
+        description: "Add insurance during event registration for paddleboard races, kayak competitions, open water swims, and surf contests. Clear water safety messaging increases uptake."
+      },
+      {
+        title: "Aquatic Emergency Coverage",
+        description: "Protection includes water rescue response, emergency watercraft evacuation, drowning incidents, marine life injuries, and specialized water sport medical treatment."
+      },
+      {
+        title: "Event Commission",
+        description: "Earn 25-35% on water sport policies. A 150-participant SUP race with 48% take rate generates $450-$630 in commission revenue per event."
+      }
+    ],
+    faqs: [
+      {
+        question: "What water sports events can offer this insurance?",
+        answer: "Kayak and canoe races, stand-up paddleboard competitions, open water swimming events, surf contests, dragon boat races, rowing regattas, water skiing, wakeboarding competitions, and aquatic adventure challenges."
+      },
+      {
+        question: "Does coverage include open ocean events?",
+        answer: "Yes, open ocean paddleboard races, ocean swimming, and coastal water sport events are covered. Coverage addresses unique open water risks including currents, marine life, and distance from shore."
+      },
+      {
+        question: "How does this work with Coast Guard permits?",
+        answer: "Participant insurance complements Coast Guard event requirements and marine event permits. It demonstrates participant safety measures and comprehensive risk management to authorities."
+      },
+      {
+        question: "Can we offer insurance for river kayaking events?",
+        answer: "Absolutely. Whitewater races, river kayak competitions, and moving water events are covered with appropriate risk assessment. Coverage addresses river-specific hazards and remote location access."
+      },
+      {
+        question: "What about multi-day paddling expeditions?",
+        answer: "Multi-day water sport events and expeditions receive extended coverage periods. Island-hopping paddleboard races and weekend kayak camping trips qualify for event insurance."
+      }
+    ],
+    stats: [
+      { label: "Per Event Revenue", value: "$540" },
+      { label: "Water Sport Take Rate", value: "47%" },
+      { label: "Avg. Policy Value", value: "$16" }
+    ],
+    testimonial: {
+      quote: "Our ocean paddleboard race series offers Daily Event Insurance and it's become a significant secondary revenue source. Participants appreciate comprehensive water safety coverage and we've earned over $2,000 this season.",
+      author: "Nicole Stevens",
+      role: "Race Director",
+      company: "Pacific Coast SUP Series"
+    }
+  },
+
+  "medispas": {
+    slug: "medispas",
+    title: "MediSpa Event Insurance",
+    shortTitle: "MediSpas & Aesthetics",
+    metaTitle: "MediSpa Event Insurance | Coverage for Aesthetic Center Events",
+    metaDescription: "Instant insurance for MediSpa open houses, aesthetic treatment events, and wellness demonstrations. Protect attendees and generate revenue from promotional events.",
+    heroTitle: "MediSpa Event Insurance",
+    heroSubtitle: "Coverage for aesthetic treatment demonstrations, MediSpa open houses, injectable events, and wellness center promotional activities.",
+    icon: "Sparkles",
+    benefits: [
+      {
+        title: "Event Liability Protection",
+        description: "Open houses, treatment demonstrations, and promotional events expose your practice to liability beyond standard malpractice coverage. Event insurance addresses promotional activity risks.",
+        icon: "Shield"
+      },
+      {
+        title: "Client Confidence Building",
+        description: "Offering event insurance demonstrates professionalism and risk management sophistication. Shows prospective clients you prioritize safety at all touchpoints.",
+        icon: "Award"
+      },
+      {
+        title: "VIP Event Revenue",
+        description: "Injectable parties, laser treatment demos, and aesthetic wellness events attract high-value clients. Insurance creates additional revenue from premium promotional events.",
+        icon: "Crown"
+      },
+      {
+        title: "Multi-Location Coverage",
+        description: "For MediSpa chains running simultaneous promotional events across locations, centralized insurance creates operational efficiency and consistent brand standards.",
+        icon: "Building2"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Event Registration",
+        description: "Offer insurance during RSVP for open houses, treatment demonstrations, wellness seminars, and promotional events. Integrates with Calendly, Eventbrite, and booking systems."
+      },
+      {
+        title: "Attendee Protection",
+        description: "Participants receive coverage for demonstration-related incidents, allergic reactions during samples, slip-and-fall accidents, and medical emergencies at promotional events."
+      },
+      {
+        title: "Premium Event Commission",
+        description: "Earn 25-30% on event policies. A VIP injectable event with 40 attendees and 50% take rate generates $200-$240 in commission revenue per event."
+      }
+    ],
+    faqs: [
+      {
+        question: "What types of MediSpa events can offer insurance?",
+        answer: "Open houses, injectable demonstrations, laser treatment showcases, wellness seminars, product launch parties, VIP aesthetic events, beauty and wellness expos, and promotional treatment events."
+      },
+      {
+        question: "Does this replace our malpractice insurance?",
+        answer: "No, event insurance is complementary to professional malpractice coverage. It addresses promotional event risks while your malpractice insurance covers actual treatment provision and clinical decisions."
+      },
+      {
+        question: "Can we offer insurance for actual treatment events?",
+        answer: "Event insurance works best for promotional activities, demonstrations, and open houses. Actual treatment provision should fall under your professional liability and malpractice coverage."
+      },
+      {
+        question: "How does this help with event marketing?",
+        answer: "Mentioning event insurance in promotional materials demonstrates professionalism and risk management. It can differentiate your events from competitors and attract safety-conscious clients."
+      },
+      {
+        question: "What about multi-location MediSpa events?",
+        answer: "We can create centralized event insurance programs for MediSpa chains running promotional events across multiple locations. Streamlines insurance management and ensures brand consistency."
+      }
+    ],
+    stats: [
+      { label: "VIP Event Revenue", value: "$225" },
+      { label: "Attendee Take Rate", value: "48%" },
+      { label: "Avg. Event Size", value: "35" }
+    ],
+    testimonial: {
+      quote: "We host quarterly injectable events and started offering Daily Event Insurance. It adds $150-200 per event in commission while reinforcing our commitment to client safety. Attendees appreciate the professional touch.",
+      author: "Dr. Amanda Peterson",
+      role: "Medical Director",
+      company: "Luxe Aesthetic & Wellness"
+    }
+  },
+
+  "wellness-recovery": {
+    slug: "wellness-recovery",
+    title: "Wellness & Recovery Center Event Insurance",
+    shortTitle: "Wellness & Recovery Centers",
+    metaTitle: "Wellness Center Insurance | Coverage for Recovery & Retreat Events",
+    metaDescription: "Same-day insurance for wellness retreats, recovery workshops, and therapeutic events. Protect participants in holistic health experiences while earning revenue.",
+    heroTitle: "Wellness & Recovery Event Insurance",
+    heroSubtitle: "Comprehensive coverage for wellness retreats, recovery workshops, therapeutic movement classes, and holistic health events.",
+    icon: "Heart",
+    benefits: [
+      {
+        title: "Holistic Activity Coverage",
+        description: "Yoga retreats, sound healing workshops, breathwork sessions, cold plunge experiences, and therapeutic movement classes all carry liability exposure. Specialized coverage addresses holistic wellness risks.",
+        icon: "Flower2"
+      },
+      {
+        title: "Multi-Day Retreat Revenue",
+        description: "Wellness retreats and immersive programs command premium pricing. Insurance on 3-day retreats with $500+ registration fees creates substantial commission opportunities.",
+        icon: "Calendar"
+      },
+      {
+        title: "Participant Safety Priority",
+        description: "Wellness clients prioritize safety and professional standards. Offering comprehensive insurance demonstrates commitment to participant wellbeing and elevates brand perception.",
+        icon: "ShieldCheck"
+      },
+      {
+        title: "Experiential Activity Protection",
+        description: "Cold plunge therapy, infrared saunas, cryotherapy sessions, and emerging wellness modalities benefit from clear insurance coverage and participant protection.",
+        icon: "Thermometer"
+      }
+    ],
+    howItWorks: [
+      {
+        title: "Retreat Registration",
+        description: "Add insurance during booking for wellness retreats, therapeutic workshops, recovery programs, and holistic health events. Seamless integration with MindBody, WellnessLiving, and retreat booking platforms."
+      },
+      {
+        title: "Comprehensive Wellness Coverage",
+        description: "Participants receive protection for activity-related injuries, therapeutic session incidents, wellness modality reactions, and medical emergencies during program participation."
+      },
+      {
+        title: "Retreat Commission Revenue",
+        description: "Earn 25-30% on wellness event policies. A 20-person weekend retreat with 55% take rate at $25 per policy generates $137-$165 in commission per event."
+      }
+    ],
+    faqs: [
+      {
+        question: "What types of wellness events can offer insurance?",
+        answer: "Yoga retreats, meditation intensives, breathwork workshops, sound healing sessions, therapeutic movement classes, cold plunge experiences, wellness weekends, recovery program workshops, and holistic health seminars."
+      },
+      {
+        question: "Does coverage include alternative healing modalities?",
+        answer: "Yes, coverage extends to various wellness practices including energy healing demonstrations, sound therapy, breathwork, cold exposure therapy, and other holistic modalities when offered as event components."
+      },
+      {
+        question: "How does this work for multi-day retreats?",
+        answer: "Multi-day wellness retreats receive extended coverage for the full program duration. Weekend retreats, week-long intensives, and multi-day immersive programs all qualify for event insurance."
+      },
+      {
+        question: "Can recovery centers offer insurance for workshops?",
+        answer: "Absolutely. Recovery workshops, therapeutic movement classes, wellness education seminars, and group healing sessions all benefit from participant insurance coverage."
+      },
+      {
+        question: "What about destination wellness retreats?",
+        answer: "Destination retreats are covered including travel to retreat location and program participation. We can add trip cancellation coverage for participants investing in destination wellness experiences."
+      }
+    ],
+    stats: [
+      { label: "Retreat Revenue Avg.", value: "$155" },
+      { label: "Wellness Take Rate", value: "54%" },
+      { label: "Avg. Policy Premium", value: "$22" }
+    ],
+    testimonial: {
+      quote: "Our quarterly wellness retreats now include Daily Event Insurance as a registration option. Over 60% of participants opt in, generating $400-500 per retreat while addressing their primary concern about safety during therapeutic activities.",
+      author: "Maya Johnson",
+      role: "Founder",
+      company: "Restore Wellness & Recovery"
+    }
   }
 }
 

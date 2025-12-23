@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
-import { DollarSign, ShieldCheck, Zap, Settings } from "lucide-react"
+import { DollarSign, ShieldCheck, Zap, Settings, ToggleRight } from "lucide-react"
 import { useState } from "react"
 
 interface Benefit {
@@ -22,9 +22,14 @@ const benefits: Benefit[] = [
     description: "Transfer risk to our insurance carriers. Protect your business from claims.",
   },
   {
+    icon: ToggleRight,
+    title: "Optional or Required",
+    description: "Your choice: offer coverage as an add-on, or make it a simple checkbox requirement.",
+  },
+  {
     icon: Zap,
-    title: "Member Convenience",
-    description: "Instant coverage, no paperwork. Delight members with seamless protection.",
+    title: "Customer Convenience",
+    description: "Instant coverage, no paperwork. Delight customers with seamless protection.",
   },
   {
     icon: Settings,

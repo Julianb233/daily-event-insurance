@@ -14,6 +14,7 @@ import { MidPageCTA } from "@/components/dei-mid-page-cta"
 import { ApplySection } from "@/components/dei-apply-section"
 import { TimelineSection } from "@/components/timeline-section"
 import { RevenueCalculator } from "@/components/revenue-calculator"
+import InsuranceModes from "@/components/insurance-modes"
 
 export default function Home() {
   return (
@@ -45,7 +46,10 @@ export default function Home() {
       {/* 9. Benefits - Business owner benefits */}
       <Benefits />
 
-      {/* 10. Mid Page CTA - Floating sticky CTA */}
+      {/* 10. Insurance Modes - Optional vs Required coverage */}
+      <InsuranceModes />
+
+      {/* 11. Mid Page CTA - Floating sticky CTA */}
       <MidPageCTA />
 
       {/* 11. Testimonials Section - Customer reviews */}

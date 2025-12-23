@@ -55,12 +55,12 @@ const industryTypes = [
 ]
 
 const partnerLogos = [
-  { name: "PowerHouse CrossFit", industry: "Fitness" },
-  { name: "Summit Climbing Co.", industry: "Climbing" },
-  { name: "Alpine Peak Resort", industry: "Ski Resort" },
-  { name: "Adventure Rentals Pro", industry: "Equipment" },
-  { name: "Coastal Water Sports", industry: "Water Sports" },
-  { name: "Urban Fitness Hub", industry: "Fitness" },
+  { name: "PowerHouse CrossFit", industry: "Fitness", height: "h-24", avatarSize: "w-10 h-10", hoverLift: -4, featured: false, bgVariant: "plain", borderOpacity: "border-slate-200", delay: 0.05 },
+  { name: "Summit Climbing Co.", industry: "Climbing", height: "h-28", avatarSize: "w-12 h-12", hoverLift: -6, featured: true, bgVariant: "gradient", borderOpacity: "border-teal-200", delay: 0.08 },
+  { name: "Alpine Peak Resort", industry: "Ski Resort", height: "h-20", avatarSize: "w-8 h-8", hoverLift: -3, featured: false, bgVariant: "plain", borderOpacity: "border-slate-200", delay: 0.12 },
+  { name: "Adventure Rentals Pro", industry: "Equipment", height: "h-24", avatarSize: "w-10 h-10", hoverLift: -5, featured: false, bgVariant: "subtle-gradient", borderOpacity: "border-slate-200/80", delay: 0.06 },
+  { name: "Coastal Water Sports", industry: "Water Sports", height: "h-26", avatarSize: "w-11 h-11", hoverLift: -5, featured: true, bgVariant: "gradient", borderOpacity: "border-cyan-200", delay: 0.1 },
+  { name: "Urban Fitness Hub", industry: "Fitness", height: "h-22", avatarSize: "w-9 h-9", hoverLift: -3, featured: false, bgVariant: "plain", borderOpacity: "border-slate-200", delay: 0.07 },
 ]
 
 const trustIndicators = [
@@ -171,41 +171,76 @@ export function DEITrustBadges() {
             Featured Partner Facilities
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {partnerLogos.map((partner, index) => (
-              <motion.div
-                key={partner.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ y: -4 }}
-                className="group"
-              >
-                <div className="relative h-24 rounded-lg bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/10 flex flex-col items-center justify-center p-4 overflow-hidden">
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            {partnerLogos.map((partner, index) => {
+              // Dynamic background based on variant
+              const getBgClass = () => {
+                if (partner.bgVariant === "gradient") {
+                  return "bg-gradient-to-br from-teal-50 to-cyan-50"
+                } else if (partner.bgVariant === "subtle-gradient") {
+                  return "bg-gradient-to-br from-white to-slate-50"
+                }
+                return "bg-white"
+              }
 
-                  {/* Logo placeholder - using first letters */}
-                  <div className="relative z-10 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-slate-200 group-hover:bg-gradient-to-br group-hover:from-teal-400 group-hover:to-cyan-400 transition-all duration-300 flex items-center justify-center">
-                      <span className="text-slate-400 group-hover:text-white font-bold text-sm transition-colors duration-300">
-                        {partner.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
-                      </span>
+              // Featured partners get enhanced styling
+              const getFeaturedClasses = () => {
+                if (partner.featured) {
+                  return "ring-2 ring-teal-200/50 hover:ring-teal-300"
+                }
+                return ""
+              }
+
+              // Different hover shadow intensities
+              const getHoverShadow = () => {
+                if (partner.featured) {
+                  return "hover:shadow-xl hover:shadow-teal-500/20"
+                }
+                return "hover:shadow-lg hover:shadow-teal-500/10"
+              }
+
+              return (
+                <motion.div
+                  key={partner.name}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: partner.delay, duration: 0.4 }}
+                  whileHover={{ y: partner.hoverLift, scale: partner.featured ? 1.03 : 1 }}
+                  className="group"
+                >
+                  <div className={`relative ${partner.height} rounded-lg ${getBgClass()} border ${partner.borderOpacity} hover:border-teal-300 transition-all duration-300 ${getHoverShadow()} ${getFeaturedClasses()} flex flex-col items-center justify-center p-4 overflow-hidden`}>
+                    {/* Gradient overlay on hover - different intensities */}
+                    <div className={`absolute inset-0 ${partner.featured ? 'bg-gradient-to-br from-teal-500/10 to-cyan-500/10' : 'bg-gradient-to-br from-teal-500/5 to-cyan-500/5'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+
+                    {/* Logo placeholder - varying sizes */}
+                    <div className="relative z-10 mb-2">
+                      <div className={`${partner.avatarSize} rounded-full ${partner.featured ? 'bg-gradient-to-br from-teal-100 to-cyan-100' : 'bg-slate-200'} group-hover:bg-gradient-to-br group-hover:from-teal-400 group-hover:to-cyan-400 transition-all duration-300 flex items-center justify-center ${partner.featured ? 'ring-2 ring-teal-200' : ''}`}>
+                        <span className={`${partner.featured ? 'text-teal-600' : 'text-slate-400'} group-hover:text-white font-bold ${partner.avatarSize.includes('w-12') ? 'text-base' : partner.avatarSize.includes('w-8') ? 'text-xs' : 'text-sm'} transition-colors duration-300`}>
+                          {partner.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Partner name */}
-                  <div className="relative z-10 text-xs font-semibold text-slate-600 group-hover:text-teal-600 transition-colors text-center leading-tight">
-                    {partner.name}
-                  </div>
+                    {/* Partner name - featured partners have bolder text */}
+                    <div className={`relative z-10 text-xs ${partner.featured ? 'font-bold' : 'font-semibold'} text-slate-600 group-hover:text-teal-600 transition-colors text-center leading-tight`}>
+                      {partner.name}
+                    </div>
 
-                  {/* Industry tag */}
-                  <div className="relative z-10 text-[10px] text-slate-400 group-hover:text-teal-400 transition-colors mt-1">
-                    {partner.industry}
+                    {/* Industry tag */}
+                    <div className="relative z-10 text-[10px] text-slate-400 group-hover:text-teal-400 transition-colors mt-1">
+                      {partner.industry}
+                    </div>
+
+                    {/* Featured badge for hero partners */}
+                    {partner.featured && (
+                      <div className="absolute top-2 right-2 z-20">
+                        <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+                      </div>
+                    )}
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </div>
         </div>
 
