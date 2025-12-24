@@ -141,14 +141,14 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
           />
 
           {/* Content */}
-          <div className="relative z-10 flex-1 flex flex-col">
+          <div className="relative z-10 flex-1 flex flex-col items-center sm:items-start text-center sm:text-left">
             {/* Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/25">
-              <market.icon className="w-8 h-8 text-white" />
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/25">
+              <market.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
             </div>
 
             {/* Title */}
-            <h3 className="text-xl font-bold text-slate-900 mb-3 leading-tight">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 leading-tight">
               {market.title}
             </h3>
 
@@ -158,7 +158,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
             </p>
 
             {/* Dual Value Badges */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-teal-50 rounded-full text-xs font-medium text-teal-700">
                 <Shield className="w-3 h-3" /> Protection
               </span>
@@ -168,7 +168,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
             </div>
 
             {/* Revenue Badge */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0 pt-4 border-t border-slate-200">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500">Earn up to</span>
                 <span className="text-base font-bold text-teal-600">{market.revenue}</span>

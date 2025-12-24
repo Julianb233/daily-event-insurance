@@ -147,28 +147,28 @@ function IndustryCard({ sector, index }: { sector: typeof industrySectorsList[0]
           {/* Gradient accent on hover */}
           <div className="absolute inset-0 bg-gradient-to-br from-teal-500/0 to-cyan-500/0 group-hover:from-teal-500/5 group-hover:to-cyan-500/5 rounded-2xl transition-all duration-300" />
 
-          <div className="relative z-10">
+          <div className="relative z-10 flex flex-col items-center sm:items-start text-center sm:text-left">
             {/* Icon */}
-            <div className="w-14 h-14 bg-gradient-to-br from-teal-600 to-teal-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <IconComponent className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-teal-600 to-teal-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl font-black uppercase text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
+            <h3 className="text-xl sm:text-2xl font-black uppercase text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
               {sector.title}
             </h3>
 
             {/* Description - show first benefit */}
-            <p className="text-slate-600 mb-6 leading-relaxed">
+            <p className="text-slate-600 mb-6 leading-relaxed text-sm sm:text-base">
               {sector.benefits[0].description}
             </p>
 
             {/* Stats */}
             {sector.stats && sector.stats.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mb-6 pb-6 border-b border-slate-200">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 pb-6 border-b border-slate-200 w-full">
                 {sector.stats.slice(0, 3).map((stat, i) => (
                   <div key={i} className="text-center">
-                    <div className="text-xl font-black text-teal-600">{stat.value}</div>
+                    <div className="text-lg sm:text-xl font-black text-teal-600">{stat.value}</div>
                     <div className="text-xs text-slate-500">{stat.label}</div>
                   </div>
                 ))}
@@ -176,7 +176,7 @@ function IndustryCard({ sector, index }: { sector: typeof industrySectorsList[0]
             )}
 
             {/* CTA */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center sm:justify-between w-full gap-2">
               <span className="text-sm font-semibold text-teal-600 group-hover:text-teal-700">
                 Learn More
               </span>
@@ -265,15 +265,15 @@ function WhyChooseByIndustry() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="relative bg-slate-50 rounded-2xl p-8"
+              className="relative bg-slate-50 rounded-2xl p-6 sm:p-8 flex flex-col items-center md:items-start text-center md:text-left"
             >
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mb-6">
-                <benefit.icon className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-teal-600 rounded-lg flex items-center justify-center mb-6">
+                <benefit.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-black uppercase text-slate-900 mb-4">
+              <h3 className="text-xl sm:text-2xl font-black uppercase text-slate-900 mb-4">
                 {benefit.title}
               </h3>
-              <p className="text-slate-600 leading-relaxed">
+              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
                 {benefit.description}
               </p>
             </motion.div>

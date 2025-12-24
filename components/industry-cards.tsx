@@ -168,7 +168,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
             />
 
             {/* Icon Container */}
-            <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
+            <div className="mb-6 relative flex justify-center sm:justify-start" style={{ transform: "translateZ(20px)" }}>
               <div className="relative inline-flex">
                 {/* Background Glow */}
                 <motion.div
@@ -195,7 +195,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
             </div>
 
             {/* Content */}
-            <div className="mb-6" style={{ transform: "translateZ(10px)" }}>
+            <div className="mb-6 text-center sm:text-left" style={{ transform: "translateZ(10px)" }}>
               <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors duration-300 leading-snug">
                 {industry.title}
               </h3>
@@ -206,7 +206,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
 
             {/* Learn More CTA */}
             <motion.div
-              className="flex items-center gap-2 text-teal-600 font-semibold text-sm md:text-base"
+              className="flex items-center justify-center sm:justify-start gap-2 text-teal-600 font-semibold text-sm md:text-base"
               style={{ transform: "translateZ(10px)" }}
               initial={{ x: 0 }}
               animate={{ x: isHovered ? 5 : 0 }}

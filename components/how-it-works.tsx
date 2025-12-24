@@ -165,29 +165,29 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
 
           {/* Icon */}
           <motion.div
-            className="mb-6 mt-4"
+            className="mb-6 mt-4 flex justify-center lg:justify-start"
             animate={isHovered ? { rotate: [0, -10, 10, 0] } : {}}
             transition={{ duration: 0.5 }}
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 text-teal-600 shadow-inner">
+            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 text-teal-600 shadow-inner">
               {step.icon}
             </div>
           </motion.div>
 
           {/* Title & Description */}
-          <h3 className="text-xl font-bold text-slate-900 mb-2">
+          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2 text-center lg:text-left">
             {step.title}
           </h3>
-          <p className="text-slate-600 mb-6">
+          <p className="text-slate-600 mb-6 text-center lg:text-left">
             {step.description}
           </p>
 
           {/* Details list with staggered animation */}
-          <ul className="space-y-2">
+          <ul className="space-y-2 text-center lg:text-left">
             {step.details.map((detail, i) => (
               <motion.li
                 key={i}
-                className="flex items-start gap-2 text-sm text-slate-600"
+                className="flex items-start justify-center lg:justify-start gap-2 text-sm text-slate-600"
                 initial={{ opacity: 0, x: -10 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.4 + index * 0.2 + i * 0.1 }}
