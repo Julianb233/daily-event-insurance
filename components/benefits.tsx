@@ -120,7 +120,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
         />
 
         {/* Card */}
-        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-premium border border-gray-100/80 hover:shadow-premium-hover transition-shadow duration-500 overflow-hidden">
+        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-premium border border-gray-100/80 hover:shadow-premium-hover transition-shadow duration-500 overflow-hidden">
           {/* Shimmer effect */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
@@ -234,7 +234,7 @@ export default function Benefits() {
         />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -262,16 +262,18 @@ export default function Benefits() {
           </p>
         </motion.div>
 
-        {/* Benefits Grid */}
+        {/* Benefits Grid - Flexbox for centered orphan cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10"
+          className="flex flex-wrap justify-center gap-6 md:gap-8"
         >
           {benefits.map((benefit, index) => (
-            <BenefitCard key={benefit.title} benefit={benefit} index={index} />
+            <div key={benefit.title} className="w-full md:w-[calc(50%-16px)]">
+              <BenefitCard benefit={benefit} index={index} />
+            </div>
           ))}
         </motion.div>
 

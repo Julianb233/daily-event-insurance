@@ -130,7 +130,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
         />
 
         {/* Card content */}
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden">
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden">
           {/* Animated gradient border */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500/0 via-teal-500/10 to-teal-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -237,7 +237,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="relative py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 via-white to-slate-50 overflow-hidden"
+      className="relative py-24 md:py-32 bg-gradient-to-b from-slate-50 via-white to-slate-50 overflow-hidden"
     >
       {/* Animated background particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -260,7 +260,7 @@ export function HowItWorks() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -287,7 +287,7 @@ export function HowItWorks() {
         </motion.div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-20">
           {steps.map((step, index) => (
             <StepCard key={step.number} step={step} index={index} isInView={isInView} />
           ))}

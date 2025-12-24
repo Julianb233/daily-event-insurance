@@ -129,7 +129,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
         onMouseLeave={() => setIsHovered(false)}
       >
         <motion.div
-          className="relative h-full bg-white rounded-2xl border border-teal-500/20 overflow-hidden cursor-pointer p-8 flex flex-col"
+          className="relative h-full bg-white rounded-2xl border border-teal-500/20 overflow-hidden cursor-pointer p-6 md:p-8 flex flex-col"
           whileHover={{ scale: 1.02, y: -4 }}
           transition={{ duration: 0.3 }}
         >
@@ -232,7 +232,7 @@ export function DEIWhoWeServe() {
         />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-12 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -261,7 +261,7 @@ export function DEIWhoWeServe() {
         </motion.div>
 
         {/* Markets Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {markets.map((market, index) => (
             <MarketCard key={market.title} market={market} index={index} />
           ))}

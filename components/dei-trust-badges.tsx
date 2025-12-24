@@ -85,9 +85,9 @@ export function DEITrustBadges() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-6 md:gap-8 mb-12">
+        <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-12">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -130,7 +130,7 @@ export function DEITrustBadges() {
           <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8">
             Trusted by Leading Facilities In
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
             {industryTypes.map((industry, index) => {
               const IconComponent = industry.icon
               return (
@@ -170,7 +170,7 @@ export function DEITrustBadges() {
           <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8">
             Featured Partner Facilities
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
             {partnerLogos.map((partner, index) => {
               // Dynamic background based on variant
               const getBgClass = () => {
@@ -248,7 +248,7 @@ export function DEITrustBadges() {
         <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-10" />
 
         {/* Trust Indicators */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
           {trustIndicators.map((indicator, index) => {
             const IconComponent = indicator.icon
             return (

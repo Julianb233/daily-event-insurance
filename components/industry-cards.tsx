@@ -282,7 +282,7 @@ export default function IndustryCards() {
         />
       </div>
 
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -310,16 +310,18 @@ export default function IndustryCards() {
           </p>
         </motion.div>
 
-        {/* Industries Grid */}
+        {/* Industries Grid - Flexbox for centered orphan cards */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
+          className="flex flex-wrap justify-center gap-6 md:gap-8"
         >
           {industries.map((industry, index) => (
-            <IndustryCard key={industry.slug} industry={industry} index={index} />
+            <div key={industry.slug} className="w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)] xl:w-[calc(25%-24px)]">
+              <IndustryCard industry={industry} index={index} />
+            </div>
           ))}
         </motion.div>
 
