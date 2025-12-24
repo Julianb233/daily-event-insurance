@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
+import Image from "next/image"
 
 interface IndustryLink {
   label: string
@@ -127,9 +128,14 @@ export default function Header() {
                 onClick={(e) => handleNavClick(e, "/")}
                 className="flex items-center gap-2 group"
               >
-                <span className="text-lg font-semibold text-slate-900 tracking-tight">
-                  Daily Event Insurance
-                </span>
+                <Image
+                  src="/images/dei-logo.svg"
+                  alt="Daily Event Insurance"
+                  width={220}
+                  height={44}
+                  className="h-10 w-auto"
+                  priority
+                />
               </a>
             </motion.div>
 

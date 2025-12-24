@@ -165,7 +165,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
 
           {/* Icon */}
           <motion.div
-            className="mb-6 mt-4"
+            className="mb-6 mt-4 flex justify-center md:justify-start"
             animate={isHovered ? { rotate: [0, -10, 10, 0] } : {}}
             transition={{ duration: 0.5 }}
           >
@@ -175,10 +175,10 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
           </motion.div>
 
           {/* Title & Description */}
-          <h3 className="text-xl font-bold text-slate-900 mb-2">
+          <h3 className="text-xl font-bold text-slate-900 mb-2 text-center md:text-left">
             {step.title}
           </h3>
-          <p className="text-slate-600 mb-6">
+          <p className="text-slate-600 mb-6 text-center md:text-left">
             {step.description}
           </p>
 

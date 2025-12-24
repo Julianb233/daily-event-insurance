@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     siteName: "Daily Event Insurance",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/og-image.svg",
         width: 1200,
         height: 630,
         alt: "Daily Event Insurance - Same-Day Coverage for Active Businesses",
@@ -76,24 +76,16 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Daily Event Insurance | Same-Day Coverage",
     description: "Enable your business to offer instant insurance protection to members. New revenue stream, reduced liability.",
-    images: ["/images/og-image.png"],
+    images: ["/images/og-image.svg"],
   },
   icons: {
     icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
       {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/images/dei-logo-icon.svg",
   },
 }
 
@@ -115,8 +107,8 @@ export default function RootLayout({
     "name": "Daily Event Insurance",
     "description": "Same-day event insurance for gyms, climbing facilities, and rental businesses. Enable your business to offer instant insurance protection to members.",
     "url": "https://dailyeventinsurance.com",
-    "logo": "https://dailyeventinsurance.com/images/logo.png",
-    "image": "https://dailyeventinsurance.com/images/og-image.png",
+    "logo": "https://dailyeventinsurance.com/images/dei-logo.svg",
+    "image": "https://dailyeventinsurance.com/images/og-image.svg",
     "provider": {
       "@type": "Organization",
       "name": "HiQOR",
