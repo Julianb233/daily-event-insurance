@@ -142,9 +142,11 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
 
           {/* Content */}
           <div className="relative z-10 flex-1 flex flex-col">
-            {/* Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/25">
-              <market.icon className="w-8 h-8 text-white" />
+            {/* Icon - Centered */}
+            <div className="flex justify-center sm:justify-start mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
+                <market.icon className="w-8 h-8 text-white" />
+              </div>
             </div>
 
             {/* Title */}
@@ -170,7 +172,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
             {/* Revenue Badge */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-200">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">Earn up to</span>
+                <span className="text-xs text-slate-500">Earn on average</span>
                 <span className="text-base font-bold text-teal-600">{market.revenue}</span>
               </div>
 
