@@ -124,12 +124,12 @@ function SectorHero({ sector }: { sector: IndustrySector }) {
             </motion.a>
 
             <motion.a
-              href="/pricing"
+              href="/#revenue-calculator"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-white bg-white/20 backdrop-blur-sm border-2 border-white/50 rounded-full hover:bg-white/30 transition-all duration-300"
             >
-              View Pricing
+              See How Much You Can Earn
             </motion.a>
           </motion.div>
 

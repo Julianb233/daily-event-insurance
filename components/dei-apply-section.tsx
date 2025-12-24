@@ -47,8 +47,8 @@ const businessTypes = [
 const options = [
   {
     id: "demo",
-    title: "Request a Demo",
-    description: "See how embedded insurance can increase revenue for your facility",
+    title: "Click to Apply",
+    description: "Quick 10-minute application. See how embedded insurance can increase revenue for your facility",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -409,7 +409,7 @@ export function ApplySection() {
                   onClick={() => setSelectedOption("demo")}
                   className="inline-flex items-center gap-2 px-8 py-4 bg-teal-500 hover:bg-teal-600 text-slate-700 font-bold rounded-lg transition-all"
                 >
-                  Request a Demo
+                  Click to Apply
                 </button>
               </div>
             )}
@@ -580,16 +580,16 @@ export function ApplySection() {
                 ) : (
                   <>
                     <div className="text-center mb-6">
-                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">See How It Works in 15 Minutes</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Apply in 10 Minutes</h3>
                       <p className="text-slate-600 mb-4">
-                        Quick demo. Live in 48 hours. $4,200/month average revenue.
+                        Quick 10-minute application. Live in 48 hours. $4,200/month average revenue.
                       </p>
 
                       {/* Quick Stats */}
                       <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-white/5 rounded-lg border border-teal-400/20">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-teal-600">15min</div>
-                          <div className="text-xs text-slate-500">Demo Call</div>
+                          <div className="text-2xl font-bold text-teal-600">10min</div>
+                          <div className="text-xs text-slate-500">Application</div>
                         </div>
                         <div className="text-center border-x border-teal-200">
                           <div className="text-2xl font-bold text-teal-600">48hrs</div>
@@ -613,7 +613,7 @@ export function ApplySection() {
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        Book Calendar Demo
+                        Book Application Call
                       </a>
                       <a
                         href="tel:+18555551234"
@@ -772,7 +772,7 @@ export function ApplySection() {
                           </>
                         ) : (
                           <>
-                            <span>Get Started Today - Free Demo</span>
+                            <span>Click to Apply Now</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
