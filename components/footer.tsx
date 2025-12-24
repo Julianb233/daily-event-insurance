@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Footer() {
   return (
@@ -16,9 +17,15 @@ export default function Footer() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-bold text-[#1E293B] mb-2">
-                Daily Event Insurance
-              </h3>
+              <Link href="/" className="block mb-4">
+                <Image
+                  src="/images/dei-logo.svg"
+                  alt="Daily Event Insurance"
+                  width={200}
+                  height={50}
+                  className="h-12 w-auto"
+                />
+              </Link>
               <p className="text-sm text-[#14B8A6] font-medium mb-4">
                 A HiQOR Company
               </p>
