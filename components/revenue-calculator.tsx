@@ -264,20 +264,53 @@ export function RevenueCalculator() {
               <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                 {/* Left side - Inputs */}
                 <div className="space-y-8">
-                  {/* Monthly Volume Selector */}
+                  {/* Monthly Volume Slider */}
                   <div>
                     <label className="flex items-center gap-2 text-slate-700 font-semibold mb-4">
                       <Users className="w-5 h-5 text-teal-600" />
                       Monthly Participants (per location)
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+
+                    {/* Current Value Display */}
+                    <div className="text-center mb-4">
+                      <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
+                        {monthlyVolume.toLocaleString()}
+                      </span>
+                      <span className="text-slate-500 ml-2">participants/month</span>
+                    </div>
+
+                    {/* Slider Input */}
+                    <div className="relative px-2">
+                      <input
+                        type="range"
+                        min="100"
+                        max="50000"
+                        step="100"
+                        value={monthlyVolume}
+                        onChange={(e) => setMonthlyVolume(Number(e.target.value))}
+                        className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer slider-thumb"
+                        style={{
+                          background: `linear-gradient(to right, #14B8A6 0%, #14B8A6 ${((monthlyVolume - 100) / (50000 - 100)) * 100}%, #e2e8f0 ${((monthlyVolume - 100) / (50000 - 100)) * 100}%, #e2e8f0 100%)`
+                        }}
+                      />
+                      {/* Slider Labels */}
+                      <div className="flex justify-between mt-2 text-xs text-slate-500">
+                        <span>100</span>
+                        <span>10K</span>
+                        <span>25K</span>
+                        <span>50K</span>
+                      </div>
+                    </div>
+
+                    {/* Quick Select Buttons */}
+                    <div className="grid grid-cols-3 gap-2 mt-4">
                       {volumeTiers.map((tier) => (
                         <motion.button
                           key={tier.value}
                           onClick={() => setMonthlyVolume(tier.value)}
-                          className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                          className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
                             monthlyVolume === tier.value
-                              ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/25"
+                              ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-md shadow-teal-500/25"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                           }`}
                           whileHover={{ scale: 1.02 }}

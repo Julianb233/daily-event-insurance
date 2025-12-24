@@ -52,13 +52,13 @@ export default function Home() {
       {/* 11. Mid Page CTA - Floating sticky CTA */}
       <MidPageCTA />
 
-      {/* 11. Testimonials Section - Customer reviews */}
-      <TestimonialsSection />
-
       {/* 12. FAQ - Frequently asked questions */}
       <FAQSection />
 
-      {/* 13. Apply Section - Partner application form */}
+      {/* 13. Testimonials Section - Customer reviews */}
+      <TestimonialsSection />
+
+      {/* 14. Apply Section - Partner application form */}
       <ApplySection />
 
       {/* 14. Footer */}
