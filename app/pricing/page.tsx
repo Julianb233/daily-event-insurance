@@ -286,7 +286,7 @@ export default function PricingPage() {
                   <div className={`p-6 ${tier.featured ? 'pt-14' : 'pt-6'}`}>
                     {/* Icon */}
                     <motion.div
-                      className="mb-4"
+                      className="mb-4 flex justify-center md:justify-start"
                       animate={{
                         rotate: hoveredCard === tier.id ? [0, -10, 10, 0] : 0,
                         scale: hoveredCard === tier.id ? 1.1 : 1,
@@ -301,15 +301,15 @@ export default function PricingPage() {
                     </motion.div>
 
                     {/* Tier name and tagline */}
-                    <h3 className="text-2xl font-black text-slate-900 mb-1">
+                    <h3 className="text-2xl font-black text-slate-900 mb-1 text-center md:text-left">
                       {tier.name}
                     </h3>
-                    <p className="text-teal-600 text-sm font-medium mb-4">
+                    <p className="text-teal-600 text-sm font-medium mb-4 text-center md:text-left">
                       {tier.tagline}
                     </p>
 
                     {/* Commission */}
-                    <div className="mb-4">
+                    <div className="mb-4 text-center md:text-left">
                       <div className="text-4xl font-black text-teal-500 mb-1">
                         {tier.commission}
                       </div>
@@ -319,13 +319,13 @@ export default function PricingPage() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4 text-center md:text-left">
                       {tier.description}
                     </p>
 
                     {/* Business Types */}
                     <div className="mb-6 p-3 bg-teal-50 rounded-lg border border-teal-100">
-                      <p className="text-xs text-teal-700 font-medium">
+                      <p className="text-xs text-teal-700 font-medium text-center md:text-left">
                         {tier.businessTypes}
                       </p>
                     </div>

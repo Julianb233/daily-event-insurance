@@ -141,7 +141,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
           />
 
           {/* Content */}
-          <div className="relative z-10 flex-1 flex flex-col">
+          <div className="relative z-10 flex-1 flex flex-col items-center text-center md:items-start md:text-left">
             {/* Icon */}
             <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-teal-500/25">
               <market.icon className="w-8 h-8 text-white" />
@@ -158,7 +158,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
             </p>
 
             {/* Dual Value Badges */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-teal-50 rounded-full text-xs font-medium text-teal-700">
                 <Shield className="w-3 h-3" /> Protection
               </span>
