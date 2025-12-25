@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Menu, X, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
@@ -127,9 +128,14 @@ export default function Header() {
                 onClick={(e) => handleNavClick(e, "/")}
                 className="flex items-center gap-2 group"
               >
-                <span className="text-lg font-semibold text-slate-900 tracking-tight">
-                  Daily Event Insurance
-                </span>
+                <Image
+                  src="/images/logo-color.png"
+                  alt="Daily Event Insurance"
+                  width={180}
+                  height={40}
+                  priority
+                  className="h-auto w-auto max-h-10"
+                />
               </a>
             </motion.div>
 
@@ -275,6 +281,29 @@ export default function Header() {
               className="flex flex-col h-full px-6 pt-20"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Mobile Menu Logo */}
+              <motion.div
+                variants={{
+                  open: { opacity: 1, y: 0 },
+                  closed: { opacity: 0, y: -20 },
+                }}
+                className="mb-8"
+              >
+                <a
+                  href="/"
+                  onClick={(e) => handleNavClick(e, "/")}
+                  className="flex items-center"
+                >
+                  <Image
+                    src="/images/logo-color.png"
+                    alt="Daily Event Insurance"
+                    width={180}
+                    height={40}
+                    className="h-auto w-auto max-h-10"
+                  />
+                </a>
+              </motion.div>
+
               <motion.ul className="space-y-1">
                 {navigationLinks.map((link) => (
                   <motion.li

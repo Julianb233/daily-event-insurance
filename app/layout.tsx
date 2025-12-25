@@ -115,7 +115,7 @@ export default function RootLayout({
     "name": "Daily Event Insurance",
     "description": "Same-day event insurance for gyms, climbing facilities, and rental businesses. Enable your business to offer instant insurance protection to members.",
     "url": "https://dailyeventinsurance.com",
-    "logo": "https://dailyeventinsurance.com/images/logo.png",
+    "logo": "https://dailyeventinsurance.com/images/logo-color.png",
     "image": "https://dailyeventinsurance.com/images/og-image.png",
     "provider": {
       "@type": "Organization",
