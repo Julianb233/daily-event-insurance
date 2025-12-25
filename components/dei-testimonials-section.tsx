@@ -62,7 +62,7 @@ const testimonials: Testimonial[] = [
     location: "Lake Tahoe, CA",
     industry: "Equipment Rentals",
     customerSince: "January 2024",
-    quote: "Our customers love it. Seriously, they're adding insurance at checkout without us even having to mention it. We integrated it in about 20 minutes, and now 68% of our rentals include coverage. That's translated to a 43% jump in our average transaction value. Best part? It runs itself—we literally don't do anything except watch the commission checks roll in every month.",
+    quote: "Our customers love it. Seriously, they're adding insurance at checkout without us even having to mention it. We were up and running in less than 48 hours, and now 68% of our rentals include coverage. That's translated to a 43% jump in our average transaction value. Best part? It runs itself—we literally don't do anything except watch the commission checks roll in every month.",
     videoUrl: undefined,
     results: {
       percentage: "43%",

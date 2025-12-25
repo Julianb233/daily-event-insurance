@@ -40,20 +40,20 @@ export default function Home() {
       {/* 7. How It Works - 3-step process */}
       <HowItWorks />
 
-      {/* 8. Timeline Section - Implementation timeline */}
+      {/* 8. Testimonials Section - Customer reviews */}
+      <TestimonialsSection />
+
+      {/* 9. Timeline Section - Implementation timeline */}
       <TimelineSection />
 
-      {/* 9. Benefits - Business owner benefits */}
+      {/* 10. Benefits - Business owner benefits */}
       <Benefits />
 
-      {/* 10. Insurance Modes - Optional vs Required coverage */}
+      {/* 11. Insurance Modes - Optional vs Required coverage */}
       <InsuranceModes />
 
-      {/* 11. Mid Page CTA - Floating sticky CTA */}
+      {/* 12. Mid Page CTA - Floating sticky CTA */}
       <MidPageCTA />
-
-      {/* 11. Testimonials Section - Customer reviews */}
-      <TestimonialsSection />
 
       {/* 12. FAQ - Frequently asked questions */}
       <FAQSection />

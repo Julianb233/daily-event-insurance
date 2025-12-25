@@ -172,7 +172,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
             {/* Revenue Badge */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-200">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">Earn on average</span>
+                <span className="text-xs text-slate-500">On average earn</span>
                 <span className="text-base font-bold text-teal-600">{market.revenue}</span>
               </div>
 
@@ -255,7 +255,7 @@ export function DEIWhoWeServe() {
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-slate-900 leading-tight tracking-tight">
-            Built for Businesses That <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Move People</span>
+            Who We <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Help</span>
           </h2>
           <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
             Daily Event Insurance helps active lifestyle businesses <strong className="text-slate-800">earn extra revenue</strong> while <strong className="text-slate-800">reducing liability exposure</strong>. Two problems, one solution.

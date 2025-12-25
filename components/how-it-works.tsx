@@ -38,7 +38,7 @@ const steps: Step[] = [
       'Mobile-optimized experience'
     ],
     icon: <Puzzle className="w-8 h-8" />,
-    highlight: '20 min setup'
+    highlight: '48 hours to go live'
   },
   {
     number: 3,

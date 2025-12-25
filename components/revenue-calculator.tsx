@@ -361,7 +361,7 @@ export function RevenueCalculator() {
                     {/* Monthly Revenue */}
                     <div className="mb-8">
                       <div className="text-slate-500 text-sm font-medium mb-2 uppercase tracking-wide">
-                        Estimated Monthly Revenue
+                        Start Earning Today
                       </div>
                       <motion.div
                         className="text-5xl md:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600"
@@ -516,7 +516,7 @@ export function RevenueCalculator() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              20-minute integration
+              48 hours to go live (timeline depends on contract signing)
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500"></div>

@@ -81,8 +81,8 @@ export function ValueStack() {
               className="text-center mb-8"
             >
               <div className="inline-block mb-3">
-                <div className="bg-teal-500/10 backdrop-blur-sm px-4 py-1.5 rounded-full border border-teal-500/30">
-                  <span className="text-teal-600 text-xs md:text-sm font-bold uppercase tracking-wider">
+                <div className="bg-teal-500/10 backdrop-blur-sm px-6 py-2.5 rounded-full border border-teal-500/30">
+                  <span className="text-teal-600 text-base md:text-xl font-bold uppercase tracking-wider">
                     What You Get FREE
                   </span>
                 </div>
