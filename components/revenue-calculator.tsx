@@ -121,8 +121,8 @@ export function RevenueCalculator() {
   // Animated values
   const animatedMonthly = useSpring(monthlyRevenue, { stiffness: 100, damping: 20 })
   const animatedAnnual = useSpring(annualRevenue, { stiffness: 100, damping: 20 })
-  const [displayMonthly, setDisplayMonthly] = useState(0)
-  const [displayAnnual, setDisplayAnnual] = useState(0)
+  const [displayMonthly, setDisplayMonthly] = useState(monthlyRevenue)
+  const [displayAnnual, setDisplayAnnual] = useState(annualRevenue)
 
   useEffect(() => {
     const unsubMonthly = animatedMonthly.on("change", (v) => setDisplayMonthly(Math.round(v)))
@@ -132,6 +132,12 @@ export function RevenueCalculator() {
       unsubAnnual()
     }
   }, [animatedMonthly, animatedAnnual])
+
+  // Update animated values when calculations change
+  useEffect(() => {
+    animatedMonthly.set(monthlyRevenue)
+    animatedAnnual.set(annualRevenue)
+  }, [monthlyRevenue, annualRevenue, animatedMonthly, animatedAnnual])
 
   // 3D Card effects
   const mouseX = useMotionValue(0)

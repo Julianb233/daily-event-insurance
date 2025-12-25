@@ -30,7 +30,7 @@ const timelineSteps: TimelineStep[] = [
     icon: Users,
   },
   {
-    day: 'Day 6-7',
+    day: '48-72hrs',
     title: 'Go Live',
     description: 'Start offering insurance to members',
     icon: Rocket,
@@ -86,7 +86,10 @@ export function TimelineSection() {
             What to Expect
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-            From first contact to full implementation in just one week
+            From first contact to full implementation in 48-72 hours (emphasizing 48 hours)
+          </p>
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mt-3">
+            Timeline depends on contract signing and how quickly you return required documents
           </p>
         </div>
 

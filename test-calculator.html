@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .calculator {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .result {
+            background: #14B8A6;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .result h3 {
+            margin: 0 0 10px 0;
+        }
+        .result .amount {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .details {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .details div {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Revenue Calculator Test</h1>
+
+        <div class="input-group">
+            <label>Monthly Participants (per location):</label>
+            <select id="monthlyVolume">
+                <option value="1000">1,000</option>
+                <option value="2500" selected>2,500</option>
+                <option value="5000">5,000</option>
+                <option value="10000">10,000</option>
+                <option value="25000">25,000</option>
+                <option value="50000">50,000+</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Number of Locations:</label>
+            <select id="locations">
+                <option value="1" data-bonus="0" selected>1 Location</option>
+                <option value="3" data-bonus="0.5">2-5 Locations</option>
+                <option value="8" data-bonus="1">6-10 Locations</option>
+                <option value="18" data-bonus="1.5">11-25 Locations</option>
+                <option value="30" data-bonus="2">25+ Locations</option>
+            </select>
+        </div>
+
+        <div class="result">
+            <h3>Monthly Revenue</h3>
+            <div class="amount" id="monthlyRevenue">$0</div>
+            <p>Recurring monthly commission</p>
+        </div>
+
+        <div class="result" style="background: #0d9488;">
+            <h3>Annual Revenue</h3>
+            <div class="amount" id="annualRevenue">$0</div>
+            <p>Total annual potential</p>
+        </div>
+
+        <div class="details">
+            <h3>Calculation Details:</h3>
+            <div>
+                <span>Total Participants:</span>
+                <span id="totalParticipants">0</span>
+            </div>
+            <div>
+                <span>Opt-in Rate:</span>
+                <span>65%</span>
+            </div>
+            <div>
+                <span>Opted-in Participants:</span>
+                <span id="optedInParticipants">0</span>
+            </div>
+            <div>
+                <span>Commission Tier:</span>
+                <span id="commissionTier">0%</span>
+            </div>
+            <div>
+                <span>Per Participant:</span>
+                <span id="perParticipant">$0</span>
+            </div>
+            <div>
+                <span>Location Bonus:</span>
+                <span id="locationBonus">+$0</span>
+            </div>
+            <div>
+                <span>Effective Rate:</span>
+                <span id="effectiveRate">$0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const OPT_IN_RATE = 0.65;
+
+        const commissionTiers = [
+            { minVolume: 0, maxVolume: 999, percentage: 25, perParticipant: 10 },
+            { minVolume: 1000, maxVolume: 2499, percentage: 27.5, perParticipant: 11 },
+            { minVolume: 2500, maxVolume: 4999, percentage: 30, perParticipant: 12 },
+            { minVolume: 5000, maxVolume: 9999, percentage: 32.5, perParticipant: 13 },
+            { minVolume: 10000, maxVolume: 24999, percentage: 35, perParticipant: 14 },
+            { minVolume: 25000, maxVolume: Infinity, percentage: 37.5, perParticipant: 15 },
+        ];
+
+        function getCommissionTier(totalVolume) {
+            return commissionTiers.find(tier =>
+                totalVolume >= tier.minVolume && totalVolume <= tier.maxVolume
+            ) || commissionTiers[0];
+        }
+
+        function calculate() {
+            const monthlyVolume = parseInt(document.getElementById('monthlyVolume').value);
+            const locationsSelect = document.getElementById('locations');
+            const locations = parseInt(locationsSelect.value);
+            const locationBonus = parseFloat(locationsSelect.options[locationsSelect.selectedIndex].dataset.bonus);
+
+            // Calculate totals
+            const totalParticipants = monthlyVolume * locations;
+            const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE);
+            const commissionTier = getCommissionTier(totalParticipants);
+            const effectivePerParticipant = commissionTier.perParticipant + locationBonus;
+            const monthlyRevenue = optedInParticipants * effectivePerParticipant;
+            const annualRevenue = monthlyRevenue * 12;
+
+            // Update display
+            document.getElementById('monthlyRevenue').textContent = '$' + monthlyRevenue.toLocaleString();
+            document.getElementById('annualRevenue').textContent = '$' + annualRevenue.toLocaleString();
+            document.getElementById('totalParticipants').textContent = totalParticipants.toLocaleString();
+            document.getElementById('optedInParticipants').textContent = optedInParticipants.toLocaleString();
+            document.getElementById('commissionTier').textContent = commissionTier.percentage + '%';
+            document.getElementById('perParticipant').textContent = '$' + commissionTier.perParticipant;
+            document.getElementById('locationBonus').textContent = '+$' + locationBonus.toFixed(2);
+            document.getElementById('effectiveRate').textContent = '$' + effectivePerParticipant.toFixed(2);
+
+            // Log to console for debugging
+            console.log('Calculation:', {
+                monthlyVolume,
+                locations,
+                locationBonus,
+                totalParticipants,
+                optedInParticipants,
+                commissionTier: commissionTier.percentage + '%',
+                perParticipant: commissionTier.perParticipant,
+                effectivePerParticipant,
+                monthlyRevenue,
+                annualRevenue
+            });
+        }
+
+        // Add event listeners
+        document.getElementById('monthlyVolume').addEventListener('change', calculate);
+        document.getElementById('locations').addEventListener('change', calculate);
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>

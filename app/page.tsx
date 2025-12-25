@@ -28,17 +28,17 @@ export default function Home() {
       {/* 3. DEI Trust Badges - Stats and partner types */}
       <DEITrustBadges />
 
-      {/* 4. Founder Story - Epiphany Bridge origin story */}
+      {/* 4. How It Works - 3-step process (moved earlier per request) */}
+      <HowItWorks />
+
+      {/* 5. Founder Story - Epiphany Bridge origin story */}
       <FounderStory />
 
-      {/* 5. DEI Who We Serve - Animated market cards */}
+      {/* 6. DEI Who We Serve - Animated market cards */}
       <DEIWhoWeServe />
 
-      {/* 6. Revenue Calculator - Interactive earnings calculator */}
+      {/* 7. Revenue Calculator - Interactive earnings calculator */}
       <RevenueCalculator />
-
-      {/* 7. How It Works - 3-step process */}
-      <HowItWorks />
 
       {/* 8. Testimonials Section - Customer reviews */}
       <TestimonialsSection />
