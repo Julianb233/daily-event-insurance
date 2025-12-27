@@ -2,8 +2,8 @@
 
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
+import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -198,19 +198,84 @@ export default function CarriersPage() {
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -50])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0.8])
 
+  // Carousel state for hero background images
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  // Auto-cycle through category images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % carrierCategories.length)
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
       <Header />
 
-      {/* Hero Section with Glassmorphism */}
+      {/* Hero Section with Glassmorphism and Image Carousel */}
       <section className="pt-32 pb-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden min-h-[90vh] flex items-center">
-        {/* Animated background orbs */}
+        {/* Background Image Carousel */}
+        <div className="absolute inset-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentImageIndex}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={carrierCategories[currentImageIndex].heroImage}
+                alt={carrierCategories[currentImageIndex].title}
+                fill
+                className="object-cover"
+                priority
+              />
+              {/* Dark overlay gradient for readability */}
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/70 to-slate-900/90" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Carousel indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {carrierCategories.map((cat, index) => (
+            <button
+              key={cat.slug}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                index === currentImageIndex
+                  ? "bg-teal-400 w-8"
+                  : "bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`View ${cat.title}`}
+            />
+          ))}
+        </div>
+
+        {/* Current category label */}
+        <motion.div
+          key={`label-${currentImageIndex}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute bottom-8 right-8 z-20"
+        >
+          <span className="px-4 py-2 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 text-sm font-medium text-white/80">
+            {carrierCategories[currentImageIndex].title}
+          </span>
+        </motion.div>
+
+        {/* Animated background orbs - now on top of image for subtle effect */}
         <FloatingOrb
-          className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-teal-500/40 to-emerald-500/20 rounded-full blur-[100px]"
+          className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-teal-500/30 to-emerald-500/15 rounded-full blur-[100px]"
           delay={0}
         />
         <FloatingOrb
-          className="absolute bottom-20 right-[10%] w-96 h-96 bg-gradient-to-br from-teal-400/30 to-cyan-500/20 rounded-full blur-[120px]"
+          className="absolute bottom-20 right-[10%] w-96 h-96 bg-gradient-to-br from-teal-400/20 to-cyan-500/15 rounded-full blur-[120px]"
           delay={2}
         />
         <FloatingOrb

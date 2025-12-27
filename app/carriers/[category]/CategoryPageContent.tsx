@@ -5,6 +5,7 @@ import Footer from "@/components/footer"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   ArrowRight,
   Shield,
@@ -128,8 +129,21 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
     <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
       <Header />
 
-      {/* Hero Section with Glassmorphism */}
-      <section className="pt-32 pb-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden min-h-[85vh] flex items-center">
+      {/* Hero Section with Background Image */}
+      <section className="pt-32 pb-24 text-white relative overflow-hidden min-h-[85vh] flex items-center">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src={category.heroImage}
+            alt={category.title}
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Dark overlay with gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/70 to-slate-900/90" />
+        </div>
+
         {/* Animated background orbs */}
         <FloatingOrb
           className={`absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br ${colors.glow} rounded-full blur-[100px]`}
