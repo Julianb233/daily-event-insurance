@@ -62,18 +62,30 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const body = await request.json()
     const {
-      businessName,
-      businessType,
-      contactName,
-      contactEmail,
-      contactPhone,
-      integrationType,
-      primaryColor,
-      logoUrl,
+      // Support both camelCase and snake_case
+      businessName, business_name,
+      businessType, business_type,
+      contactName, contact_name,
+      contactEmail, contact_email,
+      contactPhone, contact_phone,
+      integrationType, integration_type,
+      primaryColor, primary_color,
+      logoUrl, logo_url,
+      products,
     } = body
 
+    // Use the value (supporting both formats)
+    const finalBusinessName = business_name || businessName
+    const finalBusinessType = business_type || businessType
+    const finalContactName = contact_name || contactName
+    const finalContactEmail = contact_email || contactEmail
+    const finalContactPhone = contact_phone || contactPhone
+    const finalIntegrationType = integration_type || integrationType
+    const finalPrimaryColor = primary_color || primaryColor
+    const finalLogoUrl = logo_url || logoUrl
+
     // Validate required fields
-    if (!businessName || !businessType || !contactName || !contactEmail) {
+    if (!finalBusinessName || !finalBusinessType || !finalContactName || !finalContactEmail) {
       return NextResponse.json(
         { error: "Validation error", message: "Missing required fields" },
         { status: 400 }
@@ -85,14 +97,14 @@ export async function POST(request: NextRequest) {
       .from("partners")
       .insert({
         clerk_user_id: userId,
-        business_name: businessName,
-        business_type: businessType,
-        contact_name: contactName,
-        contact_email: contactEmail,
-        contact_phone: contactPhone || null,
-        integration_type: integrationType || "widget",
-        primary_color: primaryColor || "#14B8A6",
-        logo_url: logoUrl || null,
+        business_name: finalBusinessName,
+        business_type: finalBusinessType,
+        contact_name: finalContactName,
+        contact_email: finalContactEmail,
+        contact_phone: finalContactPhone || null,
+        integration_type: finalIntegrationType || "widget",
+        primary_color: finalPrimaryColor || "#14B8A6",
+        logo_url: finalLogoUrl || null,
         status: "pending",
       })
       .select()
@@ -106,19 +118,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Also create default product configurations
-    const defaultProducts = [
-      { partner_id: partner.id, product_type: "liability", is_enabled: true, customer_price: 4.99 },
-      { partner_id: partner.id, product_type: "equipment", is_enabled: false, customer_price: 9.99 },
-      { partner_id: partner.id, product_type: "cancellation", is_enabled: false, customer_price: 14.99 },
-    ]
+    // Create product configurations from provided products or defaults
+    const productConfigs = products && Array.isArray(products) && products.length > 0
+      ? products.map((p: { product_type: string; is_enabled: boolean; customer_price: number }) => ({
+          partner_id: partner.id,
+          product_type: p.product_type,
+          is_enabled: p.is_enabled ?? true,
+          customer_price: p.customer_price ?? 4.99,
+        }))
+      : [
+          { partner_id: partner.id, product_type: "liability", is_enabled: true, customer_price: 4.99 },
+          { partner_id: partner.id, product_type: "equipment", is_enabled: false, customer_price: 9.99 },
+          { partner_id: partner.id, product_type: "cancellation", is_enabled: false, customer_price: 14.99 },
+        ]
 
     const { error: productError } = await supabase
       .from("partner_products")
-      .insert(defaultProducts)
+      .insert(productConfigs)
 
     if (productError) {
-      console.error("Error creating default products:", productError)
+      console.error("Error creating products:", productError)
       // Don't fail the whole request, just log it
     }
 

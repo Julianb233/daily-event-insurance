@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { useUser } from "@clerk/nextjs"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import {
@@ -23,9 +25,32 @@ import {
   Sparkles,
   TrendingUp,
   BookOpen,
-  Mail
+  Mail,
+  Loader2
 } from "lucide-react"
 import { RevenueCalculator } from "@/components/revenue-calculator"
+
+// Shared form data interface
+interface OnboardingFormData {
+  // Step 1: Business Info
+  businessName: string
+  businessType: string
+  address: string
+  contactName: string
+  email: string
+  phone: string
+  estimatedCustomers: string
+  // Step 2: Integration
+  integrationType: string
+  // Step 3: Customize
+  selectedProducts: string[]
+  pricing: {
+    liability: number
+    equipment: number
+    cancellation: number
+  }
+  primaryColor: string
+}
 
 interface StepperProps {
   currentStep: number
@@ -94,16 +119,13 @@ function Stepper({ currentStep, totalSteps }: StepperProps) {
   )
 }
 
-function Step1BusinessInfo({ onNext }: { onNext: () => void }) {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    businessType: "",
-    address: "",
-    contactName: "",
-    email: "",
-    phone: "",
-    estimatedCustomers: "",
-  })
+interface Step1Props {
+  formData: OnboardingFormData
+  setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
+  onNext: () => void
+}
+
+function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
 
   return (
     <motion.div
@@ -247,9 +269,17 @@ function Step1BusinessInfo({ onNext }: { onNext: () => void }) {
   )
 }
 
-function Step2Integration({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  const [selectedIntegration, setSelectedIntegration] = useState<string>("")
+interface Step2Props {
+  formData: OnboardingFormData
+  setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
+  onNext: () => void
+  onBack: () => void
+}
+
+function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props) {
   const [copied, setCopied] = useState(false)
+  const selectedIntegration = formData.integrationType
+  const setSelectedIntegration = (value: string) => setFormData(prev => ({ ...prev, integrationType: value }))
 
   const widgetCode = `<script src="https://cdn.dailyeventinsurance.com/widget.js"></script>
 <div id="dei-widget" data-partner-id="YOUR_ID"></div>`
@@ -448,13 +478,22 @@ function Step2Integration({ onNext, onBack }: { onNext: () => void; onBack: () =
   )
 }
 
-function Step3Customize({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(["liability"])
-  const [pricing, setPricing] = useState({
-    liability: 25,
-    equipment: 15,
-    cancellation: 20,
-  })
+interface Step3Props {
+  formData: OnboardingFormData
+  setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
+  onNext: () => void
+  onBack: () => void
+}
+
+function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
+  const selectedProducts = formData.selectedProducts
+  const setSelectedProducts = (updater: (prev: string[]) => string[]) => {
+    setFormData(prev => ({ ...prev, selectedProducts: updater(prev.selectedProducts) }))
+  }
+  const pricing = formData.pricing
+  const setPricing = (newPricing: typeof formData.pricing) => {
+    setFormData(prev => ({ ...prev, pricing: newPricing }))
+  }
 
   const products = [
     {
@@ -613,12 +652,14 @@ function Step3Customize({ onNext, onBack }: { onNext: () => void; onBack: () => 
               <div className="flex gap-2">
                 <input
                   type="color"
-                  defaultValue="#14B8A6"
+                  value={formData.primaryColor}
+                  onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
                   className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
                 />
                 <input
                   type="text"
-                  defaultValue="#14B8A6"
+                  value={formData.primaryColor}
+                  onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
                 />
               </div>
@@ -662,7 +703,14 @@ function Step3Customize({ onNext, onBack }: { onNext: () => void; onBack: () => 
   )
 }
 
-function Step4GoLive({ onBack, onComplete }: { onBack: () => void; onComplete: () => void }) {
+interface Step4Props {
+  formData: OnboardingFormData
+  onBack: () => void
+  onComplete: () => Promise<void>
+  isSubmitting: boolean
+}
+
+function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props) {
   const [checklist, setChecklist] = useState({
     testTransaction: false,
     staffTraining: false,
@@ -809,24 +857,34 @@ function Step4GoLive({ onBack, onComplete }: { onBack: () => void; onComplete: (
 
         <div className="flex justify-between">
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
             onClick={onBack}
-            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
             Back
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: allCompleted ? 1.02 : 1 }}
-            whileTap={{ scale: allCompleted ? 0.98 : 1 }}
+            whileHover={{ scale: allCompleted && !isSubmitting ? 1.02 : 1 }}
+            whileTap={{ scale: allCompleted && !isSubmitting ? 0.98 : 1 }}
             onClick={onComplete}
-            disabled={!allCompleted}
+            disabled={!allCompleted || isSubmitting}
             className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Complete Setup
-            <Sparkles className="w-5 h-5" />
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Setting up...
+              </>
+            ) : (
+              <>
+                Complete Setup
+                <Sparkles className="w-5 h-5" />
+              </>
+            )}
           </motion.button>
         </div>
       </div>
@@ -881,21 +939,21 @@ function SuccessState() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <motion.a
-            href="/dashboard"
+            href="/partner/dashboard"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             className="px-8 py-4 bg-white text-[#14B8A6] font-bold rounded-lg hover:bg-gray-50 transition-all shadow-lg"
           >
-            Go to Dashboard
+            Go to Partner Dashboard
           </motion.a>
 
           <motion.a
-            href="/docs"
+            href="/partner/materials"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-lg hover:bg-white/20 transition-all border-2 border-white/20"
           >
-            View Documentation
+            View Materials Library
           </motion.a>
         </div>
 
@@ -916,8 +974,31 @@ function SuccessState() {
 }
 
 export default function OnboardingPage() {
+  const router = useRouter()
+  const { user } = useUser()
   const [currentStep, setCurrentStep] = useState(1)
   const [isComplete, setIsComplete] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Shared form data across all steps
+  const [formData, setFormData] = useState<OnboardingFormData>({
+    businessName: "",
+    businessType: "",
+    address: "",
+    contactName: "",
+    email: "",
+    phone: "",
+    estimatedCustomers: "",
+    integrationType: "",
+    selectedProducts: ["liability"],
+    pricing: {
+      liability: 25,
+      equipment: 15,
+      cancellation: 20,
+    },
+    primaryColor: "#14B8A6",
+  })
 
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 4))
@@ -927,8 +1008,62 @@ export default function OnboardingPage() {
     setCurrentStep((prev) => Math.max(prev - 1, 1))
   }
 
-  const handleComplete = () => {
-    setIsComplete(true)
+  const handleComplete = async () => {
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      // 1. Create partner in database via API
+      const response = await fetch("/api/partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business_name: formData.businessName,
+          business_type: formData.businessType,
+          business_address: formData.address,
+          contact_name: formData.contactName,
+          contact_email: formData.email,
+          contact_phone: formData.phone,
+          estimated_daily_customers: formData.estimatedCustomers,
+          integration_type: formData.integrationType,
+          primary_color: formData.primaryColor,
+          products: formData.selectedProducts.map(productId => ({
+            product_type: productId,
+            is_enabled: true,
+            customer_price: formData.pricing[productId as keyof typeof formData.pricing],
+          })),
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to create partner account")
+      }
+
+      // 2. Update Clerk user metadata to assign partner role
+      if (user) {
+        await user.update({
+          unsafeMetadata: {
+            ...user.unsafeMetadata,
+            role: "partner",
+            onboardingComplete: true,
+          },
+        })
+      }
+
+      // 3. Show success state briefly then redirect
+      setIsComplete(true)
+
+      // Redirect to partner dashboard after 2 seconds
+      setTimeout(() => {
+        router.push("/partner/dashboard")
+      }, 2000)
+
+    } catch (err) {
+      console.error("Onboarding error:", err)
+      setError(err instanceof Error ? err.message : "An error occurred during setup")
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -955,6 +1090,17 @@ export default function OnboardingPage() {
           </motion.div>
         )}
 
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mx-auto mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center"
+          >
+            {error}
+          </motion.div>
+        )}
+
         {/* Revenue Calculator */}
         {!isComplete && currentStep === 1 && <RevenueCalculator />}
 
@@ -965,10 +1111,37 @@ export default function OnboardingPage() {
         <AnimatePresence mode="wait">
           {!isComplete && (
             <>
-              {currentStep === 1 && <Step1BusinessInfo onNext={handleNext} />}
-              {currentStep === 2 && <Step2Integration onNext={handleNext} onBack={handleBack} />}
-              {currentStep === 3 && <Step3Customize onNext={handleNext} onBack={handleBack} />}
-              {currentStep === 4 && <Step4GoLive onBack={handleBack} onComplete={handleComplete} />}
+              {currentStep === 1 && (
+                <Step1BusinessInfo
+                  formData={formData}
+                  setFormData={setFormData}
+                  onNext={handleNext}
+                />
+              )}
+              {currentStep === 2 && (
+                <Step2Integration
+                  formData={formData}
+                  setFormData={setFormData}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                />
+              )}
+              {currentStep === 3 && (
+                <Step3Customize
+                  formData={formData}
+                  setFormData={setFormData}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                />
+              )}
+              {currentStep === 4 && (
+                <Step4GoLive
+                  formData={formData}
+                  onBack={handleBack}
+                  onComplete={handleComplete}
+                  isSubmitting={isSubmitting}
+                />
+              )}
             </>
           )}
 
