@@ -144,7 +144,6 @@ export async function POST(request: NextRequest) {
     const partnerCommission = calculateMonthlyCommission(totalParticipants, OPT_IN_RATE, locationBonus)
 
     // Upsert earnings record
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: upsertedEarnings, error: upsertError } = await (supabase as any)
       .from("monthly_earnings")
       .upsert(

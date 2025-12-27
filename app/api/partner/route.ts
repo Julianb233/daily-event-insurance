@@ -107,7 +107,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Create partner record
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: partner, error } = await (supabase as any)
       .from("partners")
       .insert({
@@ -147,7 +146,6 @@ export async function POST(request: NextRequest) {
           { partner_id: partner.id, product_type: "cancellation", is_enabled: false, customer_price: 14.99 },
         ]
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: productError } = await (supabase as any)
       .from("partner_products")
       .insert(productConfigs) as { error: { message: string } | null }

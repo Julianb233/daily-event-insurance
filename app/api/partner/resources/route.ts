@@ -125,7 +125,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Record the download
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: downloadError } = await (supabase as any)
       .from("resource_downloads")
       .insert({

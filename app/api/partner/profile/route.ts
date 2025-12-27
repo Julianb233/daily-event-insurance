@@ -106,7 +106,6 @@ export async function PATCH(request: NextRequest) {
 
     // Update partner if there are changes
     if (Object.keys(updateData).length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: updateError } = await (supabase as any)
         .from("partners")
         .update(updateData)
@@ -128,7 +127,6 @@ export async function PATCH(request: NextRequest) {
 
         if (!productType) continue
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { error: productError } = await (supabase as any)
           .from("partner_products")
           .upsert(
