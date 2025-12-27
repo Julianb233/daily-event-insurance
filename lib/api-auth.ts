@@ -95,6 +95,46 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> 
 }
 
 /**
+ * Requires partner role for API route
+ * Checks for 'partner' or 'admin' role in Clerk user metadata
+ *
+ * @returns Promise<{ userId: string, user: any }>
+ * @throws Returns NextResponse with 401 if not authenticated or 403 if not partner
+ */
+export async function requirePartner(): Promise<AuthenticatedUser> {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw NextResponse.json(
+      { error: 'Unauthorized', message: 'Authentication required' },
+      { status: 401 }
+    );
+  }
+
+  const user = await currentUser();
+
+  if (!user) {
+    throw NextResponse.json(
+      { error: 'Unauthorized', message: 'User not found' },
+      { status: 401 }
+    );
+  }
+
+  // Check for partner or admin role in public/private metadata
+  const userRole = user.publicMetadata?.role || user.privateMetadata?.role;
+  const isPartner = userRole === 'partner' || userRole === 'admin';
+
+  if (!isPartner) {
+    throw NextResponse.json(
+      { error: 'Forbidden', message: 'Partner access required' },
+      { status: 403 }
+    );
+  }
+
+  return { userId, user };
+}
+
+/**
  * Checks if current user has a specific role
  *
  * @param role - Role to check for in user metadata
