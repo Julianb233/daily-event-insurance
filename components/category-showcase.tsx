@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Dumbbell,
   Mountain,
@@ -105,14 +106,21 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
           className={`relative overflow-hidden rounded-2xl border ${colors.border} ${colors.hover} bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
         >
           {/* Hero Image Area */}
-          <div className={`relative h-48 ${colors.bg} overflow-hidden`}>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className={`w-24 h-24 rounded-full ${colors.bg} flex items-center justify-center border-2 ${colors.border}`}>
-                <Icon className={`w-12 h-12 ${colors.text}`} />
+          <div className="relative h-48 overflow-hidden">
+            <Image
+              src={category.heroImage}
+              alt={category.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
+            {/* Icon badge */}
+            <div className="absolute bottom-4 left-4">
+              <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center border ${colors.border} shadow-lg`}>
+                <Icon className={`w-6 h-6 ${colors.text}`} />
               </div>
             </div>
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
           </div>
 
           {/* Content */}

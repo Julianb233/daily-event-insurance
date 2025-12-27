@@ -16,7 +16,17 @@ import {
   ChevronRight,
   Star,
   Building2,
-  Users
+  Users,
+  Activity,
+  Bike,
+  Waves,
+  Award,
+  GraduationCap,
+  Snowflake,
+  Plane,
+  Package,
+  Heart,
+  Building
 } from "lucide-react"
 import type { IndustryCategory } from "@/lib/category-data"
 import type { IndustrySector } from "@/lib/industry-data"
@@ -25,7 +35,18 @@ const iconMap: Record<string, React.ElementType> = {
   Dumbbell,
   Mountain,
   Sparkles,
-  Trophy
+  Trophy,
+  Activity,
+  Bike,
+  Waves,
+  Award,
+  GraduationCap,
+  Snowflake,
+  Plane,
+  Package,
+  Heart,
+  Building,
+  Shield
 }
 
 const colorClasses: Record<string, { gradient: string; bg: string; text: string; border: string }> = {
@@ -63,6 +84,7 @@ interface CategoryPageContentProps {
 
 function SectorCard({ sector, color, index }: { sector: IndustrySector; color: string; index: number }) {
   const colors = colorClasses[color] || colorClasses.teal
+  const SectorIcon = iconMap[sector.icon] || Activity
 
   return (
     <motion.div
@@ -74,20 +96,38 @@ function SectorCard({ sector, color, index }: { sector: IndustrySector; color: s
         href={`/industries/${sector.slug}`}
         className="group block bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden"
       >
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <h3 className="text-lg font-bold text-slate-900 group-hover:text-teal-600 transition-colors">
+        {/* Hero Image */}
+        <div className="relative h-32 overflow-hidden">
+          <Image
+            src={sector.heroImage}
+            alt={sector.shortTitle}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+          {/* Icon badge */}
+          <div className="absolute bottom-2 left-3">
+            <div className={`w-9 h-9 rounded-lg ${colors.bg} flex items-center justify-center border ${colors.border} shadow-md`}>
+              <SectorIcon className={`w-4 h-4 ${colors.text}`} />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-600 transition-colors">
               {sector.shortTitle}
             </h3>
-            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
           </div>
-          <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+          <p className="text-sm text-slate-600 mb-3 line-clamp-2">
             {sector.heroSubtitle}
           </p>
           <div className="flex flex-wrap gap-2">
             {sector.stats.slice(0, 2).map((stat) => (
-              <div key={stat.label} className={`px-3 py-1.5 rounded-lg ${colors.bg}`}>
-                <span className={`text-sm font-semibold ${colors.text}`}>{stat.value}</span>
+              <div key={stat.label} className={`px-2.5 py-1 rounded-lg ${colors.bg}`}>
+                <span className={`text-xs font-semibold ${colors.text}`}>{stat.value}</span>
                 <span className="text-xs text-slate-500 ml-1">{stat.label}</span>
               </div>
             ))}

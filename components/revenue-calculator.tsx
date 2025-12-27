@@ -102,7 +102,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 }
 
 export function RevenueCalculator() {
-  const [monthlyVolume, setMonthlyVolume] = useState(2500)
+  const [monthlyVolume, setMonthlyVolume] = useState(5000)
   const [locations, setLocations] = useState(1)
   const [isHovered, setIsHovered] = useState(false)
 

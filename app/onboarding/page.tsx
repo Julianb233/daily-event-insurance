@@ -25,6 +25,7 @@ import {
   BookOpen,
   Mail
 } from "lucide-react"
+import { RevenueCalculator } from "@/components/revenue-calculator"
 
 interface StepperProps {
   currentStep: number
@@ -953,6 +954,9 @@ export default function OnboardingPage() {
             </p>
           </motion.div>
         )}
+
+        {/* Revenue Calculator */}
+        {!isComplete && currentStep === 1 && <RevenueCalculator />}
 
         {/* Stepper */}
         {!isComplete && <Stepper currentStep={currentStep} totalSteps={4} />}

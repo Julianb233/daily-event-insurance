@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { Timer, Bike, Layers, Mountain, Footprints, Building2, GraduationCap, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { useState } from "react"
 
 export interface Industry {
@@ -11,6 +12,7 @@ export interface Industry {
   description: string
   slug: string
   gradient: string
+  heroImage: string
 }
 
 export const industries: Industry[] = [
@@ -20,6 +22,7 @@ export const industries: Industry[] = [
     description: "Comprehensive coverage for road races, trail runs, and endurance events of all distances.",
     slug: "race-directors",
     gradient: "from-teal-500 to-teal-600",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: Bike,
@@ -27,6 +30,7 @@ export const industries: Industry[] = [
     description: "Protect cyclists with instant coverage for criteriums, gran fondos, and mountain bike races.",
     slug: "cycling-events",
     gradient: "from-teal-600 to-cyan-600",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: Layers,
@@ -34,20 +38,23 @@ export const industries: Industry[] = [
     description: "Multi-discipline event coverage for swim-bike-run and adventure racing competitions.",
     slug: "triathlons",
     gradient: "from-cyan-600 to-teal-500",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: Mountain,
     title: "Obstacle Course Races (OCR)",
     description: "High-intensity event protection for mud runs, ninja courses, and adventure challenges.",
-    slug: "obstacle-course-races",
+    slug: "obstacle-courses",
     gradient: "from-teal-500 to-teal-700",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: Footprints,
     title: "Marathons & Fun Runs",
     description: "From charity 5Ks to major marathons - coverage for events that move communities.",
-    slug: "marathons-fun-runs",
+    slug: "marathons",
     gradient: "from-teal-600 to-cyan-500",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: Building2,
@@ -55,6 +62,7 @@ export const industries: Industry[] = [
     description: "Company runs, team challenges, and wellness initiatives with seamless group coverage.",
     slug: "corporate-wellness",
     gradient: "from-cyan-500 to-teal-600",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
   {
     icon: GraduationCap,
@@ -62,6 +70,7 @@ export const industries: Industry[] = [
     description: "Student races, campus recreation events, and collegiate athletic competitions.",
     slug: "schools-universities",
     gradient: "from-teal-700 to-cyan-600",
+    heroImage: "/images/categories/race-events-hero.jpg",
   },
 ]
 
@@ -147,83 +156,66 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
           />
 
           {/* Card */}
-          <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-premium border border-gray-100/80 hover:shadow-premium-hover transition-shadow duration-500 overflow-hidden">
-            {/* Shimmer effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full"
-              animate={isHovered ? { x: ["100%", "200%"] } : {}}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-              style={{ transform: "translateX(-100%)" }}
-            />
-
-            {/* Gradient border on hover */}
-            <motion.div
-              className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${industry.gradient}`}
-              style={{
-                opacity: 0,
-                padding: "1px",
-              }}
-              animate={{ opacity: isHovered ? 0.15 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
-
-            {/* Icon Container */}
-            <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
-              <div className="relative inline-flex">
-                {/* Background Glow */}
+          <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl shadow-premium border border-gray-100/80 hover:shadow-premium-hover transition-shadow duration-500 overflow-hidden">
+            {/* Hero Image */}
+            <div className="relative h-36 overflow-hidden">
+              <Image
+                src={industry.heroImage}
+                alt={industry.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+              {/* Icon badge */}
+              <div className="absolute bottom-3 left-4">
                 <motion.div
-                  className="absolute inset-0 bg-teal-500/20 rounded-2xl blur-xl"
-                  animate={{
-                    scale: isHovered ? 1.3 : 1,
-                    opacity: isHovered ? 0.5 : 0.2,
-                  }}
+                  className={`flex items-center justify-center w-11 h-11 bg-gradient-to-br ${industry.gradient} rounded-xl shadow-lg shadow-teal-500/25`}
+                  animate={{ scale: isHovered ? 1.1 : 1 }}
                   transition={{ duration: 0.3 }}
-                />
-
-                {/* Icon Circle */}
-                <motion.div
-                  className={`relative flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br ${industry.gradient} rounded-2xl shadow-lg shadow-teal-500/25`}
-                  animate={{
-                    scale: isHovered ? 1.1 : 1,
-                    rotate: isHovered ? [0, -5, 5, 0] : 0,
-                  }}
-                  transition={{ duration: 0.4 }}
                 >
-                  <industry.icon className="w-7 h-7 md:w-8 md:h-8 text-white" strokeWidth={2} />
+                  <industry.icon className="w-5 h-5 text-white" strokeWidth={2} />
                 </motion.div>
               </div>
             </div>
 
             {/* Content */}
-            <div className="mb-6" style={{ transform: "translateZ(10px)" }}>
-              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors duration-300 leading-snug">
+            <div className="p-5">
+              {/* Shimmer effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full"
+                animate={isHovered ? { x: ["100%", "200%"] } : {}}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                style={{ transform: "translateX(-100%)" }}
+              />
+
+              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors duration-300 leading-snug">
                 {industry.title}
               </h3>
-              <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-2">
                 {industry.description}
               </p>
-            </div>
 
-            {/* Learn More CTA */}
-            <motion.div
-              className="flex items-center gap-2 text-teal-600 font-semibold text-sm md:text-base"
-              style={{ transform: "translateZ(10px)" }}
-              initial={{ x: 0 }}
-              animate={{ x: isHovered ? 5 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <span>Learn More</span>
+              {/* Learn More CTA */}
               <motion.div
-                animate={{ x: isHovered ? [0, 5, 0] : 0 }}
-                transition={{
-                  duration: 0.6,
-                  repeat: isHovered ? Infinity : 0,
-                  repeatType: "loop"
-                }}
+                className="flex items-center gap-2 text-teal-600 font-semibold text-sm"
+                initial={{ x: 0 }}
+                animate={{ x: isHovered ? 5 : 0 }}
+                transition={{ duration: 0.3 }}
               >
-                <ArrowRight className="w-4 h-4" />
+                <span>Learn More</span>
+                <motion.div
+                  animate={{ x: isHovered ? [0, 5, 0] : 0 }}
+                  transition={{
+                    duration: 0.6,
+                    repeat: isHovered ? Infinity : 0,
+                    repeatType: "loop"
+                  }}
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </div>
 
             {/* Accent Line */}
             <motion.div
