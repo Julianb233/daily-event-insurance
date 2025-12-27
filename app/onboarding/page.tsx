@@ -852,7 +852,7 @@ function SuccessState() {
         </motion.div>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-4">
-          You're Ready to Start Earning!
+          You&apos;re Ready to Start Earning!
         </h1>
         <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
           Congratulations! Your account is set up and you can now start offering insurance to your customers.
@@ -949,7 +949,7 @@ export default function OnboardingPage() {
               </span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Let's get you set up in just a few minutes. Complete each step to start offering insurance to your customers.
+              Let&apos;s get you set up in just a few minutes. Complete each step to start offering insurance to your customers.
             </p>
           </motion.div>
         )}

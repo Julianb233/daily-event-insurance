@@ -282,7 +282,7 @@ export function DEIWhoWeServe() {
             <UrgencyBanner variant="early-bird" />
           </div>
 
-          <p className="text-slate-600 mb-6">Don't see your industry? We're always expanding our coverage options.</p>
+          <p className="text-slate-600 mb-6">Don&apos;t see your industry? We&apos;re always expanding our coverage options.</p>
           <motion.a
             href="#apply"
             className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/40 transition-all duration-300"

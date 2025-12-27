@@ -170,7 +170,7 @@ export default function HeroSection() {
                     <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">ACTIVE</span>
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2">Day Pass Insurance</h3>
-                  <p className="text-sm text-slate-600 mb-4">Full coverage for today's activities</p>
+                  <p className="text-sm text-slate-600 mb-4">Full coverage for today&apos;s activities</p>
                   <div className="flex items-baseline gap-1 mb-4">
                     <span className="text-3xl font-bold text-slate-900">$5</span>
                     <span className="text-sm text-slate-500">/day</span>

@@ -58,7 +58,7 @@ export function FounderStory() {
         >
           {/* Large decorative quote mark */}
           <div className="absolute top-6 left-6 text-teal-500/10 text-8xl font-serif leading-none select-none">
-            "
+            &quot;
           </div>
 
           {/* Story Content */}
@@ -84,7 +84,7 @@ export function FounderStory() {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <p className="text-base md:text-lg">
-                That's when I discovered the massive gap in insurance for active lifestyle businesses. Traditional policies don't cover customers—only employees. Gyms, climbing centers, adventure rentals, and sports facilities were all exposed to the same risk.
+                That&apos;s when I discovered the massive gap in insurance for active lifestyle businesses. Traditional policies don&apos;t cover customers—only employees. Gyms, climbing centers, adventure rentals, and sports facilities were all exposed to the same risk.
               </p>
             </motion.div>
 
@@ -97,7 +97,7 @@ export function FounderStory() {
               className="pl-6 border-l-4 border-teal-400 bg-teal-50/50 py-4 rounded-r-lg"
             >
               <p className="text-base md:text-lg font-semibold italic text-slate-800">
-                "What if facilities could offer insurance to their members at check-in—AND make money doing it?"
+                &quot;What if facilities could offer insurance to their members at check-in—AND make money doing it?&quot;
               </p>
             </motion.div>
 
@@ -109,7 +109,7 @@ export function FounderStory() {
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               <p className="text-base md:text-lg">
-                That simple idea became Daily Event Insurance. Today, we're helping{" "}
+                That simple idea became Daily Event Insurance. Today, we&apos;re helping{" "}
                 <span className="font-bold text-teal-600">247 facilities</span> protect their members while earning{" "}
                 <span className="font-bold text-teal-600">passive revenue</span> every single month. No overhead. No risk. Just better protection for everyone.
               </p>

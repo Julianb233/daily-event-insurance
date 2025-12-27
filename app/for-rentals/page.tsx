@@ -181,7 +181,7 @@ function HowItWorksSection() {
     {
       number: "01",
       title: "Sign Up",
-      description: "Register your rental business at no cost. We'll integrate with your existing checkout system or provide you with a simple widget.",
+      description: "Register your rental business at no cost. We&apos;ll integrate with your existing checkout system or provide you with a simple widget.",
       icon: FileCheck,
       color: "from-teal-600 to-teal-500"
     },
@@ -195,7 +195,7 @@ function HowItWorksSection() {
     {
       number: "03",
       title: "Customer Pays, You're Covered",
-      description: "If they opt in, you're protected from damage claims AND you earn a commission. Win-win for everyone.",
+      description: "If they opt in, you&apos;re protected from damage claims AND you earn a commission. Win-win for everyone.",
       icon: DollarSign,
       color: "from-cyan-500 to-sky-500"
     }
@@ -467,7 +467,7 @@ function TestimonialSection() {
 
           <blockquote className="text-center">
             <p className="text-2xl md:text-3xl font-black text-slate-900 mb-6 leading-relaxed">
-              "Adding insurance to our bike rentals was a game-changer. We've reduced damage disputes by 90% and our customers love having the peace of mind. Plus, the commission is a nice bonus!"
+              &quot;Adding insurance to our bike rentals was a game-changer. We&apos;ve reduced damage disputes by 90% and our customers love having the peace of mind. Plus, the commission is a nice bonus!&quot;
             </p>
             <footer className="flex items-center justify-center gap-4">
               <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-cyan-500 rounded-full flex items-center justify-center">
@@ -591,7 +591,7 @@ function CTASection() {
 
           <div className="mt-8 text-center">
             <p className="text-slate-400 text-sm">
-              We'll get back to you within 24 hours to schedule your personalized demo.
+              We&apos;ll get back to you within 24 hours to schedule your personalized demo.
             </p>
           </div>
         </motion.div>

@@ -1,0 +1,7 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="118" height="38" rx="6" stroke="#14B8A6" stroke-width="2" fill="white"/>
+  <rect x="10" y="16" width="14" height="12" rx="2" stroke="#14B8A6" stroke-width="2" fill="none"/>
+  <path d="M13 16V12C13 9.79086 14.7909 8 17 8C19.2091 8 21 9.79086 21 12V16" stroke="#14B8A6" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="17" cy="22" r="1.5" fill="#14B8A6"/>
+  <text x="30" y="24" font-family="system-ui, sans-serif" font-size="10" font-weight="600" fill="#0D9488">Secure &amp; Compliant</text>
+</svg>

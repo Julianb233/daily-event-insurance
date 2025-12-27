@@ -145,7 +145,7 @@ export default function SocialSection() {
           <p className="text-lg md:text-xl text-white/90 font-medium"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.8)" }}
           >
-            Whether you're scaling a business, learning AI, or joining our community - your journey starts here
+            Whether you&apos;re scaling a business, learning AI, or joining our community - your journey starts here
           </p>
 
           <div className="flex flex-wrap justify-center gap-6">

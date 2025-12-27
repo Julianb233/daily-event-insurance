@@ -316,7 +316,7 @@ export function ApplySection() {
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
                 <p className="text-slate-700 text-sm italic mb-3">
-                  "We've been offering Daily Event Insurance for 6 months and our members love it. Easy to implement and we earn extra revenue on every policy sold."
+                  &quot;We&apos;ve been offering Daily Event Insurance for 6 months and our members love it. Easy to implement and we earn extra revenue on every policy sold.&quot;
                 </p>
                 <p className="text-teal-600 text-sm font-semibold">— Peak Climbing Gym, Denver CO</p>
               </div>
@@ -430,7 +430,7 @@ export function ApplySection() {
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Application Received!</h3>
                     <p className="text-slate-500 mb-6">
-                      We'll review your application and get back to you within 24 hours with next steps.
+                      We&apos;ll review your application and get back to you within 24 hours with next steps.
                     </p>
                     <button
                       onClick={resetForm}
@@ -544,7 +544,7 @@ export function ApplySection() {
 
                     <div className="mt-6 pt-6 border-t border-teal-200">
                       <p className="text-slate-400 text-sm text-center">
-                        You'll receive partnership details and onboarding information within 24 hours.
+                        You&apos;ll receive partnership details and onboarding information within 24 hours.
                       </p>
                     </div>
                   </div>
@@ -568,7 +568,7 @@ export function ApplySection() {
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Demo Requested!</h3>
                     <p className="text-slate-500 mb-6">
-                      We'll contact you within 4 hours to schedule your personalized demo.
+                      We&apos;ll contact you within 4 hours to schedule your personalized demo.
                     </p>
                     <button
                       onClick={resetForm}
@@ -790,7 +790,7 @@ export function ApplySection() {
                             <span className="text-teal-600 font-bold text-sm">1</span>
                           </div>
                           <div>
-                            <p className="text-slate-700 text-sm font-semibold">We'll contact you within 4 hours</p>
+                            <p className="text-slate-700 text-sm font-semibold">We&apos;ll contact you within 4 hours</p>
                             <p className="text-slate-400 text-xs">Schedule your personalized demo at your convenience</p>
                           </div>
                         </div>

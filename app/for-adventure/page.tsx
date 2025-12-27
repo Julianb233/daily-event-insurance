@@ -485,7 +485,7 @@ export default function ForAdventurePage() {
               ))}
             </div>
             <blockquote className="text-2xl md:text-3xl font-bold mb-8 leading-relaxed">
-              "Daily Event Insurance transformed how we handle liability. Our guests love the instant coverage, and we earn commission on every sale. It's a win-win."
+              &quot;Daily Event Insurance transformed how we handle liability. Our guests love the instant coverage, and we earn commission on every sale. It&apos;s a win-win.&quot;
             </blockquote>
             <div className="flex items-center justify-center gap-4">
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
@@ -528,7 +528,7 @@ export default function ForAdventurePage() {
                 <CheckCircle className="w-10 h-10 text-teal-400" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Demo Requested!</h3>
-              <p className="text-slate-300">We'll contact you within 24 hours to schedule your personalized demo.</p>
+              <p className="text-slate-300">We&apos;ll contact you within 24 hours to schedule your personalized demo.</p>
             </motion.div>
           ) : (
             <motion.form

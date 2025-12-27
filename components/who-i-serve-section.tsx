@@ -188,7 +188,7 @@ export function WhoIServeSection() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <p className="text-[#FDF8E8]/60 mb-3">Sound like you? Let's talk about how AI can transform your business.</p>
+          <p className="text-[#FDF8E8]/60 mb-3">Sound like you? Let&apos;s talk about how AI can transform your business.</p>
           <motion.div
             className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-[#D4A84B]/20 rounded-full border border-[#D4A84B]/40"
             animate={{

@@ -253,7 +253,7 @@ function WhyChooseByIndustry() {
             Why <span className="text-teal-600">Industry Matters</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-            One-size-fits-all insurance doesn't work for active sports and events
+            One-size-fits-all insurance doesn&apos;t work for active sports and events
           </p>
         </motion.div>
 
@@ -296,10 +296,10 @@ function IndustriesCTA() {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white leading-tight tracking-tight mb-6">
-            Don't See Your <span className="text-teal-400">Industry?</span>
+            Don&apos;t See Your <span className="text-teal-400">Industry?</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-            We're always expanding our coverage options. Tell us about your events and we'll create a custom insurance solution.
+            We&apos;re always expanding our coverage options. Tell us about your events and we&apos;ll create a custom insurance solution.
           </p>
 
           <motion.a

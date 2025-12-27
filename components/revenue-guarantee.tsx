@@ -101,9 +101,9 @@ export function RevenueGuarantee() {
                   transition={{ delay: 0.5 }}
                   className="text-white/95 text-base md:text-lg leading-relaxed max-w-3xl"
                 >
-                  If you don't earn at least{" "}
+                  If you don&apos;t earn at least{" "}
                   <span className="font-bold text-white">$500 in commissions</span> in your first{" "}
-                  <span className="font-bold text-white">90 days</span>, we'll pay you{" "}
+                  <span className="font-bold text-white">90 days</span>, we&apos;ll pay you{" "}
                   <span className="font-bold text-white">$250 for your time</span>.{" "}
                   <span className="font-extrabold text-white underline decoration-2 decoration-white/50">
                     You literally cannot lose.

@@ -177,7 +177,7 @@ export function ExitIntentModal() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-[#FDF8E8] mb-2">You're All Set!</h3>
+                  <h3 className="text-2xl font-bold text-[#FDF8E8] mb-2">You&apos;re All Set!</h3>
                   <p className="text-[#FDF8E8]/70 mb-4">
                     Check your email for your personalized AI Readiness Assessment guide.
                   </p>
@@ -207,13 +207,13 @@ export function ExitIntentModal() {
 
                   {/* Heading */}
                   <h2 className="text-3xl md:text-4xl font-bold text-[#FDF8E8] text-center mb-3">
-                    Wait! Don't Leave Yet
+                    Wait! Don&apos;t Leave Yet
                   </h2>
                   <p className="text-[#D4A84B] text-center text-lg font-semibold mb-2">
                     Get Your Free AI Readiness Assessment
                   </p>
                   <p className="text-[#FDF8E8]/70 text-center mb-8">
-                    Don't leave without your personalized AI strategy. Discover how AI can transform your business in
+                    Don&apos;t leave without your personalized AI strategy. Discover how AI can transform your business in
                     under 15 minutes.
                   </p>
 

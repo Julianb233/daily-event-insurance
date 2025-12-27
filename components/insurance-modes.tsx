@@ -479,7 +479,7 @@ export default function InsuranceModes() {
             </svg>
           </motion.a>
           <p className="mt-4 text-slate-500 text-sm">
-            We'll help you choose the best mode for your facility
+            We&apos;ll help you choose the best mode for your facility
           </p>
         </motion.div>
       </div>

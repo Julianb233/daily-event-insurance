@@ -52,7 +52,7 @@ export function AILaunchCountdown() {
             READY TO TRANSFORM?
           </h2>
           <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto">
-            Whether you want to optimize your business, learn AI, or join a community of innovators — let's connect.
+            Whether you want to optimize your business, learn AI, or join a community of innovators — let&apos;s connect.
           </p>
         </motion.div>
 

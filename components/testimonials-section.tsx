@@ -225,7 +225,7 @@ export function TestimonialsSection() {
 
                   {/* Quote */}
                   <blockquote className="text-xl md:text-2xl text-[#FDF8E8] font-medium leading-relaxed mb-8 flex-grow relative z-10">
-                    "{testimonials[currentIndex].quote}"
+                    &quot;{testimonials[currentIndex].quote}&quot;
                   </blockquote>
 
                   {/* Results Box */}

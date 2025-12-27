@@ -1,0 +1,6 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="118" height="38" rx="6" stroke="#14B8A6" stroke-width="2" fill="white"/>
+  <path d="M16 10L26 14V20C26 26 22 30 16 32C10 30 6 26 6 20V14L16 10Z" fill="#14B8A6"/>
+  <path d="M12 20L15 23L21 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="34" y="24" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#0D9488">Fully Insured</text>
+</svg>

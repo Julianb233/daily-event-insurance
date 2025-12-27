@@ -459,7 +459,7 @@ export function ApplySection() {
 
                     <div className="mt-6 pt-6 border-t border-white/10">
                       <p className="text-white/50 text-sm text-center">
-                        You'll also get access to our exclusive community and updates on new tutorials.
+                        You&apos;ll also get access to our exclusive community and updates on new tutorials.
                       </p>
                     </div>
                   </div>
@@ -483,7 +483,7 @@ export function ApplySection() {
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-2">Thank You!</h3>
                     <p className="text-white/60 mb-6">
-                      Your message has been received. I'll get back to you within 24 hours.
+                      Your message has been received. I&apos;ll get back to you within 24 hours.
                     </p>
                     <button
                       onClick={resetForm}

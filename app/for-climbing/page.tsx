@@ -174,7 +174,7 @@ function ChallengeSection() {
             <span className="text-teal-600">Challenge</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-            Traditional insurance wasn't built for the climbing industry
+            Traditional insurance wasn&apos;t built for the climbing industry
           </p>
         </motion.div>
 
@@ -458,13 +458,14 @@ function TestimonialSection() {
           className="relative"
         >
           {/* Quote Mark */}
+{/* Decorative quote mark */}
           <div className="absolute -top-8 -left-4 text-9xl text-teal-200 font-serif leading-none">
-            "
+            &quot;
           </div>
 
           <div className="relative bg-gradient-to-br from-slate-50 to-white rounded-2xl p-12 border-2 border-teal-200 shadow-xl">
             <p className="text-xl md:text-2xl text-slate-700 leading-relaxed mb-8 italic">
-              Daily Event Insurance transformed our business. We went from manually processing insurance waivers to offering instant coverage at check-in. Our members love the convenience, and we're earning $3,200/month in passive commission. It's a complete game-changer for climbing facilities.
+              Daily Event Insurance transformed our business. We went from manually processing insurance waivers to offering instant coverage at check-in. Our members love the convenience, and we&apos;re earning $3,200/month in passive commission. It&apos;s a complete game-changer for climbing facilities.
             </p>
 
             <div className="flex items-center gap-4">
@@ -590,7 +591,7 @@ function DemoFormSection() {
           </form>
 
           <p className="text-slate-400 text-sm text-center mt-6">
-            We'll contact you within 24 hours to schedule your personalized demo.
+            We&apos;ll contact you within 24 hours to schedule your personalized demo.
           </p>
         </motion.div>
 

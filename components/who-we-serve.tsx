@@ -140,7 +140,7 @@ export function WhoWeServe() {
           className="text-center mt-12 md:mt-16"
         >
           <p className="text-gray-600 mb-6">
-            Don't see your business type? We've got you covered.
+            Don&apos;t see your business type? We&apos;ve got you covered.
           </p>
           <button className="inline-flex items-center gap-2 px-8 py-4 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
             <span>Contact Us</span>

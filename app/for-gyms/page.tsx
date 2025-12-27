@@ -186,11 +186,11 @@ function ProblemSolutionSection() {
               <ul className="space-y-3 text-slate-300">
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 mt-1">✗</span>
-                  <span>Your members need liability coverage but don't know where to get it</span>
+                  <span>Your members need liability coverage but don&apos;t know where to get it</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 mt-1">✗</span>
-                  <span>You're exposed to potential claims without member insurance</span>
+                  <span>You&apos;re exposed to potential claims without member insurance</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 mt-1">✗</span>
@@ -609,8 +609,8 @@ function TestimonialSection() {
             </div>
 
             <blockquote className="text-2xl md:text-3xl font-bold text-white leading-relaxed mb-8">
-              "We added Daily Event Insurance to our check-in process and started earning an extra $3,800 per month.
-              Our members love the convenience, and we love the passive revenue. It's a complete win-win."
+              &quot;We added Daily Event Insurance to our check-in process and started earning an extra $3,800 per month.
+              Our members love the convenience, and we love the passive revenue. It&apos;s a complete win-win.&quot;
             </blockquote>
 
             <div className="flex items-center gap-4">
@@ -777,7 +777,7 @@ function DemoFormSection() {
             </motion.button>
 
             <p className="text-center text-slate-400 text-sm">
-              We'll respond within 4 hours to schedule your demo. Most gyms are up and running within 24 hours.
+              We&apos;ll respond within 4 hours to schedule your demo. Most gyms are up and running within 24 hours.
             </p>
           </form>
         </motion.div>

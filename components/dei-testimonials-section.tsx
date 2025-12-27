@@ -356,9 +356,9 @@ function TestimonialCard({ testimonial, direction, onPlayVideo }: {
               className="text-xl md:text-2xl text-slate-700 font-medium leading-relaxed relative z-10"
               style={{ transform: "translateZ(10px)" }}
             >
-              <span className="text-teal-500 text-5xl leading-none font-serif">"</span>
+              <span className="text-teal-500 text-5xl leading-none font-serif">&quot;</span>
               {testimonial.quote}
-              <span className="text-teal-500 text-5xl leading-none font-serif">"</span>
+              <span className="text-teal-500 text-5xl leading-none font-serif">&quot;</span>
             </blockquote>
 
             {/* Video Play Button Overlay */}
