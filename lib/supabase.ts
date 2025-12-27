@@ -47,12 +47,19 @@ export interface PartnerResource {
   created_at: string
 }
 
+export interface ResourceDownload {
+  id: string
+  partner_id: string
+  resource_id: string
+  downloaded_at: string
+}
+
 export interface Database {
   public: {
     Tables: {
       partners: {
         Row: Partner
-        Insert: Omit<Partner, "id" | "created_at">
+        Insert: Omit<Partner, "id" | "created_at" | "updated_at">
         Update: Partial<Omit<Partner, "id" | "created_at">>
       }
       partner_products: {
@@ -70,7 +77,14 @@ export interface Database {
         Insert: Omit<PartnerResource, "id" | "created_at">
         Update: Partial<Omit<PartnerResource, "id" | "created_at">>
       }
+      resource_downloads: {
+        Row: ResourceDownload
+        Insert: Omit<ResourceDownload, "id" | "downloaded_at">
+        Update: Partial<Omit<ResourceDownload, "id" | "downloaded_at">>
+      }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
   }
 }
 
@@ -79,14 +93,20 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ""
 
+// Helper to check if Supabase is configured
+export function isSupabaseConfigured(): boolean {
+  return Boolean(supabaseUrl && supabaseAnonKey)
+}
+
 // Client for browser/client-side usage
 let browserClient: SupabaseClient<Database> | null = null
 
-export function getSupabaseBrowserClient(): SupabaseClient<Database> {
+export function getSupabaseBrowserClient(): SupabaseClient<Database> | null {
+  if (!isSupabaseConfigured()) {
+    console.warn("Supabase credentials not configured")
+    return null
+  }
   if (!browserClient) {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn("Supabase credentials not configured")
-    }
     browserClient = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: true,
@@ -98,9 +118,10 @@ export function getSupabaseBrowserClient(): SupabaseClient<Database> {
 }
 
 // Server client with service role key for admin operations
-export function getSupabaseServerClient(): SupabaseClient<Database> {
+export function getSupabaseServerClient(): SupabaseClient<Database> | null {
   if (!supabaseUrl || !supabaseServiceKey) {
     console.warn("Supabase server credentials not configured")
+    return null
   }
   return createClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
@@ -108,12 +129,4 @@ export function getSupabaseServerClient(): SupabaseClient<Database> {
       autoRefreshToken: false,
     },
   })
-}
-
-// Default export for convenience (browser client)
-export const supabase = getSupabaseBrowserClient()
-
-// Helper to check if Supabase is configured
-export function isSupabaseConfigured(): boolean {
-  return Boolean(supabaseUrl && supabaseAnonKey)
 }

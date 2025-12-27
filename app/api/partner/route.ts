@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth, requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient, type Partner } from "@/lib/supabase"
+import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/lib/supabase"
 
 /**
  * GET /api/partner
@@ -11,11 +11,18 @@ export async function GET(request: NextRequest) {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     const { data: partner, error } = await supabase
       .from("partners")
       .select("*")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Partner | null; error: { code?: string; message: string } | null }
 
     if (error) {
       if (error.code === "PGRST116") {
@@ -45,12 +52,19 @@ export async function POST(request: NextRequest) {
     const { userId } = await requireAuth()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     // Check if partner already exists
     const { data: existing } = await supabase
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     if (existing) {
       return NextResponse.json(
@@ -93,7 +107,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create partner record
-    const { data: partner, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: partner, error } = await (supabase as any)
       .from("partners")
       .insert({
         clerk_user_id: userId,
@@ -108,12 +123,12 @@ export async function POST(request: NextRequest) {
         status: "pending",
       })
       .select()
-      .single()
+      .single() as { data: Partner | null; error: { message: string } | null }
 
-    if (error) {
+    if (error || !partner) {
       console.error("Error creating partner:", error)
       return NextResponse.json(
-        { error: "Database error", message: error.message },
+        { error: "Database error", message: error?.message || "Failed to create partner" },
         { status: 500 }
       )
     }
@@ -132,9 +147,10 @@ export async function POST(request: NextRequest) {
           { partner_id: partner.id, product_type: "cancellation", is_enabled: false, customer_price: 14.99 },
         ]
 
-    const { error: productError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: productError } = await (supabase as any)
       .from("partner_products")
-      .insert(productConfigs)
+      .insert(productConfigs) as { error: { message: string } | null }
 
     if (productError) {
       console.error("Error creating products:", productError)

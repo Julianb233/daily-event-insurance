@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient } from "@/lib/supabase"
+import { getSupabaseServerClient, type Partner, type MonthlyEarnings } from "@/lib/supabase"
 import {
   calculateMonthlyCommission,
   OPT_IN_RATE,
@@ -16,6 +16,14 @@ export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
+
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     const searchParams = request.nextUrl.searchParams
     const year = searchParams.get("year") || new Date().getFullYear().toString()
 
@@ -24,7 +32,7 @@ export async function GET(request: NextRequest) {
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     if (partnerError || !partner) {
       return NextResponse.json(
@@ -39,7 +47,7 @@ export async function GET(request: NextRequest) {
       .select("*")
       .eq("partner_id", partner.id)
       .like("year_month", `${year}-%`)
-      .order("year_month", { ascending: true })
+      .order("year_month", { ascending: true }) as { data: MonthlyEarnings[] | null; error: { message: string } | null }
 
     if (earningsError) {
       console.error("Error fetching earnings:", earningsError)
@@ -89,6 +97,13 @@ export async function POST(request: NextRequest) {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     // Parse request body
     const body = await request.json()
     const { yearMonth, totalParticipants, locationBonus = 0 } = body
@@ -115,7 +130,7 @@ export async function POST(request: NextRequest) {
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     if (partnerError || !partner) {
       return NextResponse.json(
@@ -129,7 +144,8 @@ export async function POST(request: NextRequest) {
     const partnerCommission = calculateMonthlyCommission(totalParticipants, OPT_IN_RATE, locationBonus)
 
     // Upsert earnings record
-    const { data: earnings, error: earningsError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: upsertedEarnings, error: upsertError } = await (supabase as any)
       .from("monthly_earnings")
       .upsert(
         {
@@ -144,16 +160,16 @@ export async function POST(request: NextRequest) {
         }
       )
       .select()
-      .single()
+      .single() as { data: MonthlyEarnings | null; error: { message: string } | null }
 
-    if (earningsError) {
-      console.error("Error saving earnings:", earningsError)
+    if (upsertError) {
+      console.error("Error saving earnings:", upsertError)
       return NextResponse.json(
-        { error: "Database error", message: earningsError.message },
+        { error: "Database error", message: upsertError.message },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ earnings })
+    return NextResponse.json({ earnings: upsertedEarnings })
   })
 }

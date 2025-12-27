@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient } from "@/lib/supabase"
+import { getSupabaseServerClient, type Partner, type PartnerResource, type ResourceDownload } from "@/lib/supabase"
 
 /**
  * GET /api/partner/resources
@@ -10,6 +10,14 @@ export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
+
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     const searchParams = request.nextUrl.searchParams
     const category = searchParams.get("category")
 
@@ -18,7 +26,7 @@ export async function GET(request: NextRequest) {
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     // Build query
     let query = supabase
@@ -30,7 +38,7 @@ export async function GET(request: NextRequest) {
       query = query.eq("category", category)
     }
 
-    const { data: resources, error } = await query
+    const { data: resources, error } = await query as { data: PartnerResource[] | null; error: { message: string } | null }
 
     if (error) {
       console.error("Error fetching resources:", error)
@@ -46,7 +54,7 @@ export async function GET(request: NextRequest) {
       const { data: downloads } = await supabase
         .from("resource_downloads")
         .select("resource_id")
-        .eq("partner_id", partner.id)
+        .eq("partner_id", partner.id) as { data: Pick<ResourceDownload, "resource_id">[] | null; error: unknown }
 
       if (downloads) {
         downloads.forEach((d) => {
@@ -84,6 +92,13 @@ export async function POST(request: NextRequest) {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     // Parse request body
     const body = await request.json()
     const { resourceId } = body
@@ -100,7 +115,7 @@ export async function POST(request: NextRequest) {
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     if (partnerError || !partner) {
       return NextResponse.json(
@@ -110,12 +125,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Record the download
-    const { error: downloadError } = await supabase
+    const { error: downloadError } = await (supabase
       .from("resource_downloads")
       .insert({
         partner_id: partner.id,
         resource_id: resourceId,
-      })
+      }) as unknown as Promise<{ error: { message: string } | null }>)
 
     if (downloadError) {
       console.error("Error recording download:", downloadError)

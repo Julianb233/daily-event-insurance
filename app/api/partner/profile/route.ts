@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient } from "@/lib/supabase"
+import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/lib/supabase"
 
 /**
  * GET /api/partner/profile
@@ -11,12 +11,19 @@ export async function GET(request: NextRequest) {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     // Get partner with products
     const { data: partner, error: partnerError } = await supabase
       .from("partners")
       .select("*")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Partner | null; error: unknown }
 
     if (partnerError || !partner) {
       return NextResponse.json(
@@ -29,7 +36,7 @@ export async function GET(request: NextRequest) {
     const { data: products, error: productsError } = await supabase
       .from("partner_products")
       .select("*")
-      .eq("partner_id", partner.id)
+      .eq("partner_id", partner.id) as { data: PartnerProduct[] | null; error: unknown }
 
     if (productsError) {
       console.error("Error fetching products:", productsError)
@@ -51,6 +58,13 @@ export async function PATCH(request: NextRequest) {
     const { userId } = await requirePartner()
     const supabase = getSupabaseServerClient()
 
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Configuration error", message: "Database not configured" },
+        { status: 503 }
+      )
+    }
+
     // Parse request body
     const body = await request.json()
     const {
@@ -70,7 +84,7 @@ export async function PATCH(request: NextRequest) {
       .from("partners")
       .select("id")
       .eq("clerk_user_id", userId)
-      .single()
+      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
 
     if (partnerError || !partner) {
       return NextResponse.json(
@@ -80,7 +94,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Build update object with only provided fields
-    const updateData: Record<string, unknown> = {}
+    const updateData: Partial<Partner> = {}
     if (businessName !== undefined) updateData.business_name = businessName
     if (businessType !== undefined) updateData.business_type = businessType
     if (contactName !== undefined) updateData.contact_name = contactName
@@ -92,10 +106,11 @@ export async function PATCH(request: NextRequest) {
 
     // Update partner if there are changes
     if (Object.keys(updateData).length > 0) {
-      const { error: updateError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateError } = await (supabase as any)
         .from("partners")
         .update(updateData)
-        .eq("id", partner.id)
+        .eq("id", partner.id) as { error: { message: string } | null }
 
       if (updateError) {
         console.error("Error updating partner:", updateError)
@@ -113,7 +128,8 @@ export async function PATCH(request: NextRequest) {
 
         if (!productType) continue
 
-        const { error: productError } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: productError } = await (supabase as any)
           .from("partner_products")
           .upsert(
             {
@@ -125,7 +141,7 @@ export async function PATCH(request: NextRequest) {
             {
               onConflict: "partner_id,product_type",
             }
-          )
+          ) as { error: { message: string } | null }
 
         if (productError) {
           console.error("Error updating product:", productError)
@@ -138,12 +154,12 @@ export async function PATCH(request: NextRequest) {
       .from("partners")
       .select("*")
       .eq("id", partner.id)
-      .single()
+      .single() as { data: Partner | null; error: unknown }
 
     const { data: updatedProducts } = await supabase
       .from("partner_products")
       .select("*")
-      .eq("partner_id", partner.id)
+      .eq("partner_id", partner.id) as { data: PartnerProduct[] | null; error: unknown }
 
     return NextResponse.json({
       partner: updatedPartner,
