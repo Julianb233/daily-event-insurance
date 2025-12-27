@@ -125,12 +125,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Record the download
-    const { error: downloadError } = await (supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: downloadError } = await (supabase as any)
       .from("resource_downloads")
       .insert({
         partner_id: partner.id,
         resource_id: resourceId,
-      }) as unknown as Promise<{ error: { message: string } | null }>)
+      }) as { error: { message: string } | null }
 
     if (downloadError) {
       console.error("Error recording download:", downloadError)
