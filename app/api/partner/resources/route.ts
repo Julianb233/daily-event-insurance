@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
 import { getSupabaseServerClient, type Partner, type PartnerResource, type ResourceDownload } from "@/lib/supabase"
+import { isDevMode, MOCK_RESOURCES } from "@/lib/mock-data"
 
 /**
  * GET /api/partner/resources
@@ -9,6 +10,30 @@ import { getSupabaseServerClient, type Partner, type PartnerResource, type Resou
 export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
+
+    // Dev mode - return mock data
+    if (isDevMode) {
+      console.log("[DEV MODE] Returning mock resources data")
+      const searchParams = request.nextUrl.searchParams
+      const category = searchParams.get("category")
+
+      let resources = MOCK_RESOURCES
+      if (category) {
+        resources = resources.filter(r => r.category === category)
+      }
+
+      const enrichedResources = resources.map(r => ({ ...r, downloadCount: 0 }))
+
+      return NextResponse.json({
+        resources: enrichedResources,
+        grouped: {
+          marketing: enrichedResources.filter(r => r.category === "marketing"),
+          training: enrichedResources.filter(r => r.category === "training"),
+          documentation: enrichedResources.filter(r => r.category === "documentation"),
+        },
+      })
+    }
+
     const supabase = getSupabaseServerClient()
 
     if (!supabase) {

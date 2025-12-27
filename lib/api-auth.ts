@@ -7,6 +7,19 @@ import { NextResponse } from 'next/server';
  * Provides utilities for protecting API routes and checking user permissions.
  */
 
+// Development mode - bypass auth when Clerk isn't configured
+const isDevMode = !process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+// Mock user for development
+const MOCK_USER = {
+  id: 'dev_user_001',
+  publicMetadata: { role: 'partner' },
+  privateMetadata: { role: 'partner' },
+  firstName: 'Demo',
+  lastName: 'Partner',
+  emailAddresses: [{ emailAddress: 'demo@partner.dev' }],
+};
+
 export interface AuthenticatedUser {
   userId: string;
   user: any; // Clerk user object
@@ -20,6 +33,12 @@ export interface AuthenticatedUser {
  * @throws Returns NextResponse with 401 if not authenticated
  */
 export async function requireAuth(): Promise<{ userId: string }> {
+  // Dev mode bypass
+  if (isDevMode) {
+    console.log('[DEV MODE] Auth bypassed - using mock user');
+    return { userId: MOCK_USER.id };
+  }
+
   const { userId } = await auth();
 
   if (!userId) {
@@ -102,6 +121,12 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> 
  * @throws Returns NextResponse with 401 if not authenticated or 403 if not partner
  */
 export async function requirePartner(): Promise<AuthenticatedUser> {
+  // Dev mode bypass
+  if (isDevMode) {
+    console.log('[DEV MODE] Partner auth bypassed - using mock partner');
+    return { userId: MOCK_USER.id, user: MOCK_USER };
+  }
+
   const { userId } = await auth();
 
   if (!userId) {

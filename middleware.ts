@@ -1,4 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
+
+// Development mode - bypass auth when Clerk isn't configured
+const isDevMode = !process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 // Define protected routes that require authentication
 const isProtectedRoute = createRouteMatcher([
@@ -28,12 +32,20 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
 ])
 
-export default clerkMiddleware(async (auth, req) => {
-  // Protect routes that require authentication
-  if (isProtectedRoute(req)) {
-    await auth.protect()
-  }
-})
+// Dev mode middleware - bypasses Clerk entirely
+function devModeMiddleware() {
+  console.log("[DEV MODE] Clerk middleware bypassed - no credentials configured")
+  return NextResponse.next()
+}
+
+export default isDevMode
+  ? devModeMiddleware
+  : clerkMiddleware(async (auth, req) => {
+      // Protect routes that require authentication
+      if (isProtectedRoute(req)) {
+        await auth.protect()
+      }
+    }, { debug: process.env.NODE_ENV === "development" })
 
 export const config = {
   matcher: [

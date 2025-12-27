@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
 import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/lib/supabase"
+import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
 
 /**
  * GET /api/partner/profile
@@ -9,6 +10,16 @@ import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/li
 export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
+
+    // Dev mode - return mock data
+    if (isDevMode) {
+      console.log("[DEV MODE] Returning mock profile data")
+      return NextResponse.json({
+        partner: MOCK_PARTNER,
+        products: MOCK_PRODUCTS,
+      })
+    }
+
     const supabase = getSupabaseServerClient()
 
     if (!supabase) {

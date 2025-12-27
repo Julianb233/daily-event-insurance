@@ -7,6 +7,7 @@ import {
   getCurrentYearMonth,
   getLastNMonths,
 } from "@/lib/commission-tiers"
+import { isDevMode, MOCK_EARNINGS } from "@/lib/mock-data"
 
 /**
  * GET /api/partner/earnings
@@ -15,6 +16,40 @@ import {
 export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
+
+    // Dev mode - return mock data
+    if (isDevMode) {
+      console.log("[DEV MODE] Returning mock earnings data")
+      const year = new Date().getFullYear().toString()
+      const yearEarnings = MOCK_EARNINGS.filter(e => e.year_month.startsWith(year))
+      const totalParticipants = yearEarnings.reduce((sum, e) => sum + e.total_participants, 0)
+      const totalOptedIn = yearEarnings.reduce((sum, e) => sum + e.opted_in_participants, 0)
+      const totalCommission = yearEarnings.reduce((sum, e) => sum + Number(e.partner_commission), 0)
+
+      const last12Months = getLastNMonths(12)
+      const monthlyData = last12Months.map((month) => {
+        const monthEarning = MOCK_EARNINGS.find((e) => e.year_month === month)
+        return {
+          month,
+          participants: monthEarning?.total_participants || 0,
+          optedIn: monthEarning?.opted_in_participants || 0,
+          earnings: Number(monthEarning?.partner_commission) || 0,
+        }
+      })
+
+      return NextResponse.json({
+        summary: {
+          year,
+          totalParticipants,
+          totalOptedIn,
+          totalCommission,
+          averageMonthlyCommission: yearEarnings.length ? totalCommission / yearEarnings.length : 0,
+        },
+        earnings: yearEarnings,
+        chartData: monthlyData,
+      })
+    }
+
     const supabase = getSupabaseServerClient()
 
     if (!supabase) {
