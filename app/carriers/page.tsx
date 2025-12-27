@@ -5,6 +5,7 @@ import Footer from "@/components/footer"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   TrendingUp,
   Users,
@@ -633,6 +634,9 @@ export default function CarriersPage() {
 
       {/* Coverage Types Section */}
       <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-gradient-to-br from-teal-100/40 to-transparent rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-emerald-100/40 to-transparent rounded-full blur-3xl" />
+
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -641,55 +645,108 @@ export default function CarriersPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-              Coverage Categories We Support
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-sm bg-teal-50 rounded-full border border-teal-200 mb-6"
+            >
+              <Shield className="w-4 h-4 text-teal-600" />
+              <span className="text-sm font-semibold text-teal-700">Coverage Verticals</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+              Coverage Categories{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
+                We Support
+              </span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              HIQOR activates coverage across diverse event types—each with unique risk profiles and data opportunities.
+              HIQOR activates coverage across diverse event types—each with unique risk profiles and premium opportunities.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {carrierCategories.map((category, index) => {
-              const Icon = carrierCategoryIconMap[category.icon] || Dumbbell
               const colorConfig = {
-                teal: { gradient: "from-teal-500 to-emerald-500", bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200" },
-                sky: { gradient: "from-sky-500 to-blue-500", bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200" },
-                purple: { gradient: "from-purple-500 to-violet-500", bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
-                orange: { gradient: "from-orange-500 to-amber-500", bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
+                teal: { gradient: "from-teal-500 to-emerald-500", overlay: "from-teal-900/80 via-teal-900/60 to-transparent", textDark: "text-teal-600", badge: "bg-teal-500/20 text-teal-300 border-teal-400/30" },
+                sky: { gradient: "from-sky-500 to-blue-500", overlay: "from-sky-900/80 via-sky-900/60 to-transparent", textDark: "text-sky-600", badge: "bg-sky-500/20 text-sky-300 border-sky-400/30" },
+                purple: { gradient: "from-purple-500 to-violet-500", overlay: "from-purple-900/80 via-purple-900/60 to-transparent", textDark: "text-purple-600", badge: "bg-purple-500/20 text-purple-300 border-purple-400/30" },
+                orange: { gradient: "from-orange-500 to-amber-500", overlay: "from-orange-900/80 via-orange-900/60 to-transparent", textDark: "text-orange-600", badge: "bg-orange-500/20 text-orange-300 border-orange-400/30" },
               }
               const colors = colorConfig[category.color]
 
               return (
                 <Link key={category.slug} href={`/carriers/${category.slug}`}>
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{
-                      y: -8,
+                      y: -10,
                       scale: 1.02,
-                      transition: { type: "spring", stiffness: 300 }
+                      transition: { type: "spring", stiffness: 300, damping: 20 }
                     }}
                     className="group relative h-full"
                     style={{ transformStyle: "preserve-3d", perspective: 1000 }}
                   >
-                    {/* Glow */}
-                    <div className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300`} />
+                    {/* Glow effect */}
+                    <div className={`absolute -inset-1 bg-gradient-to-r ${colors.gradient} rounded-3xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500`} />
 
-                    <div className="relative backdrop-blur-sm bg-white/90 rounded-2xl p-6 text-center border border-slate-200 hover:border-teal-300 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                      <motion.div
-                        className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${colors.gradient} flex items-center justify-center shadow-lg`}
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <Icon className="w-7 h-7 text-white" />
-                      </motion.div>
-                      <div className="text-lg font-bold text-slate-900 mb-2">{category.shortTitle}</div>
-                      <div className="text-sm text-slate-600 mb-3">{category.marketStats.marketSize} market</div>
-                      <div className={`text-xs ${colors.text} font-medium flex items-center justify-center gap-1`}>
-                        Learn more <ArrowRight className="w-3 h-3" />
+                    {/* Card */}
+                    <div className="relative h-full rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-slate-200/50">
+                      {/* Image */}
+                      <div className="relative h-64 overflow-hidden">
+                        <Image
+                          src={category.heroImage}
+                          alt={category.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        {/* Gradient overlay */}
+                        <div className={`absolute inset-0 bg-gradient-to-t ${colors.overlay}`} />
+
+                        {/* Market size badge */}
+                        <div className="absolute top-4 right-4">
+                          <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${colors.badge} backdrop-blur-sm border`}>
+                            {category.marketStats.marketSize} Market
+                          </span>
+                        </div>
+
+                        {/* Content overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <h3 className="text-2xl font-bold text-white mb-2">{category.title}</h3>
+                          <p className="text-white/80 text-sm line-clamp-2">{category.tagline}</p>
+                        </div>
+                      </div>
+
+                      {/* Bottom stats bar */}
+                      <div className="bg-white p-5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex gap-6">
+                            <div>
+                              <div className={`text-lg font-bold ${colors.textDark}`}>
+                                {category.marketStats.optInRate}
+                              </div>
+                              <div className="text-xs text-slate-500">Opt-In Rate</div>
+                            </div>
+                            <div>
+                              <div className={`text-lg font-bold ${colors.textDark}`}>
+                                {category.marketStats.avgPremium}
+                              </div>
+                              <div className="text-xs text-slate-500">Avg Premium</div>
+                            </div>
+                          </div>
+
+                          <motion.div
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${colors.gradient} text-white text-sm font-semibold shadow-lg`}
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            Explore
+                            <ArrowRight className="w-4 h-4" />
+                          </motion.div>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

@@ -55,7 +55,7 @@ export const carrierCategories: CarrierCategoryData[] = [
     shortTitle: "Fitness",
     tagline: "Tap into the $96B fitness industry with real-time workout data",
     description: "Access the massive fitness market with unprecedented visibility into member activity, class attendance, and equipment usage. Our gym integrations provide real-time data that enables precise underwriting and risk-appropriate pricing.",
-    heroImage: "/images/categories/fitness-hero.jpg",
+    heroImage: "/images/categories/fitness-gyms-hero.jpg",
     icon: "Dumbbell",
     color: "teal",
     marketStats: {
@@ -131,7 +131,7 @@ export const carrierCategories: CarrierCategoryData[] = [
     shortTitle: "Races",
     tagline: "Cover 35M+ annual race participants with event-specific policies",
     description: "The running and race event industry represents a massive, underserved market. Our race registration integrations enable per-participant, per-event coverage with complete visibility into course conditions, medical support, and participant fitness levels.",
-    heroImage: "/images/categories/race-hero.jpg",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Trophy",
     color: "orange",
     marketStats: {
@@ -207,7 +207,7 @@ export const carrierCategories: CarrierCategoryData[] = [
     shortTitle: "Adventure",
     tagline: "Underwrite adventure activities with real-time safety data",
     description: "From climbing gyms to ski resorts, kayak rentals to guided tours - outdoor adventure represents high-value premium opportunities. Our integrations provide equipment status, weather conditions, guide certifications, and participant skill levels for precise risk assessment.",
-    heroImage: "/images/categories/adventure-hero.jpg",
+    heroImage: "/images/categories/activity-based-hero.jpg",
     icon: "Mountain",
     color: "sky",
     marketStats: {
@@ -283,7 +283,7 @@ export const carrierCategories: CarrierCategoryData[] = [
     shortTitle: "Wellness",
     tagline: "Cover the $1.8T wellness industry with practitioner-verified policies",
     description: "The wellness and medical spa industry is booming, with consumers seeking everything from massage to aesthetic treatments. Our integrations verify practitioner credentials, treatment protocols, and facility certifications for accurate risk assessment.",
-    heroImage: "/images/categories/wellness-hero.jpg",
+    heroImage: "/images/categories/aesthetic-wellness-hero.jpg",
     icon: "Sparkles",
     color: "purple",
     marketStats: {
