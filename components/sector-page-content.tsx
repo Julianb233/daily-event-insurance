@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 import {
   Shield,
   DollarSign,
@@ -61,9 +62,22 @@ function SectorHero({ sector }: { sector: IndustrySector }) {
   const HeroIcon = iconMap[sector.icon] || Activity
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500">
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src={sector.heroImage}
+          alt={sector.heroTitle}
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/80 via-teal-800/70 to-slate-900/80" />
+      </div>
+
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 z-[1]">
         <div
           className="absolute inset-0"
           style={{

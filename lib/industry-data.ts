@@ -8,6 +8,7 @@ export interface IndustrySector {
   metaDescription: string
   heroTitle: string
   heroSubtitle: string
+  heroImage: string // Background image for hero section
   icon: string
   categoryId: string // Links to IndustryCategory
   benefits: {
@@ -44,6 +45,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Protect your running events with same-day insurance coverage. Offer instant participant protection, reduce liability, and earn revenue on every race registration.",
     heroTitle: "Event Insurance Built for Race Directors",
     heroSubtitle: "Protect participants, reduce your liability exposure, and create a new revenue stream with every race registration.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Activity",
     categoryId: "race-events",
     benefits: [
@@ -125,6 +127,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant participant insurance for road races, criteriums, gran fondos, and gravel events. Protect your cyclists and earn commission on every registration.",
     heroTitle: "Insurance for Cycling Event Organizers",
     heroSubtitle: "Protect your riders with same-day coverage for road races, criteriums, gran fondos, and gravel events while earning revenue.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Bike",
     categoryId: "race-events",
     benefits: [
@@ -200,6 +203,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for triathlons, duathlons, and multi-sport events. Protect participants across swim, bike, and run with integrated coverage.",
     heroTitle: "Multi-Sport Event Insurance",
     heroSubtitle: "Comprehensive coverage for triathlons, duathlons, aquathlons, and adventure races. Protect participants across all disciplines.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Waves",
     categoryId: "race-events",
     benefits: [
@@ -275,6 +279,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for Spartan races, Tough Mudder events, and obstacle course competitions. Protect participants on high-risk obstacles while earning revenue.",
     heroTitle: "OCR Event Insurance",
     heroSubtitle: "Specialized coverage for obstacle course races, mud runs, and extreme endurance events. Protection built for high-risk activities.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Mountain",
     categoryId: "race-events",
     benefits: [
@@ -350,6 +355,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Protect your marathon, half marathon, and fun run participants with instant insurance coverage. Reduce liability and create new revenue from race registrations.",
     heroTitle: "Marathon & Fun Run Insurance",
     heroSubtitle: "Comprehensive participant protection for full marathons, half marathons, 10Ks, 5Ks, and charity fun runs.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Award",
     categoryId: "race-events",
     benefits: [
@@ -425,6 +431,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant insurance for corporate 5Ks, company fitness challenges, and wellness programs. Protect employees and create revenue from corporate event partnerships.",
     heroTitle: "Corporate Wellness Event Insurance",
     heroSubtitle: "Protection for company 5Ks, wellness challenges, charity runs, and corporate fitness events. Serve the growing B2B wellness market.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "Building",
     categoryId: "race-events",
     benefits: [
@@ -500,6 +507,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for college fun runs, alumni races, homecoming 5Ks, and university athletic events. Protect students and generate revenue for athletic programs.",
     heroTitle: "School & University Event Insurance",
     heroSubtitle: "Coverage for college fun runs, alumni races, student recreation events, and university athletic fundraisers.",
+    heroImage: "/images/categories/race-events-hero.jpg",
     icon: "GraduationCap",
     categoryId: "race-events",
     benefits: [
@@ -575,6 +583,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant insurance for fitness challenges, CrossFit competitions, boot camps, and gym member events. Protect participants and earn revenue on every challenge.",
     heroTitle: "Fitness Center Event Insurance",
     heroSubtitle: "Comprehensive coverage for fitness challenges, CrossFit competitions, gym tournaments, and member appreciation events.",
+    heroImage: "/images/categories/fitness-gyms-hero.jpg",
     icon: "Dumbbell",
     categoryId: "fitness-gyms",
     benefits: [
@@ -656,6 +665,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for climbing competitions, bouldering challenges, and facility events. Protect climbers on high-risk activities while generating revenue.",
     heroTitle: "Climbing Facility Event Insurance",
     heroSubtitle: "Specialized coverage for climbing competitions, bouldering leagues, youth climbing events, and facility challenges.",
+    heroImage: "/images/categories/fitness-gyms-hero.jpg",
     icon: "Mountain",
     categoryId: "fitness-gyms",
     benefits: [
@@ -737,6 +747,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant insurance for ski races, snowboard competitions, and mountain events. Protect participants in high-risk snow sports while earning commission revenue.",
     heroTitle: "Ski Resort Event Insurance",
     heroSubtitle: "Comprehensive coverage for ski races, snowboard competitions, terrain park events, and winter sport challenges.",
+    heroImage: "/images/categories/activity-based-hero.jpg",
     icon: "Snowflake",
     categoryId: "activity-based",
     benefits: [
@@ -818,6 +829,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for skydiving competitions, BASE jumping events, and aerial sport challenges. Specialized coverage for extreme air sports with premium revenue.",
     heroTitle: "Skydiving & Aerial Sports Event Insurance",
     heroSubtitle: "Specialized coverage for skydiving competitions, formation flying events, wingsuit challenges, and aerial sport exhibitions.",
+    heroImage: "/images/categories/activity-based-hero.jpg",
     icon: "Plane",
     categoryId: "activity-based",
     benefits: [
@@ -899,6 +911,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant insurance for bike rentals, kayak outfitters, gear rental events, and adventure equipment. Protect customers and reduce liability while earning revenue.",
     heroTitle: "Equipment Rental Event Insurance",
     heroSubtitle: "Coverage for bike rental tours, kayak outfitters, adventure gear rentals, and equipment-based recreational events.",
+    heroImage: "/images/categories/activity-based-hero.jpg",
     icon: "Package",
     categoryId: "activity-based",
     benefits: [
@@ -980,6 +993,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for kayak races, SUP competitions, open water swims, and water sport events. Protect participants and earn revenue from aquatic activities.",
     heroTitle: "Water Sports Event Insurance",
     heroSubtitle: "Comprehensive coverage for kayak races, SUP competitions, open water swimming, surf contests, and aquatic adventure events.",
+    heroImage: "/images/categories/activity-based-hero.jpg",
     icon: "Waves",
     categoryId: "activity-based",
     benefits: [
@@ -1061,6 +1075,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Instant insurance for MediSpa open houses, aesthetic treatment events, and wellness demonstrations. Protect attendees and generate revenue from promotional events.",
     heroTitle: "MediSpa Event Insurance",
     heroSubtitle: "Coverage for aesthetic treatment demonstrations, MediSpa open houses, injectable events, and wellness center promotional activities.",
+    heroImage: "/images/categories/aesthetic-wellness-hero.jpg",
     icon: "Sparkles",
     categoryId: "aesthetic-wellness",
     benefits: [
@@ -1142,6 +1157,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     metaDescription: "Same-day insurance for wellness retreats, recovery workshops, and therapeutic events. Protect participants in holistic health experiences while earning revenue.",
     heroTitle: "Wellness & Recovery Event Insurance",
     heroSubtitle: "Comprehensive coverage for wellness retreats, recovery workshops, therapeutic movement classes, and holistic health events.",
+    heroImage: "/images/categories/aesthetic-wellness-hero.jpg",
     icon: "Heart",
     categoryId: "aesthetic-wellness",
     benefits: [
