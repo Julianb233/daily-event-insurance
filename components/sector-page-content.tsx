@@ -414,16 +414,35 @@ function RelatedIndustries({ currentSlug }: { currentSlug: string }) {
                 viewport={{ once: true }}
               >
                 <Link href={`/industries/${slug}`}>
-                  <div className="bg-white rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 border border-slate-200 group cursor-pointer">
-                    <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-6 h-6 text-white" />
+                  <div className="bg-white rounded-xl hover:shadow-xl transition-all duration-300 border border-slate-200 group cursor-pointer overflow-hidden">
+                    {/* Hero Image */}
+                    <div className="relative h-36 overflow-hidden">
+                      <Image
+                        src={sector.heroImage}
+                        alt={sector.shortTitle}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {/* Gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+                      {/* Icon badge */}
+                      <div className="absolute bottom-3 left-4">
+                        <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <IconComponent className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-black uppercase text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">
-                      {sector.title}
-                    </h3>
-                    <div className="flex items-center text-teal-600 text-sm font-semibold">
-                      Learn More
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">
+                        {sector.shortTitle}
+                      </h3>
+                      <p className="text-sm text-slate-600 mb-3 line-clamp-2">
+                        {sector.heroSubtitle}
+                      </p>
+                      <div className="flex items-center text-teal-600 text-sm font-semibold">
+                        Learn More
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
                     </div>
                   </div>
                 </Link>

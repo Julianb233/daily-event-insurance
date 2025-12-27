@@ -145,7 +145,19 @@ export function CategoryPageContent({ category, sectors, hasActiveGuard }: Categ
   return (
     <>
       {/* Hero Section */}
-      <section className={`relative pt-32 pb-20 overflow-hidden bg-gradient-to-br ${colors.gradient}`}>
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src={category.heroImage}
+            alt={category.title}
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Gradient overlay for readability */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-85`} />
+        </div>
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div
