@@ -9,6 +9,7 @@ export interface IndustrySector {
   heroTitle: string
   heroSubtitle: string
   icon: string
+  categoryId: string // Links to IndustryCategory
   benefits: {
     title: string
     description: string
@@ -44,6 +45,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Event Insurance Built for Race Directors",
     heroSubtitle: "Protect participants, reduce your liability exposure, and create a new revenue stream with every race registration.",
     icon: "Activity",
+    categoryId: "race-events",
     benefits: [
       {
         title: "Participant Protection",
@@ -124,6 +126,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Insurance for Cycling Event Organizers",
     heroSubtitle: "Protect your riders with same-day coverage for road races, criteriums, gran fondos, and gravel events while earning revenue.",
     icon: "Bike",
+    categoryId: "race-events",
     benefits: [
       {
         title: "Multi-Discipline Coverage",
@@ -198,6 +201,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Multi-Sport Event Insurance",
     heroSubtitle: "Comprehensive coverage for triathlons, duathlons, aquathlons, and adventure races. Protect participants across all disciplines.",
     icon: "Waves",
+    categoryId: "race-events",
     benefits: [
       {
         title: "Multi-Discipline Protection",
@@ -272,6 +276,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "OCR Event Insurance",
     heroSubtitle: "Specialized coverage for obstacle course races, mud runs, and extreme endurance events. Protection built for high-risk activities.",
     icon: "Mountain",
+    categoryId: "race-events",
     benefits: [
       {
         title: "High-Risk Activity Coverage",
@@ -346,6 +351,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Marathon & Fun Run Insurance",
     heroSubtitle: "Comprehensive participant protection for full marathons, half marathons, 10Ks, 5Ks, and charity fun runs.",
     icon: "Award",
+    categoryId: "race-events",
     benefits: [
       {
         title: "Distance Event Protection",
@@ -420,6 +426,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Corporate Wellness Event Insurance",
     heroSubtitle: "Protection for company 5Ks, wellness challenges, charity runs, and corporate fitness events. Serve the growing B2B wellness market.",
     icon: "Building",
+    categoryId: "race-events",
     benefits: [
       {
         title: "B2B Event Opportunities",
@@ -494,6 +501,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "School & University Event Insurance",
     heroSubtitle: "Coverage for college fun runs, alumni races, student recreation events, and university athletic fundraisers.",
     icon: "GraduationCap",
+    categoryId: "race-events",
     benefits: [
       {
         title: "Student Safety Priority",
@@ -568,6 +576,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Fitness Center Event Insurance",
     heroSubtitle: "Comprehensive coverage for fitness challenges, CrossFit competitions, gym tournaments, and member appreciation events.",
     icon: "Dumbbell",
+    categoryId: "fitness-gyms",
     benefits: [
       {
         title: "Challenge Event Revenue",
@@ -648,6 +657,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Climbing Facility Event Insurance",
     heroSubtitle: "Specialized coverage for climbing competitions, bouldering leagues, youth climbing events, and facility challenges.",
     icon: "Mountain",
+    categoryId: "fitness-gyms",
     benefits: [
       {
         title: "High-Risk Activity Protection",
@@ -728,6 +738,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Ski Resort Event Insurance",
     heroSubtitle: "Comprehensive coverage for ski races, snowboard competitions, terrain park events, and winter sport challenges.",
     icon: "Snowflake",
+    categoryId: "activity-based",
     benefits: [
       {
         title: "Winter Sport Risk Coverage",
@@ -808,6 +819,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Skydiving & Aerial Sports Event Insurance",
     heroSubtitle: "Specialized coverage for skydiving competitions, formation flying events, wingsuit challenges, and aerial sport exhibitions.",
     icon: "Plane",
+    categoryId: "activity-based",
     benefits: [
       {
         title: "Extreme Sport Specialization",
@@ -888,6 +900,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Equipment Rental Event Insurance",
     heroSubtitle: "Coverage for bike rental tours, kayak outfitters, adventure gear rentals, and equipment-based recreational events.",
     icon: "Package",
+    categoryId: "activity-based",
     benefits: [
       {
         title: "Customer Liability Reduction",
@@ -968,6 +981,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Water Sports Event Insurance",
     heroSubtitle: "Comprehensive coverage for kayak races, SUP competitions, open water swimming, surf contests, and aquatic adventure events.",
     icon: "Waves",
+    categoryId: "activity-based",
     benefits: [
       {
         title: "Open Water Risk Coverage",
@@ -1048,6 +1062,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "MediSpa Event Insurance",
     heroSubtitle: "Coverage for aesthetic treatment demonstrations, MediSpa open houses, injectable events, and wellness center promotional activities.",
     icon: "Sparkles",
+    categoryId: "aesthetic-wellness",
     benefits: [
       {
         title: "Event Liability Protection",
@@ -1128,6 +1143,7 @@ export const industrySectors: Record<string, IndustrySector> = {
     heroTitle: "Wellness & Recovery Event Insurance",
     heroSubtitle: "Comprehensive coverage for wellness retreats, recovery workshops, therapeutic movement classes, and holistic health events.",
     icon: "Heart",
+    categoryId: "aesthetic-wellness",
     benefits: [
       {
         title: "Holistic Activity Coverage",

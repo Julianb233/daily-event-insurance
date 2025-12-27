@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/how-it-works"
 import Benefits from "@/components/benefits"
 import { DEIIntroSection } from "@/components/dei-intro-section"
 import { DEITrustBadges } from "@/components/dei-trust-badges"
+import { HiqorValueProp } from "@/components/hiqor-value-prop"
 import { FounderStory } from "@/components/founder-story"
 import { DEIWhoWeServe } from "@/components/dei-who-we-serve"
 import { TestimonialsSection } from "@/components/dei-testimonials-section"
@@ -15,6 +16,8 @@ import { ApplySection } from "@/components/dei-apply-section"
 import { TimelineSection } from "@/components/timeline-section"
 import { RevenueCalculator } from "@/components/revenue-calculator"
 import InsuranceModes from "@/components/insurance-modes"
+import { CategoryShowcase } from "@/components/category-showcase"
+import { ActiveGuardSection } from "@/components/activeguard-section"
 
 export default function Home() {
   return (
@@ -28,14 +31,20 @@ export default function Home() {
       {/* 3. DEI Trust Badges - Stats and partner types */}
       <DEITrustBadges />
 
-      {/* 4. How It Works - 3-step process (moved earlier per request) */}
+      {/* 4. HIQOR Value Proposition - Events-based insurance concept */}
+      <HiqorValueProp />
+
+      {/* 5. How It Works - 3-step process */}
       <HowItWorks />
 
-      {/* 5. Founder Story - Epiphany Bridge origin story */}
-      <FounderStory />
+      {/* 6. Category Showcase - 4 main industry categories */}
+      <CategoryShowcase />
 
-      {/* 6. DEI Who We Serve - Animated market cards */}
-      <DEIWhoWeServe />
+      {/* 7. ActiveGuard Section - Monthly subscription product */}
+      <ActiveGuardSection />
+
+      {/* 8. Founder Story - Epiphany Bridge origin story */}
+      <FounderStory />
 
       {/* 7. Revenue Calculator - Interactive earnings calculator */}
       <RevenueCalculator />

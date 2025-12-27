@@ -2,31 +2,41 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
+import { industryCategories } from "@/lib/category-data"
 
-interface IndustryLink {
+interface CategoryLink {
+  id: string
   label: string
   href: string
   description: string
+  icon: React.ElementType
+  color: string
 }
 
-const industries: IndustryLink[] = [
-  { label: "Race Directors", href: "/industries/race-directors", description: "Insurance solutions for race organizers" },
-  { label: "Cycling Events", href: "/industries/cycling-events", description: "Comprehensive coverage for cycling competitions" },
-  { label: "Triathlons", href: "/industries/triathlons", description: "Multi-sport event insurance coverage" },
-  { label: "Obstacle Courses", href: "/industries/obstacle-courses", description: "Protection for challenging events" },
-  { label: "Marathons & Fun Runs", href: "/industries/marathons", description: "Coverage for running events of all sizes" },
-  { label: "Corporate Wellness", href: "/industries/corporate-wellness", description: "Employee wellness event insurance" },
-  { label: "Schools & Universities", href: "/industries/schools-universities", description: "Educational institution event coverage" },
-]
+const categoryIconMap: Record<string, React.ElementType> = {
+  Dumbbell,
+  Mountain,
+  Sparkles,
+  Trophy
+}
+
+const categories: CategoryLink[] = industryCategories.map((cat) => ({
+  id: cat.id,
+  label: cat.title,
+  href: `/categories/${cat.slug}`,
+  description: cat.description,
+  icon: categoryIconMap[cat.icon] || Dumbbell,
+  color: cat.color
+}))
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [industriesOpen, setIndustriesOpen] = useState(false)
-  const [mobileIndustriesOpen, setMobileIndustriesOpen] = useState(false)
+  const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -50,22 +60,22 @@ export default function Header() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      setIndustriesOpen(false)
+      setCategoriesOpen(false)
     }
 
-    if (industriesOpen) {
+    if (categoriesOpen) {
       document.addEventListener("click", handleClickOutside)
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
-  }, [industriesOpen])
+  }, [categoriesOpen])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
     setMenuOpen(false)
-    setIndustriesOpen(false)
+    setCategoriesOpen(false)
 
     // If it's a page link (not a hash), navigate to it
     if (!href.startsWith("#")) {
@@ -95,10 +105,10 @@ export default function Header() {
   }
 
   const navigationLinks = [
-    { label: "Connect", href: "/connect" },
+    { label: "About", href: "/about" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Who We Serve", href: "#who-we-serve" },
-    { label: "How You Can Earn", href: "/#revenue-calculator" },
+    { label: "How You Can Earn", href: "#calculator" },
     { label: "Benefits", href: "#benefits" },
     { label: "Pricing", href: "/pricing" },
   ]
@@ -160,53 +170,66 @@ export default function Header() {
                 </motion.a>
               ))}
 
-              {/* Industries Dropdown */}
+              {/* Categories Dropdown */}
               <div className="relative" onClick={(e) => e.stopPropagation()}>
                 <motion.button
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  onClick={() => setIndustriesOpen(!industriesOpen)}
+                  onClick={() => setCategoriesOpen(!categoriesOpen)}
                   className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
-                  aria-expanded={industriesOpen}
+                  aria-expanded={categoriesOpen}
                   aria-haspopup="true"
                 >
                   Industries
                   <ChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${
-                      industriesOpen ? "rotate-180" : ""
+                      categoriesOpen ? "rotate-180" : ""
                     }`}
                   />
                 </motion.button>
 
                 <AnimatePresence>
-                  {industriesOpen && (
+                  {categoriesOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden"
+                      className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
                     >
-                      <div className="py-2">
-                        {industries.map((industry, idx) => (
-                          <motion.a
-                            key={industry.href}
-                            href={industry.href}
-                            onClick={(e) => handleNavClick(e, industry.href)}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.05 }}
-                            className="block px-4 py-3 hover:bg-[#14B8A6]/5 transition-colors group"
-                          >
-                            <div className="font-medium text-slate-900 text-sm group-hover:text-[#14B8A6] transition-colors">
-                              {industry.label}
-                            </div>
-                            <div className="text-xs text-slate-500 mt-0.5">
-                              {industry.description}
-                            </div>
-                          </motion.a>
-                        ))}
+                      <div className="p-2">
+                        {categories.map((category, idx) => {
+                          const Icon = category.icon
+                          return (
+                            <motion.a
+                              key={category.href}
+                              href={category.href}
+                              onClick={(e) => handleNavClick(e, category.href)}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: idx * 0.05 }}
+                              className="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-slate-50 transition-colors group"
+                            >
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                                category.color === 'teal' ? 'bg-teal-100 text-teal-600' :
+                                category.color === 'sky' ? 'bg-sky-100 text-sky-600' :
+                                category.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                'bg-orange-100 text-orange-600'
+                              }`}>
+                                <Icon className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-slate-900 text-sm group-hover:text-[#14B8A6] transition-colors">
+                                  {category.label}
+                                </div>
+                                <div className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                                  {category.description}
+                                </div>
+                              </div>
+                            </motion.a>
+                          )
+                        })}
                       </div>
                     </motion.div>
                   )}
@@ -323,7 +346,7 @@ export default function Header() {
                   </motion.li>
                 ))}
 
-                {/* Mobile Industries Accordion */}
+                {/* Mobile Categories Accordion */}
                 <motion.li
                   variants={{
                     open: { opacity: 1, x: 0 },
@@ -331,20 +354,20 @@ export default function Header() {
                   }}
                 >
                   <button
-                    onClick={() => setMobileIndustriesOpen(!mobileIndustriesOpen)}
+                    onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
                     className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
-                    aria-expanded={mobileIndustriesOpen}
+                    aria-expanded={mobileCategoriesOpen}
                   >
                     Industries
                     <ChevronDown
                       className={`w-5 h-5 transition-transform duration-200 ${
-                        mobileIndustriesOpen ? "rotate-180" : ""
+                        mobileCategoriesOpen ? "rotate-180" : ""
                       }`}
                     />
                   </button>
 
                   <AnimatePresence>
-                    {mobileIndustriesOpen && (
+                    {mobileCategoriesOpen && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -353,16 +376,20 @@ export default function Header() {
                         className="overflow-hidden"
                       >
                         <div className="pl-4 py-2 space-y-1">
-                          {industries.map((industry) => (
-                            <a
-                              key={industry.href}
-                              href={industry.href}
-                              onClick={(e) => handleNavClick(e, industry.href)}
-                              className="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-md transition-colors"
-                            >
-                              {industry.label}
-                            </a>
-                          ))}
+                          {categories.map((category) => {
+                            const Icon = category.icon
+                            return (
+                              <a
+                                key={category.href}
+                                href={category.href}
+                                onClick={(e) => handleNavClick(e, category.href)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-md transition-colors"
+                              >
+                                <Icon className="w-4 h-4" />
+                                {category.label}
+                              </a>
+                            )
+                          })}
                         </div>
                       </motion.div>
                     )}

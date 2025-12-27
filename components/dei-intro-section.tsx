@@ -92,21 +92,31 @@ export function DEIIntroSection() {
           </div>
         </motion.div>
 
+        {/* HIQOR Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/30 rounded-full mb-4 md:mb-6"
+        >
+          <span className="text-teal-600 font-bold text-xs md:text-sm tracking-wide">HIQOR</span>
+          <span className="text-slate-500 text-xs md:text-sm">Events-Based InsurTech</span>
+        </motion.div>
+
         {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-3xl md:text-5xl lg:text-7xl font-black uppercase text-slate-900 text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
+          className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
           style={{
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
           }}
         >
-          Earn Extra Revenue{" "}
+          Insurance That Activates{" "}
           <span className="text-teal-500">
-            While Protecting
+            Only When Events Happen
           </span>
-          {" "}Your Business
         </motion.h1>
 
         {/* Tagline */}
@@ -116,7 +126,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
         >
-          Add a new revenue stream AND reduce your liability exposure. Two problems, one simple solution.
+          Coverage turns on when your event starts. Turns off when it ends. Earn revenue while protecting participants.
         </motion.p>
 
         {/* Subtagline */}
@@ -126,7 +136,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="text-base md:text-xl text-teal-600 text-center max-w-3xl mt-4 font-semibold"
         >
-          247 facilities already earning. Setup takes 48 hours. Limited spots available in your area.
+          Insurance for moments, not time. 247 facilities already partnered.
         </motion.p>
 
         {/* CTA Buttons */}
