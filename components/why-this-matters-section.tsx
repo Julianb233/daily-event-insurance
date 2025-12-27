@@ -1,0 +1,285 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Building2, Shield, Users, TrendingUp, DollarSign, Target, Heart, Zap, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+
+const stakeholders = [
+  {
+    icon: Building2,
+    title: 'For Platforms & Event Operators',
+    description: 'Turn existing traffic into new revenue without friction.',
+    color: 'sky',
+    benefits: [
+      { icon: DollarSign, text: 'New per-participant revenue stream' },
+      { icon: TrendingUp, text: 'Higher ARPU without price increases' },
+      { icon: Target, text: 'Monetization beyond ticketing' },
+      { icon: Heart, text: 'Better personalization and retention' },
+    ],
+  },
+  {
+    icon: Shield,
+    title: 'For Insurance Carriers',
+    description: 'Access high-intent customers at the moment of need.',
+    color: 'emerald',
+    benefits: [
+      { icon: TrendingUp, text: 'Lower CAC vs paid search' },
+      { icon: Target, text: 'High-intent acquisition moments' },
+      { icon: Zap, text: 'Cleaner engagement signals' },
+      { icon: DollarSign, text: 'Recurring premium conversion' },
+    ],
+  },
+  {
+    icon: Users,
+    title: 'For Participants',
+    description: 'Protection that fits the way they actually live.',
+    color: 'teal',
+    benefits: [
+      { icon: Shield, text: 'Protection only when it matters' },
+      { icon: CheckCircle2, text: 'No paperwork or medical questions' },
+      { icon: Zap, text: 'Zero friction at point of activity' },
+      { icon: Heart, text: 'No always-on coverage they don\'t need' },
+    ],
+  },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.46, 0.45, 0.94],
+    },
+  },
+};
+
+function StakeholderCard({ stakeholder, index }: { stakeholder: typeof stakeholders[0]; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const colorClasses = {
+    sky: {
+      bg: 'bg-sky-500',
+      bgLight: 'bg-sky-50',
+      border: 'border-sky-200',
+      borderHover: 'hover:border-sky-400',
+      text: 'text-sky-600',
+      glow: 'from-sky-500/20 via-sky-400/30 to-sky-500/20',
+    },
+    emerald: {
+      bg: 'bg-emerald-500',
+      bgLight: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      borderHover: 'hover:border-emerald-400',
+      text: 'text-emerald-600',
+      glow: 'from-emerald-500/20 via-emerald-400/30 to-emerald-500/20',
+    },
+    teal: {
+      bg: 'bg-teal-500',
+      bgLight: 'bg-teal-50',
+      border: 'border-teal-200',
+      borderHover: 'hover:border-teal-400',
+      text: 'text-teal-600',
+      glow: 'from-teal-500/20 via-teal-400/30 to-teal-500/20',
+    },
+  };
+
+  const colors = colorClasses[stakeholder.color as keyof typeof colorClasses];
+
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.3 }}
+        className="relative h-full"
+      >
+        {/* Glow effect on hover */}
+        <motion.div
+          className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r ${colors.glow} blur-xl`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+        />
+
+        {/* Card */}
+        <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} ${colors.borderHover} transition-all duration-500 overflow-hidden`}>
+          {/* Gradient top accent */}
+          <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`} />
+
+          {/* Header */}
+          <div className="mb-6">
+            <motion.div
+              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+              animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, -5, 5, 0] : 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <stakeholder.icon className="w-7 h-7 text-white" strokeWidth={2} />
+            </motion.div>
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
+              {stakeholder.title}
+            </h3>
+            <p className="text-slate-600">
+              {stakeholder.description}
+            </p>
+          </div>
+
+          {/* Benefits */}
+          <ul className="space-y-3">
+            {stakeholder.benefits.map((benefit, i) => (
+              <motion.li
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className="flex items-center gap-3 text-slate-700"
+              >
+                <div className={`w-8 h-8 ${colors.bgLight} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                  <benefit.icon className={`w-4 h-4 ${colors.text}`} />
+                </div>
+                <span className="text-sm">{benefit.text}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function WhyThisMattersSection() {
+  return (
+    <section id="why-this-matters" className="relative py-20 md:py-28 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-20 left-0 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1.1, 1, 1.1],
+            opacity: [0.7, 0.5, 0.7],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
+      {/* Subtle pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #14B8A6 1px, transparent 0)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full border border-teal-200 mb-6"
+          >
+            <TrendingUp className="w-4 h-4 text-teal-600" />
+            <span className="text-sm font-medium text-teal-700">Value Creation</span>
+          </motion.div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
+            Why This{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
+              Matters
+            </span>
+          </h2>
+          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+            Everyone wins when insurance aligns with actual behavior.
+          </p>
+        </motion.div>
+
+        {/* Stakeholder Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12"
+        >
+          {stakeholders.map((stakeholder, index) => (
+            <StakeholderCard key={stakeholder.title} stakeholder={stakeholder} index={index} />
+          ))}
+        </motion.div>
+
+        {/* Connecting Statement */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center"
+        >
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-slate-100 rounded-full">
+            <span className="w-2 h-2 bg-sky-500 rounded-full" />
+            <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+            <span className="w-2 h-2 bg-teal-500 rounded-full" />
+            <span className="text-slate-700 font-medium">
+              Three stakeholders. One aligned model.
+            </span>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

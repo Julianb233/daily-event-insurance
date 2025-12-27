@@ -92,22 +92,40 @@ export function DEIIntroSection() {
           </div>
         </motion.div>
 
+        {/* Primary Tagline - Insurance for Moments */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-4 md:mb-6"
+        >
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-r from-teal-500/15 to-teal-400/10 border border-teal-500/40 rounded-full backdrop-blur-sm">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
+            </span>
+            <span className="text-teal-700 font-bold text-sm md:text-base tracking-wide">
+              Insurance for Moments, Not Time
+            </span>
+          </div>
+        </motion.div>
+
         {/* HIQOR Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/30 rounded-full mb-4 md:mb-6"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/80 border border-slate-200 rounded-full mb-4 md:mb-6"
         >
           <span className="text-teal-600 font-bold text-xs md:text-sm tracking-wide">HIQOR</span>
-          <span className="text-slate-500 text-xs md:text-sm">Events-Based InsurTech</span>
+          <span className="text-slate-500 text-xs md:text-sm">Events-Based InsurTech Platform</span>
         </motion.div>
 
         {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
           className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
           style={{
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
@@ -123,20 +141,20 @@ export function DEIIntroSection() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
           className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
         >
           Coverage turns on when your event starts. Turns off when it ends. Earn revenue while protecting participants.
         </motion.p>
 
-        {/* Subtagline */}
+        {/* Social proof */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.9 }}
           className="text-base md:text-xl text-teal-600 text-center max-w-3xl mt-4 font-semibold"
         >
-          Insurance for moments, not time. 247 facilities already partnered.
+          247 facilities already partnered
         </motion.p>
 
         {/* CTA Buttons */}
@@ -166,6 +184,16 @@ export function DEIIntroSection() {
             See How It Works
           </motion.a>
         </motion.div>
+
+        {/* Infrastructure statement */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.3 }}
+          className="text-sm md:text-base text-slate-500 text-center max-w-3xl mt-6 md:mt-8 px-4"
+        >
+          We power the infrastructure that connects live experiences, digital health signals, and insurance economics into a single, scalable system.
+        </motion.p>
       </motion.div>
 
       {/* Subtle glow effect behind content */}
