@@ -14,7 +14,16 @@ import {
   Shield,
   Copy,
 } from "lucide-react"
-import { useUser } from "@clerk/nextjs"
+
+// Check dev mode at build time - NEXT_PUBLIC_ vars are inlined
+const isDevMode = !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
+// Mock user for dev mode
+const MOCK_USER = {
+  firstName: "Demo",
+  lastName: "Partner",
+  emailAddresses: [{ emailAddress: "demo@partner.dev" }],
+}
 
 interface Partner {
   id: string
@@ -57,8 +66,19 @@ const integrationTypes = [
   { value: "manual", label: "Manual Process", description: "Email-based waiver collection" },
 ]
 
+// Custom hook that uses Clerk in production, mock in dev
+function useProfileUser() {
+  if (isDevMode) {
+    return { user: MOCK_USER }
+  }
+  // Only import and use Clerk when not in dev mode
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { useUser } = require("@clerk/nextjs")
+  return useUser()
+}
+
 export default function PartnerProfilePage() {
-  const { user } = useUser()
+  const { user } = useProfileUser()
   const [data, setData] = useState<ProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)

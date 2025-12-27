@@ -1,7 +1,8 @@
-import { ClerkProvider } from "@clerk/nextjs"
 import { redirect } from "next/navigation"
-import { auth, currentUser } from "@clerk/nextjs/server"
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar"
+
+// Development mode - bypass auth when Clerk isn't configured
+const isDevMode = !process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 export const metadata = {
   title: "Partner Portal | Daily Event Insurance",
@@ -13,21 +14,29 @@ export default async function PartnerLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Check authentication
-  const { userId } = await auth()
+  // Dev mode bypass - skip all auth checks
+  if (!isDevMode) {
+    // Only import and use Clerk when credentials are configured
+    const { auth, currentUser } = await import("@clerk/nextjs/server")
 
-  if (!userId) {
-    redirect("/sign-in?redirect_url=/partner/dashboard")
-  }
+    // Check authentication
+    const { userId } = await auth()
 
-  // Check for partner role
-  const user = await currentUser()
-  const userRole = user?.publicMetadata?.role || user?.privateMetadata?.role
+    if (!userId) {
+      redirect("/sign-in?redirect_url=/partner/dashboard")
+    }
 
-  // Allow partner or admin roles
-  if (userRole !== "partner" && userRole !== "admin") {
-    // If not a partner yet, redirect to onboarding
-    redirect("/onboarding")
+    // Check for partner role
+    const user = await currentUser()
+    const userRole = user?.publicMetadata?.role || user?.privateMetadata?.role
+
+    // Allow partner or admin roles
+    if (userRole !== "partner" && userRole !== "admin") {
+      // If not a partner yet, redirect to onboarding
+      redirect("/onboarding")
+    }
+  } else {
+    console.log("[DEV MODE] Partner layout - auth checks bypassed")
   }
 
   return (

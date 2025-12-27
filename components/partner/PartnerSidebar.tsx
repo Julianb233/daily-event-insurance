@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
@@ -15,7 +15,16 @@ import {
   Shield,
   ChevronRight,
 } from "lucide-react"
-import { useClerk, useUser } from "@clerk/nextjs"
+
+// Check dev mode at build time - NEXT_PUBLIC_ vars are inlined
+const isDevMode = !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
+// Mock user for development mode
+const MOCK_USER = {
+  firstName: "Demo",
+  lastName: "Partner",
+  emailAddresses: [{ emailAddress: "demo@partner.dev" }],
+}
 
 const navItems = [
   {
@@ -40,17 +49,25 @@ const navItems = [
   },
 ]
 
-export function PartnerSidebar() {
-  const pathname = usePathname()
-  const { signOut } = useClerk()
-  const { user } = useUser()
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
+interface UserData {
+  firstName?: string
+  lastName?: string
+  emailAddresses: { emailAddress: string }[]
+}
 
-  const handleSignOut = () => {
-    signOut({ redirectUrl: "/" })
-  }
-
-  const SidebarContent = () => (
+// Inner content component - no hooks, just renders UI
+function SidebarInnerContent({
+  user,
+  onSignOut,
+  setIsMobileOpen,
+  pathname
+}: {
+  user: UserData
+  onSignOut: () => void
+  setIsMobileOpen: (open: boolean) => void
+  pathname: string
+}) {
+  return (
     <>
       {/* Logo */}
       <div className="p-6 border-b border-slate-200">
@@ -82,7 +99,7 @@ export function PartnerSidebar() {
         </div>
         <div className="mt-3 pt-3 border-t border-slate-200">
           <span className="inline-flex items-center px-2 py-1 bg-teal-100 text-teal-700 text-xs font-medium rounded-full">
-            Active Partner
+            {isDevMode ? "Dev Mode" : "Active Partner"}
           </span>
         </div>
       </div>
@@ -115,7 +132,7 @@ export function PartnerSidebar() {
       {/* Sign out */}
       <div className="p-4 border-t border-slate-200">
         <button
-          onClick={handleSignOut}
+          onClick={onSignOut}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
         >
           <LogOut className="w-5 h-5" />
@@ -124,12 +141,29 @@ export function PartnerSidebar() {
       </div>
     </>
   )
+}
+
+// Wrapper that handles desktop/mobile layout
+function SidebarWrapper({
+  user,
+  onSignOut
+}: {
+  user: UserData
+  onSignOut: () => void
+}) {
+  const pathname = usePathname()
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   return (
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-white border-r border-slate-200">
-        <SidebarContent />
+        <SidebarInnerContent
+          user={user}
+          onSignOut={onSignOut}
+          setIsMobileOpen={setIsMobileOpen}
+          pathname={pathname}
+        />
       </aside>
 
       {/* Mobile Header */}
@@ -172,11 +206,62 @@ export function PartnerSidebar() {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-white flex flex-col shadow-xl"
             >
-              <SidebarContent />
+              <SidebarInnerContent
+                user={user}
+                onSignOut={onSignOut}
+                setIsMobileOpen={setIsMobileOpen}
+                pathname={pathname}
+              />
             </motion.aside>
           </>
         )}
       </AnimatePresence>
     </>
   )
+}
+
+// Dev mode sidebar - uses mock data, no Clerk
+function DevModeSidebar() {
+  const router = useRouter()
+
+  const handleSignOut = () => {
+    router.push("/")
+  }
+
+  return <SidebarWrapper user={MOCK_USER} onSignOut={handleSignOut} />
+}
+
+// Production sidebar - uses Clerk hooks
+// This component is only rendered when ClerkProvider is available
+function ClerkSidebar() {
+  const router = useRouter()
+
+  // Dynamic import to avoid build-time issues
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { useUser, useClerk } = require("@clerk/nextjs")
+  const { user } = useUser()
+  const { signOut } = useClerk()
+
+  const handleSignOut = () => {
+    signOut({ redirectUrl: "/" })
+  }
+
+  const userData: UserData = user ? {
+    firstName: user.firstName || undefined,
+    lastName: user.lastName || undefined,
+    emailAddresses: user.emailAddresses || []
+  } : MOCK_USER
+
+  return <SidebarWrapper user={userData} onSignOut={handleSignOut} />
+}
+
+// Main export - chooses correct implementation based on environment
+export function PartnerSidebar() {
+  // In dev mode, use the mock sidebar that never touches Clerk
+  if (isDevMode) {
+    return <DevModeSidebar />
+  }
+
+  // In production, use the Clerk-enabled sidebar
+  return <ClerkSidebar />
 }
