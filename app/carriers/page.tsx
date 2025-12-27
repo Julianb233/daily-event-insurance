@@ -4,6 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
+import Link from "next/link"
 import {
   TrendingUp,
   Users,
@@ -23,8 +24,12 @@ import {
   UserCheck,
   Bell,
   Database,
-  Sparkles
+  Sparkles,
+  Dumbbell,
+  Trophy,
+  Mountain
 } from "lucide-react"
+import { carrierCategories, carrierCategoryIconMap } from "@/lib/carrier-category-data"
 
 const heroStats = [
   { value: "68%", label: "Average Opt-In Rate" },
@@ -644,47 +649,53 @@ export default function CarriersPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {[
-              { name: "Fitness & Gyms", icon: "🏋️" },
-              { name: "Running & Races", icon: "🏃" },
-              { name: "Climbing", icon: "🧗" },
-              { name: "Winter Sports", icon: "⛷️" },
-              { name: "Water Sports", icon: "🏄" },
-              { name: "Equipment Rentals", icon: "🚴" },
-              { name: "Adventure Tours", icon: "🏔️" },
-              { name: "Wellness & MedSpa", icon: "💆" },
-            ].map((category, index) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.05,
-                  rotateY: 10,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                className="group relative"
-                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-              >
-                {/* Glow */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {carrierCategories.map((category, index) => {
+              const Icon = carrierCategoryIconMap[category.icon] || Dumbbell
+              const colorConfig = {
+                teal: { gradient: "from-teal-500 to-emerald-500", bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200" },
+                sky: { gradient: "from-sky-500 to-blue-500", bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200" },
+                purple: { gradient: "from-purple-500 to-violet-500", bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
+                orange: { gradient: "from-orange-500 to-amber-500", bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-200" },
+              }
+              const colors = colorConfig[category.color]
 
-                <div className="relative backdrop-blur-sm bg-white/90 rounded-2xl p-6 text-center border border-slate-200 hover:border-teal-300 shadow-lg hover:shadow-xl transition-all duration-300">
+              return (
+                <Link key={category.slug} href={`/carriers/${category.slug}`}>
                   <motion.div
-                    className="text-4xl mb-3"
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    whileHover={{
+                      y: -8,
+                      scale: 1.02,
+                      transition: { type: "spring", stiffness: 300 }
+                    }}
+                    className="group relative h-full"
+                    style={{ transformStyle: "preserve-3d", perspective: 1000 }}
                   >
-                    {category.icon}
+                    {/* Glow */}
+                    <div className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300`} />
+
+                    <div className="relative backdrop-blur-sm bg-white/90 rounded-2xl p-6 text-center border border-slate-200 hover:border-teal-300 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                      <motion.div
+                        className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${colors.gradient} flex items-center justify-center shadow-lg`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <Icon className="w-7 h-7 text-white" />
+                      </motion.div>
+                      <div className="text-lg font-bold text-slate-900 mb-2">{category.shortTitle}</div>
+                      <div className="text-sm text-slate-600 mb-3">{category.marketStats.marketSize} market</div>
+                      <div className={`text-xs ${colors.text} font-medium flex items-center justify-center gap-1`}>
+                        Learn more <ArrowRight className="w-3 h-3" />
+                      </div>
+                    </div>
                   </motion.div>
-                  <div className="text-sm font-semibold text-slate-700">{category.name}</div>
-                </div>
-              </motion.div>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>

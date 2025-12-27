@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getAllSectorSlugs } from '@/lib/industry-data'
+import { getAllCarrierCategorySlugs } from '@/lib/carrier-category-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://dailyeventinsurance.com'
@@ -11,6 +12,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: currentDate,
     changeFrequency: 'monthly' as const,
     priority: 0.9,
+  }))
+
+  // Generate carrier category URLs
+  const carrierCategories = getAllCarrierCategorySlugs().map((slug) => ({
+    url: `${baseUrl}/carriers/${slug}`,
+    lastModified: currentDate,
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
   }))
 
   return [
@@ -39,6 +48,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.95,
     },
     ...industrySectors,
+    ...carrierCategories,
     {
       url: `${baseUrl}/for-gyms`,
       lastModified: currentDate,
