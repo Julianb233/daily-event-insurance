@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy } from "lucide-react"
+import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 import { industryCategories } from "@/lib/category-data"
@@ -111,6 +111,7 @@ export default function Header() {
     { label: "How You Can Earn", href: "#calculator" },
     { label: "Benefits", href: "#benefits" },
     { label: "Pricing", href: "/pricing" },
+    { label: "For Carriers", href: "/carriers" },
   ]
 
   return (
@@ -230,6 +231,29 @@ export default function Header() {
                             </motion.a>
                           )
                         })}
+                        {/* Divider */}
+                        <div className="my-2 border-t border-slate-100" />
+                        {/* For Carriers Link */}
+                        <motion.a
+                          href="/carriers"
+                          onClick={(e) => handleNavClick(e, "/carriers")}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: categories.length * 0.05 }}
+                          className="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-slate-50 transition-colors group"
+                        >
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-emerald-100 text-emerald-600">
+                            <Building2 className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-slate-900 text-sm group-hover:text-[#14B8A6] transition-colors">
+                              For Insurance Carriers
+                            </div>
+                            <div className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                              Partner with us for embedded distribution
+                            </div>
+                          </div>
+                        </motion.a>
                       </div>
                     </motion.div>
                   )}
@@ -390,6 +414,17 @@ export default function Header() {
                               </a>
                             )
                           })}
+                          {/* Divider */}
+                          <div className="my-2 border-t border-slate-100 mx-4" />
+                          {/* For Carriers Link */}
+                          <a
+                            href="/carriers"
+                            onClick={(e) => handleNavClick(e, "/carriers")}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-md transition-colors"
+                          >
+                            <Building2 className="w-4 h-4" />
+                            For Insurance Carriers
+                          </a>
                         </div>
                       </motion.div>
                     )}

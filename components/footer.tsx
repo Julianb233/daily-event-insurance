@@ -63,6 +63,7 @@ export default function Footer() {
                 { name: "Who We Serve", href: "/#who-we-serve" },
                 { name: "Benefits", href: "/#benefits" },
                 { name: "Pricing", href: "/pricing" },
+                { name: "For Carriers", href: "/carriers" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
