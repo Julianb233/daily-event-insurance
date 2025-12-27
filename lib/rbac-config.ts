@@ -14,6 +14,7 @@
 export const ROLES = {
   ADMIN: 'admin',
   MODERATOR: 'moderator',
+  PARTNER: 'partner',
   USER: 'user',
   VIEWER: 'viewer',
 } as const;
@@ -30,8 +31,9 @@ export type SystemRole = (typeof ROLES)[keyof typeof ROLES];
 export const ROLE_LEVELS: Record<SystemRole, number> = {
   [ROLES.VIEWER]: 0,
   [ROLES.USER]: 1,
-  [ROLES.MODERATOR]: 2,
-  [ROLES.ADMIN]: 3,
+  [ROLES.PARTNER]: 2,
+  [ROLES.MODERATOR]: 3,
+  [ROLES.ADMIN]: 4,
 };
 
 /**
@@ -43,6 +45,7 @@ export const ROLE_LEVELS: Record<SystemRole, number> = {
 export const ROLE_DESCRIPTIONS: Record<SystemRole, string> = {
   [ROLES.ADMIN]: 'Full system access with all administrative privileges',
   [ROLES.MODERATOR]: 'Content moderation and user management capabilities',
+  [ROLES.PARTNER]: 'Partner access with dashboard, earnings, and materials privileges',
   [ROLES.USER]: 'Standard user access with content creation privileges',
   [ROLES.VIEWER]: 'Read-only access to public content',
 };
@@ -86,6 +89,13 @@ export const PERMISSIONS = {
   API_READ: 'api.read',
   API_WRITE: 'api.write',
   API_DELETE: 'api.delete',
+
+  // Partner portal permissions
+  PARTNER_DASHBOARD: 'partner.dashboard',
+  PARTNER_EARNINGS: 'partner.earnings',
+  PARTNER_MATERIALS: 'partner.materials',
+  PARTNER_PROFILE: 'partner.profile',
+  PARTNER_REPORT: 'partner.report',
 } as const;
 
 export type SystemPermission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -110,6 +120,17 @@ export const ROLE_PERMISSIONS: Record<SystemRole, SystemPermission[]> = {
     PERMISSIONS.COMMENTS_CREATE,
     PERMISSIONS.COMMENTS_EDIT, // Own comments only
     PERMISSIONS.API_READ,
+  ],
+
+  [ROLES.PARTNER]: [
+    PERMISSIONS.CONTENT_VIEW,
+    PERMISSIONS.COMMENTS_VIEW,
+    PERMISSIONS.API_READ,
+    PERMISSIONS.PARTNER_DASHBOARD,
+    PERMISSIONS.PARTNER_EARNINGS,
+    PERMISSIONS.PARTNER_MATERIALS,
+    PERMISSIONS.PARTNER_PROFILE,
+    PERMISSIONS.PARTNER_REPORT,
   ],
 
   [ROLES.MODERATOR]: [
@@ -186,6 +207,15 @@ export const PROTECTED_ROUTES = {
   moderator: [
     '/moderate',
     '/moderate/*',
+  ],
+
+  partner: [
+    '/partner',
+    '/partner/*',
+    '/partner/dashboard',
+    '/partner/earnings',
+    '/partner/materials',
+    '/partner/profile',
   ],
 } as const;
 
