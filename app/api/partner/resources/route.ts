@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient, type Partner, type PartnerResource, type ResourceDownload } from "@/lib/supabase"
+import { db, isDbConfigured, partners, partnerResources, resourceDownloads } from "@/lib/db"
+import { eq, asc } from "drizzle-orm"
 import { isDevMode, MOCK_RESOURCES } from "@/lib/mock-data"
 
 /**
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await requirePartner()
 
     // Dev mode - return mock data
-    if (isDevMode) {
+    if (isDevMode || !isDbConfigured()) {
       console.log("[DEV MODE] Returning mock resources data")
       const searchParams = request.nextUrl.searchParams
       const category = searchParams.get("category")
@@ -34,71 +35,52 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const supabase = getSupabaseServerClient()
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Configuration error", message: "Database not configured" },
-        { status: 503 }
-      )
-    }
-
     const searchParams = request.nextUrl.searchParams
     const category = searchParams.get("category")
 
     // Get partner ID for tracking downloads
-    const { data: partner } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    // Build query
-    let query = supabase
-      .from("partner_resources")
-      .select("*")
-      .order("sort_order", { ascending: true })
+    const partner = partnerResult[0]
+
+    // Get resources
+    let resources = await db!
+      .select()
+      .from(partnerResources)
+      .orderBy(asc(partnerResources.sortOrder))
 
     if (category) {
-      query = query.eq("category", category)
-    }
-
-    const { data: resources, error } = await query as { data: PartnerResource[] | null; error: { message: string } | null }
-
-    if (error) {
-      console.error("Error fetching resources:", error)
-      return NextResponse.json(
-        { error: "Database error", message: error.message },
-        { status: 500 }
-      )
+      resources = resources.filter(r => r.category === category)
     }
 
     // Get download counts for this partner
     let downloadCounts: Record<string, number> = {}
     if (partner) {
-      const { data: downloads } = await supabase
-        .from("resource_downloads")
-        .select("resource_id")
-        .eq("partner_id", partner.id) as { data: Pick<ResourceDownload, "resource_id">[] | null; error: unknown }
+      const downloads = await db!
+        .select({ resourceId: resourceDownloads.resourceId })
+        .from(resourceDownloads)
+        .where(eq(resourceDownloads.partnerId, partner.id))
 
-      if (downloads) {
-        downloads.forEach((d) => {
-          downloadCounts[d.resource_id] = (downloadCounts[d.resource_id] || 0) + 1
-        })
-      }
+      downloads.forEach((d) => {
+        downloadCounts[d.resourceId] = (downloadCounts[d.resourceId] || 0) + 1
+      })
     }
 
     // Enrich resources with download info
-    const enrichedResources = resources?.map((resource) => ({
+    const enrichedResources = resources.map((resource) => ({
       ...resource,
       downloadCount: downloadCounts[resource.id] || 0,
     }))
 
     // Group by category for easier frontend consumption
     const grouped = {
-      marketing: enrichedResources?.filter((r) => r.category === "marketing") || [],
-      training: enrichedResources?.filter((r) => r.category === "training") || [],
-      documentation: enrichedResources?.filter((r) => r.category === "documentation") || [],
+      marketing: enrichedResources.filter((r) => r.category === "marketing"),
+      training: enrichedResources.filter((r) => r.category === "training"),
+      documentation: enrichedResources.filter((r) => r.category === "documentation"),
     }
 
     return NextResponse.json({
@@ -115,9 +97,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
-    const supabase = getSupabaseServerClient()
 
-    if (!supabase) {
+    if (!isDbConfigured()) {
       return NextResponse.json(
         { error: "Configuration error", message: "Database not configured" },
         { status: 503 }
@@ -136,28 +117,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Get partner ID
-    const { data: partner, error: partnerError } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (partnerError || !partner) {
+    if (partnerResult.length === 0) {
       return NextResponse.json(
         { error: "Partner not found", message: "Partner profile not found" },
         { status: 404 }
       )
     }
 
-    // Record the download
-    const { error: downloadError } = await (supabase as any)
-      .from("resource_downloads")
-      .insert({
-        partner_id: partner.id,
-        resource_id: resourceId,
-      }) as { error: { message: string } | null }
+    const partner = partnerResult[0]
 
-    if (downloadError) {
+    // Record the download
+    try {
+      await db!.insert(resourceDownloads).values({
+        partnerId: partner.id,
+        resourceId: resourceId,
+      })
+    } catch (downloadError) {
       console.error("Error recording download:", downloadError)
       // Don't fail the request, just log it
     }

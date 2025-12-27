@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient, type Partner, type MonthlyEarnings } from "@/lib/supabase"
+import { db, isDbConfigured, partners, monthlyEarnings } from "@/lib/db"
+import { eq, and, like } from "drizzle-orm"
 import {
   calculateMonthlyCommission,
   OPT_IN_RATE,
-  getCurrentYearMonth,
   getLastNMonths,
 } from "@/lib/commission-tiers"
 import { isDevMode, MOCK_EARNINGS } from "@/lib/mock-data"
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await requirePartner()
 
     // Dev mode - return mock data
-    if (isDevMode) {
+    if (isDevMode || !isDbConfigured()) {
       console.log("[DEV MODE] Returning mock earnings data")
       const year = new Date().getFullYear().toString()
       const yearEarnings = MOCK_EARNINGS.filter(e => e.year_month.startsWith(year))
@@ -50,62 +50,50 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const supabase = getSupabaseServerClient()
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Configuration error", message: "Database not configured" },
-        { status: 503 }
-      )
-    }
-
     const searchParams = request.nextUrl.searchParams
     const year = searchParams.get("year") || new Date().getFullYear().toString()
 
     // Get partner ID
-    const { data: partner, error: partnerError } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (partnerError || !partner) {
+    if (partnerResult.length === 0) {
       return NextResponse.json(
         { error: "Partner not found", message: "Partner profile not found" },
         { status: 404 }
       )
     }
 
-    // Get earnings for the specified year
-    const { data: earnings, error: earningsError } = await supabase
-      .from("monthly_earnings")
-      .select("*")
-      .eq("partner_id", partner.id)
-      .like("year_month", `${year}-%`)
-      .order("year_month", { ascending: true }) as { data: MonthlyEarnings[] | null; error: { message: string } | null }
+    const partner = partnerResult[0]
 
-    if (earningsError) {
-      console.error("Error fetching earnings:", earningsError)
-      return NextResponse.json(
-        { error: "Database error", message: earningsError.message },
-        { status: 500 }
+    // Get earnings for the specified year
+    const earnings = await db!
+      .select()
+      .from(monthlyEarnings)
+      .where(
+        and(
+          eq(monthlyEarnings.partnerId, partner.id),
+          like(monthlyEarnings.yearMonth, `${year}-%`)
+        )
       )
-    }
 
     // Calculate summary stats
-    const totalParticipants = earnings?.reduce((sum, e) => sum + e.total_participants, 0) || 0
-    const totalOptedIn = earnings?.reduce((sum, e) => sum + e.opted_in_participants, 0) || 0
-    const totalCommission = earnings?.reduce((sum, e) => sum + Number(e.partner_commission), 0) || 0
+    const totalParticipants = earnings.reduce((sum, e) => sum + (e.totalParticipants || 0), 0)
+    const totalOptedIn = earnings.reduce((sum, e) => sum + (e.optedInParticipants || 0), 0)
+    const totalCommission = earnings.reduce((sum, e) => sum + Number(e.partnerCommission || 0), 0)
 
     // Get last 12 months for chart display
     const last12Months = getLastNMonths(12)
     const monthlyData = last12Months.map((month) => {
-      const monthEarning = earnings?.find((e) => e.year_month === month)
+      const monthEarning = earnings.find((e) => e.yearMonth === month)
       return {
         month,
-        participants: monthEarning?.total_participants || 0,
-        optedIn: monthEarning?.opted_in_participants || 0,
-        earnings: Number(monthEarning?.partner_commission) || 0,
+        participants: monthEarning?.totalParticipants || 0,
+        optedIn: monthEarning?.optedInParticipants || 0,
+        earnings: Number(monthEarning?.partnerCommission) || 0,
       }
     })
 
@@ -115,9 +103,9 @@ export async function GET(request: NextRequest) {
         totalParticipants,
         totalOptedIn,
         totalCommission,
-        averageMonthlyCommission: earnings?.length ? totalCommission / earnings.length : 0,
+        averageMonthlyCommission: earnings.length ? totalCommission / earnings.length : 0,
       },
-      earnings: earnings || [],
+      earnings,
       chartData: monthlyData,
     })
   })
@@ -130,9 +118,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
-    const supabase = getSupabaseServerClient()
 
-    if (!supabase) {
+    if (!isDbConfigured()) {
       return NextResponse.json(
         { error: "Configuration error", message: "Database not configured" },
         { status: 503 }
@@ -161,49 +148,65 @@ export async function POST(request: NextRequest) {
     }
 
     // Get partner ID
-    const { data: partner, error: partnerError } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (partnerError || !partner) {
+    if (partnerResult.length === 0) {
       return NextResponse.json(
         { error: "Partner not found", message: "Partner profile not found" },
         { status: 404 }
       )
     }
 
+    const partner = partnerResult[0]
+
     // Calculate earnings
     const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE)
     const partnerCommission = calculateMonthlyCommission(totalParticipants, OPT_IN_RATE, locationBonus)
 
-    // Upsert earnings record
-    const { data: upsertedEarnings, error: upsertError } = await (supabase as any)
-      .from("monthly_earnings")
-      .upsert(
-        {
-          partner_id: partner.id,
-          year_month: yearMonth,
-          total_participants: totalParticipants,
-          opted_in_participants: optedInParticipants,
-          partner_commission: partnerCommission,
-        },
-        {
-          onConflict: "partner_id,year_month",
-        }
-      )
+    // Check if record exists
+    const existing = await db!
       .select()
-      .single() as { data: MonthlyEarnings | null; error: { message: string } | null }
-
-    if (upsertError) {
-      console.error("Error saving earnings:", upsertError)
-      return NextResponse.json(
-        { error: "Database error", message: upsertError.message },
-        { status: 500 }
+      .from(monthlyEarnings)
+      .where(
+        and(
+          eq(monthlyEarnings.partnerId, partner.id),
+          eq(monthlyEarnings.yearMonth, yearMonth)
+        )
       )
+      .limit(1)
+
+    let result
+    if (existing.length > 0) {
+      // Update
+      const updated = await db!
+        .update(monthlyEarnings)
+        .set({
+          totalParticipants,
+          optedInParticipants,
+          partnerCommission: String(partnerCommission),
+        })
+        .where(eq(monthlyEarnings.id, existing[0].id))
+        .returning()
+      result = updated[0]
+    } else {
+      // Insert
+      const inserted = await db!
+        .insert(monthlyEarnings)
+        .values({
+          partnerId: partner.id,
+          yearMonth,
+          totalParticipants,
+          optedInParticipants,
+          partnerCommission: String(partnerCommission),
+        })
+        .returning()
+      result = inserted[0]
     }
 
-    return NextResponse.json({ earnings: upsertedEarnings })
+    return NextResponse.json({ earnings: result })
   })
 }

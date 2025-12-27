@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/lib/supabase"
+import { db, isDbConfigured, partners, partnerProducts } from "@/lib/db"
+import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
 
 /**
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await requirePartner()
 
     // Dev mode - return mock data
-    if (isDevMode) {
+    if (isDevMode || !isDbConfigured()) {
       console.log("[DEV MODE] Returning mock profile data")
       return NextResponse.json({
         partner: MOCK_PARTNER,
@@ -20,42 +21,31 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const supabase = getSupabaseServerClient()
+    // Get partner
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Configuration error", message: "Database not configured" },
-        { status: 503 }
-      )
-    }
-
-    // Get partner with products
-    const { data: partner, error: partnerError } = await supabase
-      .from("partners")
-      .select("*")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Partner | null; error: unknown }
-
-    if (partnerError || !partner) {
+    if (partnerResult.length === 0) {
       return NextResponse.json(
         { error: "Partner not found", message: "Partner profile not found" },
         { status: 404 }
       )
     }
 
-    // Get products
-    const { data: products, error: productsError } = await supabase
-      .from("partner_products")
-      .select("*")
-      .eq("partner_id", partner.id) as { data: PartnerProduct[] | null; error: unknown }
+    const partner = partnerResult[0]
 
-    if (productsError) {
-      console.error("Error fetching products:", productsError)
-    }
+    // Get products
+    const products = await db!
+      .select()
+      .from(partnerProducts)
+      .where(eq(partnerProducts.partnerId, partner.id))
 
     return NextResponse.json({
       partner,
-      products: products || [],
+      products,
     })
   })
 }
@@ -67,14 +57,29 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
-    const supabase = getSupabaseServerClient()
 
-    if (!supabase) {
+    if (!isDbConfigured()) {
       return NextResponse.json(
         { error: "Configuration error", message: "Database not configured" },
         { status: 503 }
       )
     }
+
+    // Get partner
+    const partnerResult = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
+
+    if (partnerResult.length === 0) {
+      return NextResponse.json(
+        { error: "Partner not found", message: "Partner profile not found" },
+        { status: 404 }
+      )
+    }
+
+    const partner = partnerResult[0]
 
     // Parse request body
     const body = await request.json()
@@ -87,92 +92,76 @@ export async function PATCH(request: NextRequest) {
       integrationType,
       primaryColor,
       logoUrl,
-      products,
+      products: productUpdates,
     } = body
 
-    // Get partner
-    const { data: partner, error: partnerError } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
-
-    if (partnerError || !partner) {
-      return NextResponse.json(
-        { error: "Partner not found", message: "Partner profile not found" },
-        { status: 404 }
-      )
-    }
-
     // Build update object with only provided fields
-    const updateData: Partial<Partner> = {}
-    if (businessName !== undefined) updateData.business_name = businessName
-    if (businessType !== undefined) updateData.business_type = businessType
-    if (contactName !== undefined) updateData.contact_name = contactName
-    if (contactEmail !== undefined) updateData.contact_email = contactEmail
-    if (contactPhone !== undefined) updateData.contact_phone = contactPhone
-    if (integrationType !== undefined) updateData.integration_type = integrationType
-    if (primaryColor !== undefined) updateData.primary_color = primaryColor
-    if (logoUrl !== undefined) updateData.logo_url = logoUrl
+    const updateData: Partial<typeof partners.$inferInsert> = {}
+    if (businessName !== undefined) updateData.businessName = businessName
+    if (businessType !== undefined) updateData.businessType = businessType
+    if (contactName !== undefined) updateData.contactName = contactName
+    if (contactEmail !== undefined) updateData.contactEmail = contactEmail
+    if (contactPhone !== undefined) updateData.contactPhone = contactPhone
+    if (integrationType !== undefined) updateData.integrationType = integrationType
+    if (primaryColor !== undefined) updateData.primaryColor = primaryColor
+    if (logoUrl !== undefined) updateData.logoUrl = logoUrl
 
     // Update partner if there are changes
     if (Object.keys(updateData).length > 0) {
-      const { error: updateError } = await (supabase as any)
-        .from("partners")
-        .update(updateData)
-        .eq("id", partner.id) as { error: { message: string } | null }
-
-      if (updateError) {
-        console.error("Error updating partner:", updateError)
-        return NextResponse.json(
-          { error: "Database error", message: updateError.message },
-          { status: 500 }
-        )
-      }
+      updateData.updatedAt = new Date()
+      await db!
+        .update(partners)
+        .set(updateData)
+        .where(eq(partners.id, partner.id))
     }
 
     // Update products if provided
-    if (products && Array.isArray(products)) {
-      for (const product of products) {
+    if (productUpdates && Array.isArray(productUpdates)) {
+      for (const product of productUpdates) {
         const { productType, isEnabled, customerPrice } = product
-
         if (!productType) continue
 
-        const { error: productError } = await (supabase as any)
-          .from("partner_products")
-          .upsert(
-            {
-              partner_id: partner.id,
-              product_type: productType,
-              is_enabled: isEnabled ?? true,
-              customer_price: customerPrice ?? 4.99,
-            },
-            {
-              onConflict: "partner_id,product_type",
-            }
-          ) as { error: { message: string } | null }
+        // Check if product exists
+        const existingProduct = await db!
+          .select()
+          .from(partnerProducts)
+          .where(eq(partnerProducts.partnerId, partner.id))
+          .limit(1)
 
-        if (productError) {
-          console.error("Error updating product:", productError)
+        if (existingProduct.length > 0) {
+          await db!
+            .update(partnerProducts)
+            .set({
+              isEnabled: isEnabled ?? true,
+              customerPrice: String(customerPrice ?? 4.99),
+            })
+            .where(eq(partnerProducts.id, existingProduct[0].id))
+        } else {
+          await db!.insert(partnerProducts).values({
+            partnerId: partner.id,
+            productType,
+            isEnabled: isEnabled ?? true,
+            customerPrice: String(customerPrice ?? 4.99),
+          })
         }
       }
     }
 
     // Fetch and return updated profile
-    const { data: updatedPartner } = await supabase
-      .from("partners")
-      .select("*")
-      .eq("id", partner.id)
-      .single() as { data: Partner | null; error: unknown }
+    const updatedPartner = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.id, partner.id))
+      .limit(1)
 
-    const { data: updatedProducts } = await supabase
-      .from("partner_products")
-      .select("*")
-      .eq("partner_id", partner.id) as { data: PartnerProduct[] | null; error: unknown }
+    const updatedProducts = await db!
+      .select()
+      .from(partnerProducts)
+      .where(eq(partnerProducts.partnerId, partner.id))
 
     return NextResponse.json({
-      partner: updatedPartner,
-      products: updatedProducts || [],
+      partner: updatedPartner[0],
+      products: updatedProducts,
     })
   })
 }

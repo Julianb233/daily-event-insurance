@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth, requirePartner, withAuth } from "@/lib/api-auth"
-import { getSupabaseServerClient, type Partner, type PartnerProduct } from "@/lib/supabase"
+import { db, isDbConfigured, partners, partnerProducts } from "@/lib/db"
+import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
 
 /**
@@ -11,43 +12,26 @@ export async function GET(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
 
-    // Dev mode - return mock data
-    if (isDevMode) {
+    // Dev mode or no database - return mock data
+    if (isDevMode || !isDbConfigured()) {
       console.log("[DEV MODE] Returning mock partner data")
       return NextResponse.json({ partner: MOCK_PARTNER })
     }
 
-    const supabase = getSupabaseServerClient()
+    const result = await db!
+      .select()
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (!supabase) {
+    if (result.length === 0) {
       return NextResponse.json(
-        { error: "Configuration error", message: "Database not configured" },
-        { status: 503 }
+        { error: "Partner not found", message: "Partner profile not found" },
+        { status: 404 }
       )
     }
 
-    const { data: partner, error } = await supabase
-      .from("partners")
-      .select("*")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Partner | null; error: { code?: string; message: string } | null }
-
-    if (error) {
-      if (error.code === "PGRST116") {
-        // No rows returned
-        return NextResponse.json(
-          { error: "Partner not found", message: "Partner profile not found" },
-          { status: 404 }
-        )
-      }
-      console.error("Error fetching partner:", error)
-      return NextResponse.json(
-        { error: "Database error", message: error.message },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json({ partner })
+    return NextResponse.json({ partner: result[0] })
   })
 }
 
@@ -58,9 +42,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requireAuth()
-    const supabase = getSupabaseServerClient()
 
-    if (!supabase) {
+    if (!isDbConfigured()) {
       return NextResponse.json(
         { error: "Configuration error", message: "Database not configured" },
         { status: 503 }
@@ -68,13 +51,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if partner already exists
-    const { data: existing } = await supabase
-      .from("partners")
-      .select("id")
-      .eq("clerk_user_id", userId)
-      .single() as { data: Pick<Partner, "id"> | null; error: unknown }
+    const existing = await db!
+      .select({ id: partners.id })
+      .from(partners)
+      .where(eq(partners.clerkUserId, userId))
+      .limit(1)
 
-    if (existing) {
+    if (existing.length > 0) {
       return NextResponse.json(
         { error: "Partner exists", message: "Partner profile already exists" },
         { status: 409 }
@@ -84,7 +67,6 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const body = await request.json()
     const {
-      // Support both camelCase and snake_case
       businessName, business_name,
       businessType, business_type,
       contactName, contact_name,
@@ -115,50 +97,46 @@ export async function POST(request: NextRequest) {
     }
 
     // Create partner record
-    const { data: partner, error } = await (supabase as any)
-      .from("partners")
-      .insert({
-        clerk_user_id: userId,
-        business_name: finalBusinessName,
-        business_type: finalBusinessType,
-        contact_name: finalContactName,
-        contact_email: finalContactEmail,
-        contact_phone: finalContactPhone || null,
-        integration_type: finalIntegrationType || "widget",
-        primary_color: finalPrimaryColor || "#14B8A6",
-        logo_url: finalLogoUrl || null,
+    const [partner] = await db!
+      .insert(partners)
+      .values({
+        clerkUserId: userId,
+        businessName: finalBusinessName,
+        businessType: finalBusinessType,
+        contactName: finalContactName,
+        contactEmail: finalContactEmail,
+        contactPhone: finalContactPhone || null,
+        integrationType: finalIntegrationType || "widget",
+        primaryColor: finalPrimaryColor || "#14B8A6",
+        logoUrl: finalLogoUrl || null,
         status: "pending",
       })
-      .select()
-      .single() as { data: Partner | null; error: { message: string } | null }
+      .returning()
 
-    if (error || !partner) {
-      console.error("Error creating partner:", error)
+    if (!partner) {
       return NextResponse.json(
-        { error: "Database error", message: error?.message || "Failed to create partner" },
+        { error: "Database error", message: "Failed to create partner" },
         { status: 500 }
       )
     }
 
-    // Create product configurations from provided products or defaults
+    // Create product configurations
     const productConfigs = products && Array.isArray(products) && products.length > 0
-      ? products.map((p: { product_type: string; is_enabled: boolean; customer_price: number }) => ({
-          partner_id: partner.id,
-          product_type: p.product_type,
-          is_enabled: p.is_enabled ?? true,
-          customer_price: p.customer_price ?? 4.99,
+      ? products.map((p: { product_type: string; is_enabled?: boolean; customer_price?: number }) => ({
+          partnerId: partner.id,
+          productType: p.product_type,
+          isEnabled: p.is_enabled ?? true,
+          customerPrice: String(p.customer_price ?? 4.99),
         }))
       : [
-          { partner_id: partner.id, product_type: "liability", is_enabled: true, customer_price: 4.99 },
-          { partner_id: partner.id, product_type: "equipment", is_enabled: false, customer_price: 9.99 },
-          { partner_id: partner.id, product_type: "cancellation", is_enabled: false, customer_price: 14.99 },
+          { partnerId: partner.id, productType: "liability", isEnabled: true, customerPrice: "4.99" },
+          { partnerId: partner.id, productType: "equipment", isEnabled: false, customerPrice: "9.99" },
+          { partnerId: partner.id, productType: "cancellation", isEnabled: false, customerPrice: "14.99" },
         ]
 
-    const { error: productError } = await (supabase as any)
-      .from("partner_products")
-      .insert(productConfigs) as { error: { message: string } | null }
-
-    if (productError) {
+    try {
+      await db!.insert(partnerProducts).values(productConfigs)
+    } catch (productError) {
       console.error("Error creating products:", productError)
       // Don't fail the whole request, just log it
     }
