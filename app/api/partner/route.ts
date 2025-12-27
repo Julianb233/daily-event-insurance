@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth, requirePartner, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, partners, partnerProducts } from "@/lib/db"
+import { db, isDbConfigured, partners, partnerProducts, partnerDocuments } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
+import { getGHLClient, isGHLConfigured } from "@/lib/ghl"
 
 /**
  * GET /api/partner
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     const result = await db!
       .select()
       .from(partners)
-      .where(eq(partners.clerkUserId, userId))
+      .where(eq(partners.userId, userId))
       .limit(1)
 
     if (result.length === 0) {
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
     const existing = await db!
       .select({ id: partners.id })
       .from(partners)
-      .where(eq(partners.clerkUserId, userId))
+      .where(eq(partners.userId, userId))
       .limit(1)
 
     if (existing.length > 0) {
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
     const [partner] = await db!
       .insert(partners)
       .values({
-        clerkUserId: userId,
+        userId: userId,
         businessName: finalBusinessName,
         businessType: finalBusinessType,
         contactName: finalContactName,
@@ -139,6 +140,55 @@ export async function POST(request: NextRequest) {
     } catch (productError) {
       console.error("Error creating products:", productError)
       // Don't fail the whole request, just log it
+    }
+
+    // Initiate GHL onboarding (create contact and send documents)
+    if (isGHLConfigured()) {
+      try {
+        const ghl = getGHLClient()
+        const ghlResult = await ghl.initiatePartnerOnboarding({
+          partnerId: partner.id,
+          businessName: finalBusinessName,
+          businessType: finalBusinessType,
+          contactName: finalContactName,
+          contactEmail: finalContactEmail,
+          contactPhone: finalContactPhone || undefined,
+          integrationType: finalIntegrationType || "widget",
+        })
+
+        // Update partner with GHL IDs
+        if (ghlResult.contactId || ghlResult.opportunityId) {
+          await db!
+            .update(partners)
+            .set({
+              ghlContactId: ghlResult.contactId,
+              ghlOpportunityId: ghlResult.opportunityId,
+              documentsStatus: "sent",
+              documentsSentAt: new Date(),
+              status: "documents_sent",
+              updatedAt: new Date(),
+            })
+            .where(eq(partners.id, partner.id))
+
+          // Create document records
+          const documentTypes = ["partner_agreement", "w9", "direct_deposit"]
+          await db!.insert(partnerDocuments).values(
+            documentTypes.map((docType) => ({
+              partnerId: partner.id,
+              documentType: docType,
+              status: "sent",
+              sentAt: new Date(),
+            }))
+          )
+        }
+
+        console.log(`[Partner] GHL onboarding initiated for partner ${partner.id}`)
+      } catch (ghlError) {
+        console.error("[Partner] GHL onboarding error:", ghlError)
+        // Don't fail partner creation if GHL fails - admin can trigger manually
+      }
+    } else {
+      console.log("[Partner] GHL not configured, skipping document sending")
     }
 
     return NextResponse.json({ partner }, { status: 201 })

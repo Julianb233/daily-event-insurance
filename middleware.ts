@@ -1,51 +1,74 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import NextAuth from "next-auth"
+import { authConfig } from "@/lib/auth.config"
 import { NextResponse } from "next/server"
 
-// Development mode - bypass auth when Clerk isn't configured
-const isDevMode = !process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+const { auth } = NextAuth(authConfig)
 
-// Define protected routes that require authentication
-const isProtectedRoute = createRouteMatcher([
-  "/partner(.*)",
-  "/onboarding(.*)",
-  "/api/partner(.*)",
-  "/api/user(.*)",
-  "/api/admin(.*)",
-])
+// Development mode - bypass auth when NextAuth isn't configured
+const isDevMode = !process.env.AUTH_SECRET
 
-// Define public routes that don't require auth
-const isPublicRoute = createRouteMatcher([
+// Protected routes
+const protectedRoutes = [
+  "/partner",
+  "/onboarding",
+  "/api/partner",
+  "/api/admin",
+]
+
+// Public routes
+const publicRoutes = [
   "/",
   "/about",
   "/pricing",
   "/privacy",
   "/terms",
   "/insurance-disclosure",
-  "/industries(.*)",
-  "/categories(.*)",
+  "/industries",
+  "/categories",
   "/for-gyms",
   "/for-climbing",
   "/for-rentals",
   "/for-adventure",
   "/hero-demo",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-])
+  "/sign-in",
+  "/sign-up",
+  "/api/auth",
+]
 
-// Dev mode middleware - bypasses Clerk entirely
+// Dev mode middleware - bypasses auth entirely
 function devModeMiddleware() {
-  console.log("[DEV MODE] Clerk middleware bypassed - no credentials configured")
+  console.log("[DEV MODE] NextAuth middleware bypassed - no AUTH_SECRET configured")
   return NextResponse.next()
 }
 
-export default isDevMode
-  ? devModeMiddleware
-  : clerkMiddleware(async (auth, req) => {
-      // Protect routes that require authentication
-      if (isProtectedRoute(req)) {
-        await auth.protect()
-      }
-    }, { debug: process.env.NODE_ENV === "development" })
+// Production middleware with NextAuth
+const productionMiddleware = auth((req) => {
+  const { nextUrl } = req
+  const isLoggedIn = !!req.auth
+
+  const isProtected = protectedRoutes.some(route =>
+    nextUrl.pathname.startsWith(route)
+  )
+
+  const isPublic = publicRoutes.some(route =>
+    nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/")
+  )
+
+  // Allow API auth routes
+  if (nextUrl.pathname.startsWith("/api/auth")) {
+    return NextResponse.next()
+  }
+
+  if (isProtected && !isLoggedIn) {
+    const signInUrl = new URL("/sign-in", nextUrl.origin)
+    signInUrl.searchParams.set("callbackUrl", nextUrl.pathname)
+    return NextResponse.redirect(signInUrl)
+  }
+
+  return NextResponse.next()
+})
+
+export default isDevMode ? devModeMiddleware : productionMiddleware
 
 export const config = {
   matcher: [

@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.36.5",
+    "@auth/drizzle-adapter": "^1.11.1",
     "@emotion/is-prop-valid": "latest",
     "@expo/dom-webview": "latest",
     "@expo/metro-runtime": "latest",
@@ -48,6 +48,7 @@
     "@supabase/supabase-js": "^2.89.0",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.20",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -63,6 +64,7 @@
     "lenis": "latest",
     "lucide-react": "^0.454.0",
     "next": "16.1.0",
+    "next-auth": "5.0.0-beta.30",
     "next-themes": "^0.4.6",
     "react": "19.2.3",
     "react-day-picker": "9.8.0",
@@ -84,6 +86,7 @@
   "devDependencies": {
     "@google/generative-ai": "^0.24.1",
     "@tailwindcss/postcss": "^4.1.9",
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

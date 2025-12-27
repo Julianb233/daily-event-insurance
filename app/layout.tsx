@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
+import { SessionProvider } from "@/components/providers/session-provider"
 import "./globals.css"
 
 const roboto = Roboto({
@@ -159,7 +160,9 @@ export default function RootLayout({
       <body
         className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable}`}
       >
-        <SmoothScroll>{children}</SmoothScroll>
+        <SessionProvider>
+          <SmoothScroll>{children}</SmoothScroll>
+        </SessionProvider>
         <Analytics />
       </body>
     </html>

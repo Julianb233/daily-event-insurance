@@ -7,10 +7,19 @@ import type { Partner, PartnerProduct, MonthlyEarnings, PartnerResource } from "
 // Development mode check
 export const isDevMode = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY
 
+// Mock User Data
+export const MOCK_USER = {
+  id: "mock-user-001",
+  name: "Demo Partner",
+  email: "demo@partner.dev",
+  role: "partner",
+}
+
 // Mock Partner Data
 export const MOCK_PARTNER: Partner = {
   id: "mock-partner-001",
-  clerk_user_id: "dev_user_001",
+  user_id: "mock-user-001",
+  clerk_user_id: "dev_user_001", // Kept for backwards compatibility
   business_name: "Demo Fitness Center",
   business_type: "gym",
   contact_name: "Demo Partner",

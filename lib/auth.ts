@@ -1,214 +1,214 @@
-/**
- * Role-Based Access Control (RBAC) Utilities for Clerk
- *
- * This module provides helper functions for checking user roles and permissions
- * in a Clerk-authenticated Next.js application.
- */
+import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { db } from "@/lib/db"
+import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
+import bcrypt from "bcryptjs"
+import { authConfig } from "./auth.config"
 
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+// Development mode check
+const isDevMode = !process.env.AUTH_SECRET
+
+// Create NextAuth instance
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  adapter: db ? DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }) : undefined,
+  session: { strategy: "jwt" },
+  providers: [
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // Dev mode bypass
+        if (isDevMode) {
+          return {
+            id: "dev_user_001",
+            email: "demo@partner.dev",
+            name: "Demo Partner",
+            role: "partner",
+          }
+        }
+
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        const email = credentials.email as string
+        const password = credentials.password as string
+
+        if (!db) {
+          console.error("Database not configured")
+          return null
+        }
+
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1)
+
+        if (!user || !user.passwordHash) {
+          return null
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash)
+
+        if (!passwordMatch) {
+          return null
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        }
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = (user as any).role
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string
+        session.user.role = token.role as string
+      }
+      return session
+    },
+  },
+})
+
+// ================= Auth Helper Functions =================
+
+export type Role = "admin" | "user" | "partner" | "moderator" | "viewer"
 
 /**
- * Available roles in the system
- */
-export type Role = 'admin' | 'user' | 'moderator' | 'viewer';
-
-/**
- * Custom session claims interface
- */
-interface SessionClaims {
-  metadata?: {
-    role?: Role;
-    roles?: Role[];
-    permissions?: string[];
-  };
-}
-
-/**
- * Gets the current user's primary role from session claims
- *
- * @returns The user's role or 'user' as default
+ * Get current user's role
  */
 export async function getUserRole(): Promise<Role> {
-  const { sessionClaims } = await auth();
-  const claims = sessionClaims as SessionClaims;
-
-  return (claims?.metadata?.role as Role) || 'user';
+  const session = await auth()
+  return (session?.user?.role as Role) || "user"
 }
 
 /**
- * Gets all roles assigned to the current user
- *
- * @returns Array of roles assigned to the user
- */
-export async function getUserRoles(): Promise<Role[]> {
-  const { sessionClaims } = await auth();
-  const claims = sessionClaims as SessionClaims;
-
-  // Check if user has multiple roles array
-  if (claims?.metadata?.roles && Array.isArray(claims.metadata.roles)) {
-    return claims.metadata.roles;
-  }
-
-  // Fallback to single role
-  const singleRole = claims?.metadata?.role as Role;
-  return singleRole ? [singleRole] : ['user'];
-}
-
-/**
- * Checks if the current user has a specific role
- *
- * @param role - The role to check for
- * @returns True if user has the specified role
+ * Check if user has specific role
  */
 export async function checkRole(role: Role): Promise<boolean> {
-  const { sessionClaims } = await auth();
-  const claims = sessionClaims as SessionClaims;
-
-  // Check in roles array first
-  if (claims?.metadata?.roles && Array.isArray(claims.metadata.roles)) {
-    return claims.metadata.roles.includes(role);
-  }
-
-  // Check single role
-  return claims?.metadata?.role === role;
+  const userRole = await getUserRole()
+  return userRole === role
 }
 
 /**
- * Checks if the current user has any of the specified roles
- *
- * @param roles - Array of roles to check
- * @returns True if user has at least one of the specified roles
+ * Check if user has any of the specified roles
  */
 export async function hasAnyRole(roles: Role[]): Promise<boolean> {
-  const userRoles = await getUserRoles();
-  return roles.some(role => userRoles.includes(role));
+  const userRole = await getUserRole()
+  return roles.includes(userRole)
 }
 
 /**
- * Checks if the current user has all of the specified roles
- *
- * @param roles - Array of roles to check
- * @returns True if user has all specified roles
- */
-export async function hasAllRoles(roles: Role[]): Promise<boolean> {
-  const userRoles = await getUserRoles();
-  return roles.every(role => userRoles.includes(role));
-}
-
-/**
- * Checks if the current user has a specific permission
- *
- * @param permission - The permission string to check
- * @returns True if user has the permission
- */
-export async function checkPermission(permission: string): Promise<boolean> {
-  const { sessionClaims } = await auth();
-  const claims = sessionClaims as SessionClaims;
-
-  if (!claims?.metadata?.permissions || !Array.isArray(claims.metadata.permissions)) {
-    return false;
-  }
-
-  return claims.metadata.permissions.includes(permission);
-}
-
-/**
- * Requires a specific role - throws error or redirects if user doesn't have it
- *
- * @param role - The required role
- * @param redirectTo - Optional path to redirect to if unauthorized (default: '/')
- * @throws Error if redirectTo is not provided and user doesn't have role
- */
-export async function requireRole(role: Role, redirectTo?: string): Promise<void> {
-  const hasRole = await checkRole(role);
-
-  if (!hasRole) {
-    if (redirectTo) {
-      redirect(redirectTo);
-    } else {
-      throw new Error(`Unauthorized: Required role '${role}' not found`);
-    }
-  }
-}
-
-/**
- * Requires any of the specified roles
- *
- * @param roles - Array of acceptable roles
- * @param redirectTo - Optional path to redirect to if unauthorized (default: '/')
- * @throws Error if redirectTo is not provided and user doesn't have any role
- */
-export async function requireAnyRole(roles: Role[], redirectTo?: string): Promise<void> {
-  const hasRole = await hasAnyRole(roles);
-
-  if (!hasRole) {
-    if (redirectTo) {
-      redirect(redirectTo);
-    } else {
-      throw new Error(`Unauthorized: Required one of roles [${roles.join(', ')}]`);
-    }
-  }
-}
-
-/**
- * Requires authentication and returns user info
- *
- * @param redirectTo - Optional path to redirect to if not authenticated
- * @returns User ID if authenticated
- * @throws Error or redirects if not authenticated
+ * Require authentication - redirect if not logged in
  */
 export async function requireAuth(redirectTo?: string): Promise<string> {
-  const { userId } = await auth();
+  const session = await auth()
 
-  if (!userId) {
+  if (!session?.user?.id) {
     if (redirectTo) {
-      redirect(redirectTo);
-    } else {
-      throw new Error('Unauthorized: Authentication required');
+      const { redirect } = await import("next/navigation")
+      redirect(redirectTo)
     }
+    throw new Error("Unauthorized: Authentication required")
   }
 
-  return userId;
+  return session.user.id
 }
 
 /**
- * Checks if user is authenticated
- *
- * @returns True if user is authenticated
+ * Check if user is authenticated
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const { userId } = await auth();
-  return !!userId;
+  const session = await auth()
+  return !!session?.user
 }
 
 /**
- * Gets the current user's ID
- *
- * @returns User ID or null if not authenticated
+ * Get current user ID
  */
 export async function getUserId(): Promise<string | null> {
-  const { userId } = await auth();
-  return userId;
+  const session = await auth()
+  return session?.user?.id || null
 }
 
 /**
- * Role hierarchy - higher roles inherit permissions from lower roles
+ * Role hierarchy for permission checks
  */
 const ROLE_HIERARCHY: Record<Role, number> = {
   viewer: 0,
   user: 1,
-  moderator: 2,
-  admin: 3,
-};
+  partner: 2,
+  moderator: 3,
+  admin: 4,
+}
 
 /**
- * Checks if user's role meets or exceeds a minimum role level
- *
- * @param minRole - The minimum required role
- * @returns True if user's role is equal to or higher than minRole
+ * Check if user's role meets minimum level
  */
 export async function meetsRoleLevel(minRole: Role): Promise<boolean> {
-  const userRole = await getUserRole();
-  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[minRole];
+  const userRole = await getUserRole()
+  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[minRole]
+}
+
+/**
+ * Require specific role
+ */
+export async function requireRole(role: Role, redirectTo?: string): Promise<void> {
+  const hasRole = await checkRole(role)
+
+  if (!hasRole) {
+    if (redirectTo) {
+      const { redirect } = await import("next/navigation")
+      redirect(redirectTo)
+    } else {
+      throw new Error(`Unauthorized: Required role '${role}' not found`)
+    }
+  }
+}
+
+/**
+ * Require any of the specified roles
+ */
+export async function requireAnyRole(roles: Role[], redirectTo?: string): Promise<void> {
+  const hasRole = await hasAnyRole(roles)
+
+  if (!hasRole) {
+    if (redirectTo) {
+      const { redirect } = await import("next/navigation")
+      redirect(redirectTo)
+    } else {
+      throw new Error(`Unauthorized: Required one of roles [${roles.join(", ")}]`)
+    }
+  }
+}
+
+/**
+ * Get all roles assigned to the current user
+ */
+export async function getUserRoles(): Promise<Role[]> {
+  const role = await getUserRole()
+  return [role]
 }

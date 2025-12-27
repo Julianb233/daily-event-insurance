@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import {
   User,
@@ -14,16 +15,6 @@ import {
   Shield,
   Copy,
 } from "lucide-react"
-
-// Check dev mode at build time - NEXT_PUBLIC_ vars are inlined
-const isDevMode = !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-
-// Mock user for dev mode
-const MOCK_USER = {
-  firstName: "Demo",
-  lastName: "Partner",
-  emailAddresses: [{ emailAddress: "demo@partner.dev" }],
-}
 
 interface Partner {
   id: string
@@ -66,19 +57,8 @@ const integrationTypes = [
   { value: "manual", label: "Manual Process", description: "Email-based waiver collection" },
 ]
 
-// Custom hook that uses Clerk in production, mock in dev
-function useProfileUser() {
-  if (isDevMode) {
-    return { user: MOCK_USER }
-  }
-  // Only import and use Clerk when not in dev mode
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { useUser } = require("@clerk/nextjs")
-  return useUser()
-}
-
 export default function PartnerProfilePage() {
-  const { user } = useProfileUser()
+  const { data: session } = useSession()
   const [data, setData] = useState<ProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -122,8 +102,8 @@ export default function PartnerProfilePage() {
         id: "demo",
         business_name: "Demo Fitness Studio",
         business_type: "gym",
-        contact_name: user?.firstName || "Partner",
-        contact_email: user?.emailAddresses[0]?.emailAddress || "partner@example.com",
+        contact_name: session?.user?.name || "Partner",
+        contact_email: session?.user?.email || "partner@example.com",
         contact_phone: "",
         integration_type: "widget",
         primary_color: "#14B8A6",
@@ -468,11 +448,11 @@ export default function PartnerProfilePage() {
             <div className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xl font-bold">
-                  {user?.firstName?.[0] || "P"}
+                  {session?.user?.name?.[0] || "P"}
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">{user?.firstName || "Partner"}</p>
-                  <p className="text-sm text-slate-500">{user?.emailAddresses[0]?.emailAddress}</p>
+                  <p className="font-semibold text-slate-900">{session?.user?.name || "Partner"}</p>
+                  <p className="text-sm text-slate-500">{session?.user?.email}</p>
                 </div>
               </div>
               <div className="pt-4 border-t border-slate-200 space-y-3">

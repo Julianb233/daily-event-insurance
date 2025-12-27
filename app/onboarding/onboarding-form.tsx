@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import {
@@ -975,7 +975,7 @@ function SuccessState() {
 
 export default function OnboardingForm() {
   const router = useRouter()
-  const { user } = useUser()
+  const { data: session, update: updateSession } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [isComplete, setIsComplete] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -1040,15 +1040,20 @@ export default function OnboardingForm() {
         throw new Error(errorData.error || "Failed to create partner account")
       }
 
-      // 2. Update Clerk user metadata to assign partner role
-      if (user) {
-        await user.update({
-          unsafeMetadata: {
-            ...user.unsafeMetadata,
-            role: "partner",
-            onboardingComplete: true,
-          },
+      // 2. Update user role to partner via API
+      if (session?.user) {
+        const roleResponse = await fetch("/api/user/role", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role: "partner" }),
         })
+
+        if (!roleResponse.ok) {
+          console.error("Failed to update user role")
+        }
+
+        // Refresh the session to get the updated role
+        await updateSession()
       }
 
       // 3. Show success state briefly then redirect

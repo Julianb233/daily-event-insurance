@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const partnerResult = await db!
       .select()
       .from(partners)
-      .where(eq(partners.clerkUserId, userId))
+      .where(eq(partners.userId, userId))
       .limit(1)
 
     const partner = partnerResult[0]
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     const partnerResult = await db!
       .select()
       .from(partners)
-      .where(eq(partners.clerkUserId, userId))
+      .where(eq(partners.userId, userId))
       .limit(1)
 
     if (partnerResult.length === 0) {

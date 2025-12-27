@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation"
+import { auth } from "@/lib/auth"
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar"
 
-// Development mode - bypass auth when Clerk isn't configured
-const isDevMode = !process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+// Development mode - bypass auth when NextAuth isn't configured
+const isDevMode = !process.env.AUTH_SECRET
 
 export const metadata = {
   title: "Partner Portal | Daily Event Insurance",
@@ -16,19 +17,14 @@ export default async function PartnerLayout({
 }) {
   // Dev mode bypass - skip all auth checks
   if (!isDevMode) {
-    // Only import and use Clerk when credentials are configured
-    const { auth, currentUser } = await import("@clerk/nextjs/server")
+    const session = await auth()
 
-    // Check authentication
-    const { userId } = await auth()
-
-    if (!userId) {
-      redirect("/sign-in?redirect_url=/partner/dashboard")
+    if (!session?.user?.id) {
+      redirect("/sign-in?callbackUrl=/partner/dashboard")
     }
 
     // Check for partner role
-    const user = await currentUser()
-    const userRole = user?.publicMetadata?.role || user?.privateMetadata?.role
+    const userRole = session.user.role
 
     // Allow partner or admin roles
     if (userRole !== "partner" && userRole !== "admin") {
