@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, decimal, timestamp, integer, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, boolean, decimal, timestamp, integer, primaryKey, index } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
 // ================= NextAuth Tables =================
@@ -79,7 +79,10 @@ export const partners = pgTable("partners", {
   approvedBy: uuid("approved_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  statusIdx: index("idx_partners_status").on(table.status),
+  businessTypeIdx: index("idx_partners_business_type").on(table.businessType),
+}))
 
 // Partner products - product configurations per partner
 export const partnerProducts = pgTable("partner_products", {
@@ -89,7 +92,9 @@ export const partnerProducts = pgTable("partner_products", {
   isEnabled: boolean("is_enabled").default(true),
   customerPrice: decimal("customer_price", { precision: 10, scale: 2 }).default("4.99"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_products_partner_id").on(table.partnerId),
+}))
 
 // Monthly earnings - tracking partner commission
 export const monthlyEarnings = pgTable("monthly_earnings", {
@@ -100,7 +105,9 @@ export const monthlyEarnings = pgTable("monthly_earnings", {
   optedInParticipants: integer("opted_in_participants").default(0),
   partnerCommission: decimal("partner_commission", { precision: 10, scale: 2 }).default("0"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  partnerMonthIdx: index("idx_monthly_earnings_partner_month").on(table.partnerId, table.yearMonth),
+}))
 
 // Partner resources - materials library
 export const partnerResources = pgTable("partner_resources", {
@@ -148,7 +155,10 @@ export const webhookEvents = pgTable("webhook_events", {
   processedAt: timestamp("processed_at"),
   error: text("error"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  processedIdx: index("idx_webhook_events_processed").on(table.processed),
+  createdAtIdx: index("idx_webhook_events_created_at").on(table.createdAt),
+}))
 
 // Quotes - insurance quote requests
 export const quotes = pgTable("quotes", {
@@ -171,7 +181,14 @@ export const quotes = pgTable("quotes", {
   declinedAt: timestamp("declined_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  partnerIdIdx: index("idx_quotes_partner_id").on(table.partnerId),
+  statusIdx: index("idx_quotes_status").on(table.status),
+  coverageTypeIdx: index("idx_quotes_coverage_type").on(table.coverageType),
+  eventDateIdx: index("idx_quotes_event_date").on(table.eventDate),
+  createdAtIdx: index("idx_quotes_created_at").on(table.createdAt),
+  expiresAtIdx: index("idx_quotes_expires_at").on(table.expiresAt),
+}))
 
 // Policies - active insurance policies
 export const policies = pgTable("policies", {
@@ -199,7 +216,15 @@ export const policies = pgTable("policies", {
   cancellationReason: text("cancellation_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-})
+}, (table) => ({
+  partnerIdIdx: index("idx_policies_partner_id").on(table.partnerId),
+  quoteIdIdx: index("idx_policies_quote_id").on(table.quoteId),
+  statusIdx: index("idx_policies_status").on(table.status),
+  coverageTypeIdx: index("idx_policies_coverage_type").on(table.coverageType),
+  eventDateIdx: index("idx_policies_event_date").on(table.eventDate),
+  effectiveDateIdx: index("idx_policies_effective_date").on(table.effectiveDate),
+  createdAtIdx: index("idx_policies_created_at").on(table.createdAt),
+}))
 
 // Type exports for use in application
 export type User = typeof users.$inferSelect

@@ -8,6 +8,7 @@ import {
   notFoundError,
   serverError,
   forbiddenError,
+  validationError,
 } from "@/lib/api-responses"
 
 /**
@@ -121,6 +122,176 @@ export async function GET(
     } catch (error: any) {
       console.error("[Partner Policies] GET [policyId] Error:", error)
       return serverError(error.message || "Failed to fetch policy details")
+    }
+  })
+}
+
+/**
+ * PATCH /api/partner/policies/[policyId]
+ * Update policy (cancel, issue certificate, etc.)
+ *
+ * Body:
+ * - action: "cancel" | "issue-certificate"
+ * - reason?: string (for cancellation)
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ policyId: string }> }
+) {
+  return withAuth(async () => {
+    try {
+      const { userId } = await requirePartner()
+      const { policyId } = await params
+      const body = await request.json()
+
+      const { action, reason } = body
+
+      // Validate action
+      const validActions = ["cancel", "issue-certificate"]
+      if (!action || !validActions.includes(action)) {
+        return validationError("Invalid action", {
+          action: [`Must be one of: ${validActions.join(", ")}`]
+        })
+      }
+
+      // Dev mode
+      if (isDevMode || !isDbConfigured()) {
+        console.log("[DEV MODE] Would update policy:", policyId, "action:", action)
+
+        if (action === "cancel") {
+          return successResponse(
+            {
+              policy: {
+                id: policyId,
+                status: "cancelled",
+                cancelled_at: new Date(),
+                cancellation_reason: reason || "Requested by partner",
+              },
+              message: "Policy cancelled successfully",
+            },
+            "Policy cancelled"
+          )
+        }
+
+        if (action === "issue-certificate") {
+          return successResponse(
+            {
+              policy: {
+                id: policyId,
+                certificate_issued: true,
+                certificate_url: `https://dailyeventinsurance.com/certificates/${policyId}.pdf`,
+              },
+              message: "Certificate issued successfully",
+            },
+            "Certificate issued"
+          )
+        }
+
+        return successResponse({ message: `Policy ${action} successful` })
+      }
+
+      // Get partner
+      const partnerResult = await db!
+        .select()
+        .from(partners)
+        .where(eq(partners.userId, userId))
+        .limit(1)
+
+      if (partnerResult.length === 0) {
+        return notFoundError("Partner")
+      }
+
+      const partner = partnerResult[0]
+
+      // Get policy
+      const policyResult = await db!
+        .select()
+        .from(policies)
+        .where(
+          and(
+            eq(policies.id, policyId),
+            eq(policies.partnerId, partner.id)
+          )
+        )
+        .limit(1)
+
+      if (policyResult.length === 0) {
+        return notFoundError("Policy")
+      }
+
+      const policy = policyResult[0]
+
+      // Handle cancel action
+      if (action === "cancel") {
+        if (policy.status === "cancelled") {
+          return validationError("Invalid operation", {
+            status: ["Policy is already cancelled"]
+          })
+        }
+
+        if (policy.status === "expired") {
+          return validationError("Invalid operation", {
+            status: ["Cannot cancel expired policies"]
+          })
+        }
+
+        const [updatedPolicy] = await db!
+          .update(policies)
+          .set({
+            status: "cancelled",
+            cancelledAt: new Date(),
+            cancellationReason: reason || "Requested by partner",
+            updatedAt: new Date(),
+          })
+          .where(eq(policies.id, policyId))
+          .returning()
+
+        return successResponse(
+          { policy: updatedPolicy },
+          "Policy cancelled successfully"
+        )
+      }
+
+      // Handle issue-certificate action
+      if (action === "issue-certificate") {
+        if (policy.status !== "active") {
+          return validationError("Invalid operation", {
+            status: ["Certificates can only be issued for active policies"]
+          })
+        }
+
+        if (policy.certificateIssued) {
+          return validationError("Invalid operation", {
+            status: ["Certificate already issued for this policy"]
+          })
+        }
+
+        // Generate certificate URL (in production, this would trigger actual PDF generation)
+        const certificateUrl = `https://dailyeventinsurance.com/certificates/${policyId}.pdf`
+
+        const [updatedPolicy] = await db!
+          .update(policies)
+          .set({
+            certificateIssued: true,
+            policyDocument: certificateUrl,
+            updatedAt: new Date(),
+          })
+          .where(eq(policies.id, policyId))
+          .returning()
+
+        return successResponse(
+          {
+            policy: updatedPolicy,
+            certificate_url: certificateUrl,
+          },
+          "Certificate issued successfully"
+        )
+      }
+
+      return serverError("Invalid action")
+    } catch (error: any) {
+      console.error("[Partner Policies] PATCH [policyId] Error:", error)
+      return serverError(error.message || "Failed to update policy")
     }
   })
 }
