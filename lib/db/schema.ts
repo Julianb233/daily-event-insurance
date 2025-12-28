@@ -176,6 +176,11 @@ export const quotes = pgTable("quotes", {
   customerEmail: text("customer_email"),
   customerName: text("customer_name"),
   metadata: text("metadata"), // JSON string for additional data
+  // Pricing metadata (Stage 1)
+  duration: decimal("duration", { precision: 4, scale: 1 }), // hours
+  location: text("location"),
+  riskMultiplier: decimal("risk_multiplier", { precision: 5, scale: 3 }),
+  commissionTier: integer("commission_tier"),
   expiresAt: timestamp("expires_at", { mode: "date" }),
   acceptedAt: timestamp("accepted_at"),
   declinedAt: timestamp("declined_at"),
@@ -212,6 +217,11 @@ export const policies = pgTable("policies", {
   policyDocument: text("policy_document"), // URL to policy PDF
   certificateIssued: boolean("certificate_issued").default(false),
   metadata: text("metadata"), // JSON string for additional data
+  // Pricing metadata (Stage 1)
+  duration: decimal("duration", { precision: 4, scale: 1 }), // hours
+  location: text("location"),
+  riskMultiplier: decimal("risk_multiplier", { precision: 5, scale: 3 }),
+  commissionTier: integer("commission_tier"),
   cancelledAt: timestamp("cancelled_at"),
   cancellationReason: text("cancellation_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -283,6 +293,128 @@ export const commissionPayouts = pgTable("commission_payouts", {
   partnerMonthIdx: index("idx_commission_payouts_partner_month").on(table.partnerId, table.yearMonth),
 }))
 
+// ================= Stage 1 Production Tables =================
+
+// Payments - Stripe payment tracking
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  policyId: uuid("policy_id").references(() => policies.id).notNull(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+
+  // Payment identification
+  paymentNumber: text("payment_number").unique().notNull(), // PAY-YYYYMMDD-XXXXX
+
+  // Stripe integration
+  stripePaymentIntentId: text("stripe_payment_intent_id").unique(),
+  stripeChargeId: text("stripe_charge_id"),
+  stripeCustomerId: text("stripe_customer_id"),
+
+  // Payment details
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("usd"),
+  status: text("status").notNull().default("pending"), // pending, processing, succeeded, failed, refunded, partially_refunded, disputed
+  paymentMethod: text("payment_method"), // card, bank_transfer, etc.
+  paymentMethodDetails: text("payment_method_details"), // JSON with last4, brand, etc.
+
+  // Refund tracking
+  refundAmount: decimal("refund_amount", { precision: 10, scale: 2 }).default("0"),
+  refundReason: text("refund_reason"),
+  refundedAt: timestamp("refunded_at"),
+
+  // Metadata
+  receiptUrl: text("receipt_url"),
+  failureCode: text("failure_code"),
+  failureMessage: text("failure_message"),
+  metadata: text("metadata"), // JSON for additional data
+
+  // Timestamps
+  paidAt: timestamp("paid_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  policyIdIdx: index("idx_payments_policy_id").on(table.policyId),
+  partnerIdIdx: index("idx_payments_partner_id").on(table.partnerId),
+  statusIdx: index("idx_payments_status").on(table.status),
+  stripeIntentIdx: index("idx_payments_stripe_intent").on(table.stripePaymentIntentId),
+  createdAtIdx: index("idx_payments_created_at").on(table.createdAt),
+  partnerStatusIdx: index("idx_payments_partner_status").on(table.partnerId, table.status),
+}))
+
+// Claims - insurance claim management
+export const claims = pgTable("claims", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  policyId: uuid("policy_id").references(() => policies.id).notNull(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+
+  // Claim identification
+  claimNumber: text("claim_number").unique().notNull(), // CLM-YYYYMMDD-XXXXX
+
+  // Claim details
+  claimType: text("claim_type").notNull(), // injury, property_damage, liability, equipment_loss, cancellation
+  incidentDate: timestamp("incident_date").notNull(),
+  incidentLocation: text("incident_location"),
+  incidentDescription: text("incident_description").notNull(),
+
+  // Claimant info
+  claimantName: text("claimant_name").notNull(),
+  claimantEmail: text("claimant_email"),
+  claimantPhone: text("claimant_phone"),
+
+  // Financial
+  claimAmount: decimal("claim_amount", { precision: 10, scale: 2 }),
+  approvedAmount: decimal("approved_amount", { precision: 10, scale: 2 }),
+  payoutAmount: decimal("payout_amount", { precision: 10, scale: 2 }).default("0"),
+  deductibleAmount: decimal("deductible_amount", { precision: 10, scale: 2 }).default("0"),
+
+  // Status workflow: submitted -> under_review -> (approved|denied) -> (paid|closed)
+  status: text("status").notNull().default("submitted"), // submitted, under_review, additional_info_requested, approved, denied, paid, closed, disputed
+
+  // Review tracking
+  assignedTo: text("assigned_to"), // Adjuster name/id
+  reviewNotes: text("review_notes"),
+  denialReason: text("denial_reason"),
+
+  // Timestamps
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  approvedAt: timestamp("approved_at"),
+  deniedAt: timestamp("denied_at"),
+  paidAt: timestamp("paid_at"),
+  closedAt: timestamp("closed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  policyIdIdx: index("idx_claims_policy_id").on(table.policyId),
+  partnerIdIdx: index("idx_claims_partner_id").on(table.partnerId),
+  statusIdx: index("idx_claims_status").on(table.status),
+  incidentDateIdx: index("idx_claims_incident_date").on(table.incidentDate),
+  createdAtIdx: index("idx_claims_created_at").on(table.createdAt),
+  partnerStatusIdx: index("idx_claims_partner_status").on(table.partnerId, table.status),
+}))
+
+// Claim documents - supporting documentation for claims
+export const claimDocuments = pgTable("claim_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  claimId: uuid("claim_id").references(() => claims.id, { onDelete: "cascade" }).notNull(),
+
+  // Document details
+  documentType: text("document_type").notNull(), // photo, receipt, medical_report, police_report, witness_statement, other
+  fileName: text("file_name").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileSize: integer("file_size"), // bytes
+  mimeType: text("mime_type"),
+
+  // Metadata
+  description: text("description"),
+  uploadedBy: text("uploaded_by"), // claimant, partner, adjuster
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  claimIdIdx: index("idx_claim_documents_claim_id").on(table.claimId),
+  documentTypeIdx: index("idx_claim_documents_type").on(table.documentType),
+}))
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -310,3 +442,9 @@ export type PartnerTierOverride = typeof partnerTierOverrides.$inferSelect
 export type NewPartnerTierOverride = typeof partnerTierOverrides.$inferInsert
 export type CommissionPayout = typeof commissionPayouts.$inferSelect
 export type NewCommissionPayout = typeof commissionPayouts.$inferInsert
+export type Payment = typeof payments.$inferSelect
+export type NewPayment = typeof payments.$inferInsert
+export type Claim = typeof claims.$inferSelect
+export type NewClaim = typeof claims.$inferInsert
+export type ClaimDocument = typeof claimDocuments.$inferSelect
+export type NewClaimDocument = typeof claimDocuments.$inferInsert
