@@ -226,6 +226,63 @@ export const policies = pgTable("policies", {
   createdAtIdx: index("idx_policies_created_at").on(table.createdAt),
 }))
 
+// Commission tiers - configurable commission rates based on volume
+export const commissionTiers = pgTable("commission_tiers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tierName: text("tier_name").notNull(), // Bronze, Silver, Gold, Platinum
+  minVolume: integer("min_volume").notNull().default(0), // Min monthly participants
+  maxVolume: integer("max_volume"), // Max monthly participants (null = unlimited)
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 4 }).notNull().default("0.50"), // 0.5000 = 50%
+  flatBonus: decimal("flat_bonus", { precision: 10, scale: 2 }).default("0"), // Optional flat bonus per policy
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  tierNameIdx: index("idx_commission_tiers_tier_name").on(table.tierName),
+  sortOrderIdx: index("idx_commission_tiers_sort_order").on(table.sortOrder),
+  activeIdx: index("idx_commission_tiers_active").on(table.isActive),
+}))
+
+// Partner tier overrides - manual tier assignments
+export const partnerTierOverrides = pgTable("partner_tier_overrides", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull().unique(),
+  tierId: uuid("tier_id").references(() => commissionTiers.id, { onDelete: "cascade" }).notNull(),
+  reason: text("reason"), // Why the override was applied
+  appliedBy: uuid("applied_by").references(() => users.id),
+  expiresAt: timestamp("expires_at"), // Optional expiration
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_tier_overrides_partner_id").on(table.partnerId),
+  tierIdIdx: index("idx_partner_tier_overrides_tier_id").on(table.tierId),
+}))
+
+// Commission payouts - tracks payout history
+export const commissionPayouts = pgTable("commission_payouts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+  yearMonth: text("year_month").notNull(), // "2025-01" format
+  tierAtPayout: text("tier_at_payout").notNull(), // Snapshot of tier name
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 4 }).notNull(),
+  totalPolicies: integer("total_policies").notNull().default(0),
+  totalParticipants: integer("total_participants").notNull().default(0),
+  grossRevenue: decimal("gross_revenue", { precision: 12, scale: 2 }).notNull().default("0"),
+  commissionAmount: decimal("commission_amount", { precision: 12, scale: 2 }).notNull().default("0"),
+  bonusAmount: decimal("bonus_amount", { precision: 10, scale: 2 }).default("0"),
+  status: text("status").default("pending"), // pending, processing, paid, failed
+  paidAt: timestamp("paid_at"),
+  paymentReference: text("payment_reference"), // ACH/check reference
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_commission_payouts_partner_id").on(table.partnerId),
+  yearMonthIdx: index("idx_commission_payouts_year_month").on(table.yearMonth),
+  statusIdx: index("idx_commission_payouts_status").on(table.status),
+  partnerMonthIdx: index("idx_commission_payouts_partner_month").on(table.partnerId, table.yearMonth),
+}))
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -247,3 +304,9 @@ export type Quote = typeof quotes.$inferSelect
 export type NewQuote = typeof quotes.$inferInsert
 export type Policy = typeof policies.$inferSelect
 export type NewPolicy = typeof policies.$inferInsert
+export type CommissionTier = typeof commissionTiers.$inferSelect
+export type NewCommissionTier = typeof commissionTiers.$inferInsert
+export type PartnerTierOverride = typeof partnerTierOverrides.$inferSelect
+export type NewPartnerTierOverride = typeof partnerTierOverrides.$inferInsert
+export type CommissionPayout = typeof commissionPayouts.$inferSelect
+export type NewCommissionPayout = typeof commissionPayouts.$inferInsert
