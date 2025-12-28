@@ -73,10 +73,15 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-      url: ${{ steps.deploy.outputs.deployment_url }}
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: .next
 
       - name: Deploy to Vercel
         id: deploy
@@ -85,6 +90,11 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Vercel secrets not configured. Skipping deployment."
+            echo "Please configure VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID as repository secrets."
+            exit 0
+          fi
           npm install -g vercel
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             vercel --prod --token $VERCEL_TOKEN
@@ -92,22 +102,13 @@ jobs:
             vercel --token $VERCEL_TOKEN
           fi
 
-      - name: Notify Slack
+      - name: Build status report
         if: always()
-        uses: slackapi/slack-github-action@v1
-        continue-on-error: true
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
-          payload: |
-            {
-              "text": "Daily Event Insurance Deployment ${{ job.status }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Daily Event Insurance Deployment*\nBranch: ${{ github.ref }}\nStatus: ${{ job.status }}\nCommit: ${{ github.sha }}"
-                  }
-                }
-              ]
-            }
+        run: |
+          echo "Build Status: ${{ job.status }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "For deployment to work, configure these secrets:"
+          echo "  - VERCEL_TOKEN"
+          echo "  - VERCEL_ORG_ID"
+          echo "  - VERCEL_PROJECT_ID"
