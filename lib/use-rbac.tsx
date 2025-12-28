@@ -121,6 +121,44 @@ export function useIsPartner(): boolean {
 }
 
 /**
+ * Permission definitions - maps permissions to required roles
+ */
+const PERMISSIONS: Record<string, string[]> = {
+  // Admin permissions
+  'manage:users': ['admin'],
+  'manage:partners': ['admin'],
+  'manage:settings': ['admin'],
+  'view:analytics': ['admin', 'partner'],
+  'view:reports': ['admin', 'partner'],
+
+  // Partner permissions
+  'create:quotes': ['admin', 'partner'],
+  'view:policies': ['admin', 'partner'],
+  'manage:products': ['admin', 'partner'],
+
+  // Moderator permissions
+  'moderate:content': ['admin', 'moderator'],
+
+  // User permissions
+  'view:dashboard': ['admin', 'partner', 'moderator', 'user'],
+};
+
+/**
+ * Hook to check if user has a specific permission
+ *
+ * @param permission - The permission to check
+ * @returns True if user has the permission
+ */
+export function useHasPermission(permission: string): boolean {
+  const role = useUserRole();
+
+  return useMemo(() => {
+    const allowedRoles = PERMISSIONS[permission] || [];
+    return allowedRoles.includes(role);
+  }, [role, permission]);
+}
+
+/**
  * Combined RBAC hook that returns all role info
  *
  * @returns Object with role, roles, and check functions
@@ -149,6 +187,14 @@ export function useRBAC() {
     // Check functions
     hasRole: (roleToCheck: string) => role === roleToCheck,
     hasAnyRole: (rolesToCheck: string[]) => rolesToCheck.includes(role),
+    hasPermission: (permission: string) => {
+      const allowedRoles = PERMISSIONS[permission] || [];
+      return allowedRoles.includes(role);
+    },
+    permissions: Object.keys(PERMISSIONS).filter(perm => {
+      const allowedRoles = PERMISSIONS[perm] || [];
+      return allowedRoles.includes(role);
+    }),
   };
 }
 

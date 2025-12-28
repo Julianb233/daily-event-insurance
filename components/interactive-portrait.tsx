@@ -7,7 +7,7 @@ import Image from "next/image"
 export default function InteractivePortrait() {
   const containerRef = useRef<HTMLDivElement>(null)
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | undefined>(undefined)
   const [isMobile, setIsMobile] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -85,11 +85,8 @@ export default function InteractivePortrait() {
         container.addEventListener("mousemove", handleMouseMove)
         container.addEventListener("mouseleave", handleMouseLeave)
 
-        this.rtScene = new THREE.Mesh(
-          new THREE.PlaneGeometry(2, 2),
-          new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            onBeforeCompile: (shader) => {
+        const rtMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
+        rtMaterial.onBeforeCompile = (shader: THREE.WebGLProgramParametersWithUniforms) => {
               shader.uniforms.dTime = gu.dTime
               shader.uniforms.aspect = gu.aspect
               shader.uniforms.pointer = this.uniforms.pointer
@@ -134,10 +131,9 @@ export default function InteractivePortrait() {
                 diffuseColor.rgb = vec3(rVal);
                 `,
               )
-            },
-          }),
-        )
-        this.rtScene.material.defines = { USE_UV: "" }
+        }
+        ;(rtMaterial as any).defines = { USE_UV: "" }
+        this.rtScene = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), rtMaterial)
         this.rtCamera = new THREE.Camera()
       }
 
@@ -183,7 +179,7 @@ export default function InteractivePortrait() {
     scene.add(baseImage)
 
     const bgPlaneMaterial = new THREE.MeshBasicMaterial({ color: 0x1e3a5f, transparent: true })
-    bgPlaneMaterial.defines = { USE_UV: "" }
+    ;(bgPlaneMaterial as any).defines = { USE_UV: "" }
 
     bgPlaneMaterial.onBeforeCompile = (shader) => {
       shader.uniforms.texBlob = { value: blob.rtOutput.texture }

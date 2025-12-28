@@ -73,7 +73,7 @@ async function generateImage(prompt: string, outputPath: string): Promise<void> 
     const response = result.response;
     const imageData = response.candidates?.[0]?.content?.parts?.[0];
 
-    if (imageData && 'inlineData' in imageData) {
+    if (imageData && 'inlineData' in imageData && imageData.inlineData) {
       const buffer = Buffer.from(imageData.inlineData.data, 'base64');
       fs.writeFileSync(outputPath, buffer);
       console.log(`✓ Saved: ${outputPath}`);

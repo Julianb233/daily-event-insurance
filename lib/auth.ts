@@ -18,7 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
-  }) : undefined,
+  }) as any : undefined, // Type assertion needed due to @auth/drizzle-adapter version mismatch
   session: { strategy: "jwt" },
   providers: [
     Credentials({
@@ -70,14 +70,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role || "user",
         }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user && user.id) {
         token.id = user.id
         token.role = (user as any).role
       }
@@ -211,4 +211,38 @@ export async function requireAnyRole(roles: Role[], redirectTo?: string): Promis
 export async function getUserRoles(): Promise<Role[]> {
   const role = await getUserRole()
   return [role]
+}
+
+/**
+ * Permission definitions - maps permissions to required roles
+ */
+const PERMISSIONS: Record<string, Role[]> = {
+  // Admin permissions
+  'manage:users': ['admin'],
+  'manage:partners': ['admin'],
+  'manage:settings': ['admin'],
+  'view:analytics': ['admin', 'partner'],
+  'view:reports': ['admin', 'partner'],
+
+  // Partner permissions
+  'create:quotes': ['admin', 'partner'],
+  'view:policies': ['admin', 'partner'],
+  'manage:products': ['admin', 'partner'],
+  'posts.edit': ['admin', 'partner', 'moderator'],
+  'content.delete': ['admin', 'moderator'],
+
+  // Moderator permissions
+  'moderate:content': ['admin', 'moderator'],
+
+  // User permissions
+  'view:dashboard': ['admin', 'partner', 'moderator', 'user'],
+}
+
+/**
+ * Check if user has a specific permission
+ */
+export async function checkPermission(permission: string): Promise<boolean> {
+  const userRole = await getUserRole()
+  const allowedRoles = PERMISSIONS[permission] || []
+  return allowedRoles.includes(userRole)
 }

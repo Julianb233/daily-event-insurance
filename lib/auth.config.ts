@@ -3,8 +3,8 @@ import type { NextAuthConfig } from "next-auth"
 export const authConfig = {
   pages: {
     signIn: "/sign-in",
-    signUp: "/sign-up",
     error: "/auth/error",
+    // Note: signUp is not a NextAuth page - handled as a separate route
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {

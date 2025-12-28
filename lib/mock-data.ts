@@ -18,8 +18,7 @@ export const MOCK_USER = {
 // Mock Partner Data
 export const MOCK_PARTNER: Partner = {
   id: "mock-partner-001",
-  user_id: "mock-user-001",
-  clerk_user_id: "dev_user_001", // Kept for backwards compatibility
+  clerk_user_id: "dev_user_001",
   business_name: "Demo Fitness Center",
   business_type: "gym",
   contact_name: "Demo Partner",
@@ -27,7 +26,7 @@ export const MOCK_PARTNER: Partner = {
   contact_phone: "(555) 123-4567",
   integration_type: "widget",
   primary_color: "#14B8A6",
-  logo_url: null,
+  logo_url: undefined,
   status: "active",
   created_at: new Date().toISOString(),
 }

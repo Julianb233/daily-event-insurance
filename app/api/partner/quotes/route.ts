@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, partners, quotes, NewQuote } from "@/lib/db"
+import { db, isDbConfigured, partners, quotes, NewQuote, policies } from "@/lib/db"
 import { eq, desc, and, gte, lte, count, sql } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 import {
@@ -17,6 +17,13 @@ import {
   quotesListSchema,
   formatZodErrors,
 } from "@/lib/api-validation"
+import {
+  calculatePricing as calculatePricingEngine,
+  assessRisk,
+  validateQuote,
+  requiresManualReview,
+  type PricingInput,
+} from "@/lib/pricing"
 
 /**
  * Generate unique quote number
@@ -30,24 +37,63 @@ function generateQuoteNumber(): string {
 }
 
 /**
- * Calculate premium and commission based on coverage type and participants
+ * Calculate premium and commission using comprehensive pricing engine
  */
-function calculatePricing(coverageType: string, participants: number) {
-  const basePrices: Record<string, number> = {
-    liability: 4.99,
-    equipment: 9.99,
-    cancellation: 14.99,
+async function calculateQuotePricing(
+  input: {
+    eventType: string
+    coverageType: "liability" | "equipment" | "cancellation"
+    participants: number
+    eventDate: Date
+    duration?: number
+    location?: string
+    eventDetails?: any
+  },
+  partnerId?: string
+) {
+  // Get partner volume for tier-based pricing if available
+  let partnerVolume = 0
+  if (partnerId && db && isDbConfigured()) {
+    try {
+      // Get total participants from partner's policies (last 30 days)
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      const volumeResult = await db
+        .select({ total: sql<number>`SUM(${policies.participants})` })
+        .from(policies)
+        .where(
+          and(
+            eq(policies.partnerId, partnerId),
+            gte(policies.createdAt, thirtyDaysAgo)
+          )
+        )
+
+      if (volumeResult[0]?.total) {
+        partnerVolume = Number(volumeResult[0].total)
+      }
+    } catch (error) {
+      console.warn("[Quote Pricing] Could not fetch partner volume:", error)
+    }
   }
 
-  const basePrice = basePrices[coverageType] || 4.99
-  const premium = basePrice * participants
+  // Calculate pricing with risk assessment
+  const pricingInput: PricingInput = {
+    eventType: input.eventType,
+    coverageType: input.coverageType,
+    participants: input.participants,
+    eventDate: input.eventDate,
+    duration: input.duration || input.eventDetails?.duration,
+    location: input.location || input.eventDetails?.location,
+    eventDetails: input.eventDetails,
+    partnerVolume,
+  }
 
-  // Commission is 50% of premium
-  const commission = premium * 0.5
+  const pricing = calculatePricingEngine(pricingInput)
 
   return {
-    premium: Number(premium.toFixed(2)),
-    commission: Number(commission.toFixed(2)),
+    premium: pricing.premium,
+    commission: pricing.commission,
+    riskMultiplier: pricing.riskMultiplier,
+    riskFactors: pricing.riskFactors,
   }
 }
 
@@ -74,12 +120,53 @@ export async function POST(request: NextRequest) {
       const body = await request.json()
       const validatedData = validateBody(createQuoteSchema, body)
 
+      // Additional business logic validation
+      const businessValidation = validateQuote({
+        eventType: validatedData.eventType,
+        eventDate: validatedData.eventDate,
+        participants: validatedData.participants,
+        coverageType: validatedData.coverageType,
+        duration: validatedData.eventDetails?.duration,
+        location: validatedData.eventDetails?.location,
+        customerEmail: validatedData.customerEmail,
+        customerName: validatedData.customerName,
+        eventDetails: validatedData.eventDetails,
+        metadata: validatedData.metadata,
+      })
+
+      if (!businessValidation.valid) {
+        return validationError(
+          "Quote validation failed",
+          businessValidation.errors.reduce((acc, err) => {
+            acc[err.field] = [err.message]
+            return acc
+          }, {} as Record<string, string[]>)
+        )
+      }
+
+      // Check if manual review is required
+      const reviewCheck = requiresManualReview({
+        eventType: validatedData.eventType,
+        eventDate: validatedData.eventDate,
+        participants: validatedData.participants,
+        coverageType: validatedData.coverageType,
+        duration: validatedData.eventDetails?.duration,
+        location: validatedData.eventDetails?.location,
+        eventDetails: validatedData.eventDetails,
+      })
+
       // Dev mode
       if (isDevMode || !isDbConfigured()) {
         console.log("[DEV MODE] Would create quote with data:", validatedData)
-        const { premium, commission } = calculatePricing(
-          validatedData.coverageType,
-          validatedData.participants
+
+        const pricingResult = await calculateQuotePricing(
+          {
+            eventType: validatedData.eventType,
+            coverageType: validatedData.coverageType,
+            participants: validatedData.participants,
+            eventDate: validatedData.eventDate,
+            eventDetails: validatedData.eventDetails,
+          }
         )
 
         const mockQuote = {
@@ -89,18 +176,38 @@ export async function POST(request: NextRequest) {
           event_date: validatedData.eventDate,
           participants: validatedData.participants,
           coverage_type: validatedData.coverageType,
-          premium,
-          commission,
-          status: "pending",
+          premium: pricingResult.premium,
+          commission: pricingResult.commission,
+          status: reviewCheck.required ? "review" : "pending",
           customer_email: validatedData.customerEmail || null,
           customer_name: validatedData.customerName || null,
           event_details: validatedData.eventDetails ? JSON.stringify(validatedData.eventDetails) : null,
-          metadata: validatedData.metadata ? JSON.stringify(validatedData.metadata) : null,
+          metadata: validatedData.metadata ? JSON.stringify({
+            ...validatedData.metadata,
+            riskMultiplier: pricingResult.riskMultiplier,
+            requiresReview: reviewCheck.required,
+            reviewReasons: reviewCheck.reasons,
+            validationWarnings: businessValidation.warnings,
+          }) : JSON.stringify({
+            riskMultiplier: pricingResult.riskMultiplier,
+            requiresReview: reviewCheck.required,
+            reviewReasons: reviewCheck.reasons,
+            validationWarnings: businessValidation.warnings,
+          }),
           expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
           created_at: new Date(),
         }
 
-        return successResponse({ quote: mockQuote }, "Quote created successfully", 201)
+        return successResponse(
+          {
+            quote: mockQuote,
+            warnings: businessValidation.warnings,
+            requiresReview: reviewCheck.required,
+            reviewReasons: reviewCheck.reasons,
+          },
+          "Quote created successfully",
+          201
+        )
       }
 
       // Get partner
@@ -116,10 +223,16 @@ export async function POST(request: NextRequest) {
 
       const partner = partnerResult[0]
 
-      // Calculate pricing
-      const { premium, commission } = calculatePricing(
-        validatedData.coverageType,
-        validatedData.participants
+      // Calculate pricing with risk assessment
+      const pricingResult = await calculateQuotePricing(
+        {
+          eventType: validatedData.eventType,
+          coverageType: validatedData.coverageType,
+          participants: validatedData.participants,
+          eventDate: validatedData.eventDate,
+          eventDetails: validatedData.eventDetails,
+        },
+        partner.id
       )
 
       // Create quote
@@ -130,13 +243,26 @@ export async function POST(request: NextRequest) {
         eventDate: validatedData.eventDate,
         participants: validatedData.participants,
         coverageType: validatedData.coverageType,
-        premium: premium.toString(),
-        commission: commission.toString(),
-        status: "pending",
+        premium: pricingResult.premium.toString(),
+        commission: pricingResult.commission.toString(),
+        status: reviewCheck.required ? "review" : "pending",
         customerEmail: validatedData.customerEmail || null,
         customerName: validatedData.customerName || null,
         eventDetails: validatedData.eventDetails ? JSON.stringify(validatedData.eventDetails) : null,
-        metadata: validatedData.metadata ? JSON.stringify(validatedData.metadata) : null,
+        metadata: validatedData.metadata ? JSON.stringify({
+          ...validatedData.metadata,
+          riskMultiplier: pricingResult.riskMultiplier,
+          riskFactors: pricingResult.riskFactors,
+          requiresReview: reviewCheck.required,
+          reviewReasons: reviewCheck.reasons,
+          validationWarnings: businessValidation.warnings,
+        }) : JSON.stringify({
+          riskMultiplier: pricingResult.riskMultiplier,
+          riskFactors: pricingResult.riskFactors,
+          requiresReview: reviewCheck.required,
+          reviewReasons: reviewCheck.reasons,
+          validationWarnings: businessValidation.warnings,
+        }),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
       }
 
@@ -146,7 +272,16 @@ export async function POST(request: NextRequest) {
         return serverError("Failed to create quote")
       }
 
-      return successResponse({ quote }, "Quote created successfully", 201)
+      return successResponse(
+        {
+          quote,
+          warnings: businessValidation.warnings,
+          requiresReview: reviewCheck.required,
+          reviewReasons: reviewCheck.reasons,
+        },
+        "Quote created successfully",
+        201
+      )
     } catch (error: any) {
       console.error("[Partner Quotes] POST Error:", error)
 

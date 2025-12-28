@@ -30,7 +30,7 @@ export default function AnimatedTextureCanvas() {
       color: 0xffffff,
       transparent: true,
     })
-    material.defines = { USE_UV: "" }
+    ;(material as any).defines = { USE_UV: "" }
 
     material.onBeforeCompile = (shader) => {
       shader.uniforms.time = gu.time

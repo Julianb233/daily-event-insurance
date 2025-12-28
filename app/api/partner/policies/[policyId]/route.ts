@@ -19,12 +19,12 @@ import {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { policyId: string } }
+  { params }: { params: Promise<{ policyId: string }> }
 ) {
   return withAuth(async () => {
     try {
       const { userId } = await requirePartner()
-      const { policyId } = params
+      const { policyId } = await params
 
       // Validate UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

@@ -146,23 +146,29 @@ export async function POST(request: NextRequest) {
     if (isGHLConfigured()) {
       try {
         const ghl = getGHLClient()
+        // Split contact name into first/last for GHL
+        const nameParts = finalContactName.split(' ')
+        const firstName = nameParts[0] || finalContactName
+        const lastName = nameParts.slice(1).join(' ') || ''
+
         const ghlResult = await ghl.initiatePartnerOnboarding({
           partnerId: partner.id,
+          email: finalContactEmail,
+          firstName,
+          lastName,
+          phone: finalContactPhone || undefined,
           businessName: finalBusinessName,
           businessType: finalBusinessType,
-          contactName: finalContactName,
-          contactEmail: finalContactEmail,
-          contactPhone: finalContactPhone || undefined,
           integrationType: finalIntegrationType || "widget",
         })
 
         // Update partner with GHL IDs
-        if (ghlResult.contactId || ghlResult.opportunityId) {
+        if (ghlResult.contact?.id || ghlResult.opportunity?.id) {
           await db!
             .update(partners)
             .set({
-              ghlContactId: ghlResult.contactId,
-              ghlOpportunityId: ghlResult.opportunityId,
+              ghlContactId: ghlResult.contact?.id,
+              ghlOpportunityId: ghlResult.opportunity?.id,
               documentsStatus: "sent",
               documentsSentAt: new Date(),
               status: "documents_sent",

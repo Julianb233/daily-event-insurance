@@ -20,10 +20,13 @@ export const paginationSchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(100).default(20),
 })
 
-export const dateRangeSchema = z.object({
+// Base date range fields (for spreading into other schemas)
+const dateRangeFields = {
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
-}).refine(
+}
+
+export const dateRangeSchema = z.object(dateRangeFields).refine(
   (data) => {
     if (data.startDate && data.endDate) {
       return data.startDate <= data.endDate
@@ -80,7 +83,7 @@ export const createQuoteSchema = z.object({
 export const quotesListSchema = paginationSchema.extend({
   status: z.enum(["pending", "accepted", "declined", "expired"]).optional(),
   coverageType: productTypeSchema.optional(),
-  ...dateRangeSchema.shape,
+  ...dateRangeFields,
 })
 
 // ============= Policy Schemas =============
@@ -88,7 +91,7 @@ export const quotesListSchema = paginationSchema.extend({
 export const policiesListSchema = paginationSchema.extend({
   status: z.enum(["active", "expired", "cancelled", "pending"]).optional(),
   coverageType: productTypeSchema.optional(),
-  ...dateRangeSchema.shape,
+  ...dateRangeFields,
 })
 
 export const policyDetailsSchema = z.object({
