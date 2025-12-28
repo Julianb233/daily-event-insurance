@@ -150,6 +150,57 @@ export const webhookEvents = pgTable("webhook_events", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
+// Quotes - insurance quote requests
+export const quotes = pgTable("quotes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+  quoteNumber: text("quote_number").unique().notNull(), // QT-YYYYMMDD-XXXXX
+  eventType: text("event_type").notNull(),
+  eventDate: timestamp("event_date", { mode: "date" }).notNull(),
+  participants: integer("participants").notNull(),
+  coverageType: text("coverage_type").notNull(), // liability, equipment, cancellation
+  premium: decimal("premium", { precision: 10, scale: 2 }).notNull(),
+  commission: decimal("commission", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").default("pending"), // pending, accepted, declined, expired
+  eventDetails: text("event_details"), // JSON string
+  customerEmail: text("customer_email"),
+  customerName: text("customer_name"),
+  metadata: text("metadata"), // JSON string for additional data
+  expiresAt: timestamp("expires_at", { mode: "date" }),
+  acceptedAt: timestamp("accepted_at"),
+  declinedAt: timestamp("declined_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+// Policies - active insurance policies
+export const policies = pgTable("policies", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+  quoteId: uuid("quote_id").references(() => quotes.id),
+  policyNumber: text("policy_number").unique().notNull(), // POL-YYYYMMDD-XXXXX
+  eventType: text("event_type").notNull(),
+  eventDate: timestamp("event_date", { mode: "date" }).notNull(),
+  participants: integer("participants").notNull(),
+  coverageType: text("coverage_type").notNull(), // liability, equipment, cancellation
+  premium: decimal("premium", { precision: 10, scale: 2 }).notNull(),
+  commission: decimal("commission", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").default("active"), // active, expired, cancelled, pending
+  effectiveDate: timestamp("effective_date", { mode: "date" }).notNull(),
+  expirationDate: timestamp("expiration_date", { mode: "date" }).notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerName: text("customer_name").notNull(),
+  customerPhone: text("customer_phone"),
+  eventDetails: text("event_details"), // JSON string
+  policyDocument: text("policy_document"), // URL to policy PDF
+  certificateIssued: boolean("certificate_issued").default(false),
+  metadata: text("metadata"), // JSON string for additional data
+  cancelledAt: timestamp("cancelled_at"),
+  cancellationReason: text("cancellation_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -167,3 +218,7 @@ export type PartnerDocument = typeof partnerDocuments.$inferSelect
 export type NewPartnerDocument = typeof partnerDocuments.$inferInsert
 export type WebhookEvent = typeof webhookEvents.$inferSelect
 export type NewWebhookEvent = typeof webhookEvents.$inferInsert
+export type Quote = typeof quotes.$inferSelect
+export type NewQuote = typeof quotes.$inferInsert
+export type Policy = typeof policies.$inferSelect
+export type NewPolicy = typeof policies.$inferInsert
