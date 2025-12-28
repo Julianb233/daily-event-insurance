@@ -149,26 +149,34 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="businessName" className="block text-sm font-semibold text-gray-700 mb-2">
                 Business Name *
               </label>
               <input
+                id="businessName"
                 type="text"
                 value={formData.businessName}
                 onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
                 placeholder="Peak Performance Gym"
+                aria-required="true"
+                aria-describedby="businessName-hint"
+                autoComplete="organization"
               />
+              <span id="businessName-hint" className="sr-only">Enter your business name</span>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="businessType" className="block text-sm font-semibold text-gray-700 mb-2">
                 Business Type *
               </label>
               <select
+                id="businessType"
                 value={formData.businessType}
                 onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                aria-required="true"
+                aria-describedby="businessType-hint"
               >
                 <option value="">Select type</option>
                 <option value="gym">Gym</option>
@@ -176,72 +184,96 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
                 <option value="rental">Equipment Rental</option>
                 <option value="other">Other</option>
               </select>
+              <span id="businessType-hint" className="sr-only">Select your business type from the dropdown</span>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">
               Business Address *
             </label>
             <input
+              id="address"
               type="text"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
               placeholder="123 Main St, City, State ZIP"
+              aria-required="true"
+              aria-describedby="address-hint"
+              autoComplete="street-address"
             />
+            <span id="address-hint" className="sr-only">Enter your full business address</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="contactName" className="block text-sm font-semibold text-gray-700 mb-2">
                 Contact Name *
               </label>
               <input
+                id="contactName"
                 type="text"
                 value={formData.contactName}
                 onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
                 placeholder="John Smith"
+                aria-required="true"
+                aria-describedby="contactName-hint"
+                autoComplete="name"
               />
+              <span id="contactName-hint" className="sr-only">Enter the primary contact name</span>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                 Email *
               </label>
               <input
+                id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
                 placeholder="john@example.com"
+                aria-required="true"
+                aria-describedby="email-hint"
+                autoComplete="email"
               />
+              <span id="email-hint" className="sr-only">Enter your business email address</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
                 Phone Number *
               </label>
               <input
+                id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
                 placeholder="(555) 123-4567"
+                aria-required="true"
+                aria-describedby="phone-hint"
+                autoComplete="tel"
               />
+              <span id="phone-hint" className="sr-only">Enter your business phone number</span>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="estimatedCustomers" className="block text-sm font-semibold text-gray-700 mb-2">
                 Estimated Daily Customers *
               </label>
               <select
+                id="estimatedCustomers"
                 value={formData.estimatedCustomers}
                 onChange={(e) => setFormData({ ...formData, estimatedCustomers: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                aria-required="true"
+                aria-describedby="estimatedCustomers-hint"
               >
                 <option value="">Select range</option>
                 <option value="1-50">1-50 customers/day</option>
@@ -249,6 +281,7 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
                 <option value="101-250">101-250 customers/day</option>
                 <option value="250+">250+ customers/day</option>
               </select>
+              <span id="estimatedCustomers-hint" className="sr-only">Select your estimated daily customer volume</span>
             </div>
           </div>
         </div>
@@ -258,10 +291,11 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onNext}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+            aria-label="Continue to integration selection"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
           >
             Continue
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </motion.button>
         </div>
       </div>
@@ -344,13 +378,41 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
           </div>
         </div>
 
-        <div className="space-y-4 mb-8">
-          {integrationOptions.map((option) => (
+        <div
+          className="space-y-4 mb-8"
+          role="radiogroup"
+          aria-label="Integration method selection"
+          aria-describedby="integration-hint"
+        >
+          <span id="integration-hint" className="sr-only">
+            Use arrow keys to navigate between options, Enter or Space to select
+          </span>
+          {integrationOptions.map((option, index) => (
             <motion.div
               key={option.id}
               whileHover={{ scale: 1.01 }}
               onClick={() => setSelectedIntegration(option.id)}
-              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setSelectedIntegration(option.id)
+                } else if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+                  e.preventDefault()
+                  const nextIndex = (index + 1) % integrationOptions.length
+                  const nextElement = document.getElementById(`integration-${integrationOptions[nextIndex].id}`)
+                  nextElement?.focus()
+                } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+                  e.preventDefault()
+                  const prevIndex = (index - 1 + integrationOptions.length) % integrationOptions.length
+                  const prevElement = document.getElementById(`integration-${integrationOptions[prevIndex].id}`)
+                  prevElement?.focus()
+                }
+              }}
+              id={`integration-${option.id}`}
+              role="radio"
+              aria-checked={selectedIntegration === option.id}
+              tabIndex={selectedIntegration === option.id ? 0 : -1}
+              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
                 selectedIntegration === option.id
                   ? "border-[#14B8A6] bg-[#14B8A6]/5"
                   : "border-gray-200 hover:border-[#14B8A6]/50"
@@ -376,11 +438,14 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
                   </div>
                 </div>
 
-                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  selectedIntegration === option.id
-                    ? "border-[#14B8A6] bg-[#14B8A6]"
-                    : "border-gray-300"
-                }`}>
+                <div
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    selectedIntegration === option.id
+                      ? "border-[#14B8A6] bg-[#14B8A6]"
+                      : "border-gray-300"
+                  }`}
+                  aria-hidden="true"
+                >
                   {selectedIntegration === option.id && (
                     <Check className="w-4 h-4 text-white" />
                   )}
@@ -456,9 +521,10 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onBack}
-            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
+            aria-label="Go back to business information"
+            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             Back
           </motion.button>
 
@@ -467,10 +533,12 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
             whileTap={{ scale: 0.98 }}
             onClick={onNext}
             disabled={!selectedIntegration}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Continue to customize coverage"
+            aria-disabled={!selectedIntegration}
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
           >
             Continue
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </motion.button>
         </div>
       </div>
@@ -573,13 +641,16 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
                   <div className="flex items-start gap-3">
                     <button
                       onClick={() => toggleProduct(product.id)}
-                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
+                      role="checkbox"
+                      aria-checked={isSelected}
+                      aria-label={`${isSelected ? "Deselect" : "Select"} ${product.name}`}
+                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
                         isSelected
                           ? "border-[#14B8A6] bg-[#14B8A6]"
                           : "border-gray-300"
                       }`}
                     >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
+                      {isSelected && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                     </button>
                     <div>
                       <h3 className="text-lg font-bold text-gray-900">{product.name}</h3>
@@ -597,25 +668,36 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
                   >
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-2">
+                        <label
+                          htmlFor={`price-${product.id}`}
+                          className="block text-xs font-semibold text-gray-700 mb-2"
+                        >
                           Customer Price
                         </label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" aria-hidden="true">$</span>
                           <input
+                            id={`price-${product.id}`}
                             type="number"
                             value={pricing[product.id as keyof typeof pricing]}
                             onChange={(e) => setPricing({ ...pricing, [product.id]: Number(e.target.value) })}
-                            className="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
+                            aria-label={`Customer price for ${product.name} in dollars`}
+                            min="0"
+                            step="1"
+                            className="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-2">
+                        <span className="block text-xs font-semibold text-gray-700 mb-2">
                           Your Commission ({product.commission}%)
-                        </label>
-                        <div className="px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-green-700 font-bold">
+                        </span>
+                        <div
+                          className="px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-green-700 font-bold"
+                          role="status"
+                          aria-label={`Your commission for ${product.name}: ${commission} dollars`}
+                        >
                           ${commission}
                         </div>
                       </div>
@@ -646,33 +728,43 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
           <h3 className="text-sm font-bold text-gray-900 mb-4">Brand Customization</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-2">
+              <label htmlFor="primaryColor" className="block text-xs font-semibold text-gray-700 mb-2">
                 Primary Color
               </label>
               <div className="flex gap-2">
                 <input
+                  id="primaryColorPicker"
                   type="color"
                   value={formData.primaryColor}
                   onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
-                  className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer"
+                  aria-label="Select brand primary color"
+                  className="w-12 h-10 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
                 />
                 <input
+                  id="primaryColor"
                   type="text"
                   value={formData.primaryColor}
                   onChange={(e) => setFormData(prev => ({ ...prev, primaryColor: e.target.value }))}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent"
+                  aria-label="Enter brand primary color hex code"
+                  pattern="^#[0-9A-Fa-f]{6}$"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-2">
+              <label htmlFor="logoUpload" className="block text-xs font-semibold text-gray-700 mb-2">
                 Upload Logo
               </label>
-              <div className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer text-sm text-gray-600 flex items-center justify-between">
+              <button
+                id="logoUpload"
+                type="button"
+                aria-label="Upload your business logo"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer text-sm text-gray-600 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
+              >
                 <span>Choose file...</span>
-                <Download className="w-4 h-4" />
-              </div>
+                <Download className="w-4 h-4" aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>
@@ -682,9 +774,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onBack}
-            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
+            aria-label="Go back to integration selection"
+            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             Back
           </motion.button>
 
@@ -692,10 +785,11 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onNext}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+            aria-label="Continue to go live checklist"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
           >
             Continue
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </motion.button>
         </div>
       </div>
@@ -803,20 +897,24 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
 
                       <button
                         onClick={() => setChecklist({ ...checklist, [item.id]: !isCompleted })}
-                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        role="checkbox"
+                        aria-checked={isCompleted}
+                        aria-label={`Mark ${item.title} as ${isCompleted ? "incomplete" : "complete"}`}
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
                           isCompleted
                             ? "border-green-500 bg-green-500"
                             : "border-gray-300"
                         }`}
                       >
-                        {isCompleted && <Check className="w-4 h-4 text-white" />}
+                        {isCompleted && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                       </button>
                     </div>
 
                     {!isCompleted && (
                       <button
                         onClick={() => setChecklist({ ...checklist, [item.id]: true })}
-                        className="mt-3 px-4 py-2 bg-[#14B8A6] text-white text-sm font-semibold rounded-lg hover:bg-[#0D9488] transition-colors"
+                        aria-label={`${item.action} for ${item.title}`}
+                        className="mt-3 px-4 py-2 bg-[#14B8A6] text-white text-sm font-semibold rounded-lg hover:bg-[#0D9488] transition-colors focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
                       >
                         {item.action}
                       </button>
@@ -861,9 +959,11 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
             whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
             onClick={onBack}
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Go back to customize coverage"
+            aria-disabled={isSubmitting}
+            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             Back
           </motion.button>
 
@@ -872,17 +972,20 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
             whileTap={{ scale: allCompleted && !isSubmitting ? 0.98 : 1 }}
             onClick={onComplete}
             disabled={!allCompleted || isSubmitting}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={isSubmitting ? "Setting up your partner account" : "Complete setup and go live"}
+            aria-disabled={!allCompleted || isSubmitting}
+            aria-busy={isSubmitting}
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
                 Setting up...
               </>
             ) : (
               <>
                 Complete Setup
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-5 h-5" aria-hidden="true" />
               </>
             )}
           </motion.button>
@@ -1053,13 +1156,20 @@ export default function OnboardingForm() {
         }
 
         // Refresh the session to get the updated role
+        // The JWT callback will now refetch the role from the database
         await updateSession()
+
+        // Wait a brief moment for the session to fully propagate
+        // This prevents race conditions where the redirect happens
+        // before the new role is available in the session
+        await new Promise(resolve => setTimeout(resolve, 500))
       }
 
       // 3. Show success state briefly then redirect
       setIsComplete(true)
 
       // Redirect to partner dashboard after 2 seconds
+      // Session is now guaranteed to have the updated role
       setTimeout(() => {
         router.push("/partner/dashboard")
       }, 2000)

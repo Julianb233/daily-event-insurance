@@ -76,11 +76,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
+      // Initial sign-in: set user data from credentials
       if (user && user.id) {
         token.id = user.id
         token.role = (user as any).role
       }
+
+      // On session update or token refresh, refetch role from database
+      // This ensures role changes (e.g., after onboarding) are immediately reflected
+      if ((trigger === "update" || !user) && token.id && db) {
+        try {
+          const [dbUser] = await db
+            .select({ role: users.role })
+            .from(users)
+            .where(eq(users.id, token.id as string))
+            .limit(1)
+
+          if (dbUser) {
+            token.role = dbUser.role || "user"
+          }
+        } catch (error) {
+          console.error("Failed to refresh user role from database:", error)
+          // Keep existing role on error
+        }
+      }
+
       return token
     },
     async session({ session, token }) {
