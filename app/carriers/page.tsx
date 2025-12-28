@@ -102,22 +102,26 @@ const dataAdvantages = [
   {
     icon: Activity,
     title: "Real-Time Activity Signals",
-    description: "Know when participants are active, what they're doing, and how often"
+    description: "Know when participants are active, what they're doing, and how often",
+    slug: "real-time-activity-signals"
   },
   {
     icon: LineChart,
     title: "Risk Window Precision",
-    description: "Coverage aligned to actual exposure windows, not estimated time periods"
+    description: "Coverage aligned to actual exposure windows, not estimated time periods",
+    slug: "risk-window-precision"
   },
   {
     icon: PieChart,
     title: "Behavioral Underwriting",
-    description: "Participant history, frequency, and activity type inform risk profiles"
+    description: "Participant history, frequency, and activity type inform risk profiles",
+    slug: "behavioral-underwriting"
   },
   {
     icon: Shield,
     title: "Verified Participation",
-    description: "Biometric check-ins and event triggers eliminate fraud and false claims"
+    description: "Biometric check-ins and event triggers eliminate fraud and false claims",
+    slug: "verified-participation"
   }
 ]
 
@@ -600,34 +604,55 @@ export default function CarriersPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {dataAdvantages.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{
-                  scale: 1.03,
-                  rotateX: 5,
-                  transition: { type: "spring", stiffness: 300 }
-                }}
-                className="group relative"
-                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-              >
-                {/* Glow effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+              <Link key={item.title} href={`/carriers/underwriting/${item.slug}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{
+                    scale: 1.03,
+                    rotateX: 5,
+                    transition: { type: "spring", stiffness: 300 }
+                  }}
+                  className="group relative cursor-pointer h-full"
+                  style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                >
+                  {/* Glow effect */}
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
 
-                {/* Glass card */}
-                <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10 hover:border-teal-500/50 transition-all duration-500 text-center h-full">
-                  <div className="w-14 h-14 bg-gradient-to-br from-teal-500/30 to-emerald-500/30 rounded-xl flex items-center justify-center mx-auto mb-5 group-hover:from-teal-500/50 group-hover:to-emerald-500/50 transition-all duration-300">
-                    <item.icon className="w-7 h-7 text-teal-400" />
+                  {/* Glass card */}
+                  <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10 hover:border-teal-500/50 transition-all duration-500 text-center h-full">
+                    <div className="w-14 h-14 bg-gradient-to-br from-teal-500/30 to-emerald-500/30 rounded-xl flex items-center justify-center mx-auto mb-5 group-hover:from-teal-500/50 group-hover:to-emerald-500/50 transition-all duration-300">
+                      <item.icon className="w-7 h-7 text-teal-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                    <p className="text-slate-400 mb-4">{item.description}</p>
+                    <div className="flex items-center justify-center gap-2 text-teal-400 font-medium text-sm group-hover:gap-3 transition-all">
+                      Learn More <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-slate-400">{item.description}</p>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </div>
+
+          {/* Explore All Link */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center mt-12"
+          >
+            <Link
+              href="/carriers/underwriting"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500/20 hover:bg-teal-500/30 text-teal-400 font-semibold rounded-xl border border-teal-500/30 hover:border-teal-500/50 transition-all"
+            >
+              Explore All Data Advantages
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
