@@ -45,6 +45,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.10",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.20",

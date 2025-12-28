@@ -1,37 +1,100 @@
 {
   "version": "2.0",
   "project": "daily-event-insurance",
-  "lastUpdated": "2025-12-27T02:10:00Z",
-  "expiresAt": "2025-12-31T02:10:00Z",
-  "swarmId": "bubba_setandforget_001",
+  "lastUpdated": "2025-12-28T22:30:00Z",
+  "expiresAt": "2026-01-04T22:30:00Z",
+  "swarmId": "bubba_security_004",
   "swarmStatus": "completed",
   "currentWork": {
-    "description": "Branding assets verified, Wizard remnants cleaned",
+    "description": "Security fixes applied - middleware role verification and session timing",
     "status": "completed",
-    "phase": "Production Ready"
+    "phase": "Production Ready - Security Hardened"
   },
   "agents": {
-    "Bella-Branding": {"tasks": ["DEI-001", "DEI-002", "DEI-003", "DEI-004"], "status": "completed"},
-    "Fiona-Frontend": {"tasks": ["DEI-005"], "status": "completed"},
-    "Tyler-TypeScript": {"tasks": ["DEI-006"], "status": "completed"},
-    "Helena-Memory": {"tasks": ["DEI-007"], "status": "completed"}
+    "Bubba-Orchestrator": {"tasks": ["CLEANUP-001", "CLEANUP-002", "CLEANUP-003", "SECURITY-001", "SECURITY-002"], "status": "completed", "notes": "Security fixes applied"}
   },
   "taskRegistry": {
-    "DEI-001": {"title": "Create branding assets", "owner": "Bella-Branding", "status": "completed", "notes": "logo-color.png, logo-white.png already exist"},
-    "DEI-002": {"title": "Create OG/Twitter images", "owner": "Bella-Branding", "status": "completed", "notes": "og-image.png exists"},
-    "DEI-003": {"title": "Create hero graphic", "owner": "Bella-Branding", "status": "completed", "notes": "hero-shield.png exists"},
-    "DEI-004": {"title": "Generate partner photos", "owner": "Bella-Branding", "status": "completed", "notes": "partner-gym, climbing, adventure, rentals exist"},
-    "DEI-005": {"title": "Create process/benefit icons", "owner": "Fiona-Frontend", "status": "completed", "notes": "SVG icons created"},
-    "DEI-006": {"title": "Delete Wizard remnant files", "owner": "Tyler-TypeScript", "status": "completed", "notes": "Only 1 file (ico-helmet-w.png) needed deletion"},
-    "DEI-007": {"title": "State file updated", "owner": "Helena-Memory", "status": "completed"}
+    "LAUNCH-001": {"title": "Supabase configuration audit", "owner": "Dana-Database", "status": "completed", "result": "No changes needed - already configured"},
+    "LAUNCH-002": {"title": "Lead source research", "owner": "Morgan-Marketing", "status": "completed", "result": "6 verticals: IHRSA, MABA, ACGA, ELRA, OIA, adventure sports"},
+    "LAUNCH-003": {"title": "Accessibility & mobile audit", "owner": "Fiona-Frontend", "status": "completed", "result": "Grade B-, 5hrs quick fixes needed"},
+    "LAUNCH-004": {"title": "Partner signup flow test", "owner": "Tessa-Tester", "status": "completed", "result": "2 critical: session timing, middleware role check"},
+    "LAUNCH-005": {"title": "Vercel deployment guide", "owner": "Petra-DevOps", "status": "completed", "result": "9-phase checklist with GA4 integration"},
+    "QUOTE-ENGINE": {"title": "Quote Engine Implementation", "owner": "Dana-Database", "status": "completed", "result": "Full pricing engine with risk assessment, validation, expiration, API endpoints"},
+    "CLEANUP-001": {"title": "Remove orphan Wizard components", "owner": "Bubba-Orchestrator", "status": "completed", "result": "Removed 21 unused components with Wizard/Lorenzo/Golden Ticket references"},
+    "CLEANUP-002": {"title": "Clean obsolete scripts", "owner": "Bubba-Orchestrator", "status": "completed", "result": "Removed compress-images.js and verify-images.js"},
+    "CLEANUP-003": {"title": "Verify production build", "owner": "Bubba-Orchestrator", "status": "completed", "result": "Build passes with 66 static pages, all API routes working"},
+    "SECURITY-001": {"title": "Add role verification to middleware", "owner": "Bubba-Orchestrator", "status": "completed", "result": "Middleware now checks user role for /partner and /api/partner routes, returns 403 for unauthorized API calls, redirects users to onboarding if lacking partner role"},
+    "SECURITY-002": {"title": "Fix session role update timing", "owner": "Bubba-Orchestrator", "status": "completed", "result": "JWT callback now refetches role from database on session update, onboarding form waits for session propagation before redirect"}
+  },
+  "securityFixes": {
+    "date": "2025-12-28",
+    "changes": [
+      {
+        "file": "middleware.ts",
+        "issue": "Only checked authentication, not role",
+        "fix": "Added ROUTE_ROLES mapping with role requirements, hasRequiredRole() helper, getRequiredRoles() helper. Returns 403 for unauthorized API calls, redirects to /onboarding for users trying to access /partner"
+      },
+      {
+        "file": "lib/auth.ts",
+        "issue": "JWT callback only set role on initial sign-in, not on session refresh",
+        "fix": "Added database role refetch on trigger=update or token refresh. Role is now always current from database."
+      },
+      {
+        "file": "app/onboarding/onboarding-form.tsx",
+        "issue": "Redirect happened before session fully propagated",
+        "fix": "Added 500ms delay after updateSession() to allow session propagation before redirect"
+      }
+    ]
+  },
+  "coreFeatures": {
+    "quoteEngine": "Complete - pricing, risk assessment, validation, expiration",
+    "partnerAPI": "Complete - analytics, quotes, policies, products, resources",
+    "authentication": "Complete - NextAuth.js with database sessions + role verification",
+    "database": "Complete - Neon PostgreSQL with Drizzle ORM",
+    "rbac": "Complete - role-based access control enforced at middleware level",
+    "webhooks": "Complete - GHL integration, policy updates"
+  },
+  "criticalFindings": {
+    "security": [],
+    "accessibility": [
+      {
+        "severity": "medium",
+        "issue": "Form inputs missing ARIA labels",
+        "recommendation": "Add aria-label or aria-labelledby to all form inputs"
+      },
+      {
+        "severity": "medium",
+        "issue": "Keyboard navigation incomplete in dropdowns",
+        "recommendation": "Add arrow key support to BusinessTypeSelector"
+      }
+    ]
+  },
+  "leadSources": {
+    "gyms": {"association": "IHRSA", "reach": "40,000+ facilities"},
+    "climbing": {"association": "CWA", "reach": "600+ facilities"},
+    "rentals": {"association": "ELRA", "reach": "Bike/kayak/ski rentals"},
+    "adventure": {"association": "ACGA", "reach": "400+ camps"},
+    "trampoline": {"association": "ASTM", "reach": "800+ parks"},
+    "waterSports": {"association": "OIA", "reach": "Paddleboarding, kayaking"}
+  },
+  "healthStatus": {
+    "build": "passing",
+    "staticPages": 66,
+    "apiRoutes": 18,
+    "typeErrors": 0,
+    "codebaseCleaned": true,
+    "securityHardened": true,
+    "deprecationWarnings": ["middleware file convention deprecated - consider migrating to proxy"]
   },
   "existingAssets": {
     "logos": ["logo-color.png", "logo-white.png"],
     "icons": ["icon.svg", "icon-dark-32x32.png", "icon-light-32x32.png", "apple-icon.png"],
     "og": ["og-image.png", "og-image.webp"],
     "hero": ["hero-shield.png", "hero-desktop.png", "hero-mobile.png", "hero-on.png", "hero-off.png"],
-    "partners": ["partner-gym.png", "partner-climbing.png", "partner-adventure.png", "partner-rentals.png"]
+    "partners": ["partner-gym.png", "partner-climbing.png", "partner-adventure.png", "partner-rentals.png"],
+    "svgIcons": ["icon-signup.svg", "icon-integrate.svg", "icon-coverage.svg", "icon-revenue.svg", "icon-liability.svg", "icon-convenience.svg", "icon-integration.svg"],
+    "badges": ["badge-insured.svg", "badge-partners.svg", "badge-secure.svg"]
   },
   "autonomousMode": true,
-  "resumeInstructions": "Daily Event Insurance is production ready. All branding assets exist. Wizard remnants cleaned. Ready for deployment."
+  "resumeInstructions": "Daily Event Insurance is production ready and security hardened. All security issues FIXED: (1) Middleware now enforces role-based access, (2) Session role updates properly from database. Only accessibility quick fixes remain (~5hrs). Ready for deployment to Vercel."
 }
