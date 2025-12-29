@@ -333,6 +333,13 @@ function PartnersPageContent() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
+                  <Link
+                    href={`/admin/partners/${partner.id}`}
+                    className="p-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                    title="View details"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Link>
                   <button
                     onClick={() => {
                       setSelectedPartner(partner)
