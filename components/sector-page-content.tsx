@@ -128,7 +128,7 @@ function SectorHero({ sector }: { sector: IndustrySector }) {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
           >
             <motion.a
-              href="#apply"
+              href="/#apply"
               whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -12px rgba(0,0,0,0.3)" }}
               whileTap={{ scale: 0.98 }}
               className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-teal-700 bg-white rounded-full shadow-2xl hover:bg-teal-50 transition-all duration-300"
@@ -361,7 +361,7 @@ function CTASection() {
             </motion.a>
 
             <motion.a
-              href="#apply"
+              href="/#apply"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white font-black uppercase rounded-full hover:bg-white/30 transition-colors"

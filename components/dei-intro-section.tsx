@@ -63,31 +63,20 @@ export function DEIIntroSection() {
         className="absolute inset-0 z-[5] flex flex-col items-center justify-center pointer-events-none px-6 md:px-8"
         style={{ scale: logoScale, opacity: logoOpacity }}
       >
-        {/* Shield icon - generated with Gemini */}
+        {/* Company Logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-6 md:mb-8"
         >
-          <div className="relative w-24 h-24 md:w-36 md:h-36 lg:w-44 lg:h-44">
+          <div className="relative w-48 h-20 md:w-72 md:h-28 lg:w-96 lg:h-36">
             <Image
-              src="/images/hero-shield.png"
-              alt="Daily Event Insurance protection shield - instant coverage for your members"
+              src="/images/logo-color.png"
+              alt="Daily Event Insurance - Events-based insurance platform"
               fill
-              className="object-contain drop-shadow-[0_0_30px_rgba(20,184,166,0.5)]"
+              className="object-contain drop-shadow-[0_0_30px_rgba(20,184,166,0.3)]"
               priority
-            />
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              animate={{
-                boxShadow: [
-                  "0 0 30px rgba(20,184,166,0.3)",
-                  "0 0 60px rgba(20,184,166,0.5)",
-                  "0 0 30px rgba(20,184,166,0.3)",
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
             />
           </div>
         </motion.div>
