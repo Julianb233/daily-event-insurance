@@ -94,6 +94,13 @@ export function paginatedResponse<T>(
 }
 
 /**
+ * Bad request error response
+ */
+export function badRequest(message: string, details?: any): NextResponse {
+  return errorResponse("Bad Request", message, 400, "BAD_REQUEST", details)
+}
+
+/**
  * Validation error response
  */
 export function validationError(
