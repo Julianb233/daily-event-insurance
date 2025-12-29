@@ -559,6 +559,44 @@ export default function CarriersPage() {
         </div>
       </section>
 
+      {/* Lead Flow CTA Banner */}
+      <section className="py-16 bg-gradient-to-r from-slate-100 to-teal-50 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-teal-500/30 to-purple-500/30 rounded-3xl blur-xl" />
+            <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl p-8 md:p-10 border border-teal-200 shadow-xl">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="flex-1 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-4">
+                    <Database className="w-4 h-4" />
+                    Lead Generation Intelligence
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
+                    Race Day Coverage Lead Flow
+                  </h3>
+                  <p className="text-slate-600 max-w-xl">
+                    Discover how our embedded platform delivers biometrically-enhanced leads with TCPA consent,
+                    health signals, and verified participation data from race event partners.
+                  </p>
+                </div>
+                <Link
+                  href="/carriers/lead-flow"
+                  className="flex-shrink-0 inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-teal-600 text-white font-bold text-lg rounded-2xl hover:from-purple-700 hover:to-teal-700 transition-all shadow-xl shadow-purple-500/30 group"
+                >
+                  View Lead Flow Diagram
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Data Advantage Section with Glassmorphism */}
       <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
         {/* Animated orbs */}

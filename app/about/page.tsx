@@ -683,13 +683,13 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-28 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 relative overflow-hidden">
+      <section className="py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
         <FloatingOrb
-          className="absolute top-10 left-[10%] w-48 h-48 bg-white/10 rounded-full blur-[60px]"
+          className="absolute top-10 left-[10%] w-48 h-48 bg-gradient-to-br from-teal-500/30 to-emerald-500/20 rounded-full blur-[60px]"
           delay={0}
         />
         <FloatingOrb
-          className="absolute bottom-10 right-[15%] w-64 h-64 bg-white/10 rounded-full blur-[80px]"
+          className="absolute bottom-10 right-[15%] w-64 h-64 bg-gradient-to-br from-purple-500/20 to-teal-500/20 rounded-full blur-[80px]"
           delay={1}
         />
 
@@ -710,7 +710,7 @@ export default function AboutPage() {
               Ready to Transform Your Event Insurance?
             </motion.h2>
             <motion.p
-              className="text-xl text-teal-100 mb-12 max-w-2xl mx-auto"
+              className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -730,7 +730,7 @@ export default function AboutPage() {
                 href="/#apply"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-teal-600 font-bold text-lg rounded-2xl hover:bg-teal-50 transition-all shadow-2xl"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold text-lg rounded-2xl hover:from-teal-400 hover:to-emerald-400 transition-all shadow-2xl shadow-teal-500/30"
               >
                 Get Started Today
                 <ArrowRight className="w-5 h-5" />

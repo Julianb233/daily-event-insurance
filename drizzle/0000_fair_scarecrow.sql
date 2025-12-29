@@ -1,0 +1,370 @@
+CREATE TABLE "accounts" (
+	"user_id" uuid NOT NULL,
+	"type" text NOT NULL,
+	"provider" text NOT NULL,
+	"provider_account_id" text NOT NULL,
+	"refresh_token" text,
+	"access_token" text,
+	"expires_at" integer,
+	"token_type" text,
+	"scope" text,
+	"id_token" text,
+	"session_state" text,
+	CONSTRAINT "accounts_provider_provider_account_id_pk" PRIMARY KEY("provider","provider_account_id")
+);
+--> statement-breakpoint
+CREATE TABLE "claim_documents" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"claim_id" uuid NOT NULL,
+	"document_type" text NOT NULL,
+	"file_name" text NOT NULL,
+	"file_url" text NOT NULL,
+	"file_size" integer,
+	"mime_type" text,
+	"description" text,
+	"uploaded_by" text,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "claims" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"policy_id" uuid NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"claim_number" text NOT NULL,
+	"claim_type" text NOT NULL,
+	"incident_date" timestamp NOT NULL,
+	"incident_location" text,
+	"incident_description" text NOT NULL,
+	"claimant_name" text NOT NULL,
+	"claimant_email" text,
+	"claimant_phone" text,
+	"claim_amount" numeric(10, 2),
+	"approved_amount" numeric(10, 2),
+	"payout_amount" numeric(10, 2) DEFAULT '0',
+	"deductible_amount" numeric(10, 2) DEFAULT '0',
+	"status" text DEFAULT 'submitted' NOT NULL,
+	"assigned_to" text,
+	"review_notes" text,
+	"denial_reason" text,
+	"submitted_at" timestamp DEFAULT now() NOT NULL,
+	"reviewed_at" timestamp,
+	"approved_at" timestamp,
+	"denied_at" timestamp,
+	"paid_at" timestamp,
+	"closed_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "claims_claim_number_unique" UNIQUE("claim_number")
+);
+--> statement-breakpoint
+CREATE TABLE "commission_payouts" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"year_month" text NOT NULL,
+	"tier_at_payout" text NOT NULL,
+	"commission_rate" numeric(5, 4) NOT NULL,
+	"total_policies" integer DEFAULT 0 NOT NULL,
+	"total_participants" integer DEFAULT 0 NOT NULL,
+	"gross_revenue" numeric(12, 2) DEFAULT '0' NOT NULL,
+	"commission_amount" numeric(12, 2) DEFAULT '0' NOT NULL,
+	"bonus_amount" numeric(10, 2) DEFAULT '0',
+	"status" text DEFAULT 'pending',
+	"paid_at" timestamp,
+	"payment_reference" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "commission_tiers" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"tier_name" text NOT NULL,
+	"min_volume" integer DEFAULT 0 NOT NULL,
+	"max_volume" integer,
+	"commission_rate" numeric(5, 4) DEFAULT '0.50' NOT NULL,
+	"flat_bonus" numeric(10, 2) DEFAULT '0',
+	"is_active" boolean DEFAULT true,
+	"sort_order" integer DEFAULT 0,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "monthly_earnings" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"year_month" text NOT NULL,
+	"total_participants" integer DEFAULT 0,
+	"opted_in_participants" integer DEFAULT 0,
+	"partner_commission" numeric(10, 2) DEFAULT '0',
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "partner_documents" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"document_type" text NOT NULL,
+	"ghl_document_id" text,
+	"status" text DEFAULT 'pending',
+	"sent_at" timestamp,
+	"viewed_at" timestamp,
+	"signed_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "partner_products" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"product_type" text NOT NULL,
+	"is_enabled" boolean DEFAULT true,
+	"customer_price" numeric(10, 2) DEFAULT '4.99',
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "partner_resources" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" text NOT NULL,
+	"description" text,
+	"category" text NOT NULL,
+	"resource_type" text NOT NULL,
+	"file_url" text,
+	"thumbnail_url" text,
+	"sort_order" integer DEFAULT 0,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "partner_tier_overrides" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"tier_id" uuid NOT NULL,
+	"reason" text,
+	"applied_by" uuid,
+	"expires_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "partner_tier_overrides_partner_id_unique" UNIQUE("partner_id")
+);
+--> statement-breakpoint
+CREATE TABLE "partners" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid,
+	"clerk_user_id" text,
+	"business_name" text NOT NULL,
+	"business_type" text NOT NULL,
+	"contact_name" text NOT NULL,
+	"contact_email" text NOT NULL,
+	"contact_phone" text,
+	"integration_type" text DEFAULT 'widget',
+	"primary_color" text DEFAULT '#14B8A6',
+	"logo_url" text,
+	"status" text DEFAULT 'pending',
+	"ghl_contact_id" text,
+	"ghl_opportunity_id" text,
+	"documents_status" text DEFAULT 'not_sent',
+	"agreement_signed" boolean DEFAULT false,
+	"w9_signed" boolean DEFAULT false,
+	"direct_deposit_signed" boolean DEFAULT false,
+	"documents_sent_at" timestamp,
+	"documents_completed_at" timestamp,
+	"approved_at" timestamp,
+	"approved_by" uuid,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "partners_user_id_unique" UNIQUE("user_id"),
+	CONSTRAINT "partners_clerk_user_id_unique" UNIQUE("clerk_user_id")
+);
+--> statement-breakpoint
+CREATE TABLE "payments" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"policy_id" uuid NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"payment_number" text NOT NULL,
+	"stripe_payment_intent_id" text,
+	"stripe_charge_id" text,
+	"stripe_customer_id" text,
+	"amount" numeric(10, 2) NOT NULL,
+	"currency" text DEFAULT 'usd' NOT NULL,
+	"status" text DEFAULT 'pending' NOT NULL,
+	"payment_method" text,
+	"payment_method_details" text,
+	"refund_amount" numeric(10, 2) DEFAULT '0',
+	"refund_reason" text,
+	"refunded_at" timestamp,
+	"receipt_url" text,
+	"failure_code" text,
+	"failure_message" text,
+	"metadata" text,
+	"paid_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "payments_payment_number_unique" UNIQUE("payment_number"),
+	CONSTRAINT "payments_stripe_payment_intent_id_unique" UNIQUE("stripe_payment_intent_id")
+);
+--> statement-breakpoint
+CREATE TABLE "policies" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"quote_id" uuid,
+	"policy_number" text NOT NULL,
+	"event_type" text NOT NULL,
+	"event_date" timestamp NOT NULL,
+	"participants" integer NOT NULL,
+	"coverage_type" text NOT NULL,
+	"premium" numeric(10, 2) NOT NULL,
+	"commission" numeric(10, 2) NOT NULL,
+	"status" text DEFAULT 'active',
+	"effective_date" timestamp NOT NULL,
+	"expiration_date" timestamp NOT NULL,
+	"customer_email" text NOT NULL,
+	"customer_name" text NOT NULL,
+	"customer_phone" text,
+	"event_details" text,
+	"policy_document" text,
+	"certificate_issued" boolean DEFAULT false,
+	"metadata" text,
+	"duration" numeric(4, 1),
+	"location" text,
+	"risk_multiplier" numeric(5, 3),
+	"commission_tier" integer,
+	"cancelled_at" timestamp,
+	"cancellation_reason" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "policies_policy_number_unique" UNIQUE("policy_number")
+);
+--> statement-breakpoint
+CREATE TABLE "quotes" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"quote_number" text NOT NULL,
+	"event_type" text NOT NULL,
+	"event_date" timestamp NOT NULL,
+	"participants" integer NOT NULL,
+	"coverage_type" text NOT NULL,
+	"premium" numeric(10, 2) NOT NULL,
+	"commission" numeric(10, 2) NOT NULL,
+	"status" text DEFAULT 'pending',
+	"event_details" text,
+	"customer_email" text,
+	"customer_name" text,
+	"metadata" text,
+	"duration" numeric(4, 1),
+	"location" text,
+	"risk_multiplier" numeric(5, 3),
+	"commission_tier" integer,
+	"expires_at" timestamp,
+	"accepted_at" timestamp,
+	"declined_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "quotes_quote_number_unique" UNIQUE("quote_number")
+);
+--> statement-breakpoint
+CREATE TABLE "resource_downloads" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"partner_id" uuid NOT NULL,
+	"resource_id" uuid NOT NULL,
+	"downloaded_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "sessions" (
+	"session_token" text PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL,
+	"expires" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" text,
+	"email" text NOT NULL,
+	"email_verified" timestamp,
+	"image" text,
+	"password_hash" text,
+	"role" text DEFAULT 'user',
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "verification_tokens" (
+	"identifier" text NOT NULL,
+	"token" text NOT NULL,
+	"expires" timestamp NOT NULL,
+	CONSTRAINT "verification_tokens_identifier_token_pk" PRIMARY KEY("identifier","token")
+);
+--> statement-breakpoint
+CREATE TABLE "webhook_events" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"source" text NOT NULL,
+	"event_type" text NOT NULL,
+	"payload" text,
+	"partner_id" uuid,
+	"processed" boolean DEFAULT false,
+	"processed_at" timestamp,
+	"error" text,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "claim_documents" ADD CONSTRAINT "claim_documents_claim_id_claims_id_fk" FOREIGN KEY ("claim_id") REFERENCES "public"."claims"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "claims" ADD CONSTRAINT "claims_policy_id_policies_id_fk" FOREIGN KEY ("policy_id") REFERENCES "public"."policies"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "claims" ADD CONSTRAINT "claims_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "commission_payouts" ADD CONSTRAINT "commission_payouts_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "monthly_earnings" ADD CONSTRAINT "monthly_earnings_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partner_documents" ADD CONSTRAINT "partner_documents_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partner_products" ADD CONSTRAINT "partner_products_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partner_tier_overrides" ADD CONSTRAINT "partner_tier_overrides_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partner_tier_overrides" ADD CONSTRAINT "partner_tier_overrides_tier_id_commission_tiers_id_fk" FOREIGN KEY ("tier_id") REFERENCES "public"."commission_tiers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partner_tier_overrides" ADD CONSTRAINT "partner_tier_overrides_applied_by_users_id_fk" FOREIGN KEY ("applied_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partners" ADD CONSTRAINT "partners_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "partners" ADD CONSTRAINT "partners_approved_by_users_id_fk" FOREIGN KEY ("approved_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payments" ADD CONSTRAINT "payments_policy_id_policies_id_fk" FOREIGN KEY ("policy_id") REFERENCES "public"."policies"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payments" ADD CONSTRAINT "payments_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "policies" ADD CONSTRAINT "policies_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "policies" ADD CONSTRAINT "policies_quote_id_quotes_id_fk" FOREIGN KEY ("quote_id") REFERENCES "public"."quotes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "quotes" ADD CONSTRAINT "quotes_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "resource_downloads" ADD CONSTRAINT "resource_downloads_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "resource_downloads" ADD CONSTRAINT "resource_downloads_resource_id_partner_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."partner_resources"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "webhook_events" ADD CONSTRAINT "webhook_events_partner_id_partners_id_fk" FOREIGN KEY ("partner_id") REFERENCES "public"."partners"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_claim_documents_claim_id" ON "claim_documents" USING btree ("claim_id");--> statement-breakpoint
+CREATE INDEX "idx_claim_documents_type" ON "claim_documents" USING btree ("document_type");--> statement-breakpoint
+CREATE INDEX "idx_claims_policy_id" ON "claims" USING btree ("policy_id");--> statement-breakpoint
+CREATE INDEX "idx_claims_partner_id" ON "claims" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_claims_status" ON "claims" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_claims_incident_date" ON "claims" USING btree ("incident_date");--> statement-breakpoint
+CREATE INDEX "idx_claims_created_at" ON "claims" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_claims_partner_status" ON "claims" USING btree ("partner_id","status");--> statement-breakpoint
+CREATE INDEX "idx_commission_payouts_partner_id" ON "commission_payouts" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_commission_payouts_year_month" ON "commission_payouts" USING btree ("year_month");--> statement-breakpoint
+CREATE INDEX "idx_commission_payouts_status" ON "commission_payouts" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_commission_payouts_partner_month" ON "commission_payouts" USING btree ("partner_id","year_month");--> statement-breakpoint
+CREATE INDEX "idx_commission_tiers_tier_name" ON "commission_tiers" USING btree ("tier_name");--> statement-breakpoint
+CREATE INDEX "idx_commission_tiers_sort_order" ON "commission_tiers" USING btree ("sort_order");--> statement-breakpoint
+CREATE INDEX "idx_commission_tiers_active" ON "commission_tiers" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX "idx_monthly_earnings_partner_month" ON "monthly_earnings" USING btree ("partner_id","year_month");--> statement-breakpoint
+CREATE INDEX "idx_partner_products_partner_id" ON "partner_products" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_partner_tier_overrides_partner_id" ON "partner_tier_overrides" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_partner_tier_overrides_tier_id" ON "partner_tier_overrides" USING btree ("tier_id");--> statement-breakpoint
+CREATE INDEX "idx_partners_status" ON "partners" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_partners_business_type" ON "partners" USING btree ("business_type");--> statement-breakpoint
+CREATE INDEX "idx_payments_policy_id" ON "payments" USING btree ("policy_id");--> statement-breakpoint
+CREATE INDEX "idx_payments_partner_id" ON "payments" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_payments_status" ON "payments" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_payments_stripe_intent" ON "payments" USING btree ("stripe_payment_intent_id");--> statement-breakpoint
+CREATE INDEX "idx_payments_created_at" ON "payments" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_payments_partner_status" ON "payments" USING btree ("partner_id","status");--> statement-breakpoint
+CREATE INDEX "idx_policies_partner_id" ON "policies" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_policies_quote_id" ON "policies" USING btree ("quote_id");--> statement-breakpoint
+CREATE INDEX "idx_policies_status" ON "policies" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_policies_coverage_type" ON "policies" USING btree ("coverage_type");--> statement-breakpoint
+CREATE INDEX "idx_policies_event_date" ON "policies" USING btree ("event_date");--> statement-breakpoint
+CREATE INDEX "idx_policies_effective_date" ON "policies" USING btree ("effective_date");--> statement-breakpoint
+CREATE INDEX "idx_policies_created_at" ON "policies" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_quotes_partner_id" ON "quotes" USING btree ("partner_id");--> statement-breakpoint
+CREATE INDEX "idx_quotes_status" ON "quotes" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_quotes_coverage_type" ON "quotes" USING btree ("coverage_type");--> statement-breakpoint
+CREATE INDEX "idx_quotes_event_date" ON "quotes" USING btree ("event_date");--> statement-breakpoint
+CREATE INDEX "idx_quotes_created_at" ON "quotes" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "idx_quotes_expires_at" ON "quotes" USING btree ("expires_at");--> statement-breakpoint
+CREATE INDEX "idx_webhook_events_processed" ON "webhook_events" USING btree ("processed");--> statement-breakpoint
+CREATE INDEX "idx_webhook_events_created_at" ON "webhook_events" USING btree ("created_at");
