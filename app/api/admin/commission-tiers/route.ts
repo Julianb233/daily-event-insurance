@@ -39,13 +39,13 @@ export async function GET(request: NextRequest) {
       const pageSize = Math.min(parseInt(searchParams.get("pageSize") || "20"), 100)
       const activeOnly = searchParams.get("activeOnly") === "true"
 
-      // Dev mode mock data
+      // Dev mode mock data - Bronze starts at 500 minimum
       if (isDevMode || !isDbConfigured()) {
         const mockTiers = [
-          { id: "tier_1", tierName: "Bronze", minVolume: 0, maxVolume: 99, commissionRate: "0.4000", flatBonus: "0", isActive: true, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
-          { id: "tier_2", tierName: "Silver", minVolume: 100, maxVolume: 499, commissionRate: "0.4500", flatBonus: "0", isActive: true, sortOrder: 2, createdAt: new Date(), updatedAt: new Date() },
-          { id: "tier_3", tierName: "Gold", minVolume: 500, maxVolume: 999, commissionRate: "0.5000", flatBonus: "25.00", isActive: true, sortOrder: 3, createdAt: new Date(), updatedAt: new Date() },
-          { id: "tier_4", tierName: "Platinum", minVolume: 1000, maxVolume: null, commissionRate: "0.5500", flatBonus: "50.00", isActive: true, sortOrder: 4, createdAt: new Date(), updatedAt: new Date() },
+          { id: "tier_1", tierName: "Bronze", minVolume: 500, maxVolume: 999, commissionRate: "0.4000", flatBonus: "0", isActive: true, sortOrder: 1, createdAt: new Date(), updatedAt: new Date() },
+          { id: "tier_2", tierName: "Silver", minVolume: 1000, maxVolume: 2499, commissionRate: "0.4500", flatBonus: "10.00", isActive: true, sortOrder: 2, createdAt: new Date(), updatedAt: new Date() },
+          { id: "tier_3", tierName: "Gold", minVolume: 2500, maxVolume: 4999, commissionRate: "0.5000", flatBonus: "25.00", isActive: true, sortOrder: 3, createdAt: new Date(), updatedAt: new Date() },
+          { id: "tier_4", tierName: "Platinum", minVolume: 5000, maxVolume: null, commissionRate: "0.5500", flatBonus: "50.00", isActive: true, sortOrder: 4, createdAt: new Date(), updatedAt: new Date() },
         ]
         return paginatedResponse(mockTiers, page, pageSize, mockTiers.length)
       }

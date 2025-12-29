@@ -14,11 +14,12 @@ let tiersCache: DBTier[] | null = null
 let tiersCacheTime = 0
 
 // Fallback tiers if database is unavailable
+// Bronze starts at 500 minimum monthly participants
 const FALLBACK_TIERS: DBTier[] = [
   {
     id: "default_1",
     tierName: "Bronze",
-    minVolume: 0,
+    minVolume: 500,
     maxVolume: 999,
     commissionRate: "0.4000",
     flatBonus: "0",
@@ -33,7 +34,7 @@ const FALLBACK_TIERS: DBTier[] = [
     minVolume: 1000,
     maxVolume: 2499,
     commissionRate: "0.4500",
-    flatBonus: "0",
+    flatBonus: "10.00",
     isActive: true,
     sortOrder: 2,
     createdAt: new Date(),
@@ -335,12 +336,12 @@ export async function seedDefaultTiers(): Promise<void> {
       return
     }
 
-    // Insert default tiers
+    // Insert default tiers - Bronze starts at 500 minimum
     const defaultTiers = [
-      { tierName: "Bronze", minVolume: 0, maxVolume: 99, commissionRate: "0.4000", flatBonus: "0", sortOrder: 1 },
-      { tierName: "Silver", minVolume: 100, maxVolume: 499, commissionRate: "0.4500", flatBonus: "0", sortOrder: 2 },
-      { tierName: "Gold", minVolume: 500, maxVolume: 999, commissionRate: "0.5000", flatBonus: "25.00", sortOrder: 3 },
-      { tierName: "Platinum", minVolume: 1000, maxVolume: null, commissionRate: "0.5500", flatBonus: "50.00", sortOrder: 4 },
+      { tierName: "Bronze", minVolume: 500, maxVolume: 999, commissionRate: "0.4000", flatBonus: "0", sortOrder: 1 },
+      { tierName: "Silver", minVolume: 1000, maxVolume: 2499, commissionRate: "0.4500", flatBonus: "10.00", sortOrder: 2 },
+      { tierName: "Gold", minVolume: 2500, maxVolume: 4999, commissionRate: "0.5000", flatBonus: "25.00", sortOrder: 3 },
+      { tierName: "Platinum", minVolume: 5000, maxVolume: null, commissionRate: "0.5500", flatBonus: "50.00", sortOrder: 4 },
     ]
 
     await db.insert(tiersTable).values(defaultTiers)

@@ -94,6 +94,13 @@ export function paginatedResponse<T>(
 }
 
 /**
+ * Bad request error response
+ */
+export function badRequest(message: string, details?: any): NextResponse {
+  return errorResponse("Bad Request", message, 400, "BAD_REQUEST", details)
+}
+
+/**
  * Validation error response
  */
 export function validationError(
@@ -108,6 +115,20 @@ export function validationError(
  */
 export function notFoundError(resource: string = "Resource"): NextResponse {
   return errorResponse("Not Found", `${resource} not found`, 404, "NOT_FOUND")
+}
+
+/**
+ * Bad request error response (alias for validationError)
+ */
+export function badRequest(message: string, details?: any): NextResponse {
+  return errorResponse("Bad Request", message, 400, "BAD_REQUEST", details)
+}
+
+/**
+ * Not found alias (for compatibility)
+ */
+export function notFound(resource: string = "Resource"): NextResponse {
+  return notFoundError(resource)
 }
 
 /**

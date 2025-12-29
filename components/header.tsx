@@ -276,7 +276,7 @@ export default function Header() {
                 whileTap={{ scale: 0.98 }}
                 className="hidden sm:flex items-center px-5 py-2 bg-[#14B8A6] text-white font-medium text-[15px] rounded-md hover:bg-[#0F9F90] transition-all"
               >
-                Get Demo
+                Apply Now
               </motion.a>
 
               {/* Mobile Menu Button */}
@@ -445,7 +445,7 @@ export default function Header() {
                   onClick={(e) => handleNavClick(e, "#apply")}
                   className="block px-6 py-3 bg-[#14B8A6] text-white font-medium text-base rounded-md hover:bg-[#0F9F90] transition-all text-center"
                 >
-                  Get Demo
+                  Apply Now
                 </a>
               </motion.div>
 

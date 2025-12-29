@@ -58,9 +58,9 @@ export function DEIIntroSection() {
         }}
       />
 
-      {/* Main content - centered */}
+      {/* Main content - centered with header offset */}
       <motion.div
-        className="absolute inset-0 z-[5] flex flex-col items-center justify-center pointer-events-none px-6 md:px-8"
+        className="absolute inset-0 z-[5] flex flex-col items-center justify-center pointer-events-none px-6 md:px-8 pt-16 md:pt-20"
         style={{ scale: logoScale, opacity: logoOpacity }}
       >
         {/* Company Logo */}
@@ -160,7 +160,7 @@ export function DEIIntroSection() {
             whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(20,184,166,0.4)" }}
             whileTap={{ scale: 0.95 }}
           >
-            Start Earning Today
+            Start Earning Now
           </motion.a>
 
           {/* Secondary CTA */}
@@ -202,24 +202,31 @@ export function DEIIntroSection() {
         }}
       />
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator - enhanced visibility */}
       <motion.div
-        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:gap-3 z-20 pb-safe"
+        className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
         transition={{ delay: 1.2, duration: 0.8 }}
       >
-        <span className="text-teal-600 text-[10px] md:text-xs font-medium tracking-[0.25em] uppercase drop-shadow-lg">
-          Scroll to Explore
-        </span>
+        <motion.span
+          className="text-slate-600 text-xs md:text-sm font-semibold tracking-wide"
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+        >
+          Scroll to explore
+        </motion.span>
         <motion.div
-          className="w-5 h-8 md:w-6 md:h-10 border-2 border-teal-500/50 rounded-full flex justify-center pt-1.5 md:pt-2"
-          animate={{ borderColor: ["rgba(20,184,166,0.5)", "rgba(20,184,166,0.9)", "rgba(20,184,166,0.5)"] }}
+          className="w-6 h-10 md:w-7 md:h-12 border-2 border-teal-500 rounded-full flex justify-center pt-2 bg-white/50 backdrop-blur-sm shadow-lg"
+          animate={{
+            borderColor: ["rgba(20,184,166,0.6)", "rgba(20,184,166,1)", "rgba(20,184,166,0.6)"],
+            boxShadow: ["0 4px 15px rgba(20,184,166,0.2)", "0 4px 20px rgba(20,184,166,0.4)", "0 4px 15px rgba(20,184,166,0.2)"]
+          }}
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
         >
           <motion.div
-            className="w-1 h-2 md:w-1.5 md:h-2.5 bg-teal-500 rounded-full"
-            animate={{ y: [0, 8, 0] }}
+            className="w-1.5 h-3 md:w-2 md:h-3.5 bg-teal-500 rounded-full"
+            animate={{ y: [0, 12, 0] }}
             transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
           />
         </motion.div>

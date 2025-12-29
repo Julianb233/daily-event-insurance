@@ -23,6 +23,7 @@ import {
   getMonthName,
   OPT_IN_RATE,
   commissionTiers,
+  getNextTier,
 } from "@/lib/commission-tiers"
 
 interface MonthlyEarning {
@@ -344,24 +345,125 @@ export default function PartnerEarningsPage() {
         </div>
       </motion.div>
 
+      {/* Commission Tier Progress */}
+      {data?.summary.totalParticipants > 0 && (() => {
+        const tierInfo = getNextTier(data.summary.totalParticipants)
+        const progress = tierInfo.nextTier
+          ? ((data.summary.totalParticipants - tierInfo.currentTier.minVolume) /
+              (tierInfo.nextTier.minVolume - tierInfo.currentTier.minVolume)) * 100
+          : 100
+
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-8 bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-6 border border-teal-100"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Commission Tier Progress</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Current Tier: <span className="font-semibold text-teal-600">{tierInfo.currentTier.percentage}%</span> • ${tierInfo.currentTier.perParticipant}/participant
+                </p>
+              </div>
+              {tierInfo.nextTier && (
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-teal-600">{tierInfo.nextTier.percentage}%</p>
+                  <p className="text-xs text-slate-600">Next Tier</p>
+                </div>
+              )}
+            </div>
+
+            {tierInfo.nextTier ? (
+              <>
+                {/* Progress Bar */}
+                <div className="relative h-4 bg-white rounded-full overflow-hidden mb-3 shadow-inner">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <div>
+                    <p className="text-slate-700 font-medium">
+                      {tierInfo.participantsToNext.toLocaleString()} more participants to next tier
+                    </p>
+                    <p className="text-slate-600 text-xs mt-1">
+                      Increase your commission by {tierInfo.percentageIncrease}% and earn ${tierInfo.nextTier.perParticipant}/participant
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-slate-900">{Math.round(progress)}%</p>
+                    <p className="text-xs text-slate-600">Complete</p>
+                  </div>
+                </div>
+
+                {/* Earnings Projection */}
+                {data.summary.averageMonthlyCommission > 0 && (
+                  <div className="mt-4 p-4 bg-white/80 rounded-xl border border-teal-200">
+                    <p className="text-sm text-slate-700 mb-2">
+                      <strong>Potential Impact:</strong> Reaching the next tier could increase your monthly earnings by approximately{" "}
+                      <span className="font-bold text-teal-600">
+                        {formatCurrency(
+                          (data.summary.totalParticipants * OPT_IN_RATE * tierInfo.percentageIncrease / 100)
+                        )}
+                      </span>
+                      /month
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-lg font-semibold text-teal-600 mb-1">Congratulations!</p>
+                <p className="text-slate-700">You've reached the highest commission tier</p>
+              </div>
+            )}
+          </motion.div>
+        )
+      })()}
+
       {/* Commission Tiers Reference */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
+        transition={{ delay: 0.7 }}
         className="mt-8 bg-slate-50 rounded-2xl p-6"
       >
-        <h3 className="text-lg font-bold text-slate-900 mb-4">Commission Tiers</h3>
+        <h3 className="text-lg font-bold text-slate-900 mb-4">All Commission Tiers</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {commissionTiers.map((tier, idx) => (
-            <div key={idx} className="bg-white rounded-xl p-4 text-center border border-slate-200">
-              <div className="text-lg font-bold text-teal-600">{tier.percentage}%</div>
-              <div className="text-xs text-slate-500 mt-1">
-                {tier.minVolume.toLocaleString()}{tier.maxVolume === Infinity ? '+' : `-${tier.maxVolume.toLocaleString()}`}
+          {commissionTiers.map((tier, idx) => {
+            const isCurrentTier = data?.summary.totalParticipants >= tier.minVolume && data?.summary.totalParticipants <= tier.maxVolume
+            return (
+              <div
+                key={idx}
+                className={`rounded-xl p-4 text-center border-2 transition-all ${
+                  isCurrentTier
+                    ? "bg-gradient-to-br from-teal-500 to-teal-600 border-teal-400 text-white shadow-lg"
+                    : "bg-white border-slate-200 text-slate-900"
+                }`}
+              >
+                <div className={`text-lg font-bold ${isCurrentTier ? "text-white" : "text-teal-600"}`}>
+                  {tier.percentage}%
+                </div>
+                <div className={`text-xs mt-1 ${isCurrentTier ? "text-teal-100" : "text-slate-500"}`}>
+                  {tier.minVolume.toLocaleString()}{tier.maxVolume === Infinity ? '+' : `-${tier.maxVolume.toLocaleString()}`}
+                </div>
+                <div className={`text-xs mt-0.5 ${isCurrentTier ? "text-teal-50" : "text-slate-400"}`}>
+                  ${tier.perParticipant}/person
+                </div>
+                {isCurrentTier && (
+                  <div className="mt-2 text-xs font-semibold bg-white/20 px-2 py-1 rounded">
+                    Current
+                  </div>
+                )}
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">${tier.perParticipant}/person</div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </motion.div>
 
