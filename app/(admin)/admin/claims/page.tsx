@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import Link from "next/link"
 import {
   AlertTriangle,
   Search,
@@ -15,6 +16,7 @@ import {
   DollarSign,
   Eye,
   MessageSquare,
+  ExternalLink,
 } from "lucide-react"
 
 interface Claim {
@@ -283,6 +285,16 @@ export default function ClaimsPage() {
                   <div className="text-right">
                     <p className="text-xs text-slate-500">Claim Amount</p>
                     <p className="text-xl font-bold text-slate-900">{formatCurrency(claim.claimAmount)}</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/admin/claims/${claim.id}`}
+                      className="px-3 py-1.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200 transition-colors inline-flex items-center gap-1"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </Link>
                   </div>
 
                   {claim.status === "pending" && (

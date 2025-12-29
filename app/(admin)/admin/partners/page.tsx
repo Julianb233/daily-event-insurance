@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import {
   Building2,
   Search,
