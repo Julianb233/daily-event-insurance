@@ -111,6 +111,20 @@ export function notFoundError(resource: string = "Resource"): NextResponse {
 }
 
 /**
+ * Bad request error response (alias for validationError)
+ */
+export function badRequest(message: string, details?: any): NextResponse {
+  return errorResponse("Bad Request", message, 400, "BAD_REQUEST", details)
+}
+
+/**
+ * Not found alias (for compatibility)
+ */
+export function notFound(resource: string = "Resource"): NextResponse {
+  return notFoundError(resource)
+}
+
+/**
  * Unauthorized error response
  */
 export function unauthorizedError(message: string = "Authentication required"): NextResponse {
