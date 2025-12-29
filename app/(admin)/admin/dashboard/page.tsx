@@ -18,41 +18,44 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-// Types for dashboard data
+// Types for dashboard data from API
 interface DashboardStats {
   overview: {
     totalPartners: number
     activePartners: number
     pendingPartners: number
     totalPolicies: number
-    totalRevenue: number
-    totalCommission: number
-    pendingPayouts: number
+    activePolicies: number
+    totalQuotes: number
+    conversionRate: number
   }
   revenue: {
-    daily: { date: string; amount: number }[]
-    monthly: { month: string; amount: number }[]
+    totalPremium: number
+    totalCommissions: number
+    totalParticipants: number
+    avgPremiumPerPolicy: number
+    avgCommissionRate: number
   }
+  commissionTiers: {
+    name: string
+    rate: number
+  }[]
   topPartners: {
     id: string
-    businessName: string
-    totalRevenue: number
-    policyCount: number
+    name: string
+    policies: number
+    revenue: number
+    commission: number
   }[]
-  recentActivity: {
-    id: string
-    type: string
-    description: string
-    timestamp: string
-  }[]
-  commissionTiers: {
-    tierName: string
-    partnerCount: number
-    totalRevenue: number
-  }[]
+  pendingPayouts: {
+    count: number
+    totalAmount: number
+  }
+  period: string
+  generatedAt: string
 }
 
-// Mock data for development
+// Mock data for development - matches API structure
 function generateMockData(): DashboardStats {
   return {
     overview: {
@@ -60,43 +63,36 @@ function generateMockData(): DashboardStats {
       activePartners: 38,
       pendingPartners: 9,
       totalPolicies: 3842,
-      totalRevenue: 287540.00,
-      totalCommission: 129393.00,
-      pendingPayouts: 12450.00,
+      activePolicies: 3241,
+      totalQuotes: 5234,
+      conversionRate: 73.4,
     },
     revenue: {
-      daily: Array.from({ length: 30 }, (_, i) => ({
-        date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split('T')[0],
-        amount: 5000 + Math.random() * 10000,
-      })),
-      monthly: [
-        { month: "Jul", amount: 18500 },
-        { month: "Aug", amount: 22300 },
-        { month: "Sep", amount: 25800 },
-        { month: "Oct", amount: 31200 },
-        { month: "Nov", amount: 28900 },
-        { month: "Dec", amount: 35400 },
-      ],
+      totalPremium: 287540.00,
+      totalCommissions: 129393.00,
+      totalParticipants: 12450,
+      avgPremiumPerPolicy: 74.85,
+      avgCommissionRate: 0.45,
     },
     topPartners: [
-      { id: "1", businessName: "Adventure Sports Inc", totalRevenue: 45200, policyCount: 512 },
-      { id: "2", businessName: "Mountain Climbers Co", totalRevenue: 38900, policyCount: 423 },
-      { id: "3", businessName: "Urban Gym Network", totalRevenue: 32100, policyCount: 378 },
-      { id: "4", businessName: "Outdoor Adventures LLC", totalRevenue: 28700, policyCount: 312 },
-      { id: "5", businessName: "Summit Fitness", totalRevenue: 24500, policyCount: 289 },
-    ],
-    recentActivity: [
-      { id: "1", type: "partner_approved", description: "New partner approved: Peak Performance Gym", timestamp: new Date(Date.now() - 3600000).toISOString() },
-      { id: "2", type: "payout_processed", description: "Payout processed: $2,450 to Adventure Sports Inc", timestamp: new Date(Date.now() - 7200000).toISOString() },
-      { id: "3", type: "tier_updated", description: "Urban Gym Network upgraded to Gold tier", timestamp: new Date(Date.now() - 14400000).toISOString() },
-      { id: "4", type: "policy_milestone", description: "System milestone: 3,800 policies issued", timestamp: new Date(Date.now() - 28800000).toISOString() },
+      { id: "1", name: "Adventure Sports Inc", revenue: 45200, commission: 22600, policies: 512 },
+      { id: "2", name: "Mountain Climbers Co", revenue: 38900, commission: 19450, policies: 423 },
+      { id: "3", name: "Urban Gym Network", revenue: 32100, commission: 16050, policies: 378 },
+      { id: "4", name: "Outdoor Adventures LLC", revenue: 28700, commission: 14350, policies: 312 },
+      { id: "5", name: "Summit Fitness", revenue: 24500, commission: 12250, policies: 289 },
     ],
     commissionTiers: [
-      { tierName: "Bronze", partnerCount: 18, totalRevenue: 42300 },
-      { tierName: "Silver", partnerCount: 12, totalRevenue: 68500 },
-      { tierName: "Gold", partnerCount: 6, totalRevenue: 89200 },
-      { tierName: "Platinum", partnerCount: 2, totalRevenue: 87540 },
+      { name: "Bronze", rate: 0.40 },
+      { name: "Silver", rate: 0.45 },
+      { name: "Gold", rate: 0.50 },
+      { name: "Platinum", rate: 0.55 },
     ],
+    pendingPayouts: {
+      count: 12,
+      totalAmount: 15670.50,
+    },
+    period: "30d",
+    generatedAt: new Date().toISOString(),
   }
 }
 
@@ -194,8 +190,8 @@ export default function AdminDashboardPage() {
               12.5%
             </span>
           </div>
-          <p className="text-sm text-slate-500 mb-1">Total Revenue</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.overview.totalRevenue)}</p>
+          <p className="text-sm text-slate-500 mb-1">Total Premium</p>
+          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.revenue.totalPremium)}</p>
         </motion.div>
 
         {/* Total Partners */}
@@ -250,7 +246,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <p className="text-sm text-slate-500 mb-1">Pending Payouts</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.overview.pendingPayouts)}</p>
+          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.pendingPayouts.totalAmount)}</p>
         </motion.div>
       </div>
 
@@ -287,17 +283,17 @@ export default function AdminDashboardPage() {
                     {index + 1}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{partner.businessName}</p>
-                    <p className="text-sm text-slate-500">{partner.policyCount} policies</p>
+                    <p className="font-semibold text-slate-900">{partner.name}</p>
+                    <p className="text-sm text-slate-500">{partner.policies} policies</p>
                   </div>
                 </div>
-                <p className="font-bold text-slate-900">{formatCurrency(partner.totalRevenue)}</p>
+                <p className="font-bold text-slate-900">{formatCurrency(partner.revenue)}</p>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Commission Tiers Breakdown */}
+        {/* Commission Tiers & Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -306,10 +302,10 @@ export default function AdminDashboardPage() {
         >
           <div className="flex items-center gap-2 mb-6">
             <Layers className="w-5 h-5 text-violet-600" />
-            <h3 className="text-lg font-bold text-slate-900">Tier Distribution</h3>
+            <h3 className="text-lg font-bold text-slate-900">Commission Tiers</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {data.commissionTiers.map((tier) => {
               const colors: Record<string, string> = {
                 Bronze: "from-amber-600 to-amber-700",
@@ -318,33 +314,31 @@ export default function AdminDashboardPage() {
                 Platinum: "from-violet-500 to-violet-600",
               }
               return (
-                <div key={tier.tierName} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full bg-gradient-to-br ${colors[tier.tierName] || 'from-slate-400 to-slate-500'}`} />
-                      <span className="text-sm font-medium text-slate-700">{tier.tierName}</span>
+                <div key={tier.name} className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${colors[tier.name] || 'from-slate-400 to-slate-500'} flex items-center justify-center text-white font-bold text-sm`}>
+                      {(tier.rate * 100).toFixed(0)}%
                     </div>
-                    <span className="text-sm text-slate-500">{tier.partnerCount} partners</span>
+                    <span className="font-medium text-slate-700">{tier.name}</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-slate-200 rounded-full h-2">
-                      <div
-                        className={`bg-gradient-to-r ${colors[tier.tierName] || 'from-slate-400 to-slate-500'} h-2 rounded-full`}
-                        style={{
-                          width: `${(tier.totalRevenue / data.overview.totalRevenue) * 100}%`
-                        }}
-                      />
-                    </div>
-                    <span className="text-xs text-slate-500 w-20 text-right">
-                      {formatCurrency(tier.totalRevenue)}
-                    </span>
-                  </div>
+                  <span className="text-sm text-slate-500">Commission Rate</span>
                 </div>
               )
             })}
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-200">
+          <div className="mt-6 space-y-3 pt-4 border-t border-slate-200">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-600">Avg. Commission Rate</span>
+              <span className="font-semibold text-slate-900">{(data.revenue.avgCommissionRate * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-600">Total Commissions</span>
+              <span className="font-semibold text-slate-900">{formatCurrency(data.revenue.totalCommissions)}</span>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-200">
             <Link
               href="/admin/commission-tiers"
               className="text-sm text-violet-600 font-medium hover:text-violet-700 flex items-center gap-1"
@@ -356,45 +350,8 @@ export default function AdminDashboardPage() {
         </motion.div>
       </div>
 
-      {/* Activity and Quick Actions */}
+      {/* Quick Actions */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.7 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-slate-900">Recent Activity</h3>
-          </div>
-          <div className="space-y-4">
-            {data.recentActivity.map((activity) => {
-              const icons: Record<string, React.ReactNode> = {
-                partner_approved: <CheckCircle2 className="w-5 h-5 text-green-500" />,
-                payout_processed: <DollarSign className="w-5 h-5 text-blue-500" />,
-                tier_updated: <TrendingUp className="w-5 h-5 text-purple-500" />,
-                policy_milestone: <FileText className="w-5 h-5 text-amber-500" />,
-              }
-              return (
-                <div
-                  key={activity.id}
-                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors"
-                >
-                  <div className="mt-0.5">
-                    {icons[activity.type] || <AlertCircle className="w-5 h-5 text-slate-400" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-700">{activity.description}</p>
-                    <p className="text-xs text-slate-400 mt-1">{formatTimeAgo(activity.timestamp)}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </motion.div>
-
-        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -433,7 +390,7 @@ export default function AdminDashboardPage() {
                 Process Payouts
               </p>
               <p className="text-sm text-slate-500">
-                {formatCurrency(data.overview.pendingPayouts)} pending
+                {formatCurrency(data.pendingPayouts.totalAmount)} pending
               </p>
             </div>
             <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-1 transition-all" />

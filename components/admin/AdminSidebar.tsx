@@ -18,6 +18,7 @@ import {
   ChevronRight,
   FileText,
   AlertTriangle,
+  TrendingUp,
 } from "lucide-react"
 
 // Check dev mode
@@ -41,6 +42,11 @@ const navItems = [
     icon: Users,
   },
   {
+    label: "Policies",
+    href: "/admin/policies",
+    icon: FileText,
+  },
+  {
     label: "Commission Tiers",
     href: "/admin/commission-tiers",
     icon: Layers,
@@ -58,7 +64,7 @@ const navItems = [
   {
     label: "Reports",
     href: "/admin/reports",
-    icon: FileText,
+    icon: TrendingUp,
   },
   {
     label: "Settings",
