@@ -75,7 +75,7 @@ function ProblemCard({ item, index }: { item: typeof problems[0]; index: number 
             style={{ originY: 0 }}
           />
 
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
             {/* Icon */}
             <div className="flex-shrink-0">
               <motion.div

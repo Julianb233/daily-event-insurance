@@ -257,15 +257,15 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
 
             {/* Key Details */}
             <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
-              <div className="flex items-start gap-3">
-                <Users className="w-5 h-5 text-teal-500 flex-shrink-0 mt-1" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
+                <Users className="w-5 h-5 text-teal-500 flex-shrink-0 sm:mt-1" />
                 <div>
                   <p className="text-sm font-semibold text-slate-700">Customer Experience</p>
                   <p className="text-sm text-slate-600">{mode.customerExperience}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <DollarSign className="w-5 h-5 text-teal-500 flex-shrink-0 mt-1" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
+                <DollarSign className="w-5 h-5 text-teal-500 flex-shrink-0 sm:mt-1" />
                 <div>
                   <p className="text-sm font-semibold text-slate-700">Payment Model</p>
                   <p className="text-sm text-slate-600">{mode.paymentModel}</p>
