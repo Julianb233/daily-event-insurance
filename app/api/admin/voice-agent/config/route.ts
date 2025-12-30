@@ -1,24 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { neon } from '@neondatabase/serverless';
 
 // GET - Fetch voice agent configuration
 export async function GET() {
   try {
-    const supabase = createAdminClient();
-
-    const { data, error } = await supabase
-      .from('voice_agent_config')
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      throw error;
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    if (!data) {
+    const sql = neon(process.env.DATABASE_URL);
+    const result = await sql`
+      SELECT * FROM voice_agent_config
+      WHERE is_active = true
+      ORDER BY created_at DESC
+      LIMIT 1
+    `;
+
+    if (result.length === 0) {
       // Return default config if none exists
       return NextResponse.json({
         id: null,
@@ -57,7 +55,7 @@ Guidelines:
       });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(result[0]);
   } catch (error) {
     console.error('Error fetching config:', error);
     return NextResponse.json(
@@ -70,63 +68,65 @@ Guidelines:
 // PUT - Update voice agent configuration
 export async function PUT(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const body = await request.json();
-    const supabase = createAdminClient();
 
     if (body.id) {
       // Update existing config
-      const updateData = {
-        name: body.name,
-        is_active: body.is_active,
-        system_prompt: body.system_prompt,
-        greeting_message: body.greeting_message,
-        voice: body.voice,
-        max_response_length: body.max_response_length,
-        response_style: body.response_style,
-        language: body.language,
-        business_hours: body.business_hours,
-        timezone: body.timezone,
-        after_hours_behavior: body.after_hours_behavior,
-        after_hours_message: body.after_hours_message,
-        fallback_message: body.fallback_message,
-        updated_at: new Date().toISOString(),
-      };
+      const result = await sql`
+        UPDATE voice_agent_config SET
+          name = ${body.name},
+          is_active = ${body.is_active},
+          system_prompt = ${body.system_prompt},
+          greeting_message = ${body.greeting_message},
+          voice = ${body.voice},
+          max_response_length = ${body.max_response_length},
+          response_style = ${body.response_style},
+          language = ${body.language},
+          business_hours = ${JSON.stringify(body.business_hours)},
+          timezone = ${body.timezone},
+          after_hours_behavior = ${body.after_hours_behavior},
+          after_hours_message = ${body.after_hours_message},
+          fallback_message = ${body.fallback_message},
+          updated_at = NOW()
+        WHERE id = ${body.id}
+        RETURNING *
+      `;
 
-      const { data, error } = await supabase
-        .from('voice_agent_config')
-        .update(updateData as never)
-        .eq('id', body.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return NextResponse.json(data);
+      if (result.length === 0) {
+        return NextResponse.json({ error: 'Config not found' }, { status: 404 });
+      }
+      return NextResponse.json(result[0]);
     } else {
       // Create new config
-      const insertData = {
-        name: body.name || 'Default Agent',
-        is_active: true,
-        system_prompt: body.system_prompt,
-        greeting_message: body.greeting_message,
-        voice: body.voice || 'alloy',
-        max_response_length: body.max_response_length || 150,
-        response_style: body.response_style || 'professional',
-        language: body.language || 'en',
-        business_hours: body.business_hours,
-        timezone: body.timezone || 'America/New_York',
-        after_hours_behavior: body.after_hours_behavior || 'voicemail',
-        after_hours_message: body.after_hours_message,
-        fallback_message: body.fallback_message,
-      };
+      const result = await sql`
+        INSERT INTO voice_agent_config (
+          name, is_active, system_prompt, greeting_message, voice,
+          max_response_length, response_style, language, business_hours,
+          timezone, after_hours_behavior, after_hours_message, fallback_message
+        ) VALUES (
+          ${body.name || 'Default Agent'},
+          true,
+          ${body.system_prompt},
+          ${body.greeting_message},
+          ${body.voice || 'alloy'},
+          ${body.max_response_length || 150},
+          ${body.response_style || 'professional'},
+          ${body.language || 'en'},
+          ${JSON.stringify(body.business_hours)},
+          ${body.timezone || 'America/New_York'},
+          ${body.after_hours_behavior || 'voicemail'},
+          ${body.after_hours_message},
+          ${body.fallback_message}
+        )
+        RETURNING *
+      `;
 
-      const { data, error } = await supabase
-        .from('voice_agent_config')
-        .insert(insertData as never)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return NextResponse.json(data, { status: 201 });
+      return NextResponse.json(result[0], { status: 201 });
     }
   } catch (error) {
     console.error('Error updating config:', error);
@@ -140,33 +140,37 @@ export async function PUT(request: NextRequest) {
 // POST - Create new voice agent configuration
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const body = await request.json();
-    const supabase = createAdminClient();
 
-    const insertData = {
-      name: body.name || 'Default Agent',
-      is_active: true,
-      system_prompt: body.system_prompt,
-      greeting_message: body.greeting_message,
-      voice: body.voice || 'alloy',
-      max_response_length: body.max_response_length || 150,
-      response_style: body.response_style || 'professional',
-      language: body.language || 'en',
-      business_hours: body.business_hours,
-      timezone: body.timezone || 'America/New_York',
-      after_hours_behavior: body.after_hours_behavior || 'voicemail',
-      after_hours_message: body.after_hours_message,
-      fallback_message: body.fallback_message,
-    };
+    const result = await sql`
+      INSERT INTO voice_agent_config (
+        name, is_active, system_prompt, greeting_message, voice,
+        max_response_length, response_style, language, business_hours,
+        timezone, after_hours_behavior, after_hours_message, fallback_message
+      ) VALUES (
+        ${body.name || 'Default Agent'},
+        true,
+        ${body.system_prompt},
+        ${body.greeting_message},
+        ${body.voice || 'alloy'},
+        ${body.max_response_length || 150},
+        ${body.response_style || 'professional'},
+        ${body.language || 'en'},
+        ${JSON.stringify(body.business_hours)},
+        ${body.timezone || 'America/New_York'},
+        ${body.after_hours_behavior || 'voicemail'},
+        ${body.after_hours_message},
+        ${body.fallback_message}
+      )
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('voice_agent_config')
-      .insert(insertData as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(result[0], { status: 201 });
   } catch (error) {
     console.error('Error creating config:', error);
     return NextResponse.json(

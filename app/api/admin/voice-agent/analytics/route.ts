@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { neon } from '@neondatabase/serverless';
 
 // Type for voice call records
 interface VoiceCall {
@@ -24,23 +24,26 @@ interface VoiceCall {
 // GET - Fetch voice agent analytics
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const configId = searchParams.get('config_id');
-    const supabase = createAdminClient();
-
-    // Get call statistics using RPC or direct query
-    let statsQuery = supabase.from('voice_calls').select('*');
-
-    if (configId) {
-      statsQuery = statsQuery.eq('agent_config_id', configId);
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const { data: calls, error: callsError } = await statsQuery;
+    const sql = neon(process.env.DATABASE_URL);
+    const { searchParams } = new URL(request.url);
+    const configId = searchParams.get('config_id');
 
-    if (callsError) throw callsError;
+    // Get all calls (with optional config filter)
+    let allCalls: VoiceCall[];
+    if (configId) {
+      allCalls = await sql`
+        SELECT * FROM voice_calls
+        WHERE agent_config_id = ${configId}
+      ` as VoiceCall[];
+    } else {
+      allCalls = await sql`SELECT * FROM voice_calls` as VoiceCall[];
+    }
 
     // Calculate statistics from calls
-    const allCalls = (calls || []) as VoiceCall[];
     const completedCalls = allCalls.filter(c => c.status === 'completed');
     const missedCalls = allCalls.filter(c => c.status === 'missed');
     const escalatedCalls = allCalls.filter(c => c.escalation_triggered);
@@ -48,13 +51,13 @@ export async function GET(request: NextRequest) {
     const avgDuration = allCalls.length > 0 ? Math.round(totalDuration / allCalls.length) : 0;
 
     // Get recent calls
-    const { data: recentCalls, error: recentError } = await supabase
-      .from('voice_calls')
-      .select('id, room_name, caller_id, status, started_at, ended_at, duration_seconds, escalation_triggered, escalation_reason')
-      .order('started_at', { ascending: false })
-      .limit(10);
-
-    if (recentError) throw recentError;
+    const recentCalls = await sql`
+      SELECT id, room_name, caller_id, status, started_at, ended_at,
+             duration_seconds, escalation_triggered, escalation_reason
+      FROM voice_calls
+      ORDER BY started_at DESC
+      LIMIT 10
+    `;
 
     // Calculate calls by hour (last 7 days)
     const sevenDaysAgo = new Date();
@@ -125,8 +128,12 @@ export async function GET(request: NextRequest) {
 // POST - Record call analytics (called by voice agent after call ends)
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const body = await request.json();
-    const supabase = createAdminClient();
 
     const {
       room_name,
@@ -146,32 +153,33 @@ export async function POST(request: NextRequest) {
       metadata
     } = body;
 
-    const insertData: Partial<VoiceCall> = {
-      room_name,
-      caller_id,
-      agent_id,
-      status,
-      started_at: started_at || new Date().toISOString(),
-      ended_at,
-      duration_seconds,
-      transcript,
-      recording_url,
-      sentiment_scores,
-      topics_detected,
-      escalation_triggered,
-      escalation_reason,
-      agent_config_id,
-      metadata
-    };
+    const result = await sql`
+      INSERT INTO voice_calls (
+        room_name, caller_id, agent_id, status, started_at, ended_at,
+        duration_seconds, transcript, recording_url, sentiment_scores,
+        topics_detected, escalation_triggered, escalation_reason,
+        agent_config_id, metadata
+      ) VALUES (
+        ${room_name},
+        ${caller_id},
+        ${agent_id || null},
+        ${status},
+        ${started_at || new Date().toISOString()},
+        ${ended_at || null},
+        ${duration_seconds || null},
+        ${transcript || null},
+        ${recording_url || null},
+        ${sentiment_scores ? JSON.stringify(sentiment_scores) : null},
+        ${topics_detected || null},
+        ${escalation_triggered},
+        ${escalation_reason || null},
+        ${agent_config_id || null},
+        ${metadata ? JSON.stringify(metadata) : null}
+      )
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('voice_calls')
-      .insert(insertData as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(result[0], { status: 201 });
   } catch (error) {
     console.error('Error recording call:', error);
     return NextResponse.json(

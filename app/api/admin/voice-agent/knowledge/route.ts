@@ -1,36 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { neon } from '@neondatabase/serverless';
 
 // GET - Fetch knowledge base entries
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const { searchParams } = new URL(request.url);
     const configId = searchParams.get('config_id');
     const category = searchParams.get('category');
     const entryType = searchParams.get('entry_type');
-    const supabase = createAdminClient();
 
-    let query = supabase
-      .from('knowledge_base')
-      .select('*')
-      .eq('is_active', true)
-      .order('priority', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    if (configId) {
-      query = query.eq('config_id', configId);
+    // Build query with optional filters
+    let result;
+    if (configId && category && entryType) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND config_id = ${configId}
+          AND category = ${category}
+          AND entry_type = ${entryType}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else if (configId && category) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND config_id = ${configId}
+          AND category = ${category}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else if (configId && entryType) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND config_id = ${configId}
+          AND entry_type = ${entryType}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else if (configId) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND config_id = ${configId}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else if (category) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND category = ${category}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else if (entryType) {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+          AND entry_type = ${entryType}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else {
+      result = await sql`
+        SELECT * FROM knowledge_base
+        WHERE is_active = true
+        ORDER BY priority DESC, created_at DESC
+      `;
     }
-    if (category) {
-      query = query.eq('category', category);
-    }
-    if (entryType) {
-      query = query.eq('entry_type', entryType);
-    }
 
-    const { data, error } = await query;
-
-    if (error) throw error;
-    return NextResponse.json(data || []);
+    return NextResponse.json(result || []);
   } catch (error) {
     console.error('Error fetching knowledge base:', error);
     return NextResponse.json(
@@ -43,8 +83,12 @@ export async function GET(request: NextRequest) {
 // POST - Create new knowledge base entry
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const body = await request.json();
-    const supabase = createAdminClient();
 
     const {
       config_id,
@@ -69,33 +113,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'config_id is required' }, { status: 400 });
     }
 
-    const insertData = {
-      config_id,
-      entry_type,
-      question,
-      answer,
-      document_title,
-      document_content,
-      document_url,
-      product_name,
-      product_description,
-      product_price,
-      product_features,
-      category,
-      tags,
-      search_keywords,
-      priority,
-      created_by
-    };
+    const result = await sql`
+      INSERT INTO knowledge_base (
+        config_id, entry_type, question, answer, document_title,
+        document_content, document_url, product_name, product_description,
+        product_price, product_features, category, tags, search_keywords,
+        priority, created_by
+      ) VALUES (
+        ${config_id},
+        ${entry_type},
+        ${question || null},
+        ${answer || null},
+        ${document_title || null},
+        ${document_content || null},
+        ${document_url || null},
+        ${product_name || null},
+        ${product_description || null},
+        ${product_price || null},
+        ${product_features || null},
+        ${category || null},
+        ${tags || null},
+        ${search_keywords || null},
+        ${priority},
+        ${created_by || null}
+      )
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('knowledge_base')
-      .insert(insertData as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(result[0], { status: 201 });
   } catch (error) {
     console.error('Error creating knowledge base entry:', error);
     return NextResponse.json(
@@ -108,33 +153,45 @@ export async function POST(request: NextRequest) {
 // PUT - Update knowledge base entry
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json();
-    const supabase = createAdminClient();
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
 
-    const { id, ...updateData } = body;
+    const sql = neon(process.env.DATABASE_URL);
+    const body = await request.json();
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Entry ID required' }, { status: 400 });
     }
 
-    const updatePayload = {
-      ...updateData,
-      updated_at: new Date().toISOString()
-    };
+    const result = await sql`
+      UPDATE knowledge_base SET
+        entry_type = COALESCE(${body.entry_type || null}, entry_type),
+        question = ${body.question || null},
+        answer = ${body.answer || null},
+        document_title = ${body.document_title || null},
+        document_content = ${body.document_content || null},
+        document_url = ${body.document_url || null},
+        product_name = ${body.product_name || null},
+        product_description = ${body.product_description || null},
+        product_price = ${body.product_price || null},
+        product_features = ${body.product_features || null},
+        category = ${body.category || null},
+        tags = ${body.tags || null},
+        search_keywords = ${body.search_keywords || null},
+        priority = COALESCE(${body.priority}, priority),
+        is_active = COALESCE(${body.is_active}, is_active),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('knowledge_base')
-      .update(updatePayload as never)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    if (!data) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(result[0]);
   } catch (error) {
     console.error('Error updating knowledge base entry:', error);
     return NextResponse.json(
@@ -147,20 +204,20 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete knowledge base entry
 export async function DELETE(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const supabase = createAdminClient();
 
     if (!id) {
       return NextResponse.json({ error: 'Entry ID required' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('knowledge_base')
-      .delete()
-      .eq('id', id);
+    await sql`DELETE FROM knowledge_base WHERE id = ${id}`;
 
-    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting knowledge base entry:', error);

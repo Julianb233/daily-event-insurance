@@ -1,27 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { neon } from '@neondatabase/serverless';
 
 // GET - Fetch all escalation rules for a config
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const configId = searchParams.get('config_id');
-    const supabase = createAdminClient();
-
-    let query = supabase
-      .from('escalation_rules')
-      .select('*')
-      .order('priority', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    if (configId) {
-      query = query.eq('config_id', configId);
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const { data, error } = await query;
+    const sql = neon(process.env.DATABASE_URL);
+    const { searchParams } = new URL(request.url);
+    const configId = searchParams.get('config_id');
 
-    if (error) throw error;
-    return NextResponse.json(data || []);
+    let result;
+    if (configId) {
+      result = await sql`
+        SELECT * FROM escalation_rules
+        WHERE config_id = ${configId}
+        ORDER BY priority DESC, created_at DESC
+      `;
+    } else {
+      result = await sql`
+        SELECT * FROM escalation_rules
+        ORDER BY priority DESC, created_at DESC
+      `;
+    }
+
+    return NextResponse.json(result || []);
   } catch (error) {
     console.error('Error fetching escalation rules:', error);
     return NextResponse.json(
@@ -34,8 +39,12 @@ export async function GET(request: NextRequest) {
 // POST - Create new escalation rule
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const body = await request.json();
-    const supabase = createAdminClient();
 
     const {
       config_id,
@@ -60,30 +69,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const insertData = {
-      config_id,
-      name,
-      description,
-      trigger_type,
-      trigger_keywords,
-      sentiment_threshold,
-      time_limit_seconds,
-      trigger_intents,
-      custom_condition,
-      action,
-      transfer_to,
-      action_message,
-      priority
-    };
+    const result = await sql`
+      INSERT INTO escalation_rules (
+        config_id, name, description, trigger_type, trigger_keywords,
+        sentiment_threshold, time_limit_seconds, trigger_intents,
+        custom_condition, action, transfer_to, action_message, priority
+      ) VALUES (
+        ${config_id},
+        ${name},
+        ${description || null},
+        ${trigger_type},
+        ${trigger_keywords || null},
+        ${sentiment_threshold || null},
+        ${time_limit_seconds || null},
+        ${trigger_intents || null},
+        ${custom_condition || null},
+        ${action},
+        ${transfer_to || null},
+        ${action_message || null},
+        ${priority}
+      )
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('escalation_rules')
-      .insert(insertData as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(result[0], { status: 201 });
   } catch (error) {
     console.error('Error creating escalation rule:', error);
     return NextResponse.json(
@@ -96,33 +105,43 @@ export async function POST(request: NextRequest) {
 // PUT - Update escalation rule
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json();
-    const supabase = createAdminClient();
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
 
-    const { id, ...updateData } = body;
+    const sql = neon(process.env.DATABASE_URL);
+    const body = await request.json();
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Rule ID required' }, { status: 400 });
     }
 
-    const updatePayload = {
-      ...updateData,
-      updated_at: new Date().toISOString()
-    };
+    const result = await sql`
+      UPDATE escalation_rules SET
+        name = COALESCE(${body.name || null}, name),
+        description = ${body.description || null},
+        trigger_type = COALESCE(${body.trigger_type || null}, trigger_type),
+        trigger_keywords = ${body.trigger_keywords || null},
+        sentiment_threshold = ${body.sentiment_threshold || null},
+        time_limit_seconds = ${body.time_limit_seconds || null},
+        trigger_intents = ${body.trigger_intents || null},
+        custom_condition = ${body.custom_condition || null},
+        action = COALESCE(${body.action || null}, action),
+        transfer_to = ${body.transfer_to || null},
+        action_message = ${body.action_message || null},
+        priority = COALESCE(${body.priority}, priority),
+        is_active = COALESCE(${body.is_active}, is_active),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `;
 
-    const { data, error } = await supabase
-      .from('escalation_rules')
-      .update(updatePayload as never)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    if (!data) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Rule not found' }, { status: 404 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(result[0]);
   } catch (error) {
     console.error('Error updating escalation rule:', error);
     return NextResponse.json(
@@ -135,20 +154,20 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete escalation rule
 export async function DELETE(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const supabase = createAdminClient();
 
     if (!id) {
       return NextResponse.json({ error: 'Rule ID required' }, { status: 400 });
     }
 
-    const { error } = await supabase
-      .from('escalation_rules')
-      .delete()
-      .eq('id', id);
+    await sql`DELETE FROM escalation_rules WHERE id = ${id}`;
 
-    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting escalation rule:', error);
