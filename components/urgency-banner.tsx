@@ -114,7 +114,7 @@ export function UrgencyBanner({
       />
 
       <div className="relative p-4 md:p-5">
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
           {/* Icon */}
           <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${colors.iconBg} flex items-center justify-center shadow-lg ${colors.glow}`}>
             <Icon className={`w-6 h-6 ${colors.iconColor}`} />

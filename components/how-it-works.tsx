@@ -187,7 +187,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
             {step.details.map((detail, i) => (
               <motion.li
                 key={i}
-                className="flex items-start gap-2 text-sm text-slate-600"
+                className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-2 text-sm text-slate-600"
                 initial={{ opacity: 0, x: -10 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.4 + index * 0.2 + i * 0.1 }}
@@ -320,7 +320,7 @@ export function HowItWorks() {
                   ].map((item, i) => (
                     <motion.li
                       key={i}
-                      className="flex items-center gap-3 text-slate-700"
+                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-700"
                       initial={{ opacity: 0, x: -20 }}
                       animate={isInView ? { opacity: 1, x: 0 } : {}}
                       transition={{ delay: 1 + i * 0.1 }}

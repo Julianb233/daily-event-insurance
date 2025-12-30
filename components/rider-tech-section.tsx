@@ -235,7 +235,7 @@ export default function RiderTechSection() {
 
                 <div className="space-y-3">
                   {activeSolution.benefits.map((benefit, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
+                    <div key={idx} className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3">
                       <div className="w-2 h-2 rounded-full bg-[#D4A84B]" />
                       <span className="text-[#F0D98C] font-medium">{benefit}</span>
                     </div>

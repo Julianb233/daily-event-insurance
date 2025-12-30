@@ -210,7 +210,7 @@ export function HowTheModelWorksSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex items-center gap-3 text-slate-300"
+                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-300"
                     >
                       <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-3 h-3 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -265,7 +265,7 @@ export function HowTheModelWorksSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex items-center gap-3 text-slate-300"
+                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-300"
                     >
                       <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-3 h-3 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -785,7 +785,7 @@ export function ApplySection() {
                     <div className="mt-8 pt-6 border-t border-teal-200">
                       <h4 className="text-slate-700 font-semibold mb-4 text-center">What happens next?</h4>
                       <div className="space-y-3">
-                        <div className="flex items-start gap-3">
+                        <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
                           <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                             <span className="text-teal-600 font-bold text-sm">1</span>
                           </div>
@@ -794,7 +794,7 @@ export function ApplySection() {
                             <p className="text-slate-400 text-xs">Schedule your personalized demo at your convenience</p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
+                        <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
                           <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                             <span className="text-teal-600 font-bold text-sm">2</span>
                           </div>
@@ -803,7 +803,7 @@ export function ApplySection() {
                             <p className="text-slate-400 text-xs">See exactly how it works for your facility</p>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3">
+                        <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
                           <div className="w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                             <span className="text-teal-600 font-bold text-sm">3</span>
                           </div>

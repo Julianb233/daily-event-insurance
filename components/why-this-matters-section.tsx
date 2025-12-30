@@ -149,7 +149,7 @@ function StakeholderCard({ stakeholder, index }: { stakeholder: typeof stakehold
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 + i * 0.1 }}
-                className="flex items-center gap-3 text-slate-700"
+                className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-700"
               >
                 <div className={`w-8 h-8 ${colors.bgLight} rounded-lg flex items-center justify-center flex-shrink-0`}>
                   <benefit.icon className={`w-4 h-4 ${colors.text}`} />

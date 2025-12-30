@@ -314,7 +314,7 @@ export function HiqorValueProp() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="flex items-center gap-3 px-5 py-4 bg-white/5 rounded-xl border border-white/10"
+                className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 px-5 py-4 bg-white/5 rounded-xl border border-white/10"
               >
                 <CheckCircle2 className="w-5 h-5 text-teal-400 flex-shrink-0" />
                 <span className="text-white/90 text-sm md:text-base">{item}</span>

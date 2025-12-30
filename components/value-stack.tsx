@@ -106,7 +106,7 @@ export function ValueStack() {
                   transition={{ delay: 0.1 + index * 0.08 }}
                   className="group"
                 >
-                  <div className="flex items-start gap-3 py-3 px-4 rounded-lg hover:bg-teal-50/50 transition-colors">
+                  <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3 py-3 px-4 rounded-lg hover:bg-teal-50/50 transition-colors">
                     {/* Checkmark icon */}
                     <motion.div
                       initial={{ scale: 0 }}
