@@ -324,8 +324,8 @@ export default function UnderwritingTopicContent({ topic }: Props) {
                   <span className="font-semibold text-white">Example: </span>
                   {useCase.example}
                 </p>
-                <div className="flex items-start gap-2 text-sm">
-                  <CheckCircle className={`w-5 h-5 ${colors.text} mt-0.5 flex-shrink-0`} />
+                <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-2 text-sm">
+                  <CheckCircle className={`w-5 h-5 ${colors.text} sm:mt-0.5 flex-shrink-0`} />
                   <span className="text-slate-400">
                     <span className="font-semibold text-slate-300">Benefit: </span>
                     {useCase.benefit}

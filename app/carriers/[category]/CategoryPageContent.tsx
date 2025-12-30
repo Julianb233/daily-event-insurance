@@ -348,7 +348,7 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
                   <div className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500`} />
 
                   <div className={`relative h-full backdrop-blur-sm bg-white/80 rounded-3xl p-8 border border-slate-200/50 shadow-xl hover:shadow-2xl ${colors.hoverBorder} transition-all duration-500`}>
-                    <div className="flex items-start gap-5">
+                    <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-5">
                       <motion.div
                         className={`w-14 h-14 bg-gradient-to-br ${colors.gradient} rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg`}
                         whileHover={{ rotate: 10 }}
@@ -429,7 +429,7 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
                 <div className={`absolute -inset-0.5 bg-gradient-to-r ${colors.gradient} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />
 
                 <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10 hover:border-white/30 transition-all duration-500 h-full">
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.gradient} opacity-30 flex items-center justify-center flex-shrink-0`}>
                       <LineChart className="w-6 h-6 text-white" />
                     </div>
@@ -481,7 +481,7 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-start gap-4"
+                    className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4"
                   >
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center flex-shrink-0`}>
                       <CheckCircle2 className="w-5 h-5 text-white" />

@@ -531,7 +531,7 @@ export default function CarriersPage() {
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition-all duration-500" />
 
                 <div className="relative backdrop-blur-sm bg-white/90 rounded-3xl p-8 shadow-lg border border-slate-100 hover:border-teal-200 transition-all duration-300 h-full">
-                  <div className="flex items-start gap-6">
+                  <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-6">
                     {/* Step number with 3D effect */}
                     <motion.div
                       className="flex-shrink-0 relative"
