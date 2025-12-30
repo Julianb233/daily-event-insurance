@@ -221,13 +221,13 @@ export default function PartnerEarningsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0">
               <DollarSign className="w-5 h-5 text-teal-600" />
             </div>
             <p className="text-sm text-slate-500">Total Earnings</p>
           </div>
-          <p className="text-2xl font-bold text-slate-900">
+          <p className="text-2xl font-bold text-slate-900 text-center sm:text-left">
             {formatCurrency(data?.summary.totalCommission || 0)}
           </p>
         </motion.div>
@@ -238,13 +238,13 @@ export default function PartnerEarningsPage() {
           transition={{ delay: 0.1 }}
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
               <Users className="w-5 h-5 text-blue-600" />
             </div>
             <p className="text-sm text-slate-500">Total Participants</p>
           </div>
-          <p className="text-2xl font-bold text-slate-900">
+          <p className="text-2xl font-bold text-slate-900 text-center sm:text-left">
             {(data?.summary.totalParticipants || 0).toLocaleString()}
           </p>
         </motion.div>
@@ -255,13 +255,13 @@ export default function PartnerEarningsPage() {
           transition={{ delay: 0.2 }}
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-5 h-5 text-emerald-600" />
             </div>
             <p className="text-sm text-slate-500">Avg Monthly</p>
           </div>
-          <p className="text-2xl font-bold text-slate-900">
+          <p className="text-2xl font-bold text-slate-900 text-center sm:text-left">
             {formatCurrency(data?.summary.averageMonthlyCommission || 0)}
           </p>
         </motion.div>
@@ -272,13 +272,13 @@ export default function PartnerEarningsPage() {
           transition={{ delay: 0.3 }}
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 mb-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <p className="text-sm text-slate-500">Months Reported</p>
           </div>
-          <p className="text-2xl font-bold text-slate-900">
+          <p className="text-2xl font-bold text-slate-900 text-center sm:text-left">
             {data?.earnings.length || 0}
           </p>
         </motion.div>
@@ -381,8 +381,8 @@ export default function PartnerEarningsPage() {
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0">
                 <Calculator className="w-6 h-6 text-teal-600" />
               </div>
               <div>

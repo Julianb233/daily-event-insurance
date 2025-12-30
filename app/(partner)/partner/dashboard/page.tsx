@@ -243,8 +243,8 @@ export default function PartnerDashboardPage() {
           transition={{ duration: 0.4, delay: 0.6 }}
           className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center gap-2 mb-6">
-            <Target className="w-5 h-5 text-teal-600" />
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2 mb-6">
+            <Target className="w-5 h-5 text-teal-600 flex-shrink-0" />
             <h3 className="text-lg font-bold text-slate-900">Tier Progress</h3>
           </div>
 
@@ -285,11 +285,11 @@ export default function PartnerDashboardPage() {
 
             {!tierInfo.nextTier && (
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
+                <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2 mb-1">
+                  <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
                   <p className="text-sm font-semibold text-amber-700">Top Tier Achieved!</p>
                 </div>
-                <p className="text-sm text-slate-600">You&apos;re earning the maximum commission rate.</p>
+                <p className="text-sm text-slate-600 text-center sm:text-left">You&apos;re earning the maximum commission rate.</p>
               </div>
             )}
           </div>
@@ -307,15 +307,15 @@ export default function PartnerDashboardPage() {
           href="/partner/earnings"
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100 hover:border-teal-200 hover:shadow-xl transition-all group"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4">
+            <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0">
               <Calendar className="w-5 h-5 text-teal-600" />
             </div>
             <div>
               <p className="font-semibold text-slate-900 group-hover:text-teal-600 transition-colors">Report Participants</p>
               <p className="text-sm text-slate-500">Update monthly numbers</p>
             </div>
-            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all ml-auto" />
+            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all hidden sm:block sm:ml-auto" />
           </div>
         </Link>
 
@@ -323,15 +323,15 @@ export default function PartnerDashboardPage() {
           href="/partner/materials"
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100 hover:border-teal-200 hover:shadow-xl transition-all group"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4">
+            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 text-blue-600" />
             </div>
             <div>
               <p className="font-semibold text-slate-900 group-hover:text-teal-600 transition-colors">Marketing Materials</p>
               <p className="text-sm text-slate-500">Download resources</p>
             </div>
-            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all ml-auto" />
+            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all hidden sm:block sm:ml-auto" />
           </div>
         </Link>
 
@@ -339,15 +339,15 @@ export default function PartnerDashboardPage() {
           href="/partner/profile"
           className="bg-white rounded-xl p-5 shadow-lg border border-slate-100 hover:border-teal-200 hover:shadow-xl transition-all group"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
               <Users className="w-5 h-5 text-purple-600" />
             </div>
             <div>
               <p className="font-semibold text-slate-900 group-hover:text-teal-600 transition-colors">Profile Settings</p>
               <p className="text-sm text-slate-500">Manage your account</p>
             </div>
-            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all ml-auto" />
+            <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all hidden sm:block sm:ml-auto" />
           </div>
         </Link>
       </motion.div>

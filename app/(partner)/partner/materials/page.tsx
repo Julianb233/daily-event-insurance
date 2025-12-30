@@ -277,8 +277,8 @@ export default function PartnerMaterialsPage() {
               animate={{ opacity: 1, y: 0 }}
               className={`bg-white rounded-xl p-5 shadow-lg border ${config.borderColor}`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center`}>
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3">
+                <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center flex-shrink-0`}>
                   <config.icon className="w-5 h-5" />
                 </div>
                 <div>

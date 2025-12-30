@@ -212,8 +212,8 @@ export default function PartnerProfilePage() {
             className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-slate-600" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2">
+                <Building2 className="w-5 h-5 text-slate-600 flex-shrink-0" />
                 <h3 className="font-bold text-slate-900">Business Information</h3>
               </div>
             </div>
@@ -252,8 +252,8 @@ export default function PartnerProfilePage() {
             className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-slate-600" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2">
+                <User className="w-5 h-5 text-slate-600 flex-shrink-0" />
                 <h3 className="font-bold text-slate-900">Contact Information</h3>
               </div>
             </div>
@@ -305,8 +305,8 @@ export default function PartnerProfilePage() {
             className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Code className="w-5 h-5 text-slate-600" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2">
+                <Code className="w-5 h-5 text-slate-600 flex-shrink-0" />
                 <h3 className="font-bold text-slate-900">Integration Settings</h3>
               </div>
             </div>
@@ -369,8 +369,8 @@ export default function PartnerProfilePage() {
             className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-slate-600" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2">
+                <Palette className="w-5 h-5 text-slate-600 flex-shrink-0" />
                 <h3 className="font-bold text-slate-900">Branding</h3>
               </div>
             </div>
@@ -440,14 +440,14 @@ export default function PartnerProfilePage() {
             className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-slate-600" />
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-2">
+                <Shield className="w-5 h-5 text-slate-600 flex-shrink-0" />
                 <h3 className="font-bold text-slate-900">Account</h3>
               </div>
             </div>
             <div className="p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xl font-bold">
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 mb-4">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
                   {session?.user?.name?.[0] || "P"}
                 </div>
                 <div>
