@@ -153,8 +153,8 @@ function RentalDilemmaSection() {
               viewport={{ once: true }}
               className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200"
             >
-              <div className="flex items-start gap-4">
-                <div className="text-4xl">{item.icon}</div>
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
+                <div className="text-4xl flex-shrink-0">{item.icon}</div>
                 <div className="flex-1">
                   <h3 className="text-xl font-black text-slate-900 mb-2 uppercase">
                     {item.problem}
@@ -411,8 +411,8 @@ function BusinessBenefitsSection() {
               viewport={{ once: true }}
               className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
             >
-              <div className="flex items-start gap-6">
-                <div className="bg-white/20 rounded-xl p-4">
+              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-6">
+                <div className="bg-white/20 rounded-xl p-4 flex-shrink-0">
                   <benefit.icon className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">

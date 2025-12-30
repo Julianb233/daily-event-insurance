@@ -282,8 +282,8 @@ export function CategoryShowcase() {
           className="text-center mt-14"
         >
           <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 bg-white rounded-2xl border border-slate-200 shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3">
+              <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <Check className="w-6 h-6 text-teal-600" />
               </div>
               <div className="text-left">

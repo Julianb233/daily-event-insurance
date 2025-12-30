@@ -483,8 +483,8 @@ export default function AboutPage() {
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition-opacity" />
               <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10 hover:border-teal-500/50 transition-all">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 bg-gradient-to-br from-teal-500/30 to-emerald-500/30 rounded-xl flex items-center justify-center">
+                <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 mb-6">
+                  <div className="w-14 h-14 bg-gradient-to-br from-teal-500/30 to-emerald-500/30 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Users className="w-7 h-7 text-teal-400" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Event Generators</h3>
@@ -518,8 +518,8 @@ export default function AboutPage() {
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition-opacity" />
               <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10 hover:border-teal-500/50 transition-all h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-xl flex items-center justify-center">
+                <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 mb-6">
+                  <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/30 to-teal-500/30 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Building2 className="w-7 h-7 text-emerald-400" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Insurance Buyers</h3>
@@ -588,7 +588,7 @@ export default function AboutPage() {
                 className="group relative"
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-all duration-300" />
-                <div className="relative flex items-start gap-4 p-6 backdrop-blur-sm bg-white rounded-2xl border border-slate-200 hover:border-teal-300 shadow-lg hover:shadow-xl transition-all">
+                <div className="relative flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4 p-6 backdrop-blur-sm bg-white rounded-2xl border border-slate-200 hover:border-teal-300 shadow-lg hover:shadow-xl transition-all">
                   <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-teal-500 group-hover:to-emerald-500 transition-all duration-300">
                     <item.icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors duration-300" />
                   </div>
@@ -642,7 +642,7 @@ export default function AboutPage() {
                 className="group relative"
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300" />
-                <div className="relative flex items-center gap-4 p-6 backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 hover:border-teal-500/50 transition-all">
+                <div className="relative flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 p-6 backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 hover:border-teal-500/50 transition-all">
                   <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="w-5 h-5 text-white" />
                   </div>

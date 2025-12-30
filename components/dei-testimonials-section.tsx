@@ -419,7 +419,7 @@ function TestimonialCard({ testimonial, direction, onPlayVideo }: {
           </motion.div>
 
           {/* Author Info with 3D Avatar */}
-          <div className="flex items-center gap-4 relative z-10" style={{ transform: "translateZ(25px)" }}>
+          <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4 relative z-10" style={{ transform: "translateZ(25px)" }}>
             {/* Avatar with 3D ring effect */}
             <div className="relative">
               <motion.div
