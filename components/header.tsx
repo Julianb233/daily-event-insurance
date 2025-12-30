@@ -266,8 +266,18 @@ export default function Header() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center gap-4"
+              className="flex items-center gap-3"
             >
+              {/* Login Button */}
+              <motion.a
+                href="/sign-in"
+                onClick={(e) => handleNavClick(e, "/sign-in")}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="hidden sm:flex items-center px-4 py-2 text-slate-600 font-medium text-[15px] rounded-md hover:text-slate-900 hover:bg-slate-50 transition-all"
+              >
+                Login
+              </motion.a>
               {/* CTA Button */}
               <motion.a
                 href="#apply"
@@ -438,8 +448,15 @@ export default function Header() {
                   open: { opacity: 1, x: 0 },
                   closed: { opacity: 0, x: -20 },
                 }}
-                className="mt-8 space-y-4"
+                className="mt-8 space-y-3"
               >
+                <a
+                  href="/sign-in"
+                  onClick={(e) => handleNavClick(e, "/sign-in")}
+                  className="block px-6 py-3 border border-slate-300 text-slate-700 font-medium text-base rounded-md hover:bg-slate-50 transition-all text-center"
+                >
+                  Login
+                </a>
                 <a
                   href="#apply"
                   onClick={(e) => handleNavClick(e, "#apply")}
