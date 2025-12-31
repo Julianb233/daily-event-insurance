@@ -1,0 +1,320 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import Header from "@/components/header"
+import Footer from "@/components/footer"
+import { DocumentViewer } from "@/components/document-viewer"
+import {
+  FileText,
+  CheckCircle2,
+  Clock,
+  ChevronRight,
+  Loader2,
+  AlertCircle,
+  Receipt,
+  Building2,
+} from "lucide-react"
+
+interface DocumentTemplate {
+  id: string
+  type: string
+  title: string
+  content: string
+  version: string
+}
+
+interface DocumentStatus {
+  signed: boolean
+  signedAt?: string
+}
+
+const documentIcons: Record<string, React.ElementType> = {
+  partner_agreement: Building2,
+  w9: Receipt,
+  direct_deposit: FileText,
+}
+
+export default function OnboardingDocumentsPage() {
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [templates, setTemplates] = useState<DocumentTemplate[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [partnerId, setPartnerId] = useState<string | null>(null)
+  const [documentStatuses, setDocumentStatuses] = useState<Record<string, DocumentStatus>>({})
+  const [selectedDocument, setSelectedDocument] = useState<DocumentTemplate | null>(null)
+  const [isViewerOpen, setIsViewerOpen] = useState(false)
+
+  // Fetch templates and partner info on mount
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch document templates
+        const templatesRes = await fetch("/api/documents/templates")
+        const templatesData = await templatesRes.json()
+
+        if (templatesData.success) {
+          setTemplates(templatesData.templates)
+        } else {
+          throw new Error("Failed to load document templates")
+        }
+
+        // Fetch partner info and document status
+        const partnerRes = await fetch("/api/partner/me")
+        if (partnerRes.ok) {
+          const partnerData = await partnerRes.json()
+          if (partnerData.partner) {
+            setPartnerId(partnerData.partner.id)
+
+            // Fetch document signing status
+            const statusRes = await fetch(`/api/documents/sign?partnerId=${partnerData.partner.id}`)
+            const statusData = await statusRes.json()
+
+            if (statusData.success) {
+              setDocumentStatuses(statusData.documents)
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error loading documents:", err)
+        setError("Failed to load documents. Please try again.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const handleSign = async (documentType: string, signature: string) => {
+    if (!partnerId) {
+      throw new Error("Partner ID not found. Please complete registration first.")
+    }
+
+    const response = await fetch("/api/documents/sign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        partnerId,
+        documentType,
+        signature,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!data.success) {
+      throw new Error(data.error || "Failed to sign document")
+    }
+
+    // Update local state
+    setDocumentStatuses((prev) => ({
+      ...prev,
+      [documentType]: { signed: true, signedAt: new Date().toISOString() },
+    }))
+
+    // Check if all documents are signed
+    if (data.allDocumentsSigned) {
+      // Redirect to dashboard after short delay
+      setTimeout(() => {
+        router.push("/partner/dashboard")
+      }, 1500)
+    }
+  }
+
+  const allDocumentsSigned = templates.length > 0 && templates.every(
+    (t) => documentStatuses[t.type]?.signed
+  )
+
+  const signedCount = templates.filter((t) => documentStatuses[t.type]?.signed).length
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <Header />
+        <div className="pt-32 pb-20 px-4 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-teal-600 mx-auto mb-4" />
+            <p className="text-gray-600">Loading documents...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <Header />
+        <div className="pt-32 pb-20 px-4">
+          <div className="max-w-lg mx-auto text-center">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Documents</h1>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <Header />
+
+      <div className="pt-32 pb-20 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Sign Your{" "}
+            <span className="bg-gradient-to-r from-teal-500 to-teal-600 bg-clip-text text-transparent">
+              Partner Documents
+            </span>
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Please review and sign the following documents to complete your partner setup.
+          </p>
+        </motion.div>
+
+        {/* Progress indicator */}
+        <div className="max-w-3xl mx-auto mb-8">
+          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+            <span>Documents signed</span>
+            <span className="font-medium">{signedCount} of {templates.length}</span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-teal-500 to-teal-600"
+              initial={{ width: 0 }}
+              animate={{ width: `${(signedCount / templates.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+        </div>
+
+        {/* Documents list */}
+        <div className="max-w-3xl mx-auto space-y-4">
+          {templates.map((template, index) => {
+            const Icon = documentIcons[template.type] || FileText
+            const status = documentStatuses[template.type]
+            const isSigned = status?.signed
+
+            return (
+              <motion.div
+                key={template.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`bg-white rounded-xl shadow-lg border-2 p-6 transition-all ${
+                  isSigned
+                    ? "border-green-200 bg-green-50/50"
+                    : "border-gray-100 hover:border-teal-200"
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+                      isSigned ? "bg-green-100" : "bg-teal-100"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-7 h-7 ${isSigned ? "text-green-600" : "text-teal-600"}`}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900">{template.title}</h3>
+                    <div className="flex items-center gap-3 text-sm">
+                      {isSigned ? (
+                        <span className="flex items-center gap-1 text-green-600">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Signed {status.signedAt && `on ${new Date(status.signedAt).toLocaleDateString()}`}
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-amber-600">
+                          <Clock className="w-4 h-4" />
+                          Pending signature
+                        </span>
+                      )}
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-500">Version {template.version}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setSelectedDocument(template)
+                      setIsViewerOpen(true)
+                    }}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
+                      isSigned
+                        ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        : "bg-teal-600 text-white hover:bg-teal-700"
+                    }`}
+                  >
+                    {isSigned ? "View" : "Sign"}
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+
+        {/* All signed message */}
+        {allDocumentsSigned && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-3xl mx-auto mt-8 p-6 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl text-white text-center"
+          >
+            <CheckCircle2 className="w-12 h-12 mx-auto mb-3" />
+            <h2 className="text-2xl font-bold mb-2">All Documents Signed!</h2>
+            <p className="text-teal-100 mb-4">
+              You're all set. Redirecting to your partner dashboard...
+            </p>
+            <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+          </motion.div>
+        )}
+
+        {/* Continue button (if not all signed) */}
+        {!allDocumentsSigned && signedCount > 0 && (
+          <div className="max-w-3xl mx-auto mt-8 text-center">
+            <p className="text-gray-500 mb-4">
+              {templates.length - signedCount} document{templates.length - signedCount !== 1 ? "s" : ""} remaining
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Document Viewer Modal */}
+      <DocumentViewer
+        isOpen={isViewerOpen}
+        onClose={() => {
+          setIsViewerOpen(false)
+          setSelectedDocument(null)
+        }}
+        document={selectedDocument}
+        onSign={handleSign}
+        isSigned={selectedDocument ? documentStatuses[selectedDocument.type]?.signed : false}
+      />
+
+      <Footer />
+    </main>
+  )
+}

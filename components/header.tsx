@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2 } from "lucide-react"
+import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, FileText, HelpCircle, DollarSign, Info } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 import { industryCategories } from "@/lib/category-data"
@@ -14,6 +14,13 @@ interface CategoryLink {
   description: string
   icon: React.ElementType
   color: string
+}
+
+interface ResourceLink {
+  label: string
+  href: string
+  description: string
+  icon: React.ElementType
 }
 
 const categoryIconMap: Record<string, React.ElementType> = {
@@ -32,11 +39,20 @@ const categories: CategoryLink[] = industryCategories.map((cat) => ({
   color: cat.color
 }))
 
+const resourceLinks: ResourceLink[] = [
+  { label: "About Us", href: "/about", description: "Learn about our mission", icon: Info },
+  { label: "Pricing", href: "/pricing", description: "Transparent pricing info", icon: DollarSign },
+  { label: "FAQ", href: "#faq", description: "Common questions answered", icon: HelpCircle },
+  { label: "Blog", href: "/blog", description: "Latest news and insights", icon: FileText },
+]
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [resourcesOpen, setResourcesOpen] = useState(false)
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
+  const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -57,20 +73,21 @@ export default function Header() {
     }
   }, [menuOpen])
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setCategoriesOpen(false)
+      setResourcesOpen(false)
     }
 
-    if (categoriesOpen) {
+    if (categoriesOpen || resourcesOpen) {
       document.addEventListener("click", handleClickOutside)
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
-  }, [categoriesOpen])
+  }, [categoriesOpen, resourcesOpen])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
@@ -104,13 +121,9 @@ export default function Header() {
     }
   }
 
+  // Condensed navigation - key pages only
   const navigationLinks = [
-    { label: "About", href: "/about" },
     { label: "How It Works", href: "#how-it-works" },
-    { label: "Who We Serve", href: "#who-we-serve" },
-    { label: "How You Can Earn", href: "#calculator" },
-    { label: "Benefits", href: "#benefits" },
-    { label: "Pricing", href: "/pricing" },
     { label: "For Carriers", href: "/carriers" },
   ]
 
@@ -254,6 +267,67 @@ export default function Header() {
                             </div>
                           </div>
                         </motion.a>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Resources Dropdown */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9 }}
+                  onClick={() => setResourcesOpen(!resourcesOpen)}
+                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
+                  aria-expanded={resourcesOpen}
+                  aria-haspopup="true"
+                >
+                  Resources
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      resourcesOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </motion.button>
+
+                <AnimatePresence>
+                  {resourcesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+                    >
+                      <div className="p-2">
+                        {resourceLinks.map((resource, idx) => {
+                          const Icon = resource.icon
+                          return (
+                            <motion.a
+                              key={resource.href}
+                              href={resource.href}
+                              onClick={(e) => handleNavClick(e, resource.href)}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: idx * 0.05 }}
+                              className="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-slate-50 transition-colors group"
+                            >
+                              <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-teal-100 text-teal-600">
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <div className="font-medium text-slate-900 text-sm group-hover:text-[#14B8A6] transition-colors">
+                                  {resource.label}
+                                </div>
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                  {resource.description}
+                                </div>
+                              </div>
+                            </motion.a>
+                          )
+                        })}
                       </div>
                     </motion.div>
                   )}
@@ -435,6 +509,56 @@ export default function Header() {
                             <Building2 className="w-4 h-4" />
                             For Insurance Carriers
                           </a>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.li>
+
+                {/* Mobile Resources Accordion */}
+                <motion.li
+                  variants={{
+                    open: { opacity: 1, x: 0 },
+                    closed: { opacity: 0, x: -20 },
+                  }}
+                >
+                  <button
+                    onClick={() => setMobileResourcesOpen(!mobileResourcesOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-md transition-colors"
+                    aria-expanded={mobileResourcesOpen}
+                  >
+                    Resources
+                    <ChevronDown
+                      className={`w-5 h-5 transition-transform duration-200 ${
+                        mobileResourcesOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileResourcesOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 py-2 space-y-1">
+                          {resourceLinks.map((resource) => {
+                            const Icon = resource.icon
+                            return (
+                              <a
+                                key={resource.href}
+                                href={resource.href}
+                                onClick={(e) => handleNavClick(e, resource.href)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-md transition-colors"
+                              >
+                                <Icon className="w-4 h-4" />
+                                {resource.label}
+                              </a>
+                            )
+                          })}
                         </div>
                       </motion.div>
                     )}

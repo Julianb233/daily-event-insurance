@@ -144,6 +144,21 @@ export const partnerDocuments = pgTable("partner_documents", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
+// Document templates - admin-editable document content
+export const documentTemplates = pgTable("document_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  type: text("type").notNull(), // partner_agreement, w9, direct_deposit
+  title: text("title").notNull(),
+  content: text("content").notNull(), // HTML/Markdown content
+  version: text("version").default("1.0"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("idx_document_templates_type").on(table.type),
+  activeIdx: index("idx_document_templates_active").on(table.isActive),
+}))
+
 // Webhook events - audit log for GHL webhooks
 export const webhookEvents = pgTable("webhook_events", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -448,3 +463,5 @@ export type Claim = typeof claims.$inferSelect
 export type NewClaim = typeof claims.$inferInsert
 export type ClaimDocument = typeof claimDocuments.$inferSelect
 export type NewClaimDocument = typeof claimDocuments.$inferInsert
+export type DocumentTemplate = typeof documentTemplates.$inferSelect
+export type NewDocumentTemplate = typeof documentTemplates.$inferInsert

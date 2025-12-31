@@ -59,9 +59,9 @@ interface StepperProps {
 
 function Stepper({ currentStep, totalSteps }: StepperProps) {
   const steps = [
-    { number: 1, title: "Business Info", icon: Building2 },
-    { number: 2, title: "Integration", icon: Code2 },
-    { number: 3, title: "Customize", icon: Settings },
+    { number: 1, title: "Customize", icon: Settings },
+    { number: 2, title: "Business Info", icon: Building2 },
+    { number: 3, title: "Integration", icon: Code2 },
     { number: 4, title: "Go Live", icon: Rocket },
   ]
 
@@ -123,9 +123,10 @@ interface Step1Props {
   formData: OnboardingFormData
   setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
   onNext: () => void
+  onBack: () => void
 }
 
-function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
+function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props) {
 
   return (
     <motion.div
@@ -286,7 +287,18 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-between">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onBack}
+            aria-label="Go back to customize coverage"
+            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+          >
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+            Back
+          </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -551,9 +563,10 @@ interface Step3Props {
   setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
   onNext: () => void
   onBack: () => void
+  isFirstStep?: boolean
 }
 
-function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
+function Step3Customize({ formData, setFormData, onNext, onBack, isFirstStep }: Step3Props) {
   const selectedProducts = formData.selectedProducts
   const setSelectedProducts = (updater: (prev: string[]) => string[]) => {
     setFormData(prev => ({ ...prev, selectedProducts: updater(prev.selectedProducts) }))
@@ -769,23 +782,25 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
           </div>
         </div>
 
-        <div className="flex justify-between">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onBack}
-            aria-label="Go back to integration selection"
-            className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-          >
-            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
-            Back
-          </motion.button>
+        <div className={`flex ${isFirstStep ? 'justify-end' : 'justify-between'}`}>
+          {!isFirstStep && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onBack}
+              aria-label="Go back to previous step"
+              className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+            >
+              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              Back
+            </motion.button>
+          )}
 
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onNext}
-            aria-label="Continue to go live checklist"
+            aria-label="Continue to business information"
             className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
           >
             Continue
@@ -1216,8 +1231,8 @@ export default function OnboardingForm() {
           </motion.div>
         )}
 
-        {/* Revenue Calculator */}
-        {!isComplete && currentStep === 1 && <RevenueCalculator />}
+        {/* Revenue Calculator - Show on Integration step (step 3) */}
+        {!isComplete && currentStep === 3 && <RevenueCalculator />}
 
         {/* Stepper */}
         {!isComplete && <Stepper currentStep={currentStep} totalSteps={4} />}
@@ -1226,14 +1241,27 @@ export default function OnboardingForm() {
         <AnimatePresence mode="wait">
           {!isComplete && (
             <>
+              {/* Step 1: Customize - Show what they can offer first */}
               {currentStep === 1 && (
+                <Step3Customize
+                  formData={formData}
+                  setFormData={setFormData}
+                  onNext={handleNext}
+                  onBack={() => {}} // No back on first step
+                  isFirstStep={true}
+                />
+              )}
+              {/* Step 2: Business Info */}
+              {currentStep === 2 && (
                 <Step1BusinessInfo
                   formData={formData}
                   setFormData={setFormData}
                   onNext={handleNext}
+                  onBack={handleBack}
                 />
               )}
-              {currentStep === 2 && (
+              {/* Step 3: Integration - with Revenue Calculator */}
+              {currentStep === 3 && (
                 <Step2Integration
                   formData={formData}
                   setFormData={setFormData}
@@ -1241,14 +1269,7 @@ export default function OnboardingForm() {
                   onBack={handleBack}
                 />
               )}
-              {currentStep === 3 && (
-                <Step3Customize
-                  formData={formData}
-                  setFormData={setFormData}
-                  onNext={handleNext}
-                  onBack={handleBack}
-                />
-              )}
+              {/* Step 4: Go Live */}
               {currentStep === 4 && (
                 <Step4GoLive
                   formData={formData}
