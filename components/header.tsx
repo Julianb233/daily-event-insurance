@@ -142,10 +142,10 @@ export default function Header() {
                 <Image
                   src="/images/logo-color.png"
                   alt="Daily Event Insurance"
-                  width={180}
-                  height={40}
+                  width={160}
+                  height={60}
                   priority
-                  className="h-auto w-auto max-h-10"
+                  className="h-12 w-auto object-contain"
                 />
               </a>
             </motion.div>
@@ -354,9 +354,9 @@ export default function Header() {
                   <Image
                     src="/images/logo-color.png"
                     alt="Daily Event Insurance"
-                    width={180}
-                    height={40}
-                    className="h-auto w-auto max-h-10"
+                    width={160}
+                    height={60}
+                    className="h-12 w-auto object-contain"
                   />
                 </a>
               </motion.div>
