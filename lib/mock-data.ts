@@ -3,6 +3,7 @@
  */
 
 import type { Partner, PartnerProduct, MonthlyEarnings, PartnerResource } from "./supabase"
+import { MOCK_RESOURCES_SNAKE_CASE } from "./partner-resources-data"
 
 // Development mode check
 export const isDevMode = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -78,58 +79,7 @@ export const MOCK_EARNINGS: MonthlyEarnings[] = Array.from({ length: 12 }, (_, i
   }
 }).reverse()
 
-// Mock Resources
-export const MOCK_RESOURCES: PartnerResource[] = [
-  {
-    id: "mock-resource-001",
-    title: "Partner Logo Pack",
-    description: "High-resolution logos for marketing materials",
-    category: "marketing",
-    resource_type: "image",
-    file_url: "/resources/logo-pack.zip",
-    thumbnail_url: "/resources/thumbnails/logo-pack.png",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "mock-resource-002",
-    title: "Social Media Templates",
-    description: "Ready-to-use social media graphics",
-    category: "marketing",
-    resource_type: "image",
-    file_url: "/resources/social-templates.zip",
-    thumbnail_url: "/resources/thumbnails/social-templates.png",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "mock-resource-003",
-    title: "Integration Walkthrough",
-    description: "Video guide for setting up the widget",
-    category: "training",
-    resource_type: "video",
-    file_url: "https://youtube.com/watch?v=demo",
-    thumbnail_url: "/resources/thumbnails/walkthrough.png",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "mock-resource-004",
-    title: "Partner Handbook",
-    description: "Complete guide to the partner program",
-    category: "documentation",
-    resource_type: "pdf",
-    file_url: "/resources/partner-handbook.pdf",
-    thumbnail_url: "/resources/thumbnails/handbook.png",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "mock-resource-005",
-    title: "API Documentation",
-    description: "Technical docs for API integration",
-    category: "documentation",
-    resource_type: "link",
-    file_url: "/api-docs",
-    thumbnail_url: "/resources/thumbnails/api-docs.png",
-    created_at: new Date().toISOString(),
-  },
-]
+// Mock Resources - Enhanced with realistic content from partner-resources-data
+export const MOCK_RESOURCES: PartnerResource[] = MOCK_RESOURCES_SNAKE_CASE as PartnerResource[]
 
 console.log("[MOCK DATA] Dev mode active - using mock data for Partner Portal")
