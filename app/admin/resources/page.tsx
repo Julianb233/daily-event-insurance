@@ -254,8 +254,8 @@ export default function AdminResourcesPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+            <div className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                 <FolderOpen className="w-5 h-5 text-gray-600" />
               </div>
               <div>
@@ -268,8 +268,8 @@ export default function AdminResourcesPage() {
             const CategoryIcon = categoryIcons[key as ResourceCategory]
             return (
               <div key={key} className={`bg-white rounded-xl p-5 shadow-sm border ${config.borderColor}`}>
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center`}>
+                <div className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-3">
+                  <div className={`w-10 h-10 rounded-lg ${config.color} flex items-center justify-center flex-shrink-0`}>
                     <CategoryIcon className="w-5 h-5" />
                   </div>
                   <div>
@@ -423,7 +423,9 @@ export default function AdminResourcesPage() {
 
           {filteredResources.length === 0 && (
             <div className="text-center py-12">
-              <FolderOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <div className="flex justify-center mb-4">
+                <FolderOpen className="w-12 h-12 text-gray-300" />
+              </div>
               <p className="text-gray-500">No resources found</p>
               <button
                 onClick={openCreateModal}

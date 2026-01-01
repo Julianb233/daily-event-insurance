@@ -227,7 +227,7 @@ export default function PartnerMaterialsPage() {
       </motion.div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+      <div className="flex flex-col gap-4 mb-8">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
@@ -238,7 +238,7 @@ export default function PartnerMaterialsPage() {
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory("all")}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -253,14 +253,14 @@ export default function PartnerMaterialsPage() {
             <button
               key={key}
               onClick={() => setActiveCategory(key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeCategory === key
                   ? "bg-teal-500 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
-              <config.icon className="w-4 h-4" />
-              {config.label}
+              <config.icon className="w-4 h-4 flex-shrink-0" />
+              <span>{config.label}</span>
             </button>
           ))}
         </div>
@@ -354,8 +354,10 @@ export default function PartnerMaterialsPage() {
         })}
 
         {filteredResources.length === 0 && (
-          <div className="md:col-span-2 lg:col-span-3 text-center py-12">
-            <FolderOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+          <div className="col-span-full text-center py-12">
+            <div className="flex justify-center mb-4">
+              <FolderOpen className="w-12 h-12 text-slate-300" />
+            </div>
             <p className="text-slate-500">No resources found matching your criteria.</p>
           </div>
         )}

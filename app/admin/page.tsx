@@ -85,19 +85,19 @@ export default function AdminPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 text-center md:text-left">
             <p className="text-sm text-gray-500 mb-1">Partner Resources</p>
             <p className="text-2xl font-bold text-gray-900">16</p>
           </div>
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 text-center md:text-left">
             <p className="text-sm text-gray-500 mb-1">Document Templates</p>
             <p className="text-2xl font-bold text-gray-900">3</p>
           </div>
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 text-center md:text-left">
             <p className="text-sm text-gray-500 mb-1">Active Partners</p>
             <p className="text-2xl font-bold text-gray-900">--</p>
           </div>
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 text-center md:text-left">
             <p className="text-sm text-gray-500 mb-1">System Status</p>
             <p className="text-lg font-bold text-green-600">Operational</p>
           </div>
