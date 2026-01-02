@@ -1,8 +1,8 @@
-# Daily Event Insurance - Pricing Structure
+# Hiqor and Daily Event Insurance - Pricing Structure
 
 ## Overview
 
-Daily Event Insurance operates on a B2B2C model with partner revenue sharing and enterprise licensing for insurance carriers.
+Hiqor and Daily Event Insurance operates on a B2B2C model with partner revenue sharing and enterprise licensing for insurance carriers.
 
 ---
 
@@ -14,7 +14,7 @@ Includes:
 - Custom branded partner website
 - SEO optimization and content
 - Automation workflows (lead capture, notifications)
-- Integration with Daily Event Insurance platform
+- Integration with Hiqor platform
 - Partner portal access
 - Training and onboarding
 
@@ -67,7 +67,7 @@ Includes:
 | Party | Share | Amount |
 |-------|-------|--------|
 | Insurance Carrier | 65% | $26 |
-| Daily Event Insurance | 35% | $14 |
+| Hiqor | 35% | $14 |
 
 ### Partner Commission: $14/policy
 
