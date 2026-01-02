@@ -430,6 +430,161 @@ export const claimDocuments = pgTable("claim_documents", {
   documentTypeIdx: index("idx_claim_documents_type").on(table.documentType),
 }))
 
+// ================= Microsite & Carrier Management =================
+
+// Microsites - partner branded websites we create and manage
+export const microsites = pgTable("microsites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+
+  // Site identification
+  domain: text("domain").unique(), // e.g., spartan.dailyeventinsurance.com
+  subdomain: text("subdomain").unique(), // e.g., spartan
+  customDomain: text("custom_domain"), // Partner's own domain if they want
+
+  // Branding
+  siteName: text("site_name").notNull(),
+  primaryColor: text("primary_color").default("#14B8A6"),
+  logoUrl: text("logo_url"),
+  heroImageUrl: text("hero_image_url"),
+
+  // Pricing (from PRICING-STRUCTURE.md)
+  monthlyCharge: decimal("monthly_charge", { precision: 10, scale: 2 }).default("650"), // Total charge
+  julianShare: decimal("julian_share", { precision: 10, scale: 2 }).default("500"), // Julian's share
+  operatingMargin: decimal("operating_margin", { precision: 10, scale: 2 }).default("150"), // Margin
+
+  // Setup tracking
+  setupFee: decimal("setup_fee", { precision: 10, scale: 2 }).default("10000"), // $10,000 one-time
+  setupFeePaid: boolean("setup_fee_paid").default(false),
+  setupFeePaidAt: timestamp("setup_fee_paid_at"),
+
+  // Billing
+  billingStatus: text("billing_status").default("pending"), // pending, active, overdue, suspended
+  nextBillingDate: timestamp("next_billing_date"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+
+  // Status
+  status: text("status").default("building"), // building, review, live, suspended, archived
+  launchedAt: timestamp("launched_at"),
+
+  // Analytics
+  totalVisitors: integer("total_visitors").default(0),
+  totalLeads: integer("total_leads").default(0),
+  totalPolicies: integer("total_policies").default(0),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_microsites_partner_id").on(table.partnerId),
+  statusIdx: index("idx_microsites_status").on(table.status),
+  billingStatusIdx: index("idx_microsites_billing_status").on(table.billingStatus),
+  domainIdx: index("idx_microsites_domain").on(table.domain),
+}))
+
+// Microsite billing history - monthly invoices
+export const micrositeBilling = pgTable("microsite_billing", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  micrositeId: uuid("microsite_id").references(() => microsites.id, { onDelete: "cascade" }).notNull(),
+
+  // Billing period
+  yearMonth: text("year_month").notNull(), // "2025-01" format
+
+  // Amounts
+  totalCharge: decimal("total_charge", { precision: 10, scale: 2 }).notNull().default("650"),
+  julianShare: decimal("julian_share", { precision: 10, scale: 2 }).notNull().default("500"),
+  operatingCost: decimal("operating_cost", { precision: 10, scale: 2 }).notNull().default("150"),
+
+  // Payment
+  status: text("status").default("pending"), // pending, paid, overdue, waived
+  invoiceNumber: text("invoice_number"),
+  stripeInvoiceId: text("stripe_invoice_id"),
+  paidAt: timestamp("paid_at"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  micrositeIdIdx: index("idx_microsite_billing_microsite_id").on(table.micrositeId),
+  yearMonthIdx: index("idx_microsite_billing_year_month").on(table.yearMonth),
+  statusIdx: index("idx_microsite_billing_status").on(table.status),
+  micrositeMonthIdx: index("idx_microsite_billing_microsite_month").on(table.micrositeId, table.yearMonth),
+}))
+
+// Carrier licenses - insurance carrier licensing fees per site
+export const carrierLicenses = pgTable("carrier_licenses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  micrositeId: uuid("microsite_id").references(() => microsites.id, { onDelete: "cascade" }).notNull(),
+
+  // Carrier info
+  carrierName: text("carrier_name").notNull().default("Mutual of Omaha"),
+  carrierCode: text("carrier_code").default("MUTUAL_OMAHA"),
+
+  // Pricing (from PRICING-STRUCTURE.md - $600/site)
+  licenseFee: decimal("license_fee", { precision: 10, scale: 2 }).notNull().default("600"),
+
+  // Status
+  status: text("status").default("pending"), // pending, active, suspended, terminated
+  activatedAt: timestamp("activated_at"),
+
+  // Contract details
+  contractNumber: text("contract_number"),
+  contractStartDate: timestamp("contract_start_date"),
+  contractEndDate: timestamp("contract_end_date"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  micrositeIdIdx: index("idx_carrier_licenses_microsite_id").on(table.micrositeId),
+  carrierCodeIdx: index("idx_carrier_licenses_carrier_code").on(table.carrierCode),
+  statusIdx: index("idx_carrier_licenses_status").on(table.status),
+}))
+
+// Leads - captured from microsites and quote forms
+export const leads = pgTable("leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  micrositeId: uuid("microsite_id").references(() => microsites.id),
+  partnerId: uuid("partner_id").references(() => partners.id),
+
+  // Lead identification
+  vertical: text("vertical").notNull(), // gym, wellness, ski-resort, fitness
+  source: text("source").notNull(), // gym-quote-form, wellness-quote-form, etc.
+
+  // Contact info
+  businessName: text("business_name"),
+  contactName: text("contact_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+
+  // Business details (varies by vertical)
+  formData: text("form_data"), // JSON string of all form fields
+
+  // Volume metrics (for revenue calculator)
+  expectedVolume: integer("expected_volume"), // monthly participants/treatments/visitors
+  estimatedRevenue: decimal("estimated_revenue", { precision: 10, scale: 2 }), // calculated commission
+
+  // Status
+  status: text("status").default("new"), // new, contacted, qualified, proposal_sent, negotiating, won, lost
+
+  // Assignment
+  assignedTo: uuid("assigned_to").references(() => users.id),
+  assignedAt: timestamp("assigned_at"),
+
+  // Conversion tracking
+  convertedToPartnerId: uuid("converted_to_partner_id").references(() => partners.id),
+  convertedAt: timestamp("converted_at"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  verticalIdx: index("idx_leads_vertical").on(table.vertical),
+  statusIdx: index("idx_leads_status").on(table.status),
+  emailIdx: index("idx_leads_email").on(table.email),
+  createdAtIdx: index("idx_leads_created_at").on(table.createdAt),
+  micrositeIdIdx: index("idx_leads_microsite_id").on(table.micrositeId),
+}))
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -465,3 +620,11 @@ export type ClaimDocument = typeof claimDocuments.$inferSelect
 export type NewClaimDocument = typeof claimDocuments.$inferInsert
 export type DocumentTemplate = typeof documentTemplates.$inferSelect
 export type NewDocumentTemplate = typeof documentTemplates.$inferInsert
+export type Microsite = typeof microsites.$inferSelect
+export type NewMicrosite = typeof microsites.$inferInsert
+export type MicrositeBilling = typeof micrositeBilling.$inferSelect
+export type NewMicrositeBilling = typeof micrositeBilling.$inferInsert
+export type CarrierLicense = typeof carrierLicenses.$inferSelect
+export type NewCarrierLicense = typeof carrierLicenses.$inferInsert
+export type Lead = typeof leads.$inferSelect
+export type NewLead = typeof leads.$inferInsert
