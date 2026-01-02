@@ -2,7 +2,22 @@
 
 ## Overview
 
-Hiqor and Daily Event Insurance operates on a B2B2C model with partner revenue sharing and enterprise licensing for insurance carriers.
+This is a partnership between **Hiqor** (insurance technology platform) and **Daily Event Insurance** (marketing agency contractor).
+
+- **Hiqor**: Provides the insurance platform, carrier relationships, and technology infrastructure
+- **Daily Event Insurance**: Marketing agency handling partner acquisition, websites, and automation
+- **Model**: B2B2C with partner revenue sharing and enterprise licensing for insurance carriers
+
+---
+
+## Partnership Structure
+
+| Entity | Role |
+|--------|------|
+| Hiqor | Insurance platform & carrier partnerships |
+| Daily Event Insurance | Marketing agency (contractor) |
+| Insurance Carriers | Underwriting (Mutual of Omaha, future: AIG/Chubb) |
+| Partners | Gyms, ski resorts, wellness centers, events |
 
 ---
 
@@ -67,11 +82,11 @@ Includes:
 | Party | Share | Amount |
 |-------|-------|--------|
 | Insurance Carrier | 65% | $26 |
-| Hiqor | 35% | $14 |
+| Daily Event Insurance | 35% | $14 |
 
 ### Partner Commission: $14/policy
 
-- 35% revenue share to platform
+- 35% revenue share to Daily Event Insurance (marketing agency)
 - Partners receive commission per covered participant
 - Estimated 65% opt-in rate from eligible participants
 
@@ -140,7 +155,7 @@ Monthly Revenue = Participants × 0.65 (opt-in) × $14 (commission)
 | Carrier License (per site) | $600 | Per site |
 | Microsite Management | $650 | Monthly |
 | Julian's Microsite Share | $500 | Monthly |
-| Policy Revenue Share | $14 | Per policy |
+| Policy Revenue Share (Daily Event Insurance) | $14 | Per policy |
 
 ---
 
