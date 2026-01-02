@@ -31,16 +31,23 @@ export interface EarningsCalculation {
 
 /**
  * Tiered commission structure
- * Base policy price: ~$40, commission tiers from 25% to 37.5%
+ * Base policy price: $40, commission starts at 35% (Julian's share)
+ * Partners earn from this pool based on volume
  */
 export const commissionTiers: CommissionTier[] = [
-  { minVolume: 0, maxVolume: 999, percentage: 25, perParticipant: 10 },
-  { minVolume: 1000, maxVolume: 2499, percentage: 27.5, perParticipant: 11 },
-  { minVolume: 2500, maxVolume: 4999, percentage: 30, perParticipant: 12 },
-  { minVolume: 5000, maxVolume: 9999, percentage: 32.5, perParticipant: 13 },
+  { minVolume: 0, maxVolume: 999, percentage: 35, perParticipant: 14 },
+  { minVolume: 1000, maxVolume: 2499, percentage: 35, perParticipant: 14 },
+  { minVolume: 2500, maxVolume: 4999, percentage: 35, perParticipant: 14 },
+  { minVolume: 5000, maxVolume: 9999, percentage: 35, perParticipant: 14 },
   { minVolume: 10000, maxVolume: 24999, percentage: 35, perParticipant: 14 },
-  { minVolume: 25000, maxVolume: Infinity, percentage: 37.5, perParticipant: 15 },
+  { minVolume: 25000, maxVolume: Infinity, percentage: 35, perParticipant: 14 },
 ]
+
+/**
+ * Julian's Revenue Share: 35% of all contracts, lifetime
+ * This is separate from partner commissions which come from the company's 65%
+ */
+export const JULIAN_REVENUE_SHARE = 0.35
 
 /**
  * Location bonus options

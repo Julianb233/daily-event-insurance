@@ -228,7 +228,7 @@ function ProblemSolutionSection() {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
-                  <span>Earn 20-30% commission on every policy sold</span>
+                  <span>Earn up to 35% commission on every $40 policy sold</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
@@ -419,8 +419,8 @@ function GymBenefitsSection() {
 function RevenueCalculatorSection() {
   const [dailyCheckins, setDailyCheckins] = useState(100)
   const [conversionRate, setConversionRate] = useState(30)
-  const [pricePerPolicy, setPricePerPolicy] = useState(5)
-  const [commissionRate] = useState(25)
+  const [pricePerPolicy, setPricePerPolicy] = useState(40)
+  const [commissionRate] = useState(35)
 
   const dailyRevenue = (dailyCheckins * (conversionRate / 100) * pricePerPolicy * (commissionRate / 100))
   const monthlyRevenue = dailyRevenue * 30
@@ -504,18 +504,15 @@ function RevenueCalculatorSection() {
 
               <div>
                 <label className="flex items-center justify-between text-white font-semibold mb-3">
-                  <span>Price per Policy</span>
+                  <span>Policy Price</span>
                   <span className="text-2xl font-black text-teal-100">${pricePerPolicy}</span>
                 </label>
-                <input
-                  type="range"
-                  min="3"
-                  max="15"
-                  step="1"
-                  value={pricePerPolicy}
-                  onChange={(e) => setPricePerPolicy(parseInt(e.target.value))}
-                  className="w-full h-3 bg-white/20 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
-                />
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 rounded-lg px-6 py-3 text-center flex-1">
+                    <span className="text-2xl font-black text-white">$40</span>
+                    <span className="block text-white/70 text-xs">Day Pass Coverage</span>
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 border-t border-white/20">
