@@ -71,9 +71,15 @@ export function ActiveGuardSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/30 rounded-full mb-4">
-            <Star className="w-4 h-4 text-teal-600" />
-            <span className="text-teal-600 font-semibold text-sm">ActiveGuard Monthly</span>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/30 rounded-full">
+              <Star className="w-4 h-4 text-teal-600" />
+              <span className="text-teal-600 font-semibold text-sm">ActiveGuard Monthly</span>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 border border-amber-300 rounded-full text-amber-700 text-xs font-semibold">
+              <Zap className="w-3 h-3" />
+              Coming Q2 2026
+            </span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
             Turn Memberships Into Recurring Revenue
