@@ -183,20 +183,22 @@ export async function GET(request: NextRequest) {
           : undefined;
 
         const [results, countResult] = await Promise.all([
-          db
+          db!
             .select({
               id: microsites.id,
               partnerId: microsites.partnerId,
               subdomain: microsites.subdomain,
+              domain: microsites.domain,
               customDomain: microsites.customDomain,
-              brandingConfig: microsites.brandingConfig,
-              features: microsites.features,
+              siteName: microsites.siteName,
+              primaryColor: microsites.primaryColor,
+              logoUrl: microsites.logoUrl,
               status: microsites.status,
-              deployedAt: microsites.deployedAt,
+              launchedAt: microsites.launchedAt,
               createdAt: microsites.createdAt,
               updatedAt: microsites.updatedAt,
               partnerName: partners.businessName,
-              partnerVertical: partners.vertical
+              partnerBusinessType: partners.businessType
             })
             .from(microsites)
             .leftJoin(partners, eq(microsites.partnerId, partners.id))
@@ -204,7 +206,7 @@ export async function GET(request: NextRequest) {
             .orderBy(desc(microsites.createdAt))
             .limit(limit)
             .offset(offset),
-          db
+          db!
             .select({ count: sql<number>`count(*)` })
             .from(microsites)
             .where(whereClause)
@@ -250,29 +252,29 @@ export async function POST(request: NextRequest) {
         }
 
         // Production - insert into database
-        const [newMicrosite] = await db
+        const [newMicrosite] = await db!
           .insert(microsites)
           .values({
             partnerId: data.partnerId,
             subdomain: data.subdomain,
+            siteName: data.brandingConfig?.companyName || data.subdomain,
             customDomain: data.customDomain || null,
-            brandingConfig: data.brandingConfig || {},
-            features: data.features || { chatbot: true, quoteForm: true, analytics: true },
-            status: data.status || 'pending'
+            primaryColor: data.brandingConfig?.primaryColor || '#14B8A6',
+            logoUrl: data.brandingConfig?.logoUrl || null,
+            status: data.status || 'building'
           })
           .returning();
 
-        // Create billing record
-        await db
+        // Create billing record for first month
+        const yearMonth = new Date().toISOString().slice(0, 7); // "2026-01" format
+        await db!
           .insert(micrositeBilling)
           .values({
             micrositeId: newMicrosite.id,
-            monthlyFee: 650,
-            operatingCost: 320,
-            julianShare: 500,
-            margin: 150,
-            billingCycle: 'monthly',
-            nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+            yearMonth,
+            totalCharge: '650',
+            julianShare: '500',
+            operatingCost: '150',
             status: 'pending'
           });
 
@@ -312,7 +314,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         // Production - update database
-        const [updated] = await db
+        const [updated] = await db!
           .update(microsites)
           .set({
             ...updates,
@@ -357,7 +359,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         // Production - soft delete (archive)
-        const [archived] = await db
+        const [archived] = await db!
           .update(microsites)
           .set({
             status: 'archived',
@@ -371,7 +373,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         // Also update billing status
-        await db
+        await db!
           .update(micrositeBilling)
           .set({ status: 'cancelled' })
           .where(eq(micrositeBilling.micrositeId, id));

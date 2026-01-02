@@ -182,11 +182,18 @@ export default function PartnerMaterialsPage() {
     } else if (resource.resource_type === "video") {
       window.open(resource.file_url, "_blank")
     } else {
-      // Download file
-      const a = document.createElement("a")
-      a.href = resource.file_url
-      a.download = resource.title
-      a.click()
+      // Download file using new download API endpoint
+      const filename = resource.file_url.split("/").pop()
+      if (filename) {
+        // Use new download endpoint for better tracking and security
+        window.location.href = `/api/downloads/${resource.category}/${filename}`
+      } else {
+        // Fallback to direct download
+        const a = document.createElement("a")
+        a.href = resource.file_url
+        a.download = resource.title
+        a.click()
+      }
     }
   }
 

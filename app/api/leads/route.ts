@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Production - insert into database
-    const [newLead] = await db
+    const [newLead] = await db!
       .insert(leads)
       .values({
         vertical: data.vertical,
@@ -148,15 +148,11 @@ export async function POST(request: NextRequest) {
         email: data.email,
         phone: data.phone || null,
         contactName: data.contactName,
-        companyName,
-        formData: data,
-        estimatedRevenue,
+        businessName: companyName,
+        formData: JSON.stringify(data),
+        estimatedRevenue: String(estimatedRevenue),
         status: 'new',
-        partnerId: data.partnerId || null,
-        referralCode: data.referralCode || null,
-        utmSource: data.utmSource || null,
-        utmMedium: data.utmMedium || null,
-        utmCampaign: data.utmCampaign || null
+        partnerId: data.partnerId || null
       })
       .returning();
 
@@ -258,7 +254,7 @@ export async function GET(request: NextRequest) {
     // Production - query database
     const offset = (page - 1) * limit;
 
-    const results = await db
+    const results = await db!
       .select()
       .from(leads)
       .orderBy(desc(leads.createdAt))

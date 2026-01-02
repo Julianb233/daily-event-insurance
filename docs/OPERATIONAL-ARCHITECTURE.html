@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Event Insurance - Operational Architecture</title>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --secondary: #1e293b;
+            --accent: #f59e0b;
+            --success: #22c55e;
+            --info: #3b82f6;
+            --bg-light: #f8fafc;
+            --border: #e2e8f0;
+            --text: #334155;
+            --text-light: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #334155 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: var(--text);
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .flow-container {
+            background: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .flow-item {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .flow-item.highlight {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flow-item .emoji {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-item .label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .card.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+        }
+
+        .card.primary h4 {
+            color: white;
+        }
+
+        .card h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card ul {
+            margin-left: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        tr:hover {
+            background: #f0fdfa;
+        }
+
+        code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .step-list {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            counter-increment: step;
+            padding: 1rem 1rem 1rem 3.5rem;
+            position: relative;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-future {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .tech-tag {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .endpoint-group {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .endpoint:last-child {
+            border-bottom: none;
+        }
+
+        .method {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method-get { background: #dbeafe; color: #1e40af; }
+        .method-post { background: #dcfce7; color: #166534; }
+        .method-patch { background: #fef3c7; color: #92400e; }
+        .method-delete { background: #fee2e2; color: #991b1b; }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .endpoint-desc {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-left: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .flow-row {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏗️ Daily Event Insurance</h1>
+        <p>Operational Architecture & System Design</p>
+        <span class="badge">📋 Engineering Reference Document</span>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#customer-journey">Customer Journey</a></li>
+            <li><a href="#partner-onboarding">Partner Onboarding</a></li>
+            <li><a href="#tech-stack">Tech Stack</a></li>
+            <li><a href="#api-endpoints">API Endpoints</a></li>
+            <li><a href="#database">Database</a></li>
+            <li><a href="#deployment">Deployment</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- System Overview -->
+        <section id="overview">
+            <h2>System Overview</h2>
+            <p>Daily Event Insurance is a B2B2C insurance platform enabling businesses to offer day-pass and event coverage to their customers. The system connects partners (gyms, ski resorts, wellness centers) with insurance carriers through an automated digital experience.</p>
+
+            <div class="flow-container">
+                <h3 style="text-align: center; margin-bottom: 1.5rem;">Core System Flow</h3>
+                <div class="flow-row">
+                    <div class="flow-item">
+                        <span class="emoji">🏢</span>
+                        <span class="label">Partner Business</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item highlight">
+                        <span class="emoji">⚡</span>
+                        <span class="label">Daily Event Insurance Platform</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">🛡️</span>
+                        <span class="label">Insurance Carrier</span>
+                    </div>
+                </div>
+                <div class="flow-row" style="margin-top: 2rem;">
+                    <div class="flow-item">
+                        <span class="emoji">👤</span>
+                        <span class="label">End Customer</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <h4>🏢 Partners</h4>
+                    <ul>
+                        <li>Gyms & fitness centers</li>
+                        <li>Ski resorts</li>
+                        <li>Wellness & aesthetic clinics</li>
+                        <li>Event organizers</li>
+                        <li>Race directors</li>
+                    </ul>
+                </div>
+                <div class="card primary">
+                    <h4>⚡ Platform Capabilities</h4>
+                    <ul>
+                        <li>Instant quote generation</li>
+                        <li>Automated underwriting</li>
+                        <li>Partner microsites</li>
+                        <li>Lead management</li>
+                        <li>Analytics dashboard</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🛡️ Carriers</h4>
+                    <ul>
+                        <li>Mutual of Omaha (Active)</li>
+                        <li>AIG (Future)</li>
+                        <li>Chubb (Future)</li>
+                        <li>Real-time API integration</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Journey -->
+        <section id="customer-journey">
+            <h2>Customer Journey Flow</h2>
+            <p>The end-to-end flow from customer discovery through policy issuance and claims support.</p>
+
+            <div class="flow-container">
+                <h3 style="text-align: center; margin-bottom: 1.5rem;">Purchase Flow</h3>
+                <div class="flow-row">
+                    <div class="flow-item">
+                        <span class="emoji">🔍</span>
+                        <span class="label">Discovery</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">💰</span>
+                        <span class="label">Quote</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">📝</span>
+                        <span class="label">Application</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item highlight">
+                        <span class="emoji">💳</span>
+                        <span class="label">Payment</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">✅</span>
+                        <span class="label">Policy Issued</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4>🔍 Discovery Phase</h4>
+                    <ol class="step-list">
+                        <li>Customer visits partner microsite or main website</li>
+                        <li>Selects coverage type based on activity</li>
+                        <li>Views pricing and coverage details</li>
+                        <li>AI chatbot provides instant answers</li>
+                    </ol>
+                </div>
+                <div class="card">
+                    <h4>💰 Quote & Purchase</h4>
+                    <ol class="step-list">
+                        <li>Enters activity details and dates</li>
+                        <li>Receives instant quote ($40 day coverage)</li>
+                        <li>Completes secure Stripe payment</li>
+                        <li>Receives policy via email instantly</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4>📋 Post-Purchase Support</h4>
+                <div class="grid-3">
+                    <div>
+                        <strong>Policy Access</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">Digital policy documents accessible 24/7 via email and customer portal</p>
+                    </div>
+                    <div>
+                        <strong>Claims Process</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">Streamlined claims submission through partner or direct channels</p>
+                    </div>
+                    <div>
+                        <strong>Customer Support</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">AI chatbot + human escalation for complex inquiries</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partner Onboarding -->
+        <section id="partner-onboarding">
+            <h2>Partner Onboarding Flow</h2>
+            <p>Automated partner acquisition and onboarding process from initial contact to live microsite deployment.</p>
+
+            <div class="flow-container">
+                <h3 style="text-align: center; margin-bottom: 1.5rem;">Onboarding Stages</h3>
+                <div class="flow-row">
+                    <div class="flow-item">
+                        <span class="emoji">📥</span>
+                        <span class="label">Lead Capture</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">📞</span>
+                        <span class="label">Qualification</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">📄</span>
+                        <span class="label">Agreement</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item highlight">
+                        <span class="emoji">🚀</span>
+                        <span class="label">Microsite Deploy</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">📈</span>
+                        <span class="label">Active Partner</span>
+                    </div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>Actions</th>
+                        <th>Automation</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Lead Capture</strong></td>
+                        <td>Quote form submission, vertical-specific landing page</td>
+                        <td>Auto-qualify, CRM entry, lead scoring</td>
+                        <td>Instant</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qualification</strong></td>
+                        <td>Volume assessment, business verification</td>
+                        <td>Email sequence, calendar booking</td>
+                        <td>1-3 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agreement</strong></td>
+                        <td>Contract signing, payment setup</td>
+                        <td>DocuSign, Stripe Connect</td>
+                        <td>1-2 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microsite Deploy</strong></td>
+                        <td>Branding configuration, subdomain setup</td>
+                        <td>Auto-deploy, DNS configuration</td>
+                        <td>Same day</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Go Live</strong></td>
+                        <td>Training, initial promotion support</td>
+                        <td>Onboarding emails, analytics setup</td>
+                        <td>1 day</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Technical System Flow -->
+        <section id="tech-stack">
+            <h2>Technical Architecture</h2>
+
+            <h3>Technology Stack</h3>
+            <div class="tech-stack">
+                <span class="tech-tag">Next.js 14</span>
+                <span class="tech-tag">TypeScript</span>
+                <span class="tech-tag">React 18</span>
+                <span class="tech-tag">Tailwind CSS</span>
+                <span class="tech-tag">Framer Motion</span>
+                <span class="tech-tag">Neon PostgreSQL</span>
+                <span class="tech-tag">Drizzle ORM</span>
+                <span class="tech-tag">Clerk Auth</span>
+                <span class="tech-tag">Stripe</span>
+                <span class="tech-tag">Resend</span>
+                <span class="tech-tag">Vercel</span>
+                <span class="tech-tag">Claude AI</span>
+            </div>
+
+            <div class="grid-2" style="margin-top: 2rem;">
+                <div class="card">
+                    <h4>🎨 Frontend</h4>
+                    <ul>
+                        <li><strong>Framework:</strong> Next.js 14 (App Router)</li>
+                        <li><strong>UI:</strong> Tailwind CSS + shadcn/ui</li>
+                        <li><strong>Animations:</strong> Framer Motion</li>
+                        <li><strong>Forms:</strong> React Hook Form + Zod</li>
+                        <li><strong>State:</strong> React Query + Zustand</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>⚙️ Backend</h4>
+                    <ul>
+                        <li><strong>API:</strong> Next.js API Routes</li>
+                        <li><strong>Database:</strong> Neon PostgreSQL</li>
+                        <li><strong>ORM:</strong> Drizzle</li>
+                        <li><strong>Auth:</strong> Clerk</li>
+                        <li><strong>Payments:</strong> Stripe Connect</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🤖 AI & Automation</h4>
+                    <ul>
+                        <li><strong>Chatbot:</strong> Claude AI</li>
+                        <li><strong>Email:</strong> Resend + React Email</li>
+                        <li><strong>Workflows:</strong> n8n Integration</li>
+                        <li><strong>Scraping:</strong> FireCrawl</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>☁️ Infrastructure</h4>
+                    <ul>
+                        <li><strong>Hosting:</strong> Vercel</li>
+                        <li><strong>CDN:</strong> Vercel Edge Network</li>
+                        <li><strong>DNS:</strong> Cloudflare</li>
+                        <li><strong>Monitoring:</strong> Vercel Analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Endpoints -->
+        <section id="api-endpoints">
+            <h2>API Endpoints</h2>
+
+            <div class="endpoint-group">
+                <h4>📋 Lead Management</h4>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/leads</span>
+                    <span class="endpoint-desc">Submit quote request from any vertical</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/api/leads</span>
+                    <span class="endpoint-desc">List leads with filtering (admin)</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-patch">PATCH</span>
+                    <span class="endpoint-path">/api/leads/[id]</span>
+                    <span class="endpoint-desc">Update lead status</span>
+                </div>
+            </div>
+
+            <div class="endpoint-group">
+                <h4>👥 Partner Management</h4>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/partners</span>
+                    <span class="endpoint-desc">Create new partner</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/api/partners</span>
+                    <span class="endpoint-desc">List all partners</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-patch">PATCH</span>
+                    <span class="endpoint-path">/api/partners/[id]</span>
+                    <span class="endpoint-desc">Update partner details</span>
+                </div>
+            </div>
+
+            <div class="endpoint-group">
+                <h4>🌐 Microsite Management</h4>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/admin/microsites</span>
+                    <span class="endpoint-desc">Create partner microsite</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/api/admin/microsites</span>
+                    <span class="endpoint-desc">List microsites with status</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-patch">PATCH</span>
+                    <span class="endpoint-path">/api/admin/microsites</span>
+                    <span class="endpoint-desc">Update microsite configuration</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-delete">DELETE</span>
+                    <span class="endpoint-path">/api/admin/microsites?id=</span>
+                    <span class="endpoint-desc">Archive microsite</span>
+                </div>
+            </div>
+
+            <div class="endpoint-group">
+                <h4>💳 Payments & Policies</h4>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/checkout</span>
+                    <span class="endpoint-desc">Create Stripe checkout session</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/webhooks/stripe</span>
+                    <span class="endpoint-desc">Handle Stripe webhook events</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/api/policies/[id]</span>
+                    <span class="endpoint-desc">Retrieve policy details</span>
+                </div>
+            </div>
+
+            <div class="endpoint-group">
+                <h4>🤖 AI & Chat</h4>
+                <div class="endpoint">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/api/chat</span>
+                    <span class="endpoint-desc">Process chatbot message</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/api/chat/history</span>
+                    <span class="endpoint-desc">Retrieve conversation history</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Database Schema -->
+        <section id="database">
+            <h2>Database Schema</h2>
+            <p>Core entities and their relationships in the Neon PostgreSQL database.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4>📋 leads</h4>
+                    <pre><code>id: UUID (PK)
+vertical: ENUM
+source: VARCHAR
+email: VARCHAR
+phone: VARCHAR
+contactName: VARCHAR
+companyName: VARCHAR
+formData: JSONB
+estimatedRevenue: INTEGER
+status: ENUM
+partnerId: UUID (FK)
+referralCode: VARCHAR
+utmSource: VARCHAR
+createdAt: TIMESTAMP
+updatedAt: TIMESTAMP</code></pre>
+                </div>
+                <div class="card">
+                    <h4>👥 partners</h4>
+                    <pre><code>id: UUID (PK)
+businessName: VARCHAR
+vertical: ENUM
+email: VARCHAR
+phone: VARCHAR
+address: JSONB
+status: ENUM
+commissionRate: DECIMAL
+stripeAccountId: VARCHAR
+referralCode: VARCHAR (unique)
+createdAt: TIMESTAMP
+updatedAt: TIMESTAMP</code></pre>
+                </div>
+                <div class="card">
+                    <h4>🌐 microsites</h4>
+                    <pre><code>id: UUID (PK)
+partnerId: UUID (FK)
+subdomain: VARCHAR (unique)
+customDomain: VARCHAR
+brandingConfig: JSONB
+features: JSONB
+status: ENUM
+deployedAt: TIMESTAMP
+createdAt: TIMESTAMP
+updatedAt: TIMESTAMP</code></pre>
+                </div>
+                <div class="card">
+                    <h4>📄 policies</h4>
+                    <pre><code>id: UUID (PK)
+customerId: UUID (FK)
+partnerId: UUID (FK)
+policyNumber: VARCHAR
+coverageType: ENUM
+startDate: DATE
+endDate: DATE
+premium: DECIMAL
+status: ENUM
+carrierPolicyId: VARCHAR
+createdAt: TIMESTAMP</code></pre>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4>🔗 Entity Relationships</h4>
+                <ul>
+                    <li><strong>Partners → Microsites:</strong> One-to-one (each partner has one microsite)</li>
+                    <li><strong>Partners → Leads:</strong> One-to-many (partner referrals)</li>
+                    <li><strong>Partners → Policies:</strong> One-to-many (policies sold through partner)</li>
+                    <li><strong>Leads → Policies:</strong> One-to-one (lead converts to policy)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Deployment -->
+        <section id="deployment">
+            <h2>Deployment Architecture</h2>
+
+            <div class="flow-container">
+                <h3 style="text-align: center; margin-bottom: 1.5rem;">CI/CD Pipeline</h3>
+                <div class="flow-row">
+                    <div class="flow-item">
+                        <span class="emoji">💻</span>
+                        <span class="label">Developer Push</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">🔍</span>
+                        <span class="label">GitHub Actions</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item">
+                        <span class="emoji">✅</span>
+                        <span class="label">Tests & Lint</span>
+                    </div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-item highlight">
+                        <span class="emoji">🚀</span>
+                        <span class="label">Vercel Deploy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4>🌍 Environments</h4>
+                    <table style="margin: 0;">
+                        <tr>
+                            <td><strong>Production</strong></td>
+                            <td>dailyeventinsurance.com</td>
+                            <td><span class="status-badge status-active">Live</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Staging</strong></td>
+                            <td>staging.dailyeventinsurance.com</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Preview</strong></td>
+                            <td>PR-specific URLs</td>
+                            <td><span class="status-badge status-active">Auto</span></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h4>🔐 Environment Variables</h4>
+                    <ul>
+                        <li><code>DATABASE_URL</code> - Neon connection string</li>
+                        <li><code>CLERK_SECRET_KEY</code> - Authentication</li>
+                        <li><code>STRIPE_SECRET_KEY</code> - Payments</li>
+                        <li><code>ANTHROPIC_API_KEY</code> - AI chatbot</li>
+                        <li><code>RESEND_API_KEY</code> - Email delivery</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h4>📊 Monitoring & Observability</h4>
+                <div class="grid-3">
+                    <div>
+                        <strong>Vercel Analytics</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">Page views, Web Vitals, performance metrics</p>
+                    </div>
+                    <div>
+                        <strong>Error Tracking</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">Runtime errors, API failures, edge function logs</p>
+                    </div>
+                    <div>
+                        <strong>Database Metrics</strong>
+                        <p style="font-size: 0.875rem; color: var(--text-light);">Neon dashboard for query performance, connections</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Daily Event Insurance - Operational Architecture</p>
+        <p>Last Updated: January 2026 | Engineering Reference Document</p>
+    </footer>
+</body>
+</html>
+</code></pre>
