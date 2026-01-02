@@ -8,7 +8,7 @@ Daily Event Insurance operates on a B2B2C model with partner revenue sharing and
 
 ## Partner Website Package
 
-### One-Time Setup: $10,000
+### One-Time Setup: $12,500
 
 Includes:
 - Custom branded partner website
@@ -135,7 +135,7 @@ Monthly Revenue = Participants × 0.65 (opt-in) × $14 (commission)
 
 | Item | Price | Frequency |
 |------|-------|-----------|
-| Partner Website Setup | $10,000 | One-time |
+| Partner Website Setup | $12,500 | One-time |
 | Monthly Operating | $320 | Monthly |
 | Carrier License (per site) | $600 | Per site |
 | Microsite Management | $650 | Monthly |
