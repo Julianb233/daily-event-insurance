@@ -5,7 +5,7 @@
  * and integration with other components
  */
 
-import { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import AnimatedCounter from './animated-counter';
 
 /**
