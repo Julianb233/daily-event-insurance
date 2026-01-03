@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, FileText, HelpCircle, DollarSign, Info } from "lucide-react"
+import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, FileText, HelpCircle, DollarSign, Info, GitBranch } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 import { industryCategories } from "@/lib/category-data"
@@ -41,6 +41,7 @@ const categories: CategoryLink[] = industryCategories.map((cat) => ({
 
 const resourceLinks: ResourceLink[] = [
   { label: "About Us", href: "/about", description: "Learn about our mission", icon: Info },
+  { label: "Race Day Flow", href: "/race-day-flow", description: "See how race coverage works", icon: GitBranch },
   { label: "Pricing", href: "/pricing", description: "Transparent pricing info", icon: DollarSign },
   { label: "FAQ", href: "#faq", description: "Common questions answered", icon: HelpCircle },
   { label: "Blog", href: "/blog", description: "Latest news and insights", icon: FileText },

@@ -35,3 +35,21 @@ export {
   getSchedulerStats,
   type ScheduleEmailOptions,
 } from './scheduler'
+
+// Outbound campaigns (Hormozi-style)
+export {
+  startOutboundSequence,
+  stopOutboundSequence,
+  getOutboundSequenceStatus,
+  type OutboundSequenceType,
+} from './sequences-outbound'
+
+export {
+  getEmailTemplate,
+  sequenceTiming,
+  gymEmails,
+  wellnessEmails,
+  skiResortEmails,
+  fitnessEmails,
+  type EmailTemplateData,
+} from './templates/outbound'

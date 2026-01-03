@@ -156,12 +156,36 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
-    // TODO: Trigger notification to sales team
-    // TODO: Add to email drip campaign based on vertical
-    // TODO: Calculate lead score based on volume
+    // Auto-start outbound email sequence for qualifying leads
+    // Only for verticals with email sequences (not 'race' or 'other')
+    if (['gym', 'wellness', 'ski-resort', 'fitness'].includes(data.vertical)) {
+      const { startOutboundSequence } = await import('@/lib/email/sequences-outbound')
+
+      const sequenceResult = await startOutboundSequence({
+        leadId: newLead.id,
+        vertical: data.vertical as 'gym' | 'wellness' | 'ski-resort' | 'fitness',
+        email: data.email,
+        contactName: data.contactName,
+        companyName,
+        estimatedRevenue,
+      })
+
+      if (sequenceResult.success) {
+        console.log(`[Leads] Auto-started ${data.vertical} outbound sequence for lead ${newLead.id}`)
+      } else {
+        console.error(`[Leads] Failed to start sequence:`, sequenceResult.error)
+      }
+    }
+
+    // TODO: Trigger notification to sales team (Slack/email)
+    // TODO: Calculate lead score based on volume and engagement
 
     return successResponse(
-      { id: newLead.id, estimatedRevenue },
+      {
+        id: newLead.id,
+        estimatedRevenue,
+        sequenceStarted: ['gym', 'wellness', 'ski-resort', 'fitness'].includes(data.vertical)
+      },
       'Quote request submitted successfully',
       201
     );
