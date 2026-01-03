@@ -6,6 +6,8 @@ import { db, isDbConfigured } from '@/lib/db';
 import { leads } from '@/lib/db/schema';
 import { successResponse, serverError, validationError } from '@/lib/api-utils';
 import { desc } from 'drizzle-orm';
+import { calculateLeadScore, type LeadScoringInput } from '@/lib/lead-scoring';
+import { notifySalesTeam } from '@/lib/notifications';
 
 // Validation schema for lead submission from quote forms
 const createLeadSchema = z.object({
@@ -109,6 +111,23 @@ export async function POST(request: NextRequest) {
     // Determine company name from various fields
     const companyName = data.organizationName || data.resortName || data.facilityName || 'Unknown';
 
+    // Calculate lead score (works in both dev and production)
+    const leadScoringInput: LeadScoringInput = {
+      vertical: data.vertical,
+      estimatedRevenue,
+      email: data.email,
+      phone: data.phone,
+      monthlyGuests: data.monthlyGuests,
+      monthlyClients: data.monthlyClients,
+      dailyVisitors: data.dailyVisitors,
+      expectedParticipants: data.expectedParticipants,
+      eventsPerYear: data.eventsPerYear,
+      currentCoverage: data.currentCoverage,
+      message: data.message
+    }
+
+    const leadScore = calculateLeadScore(leadScoringInput)
+
     // Development mode
     if (!isDbConfigured()) {
       const newLead = {
@@ -121,6 +140,7 @@ export async function POST(request: NextRequest) {
         companyName,
         formData: data,
         estimatedRevenue,
+        leadScore,
         status: 'new',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -129,11 +149,19 @@ export async function POST(request: NextRequest) {
       console.log('[DEV] Lead captured:', {
         vertical: data.vertical,
         email: data.email,
-        estimatedRevenue: `$${estimatedRevenue.toLocaleString()}/year`
+        estimatedRevenue: `$${estimatedRevenue.toLocaleString()}/year`,
+        leadScore: `${leadScore.score}/100 (${leadScore.tier})`
       });
 
       return successResponse(
-        { id: newLead.id, estimatedRevenue },
+        {
+          id: newLead.id,
+          estimatedRevenue,
+          leadScore: {
+            score: leadScore.score,
+            tier: leadScore.tier
+          }
+        },
         'Quote request submitted successfully',
         201
       );
@@ -156,8 +184,15 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    console.log(`[Leads] Lead score calculated for ${newLead.id}:`, {
+      score: leadScore.score,
+      tier: leadScore.tier,
+      factors: leadScore.factors
+    })
+
     // Auto-start outbound email sequence for qualifying leads
     // Only for verticals with email sequences (not 'race' or 'other')
+    let sequenceStarted = false
     if (['gym', 'wellness', 'ski-resort', 'fitness'].includes(data.vertical)) {
       const { startOutboundSequence } = await import('@/lib/email/sequences-outbound')
 
@@ -172,19 +207,40 @@ export async function POST(request: NextRequest) {
 
       if (sequenceResult.success) {
         console.log(`[Leads] Auto-started ${data.vertical} outbound sequence for lead ${newLead.id}`)
+        sequenceStarted = true
       } else {
         console.error(`[Leads] Failed to start sequence:`, sequenceResult.error)
       }
     }
 
-    // TODO: Trigger notification to sales team (Slack/email)
-    // TODO: Calculate lead score based on volume and engagement
+    // Trigger notification to sales team (Slack/email)
+    // Fire and forget - don't block lead submission on notification delivery
+    notifySalesTeam({
+      leadId: newLead.id,
+      vertical: data.vertical,
+      contactName: data.contactName,
+      email: data.email,
+      businessName: companyName,
+      estimatedRevenue,
+      leadScore: {
+        score: leadScore.score,
+        tier: leadScore.tier
+      },
+      formData: data
+    }).catch(error => {
+      console.error(`[Leads] Failed to notify sales team:`, error)
+      // Don't fail the request if notification fails
+    })
 
     return successResponse(
       {
         id: newLead.id,
         estimatedRevenue,
-        sequenceStarted: ['gym', 'wellness', 'ski-resort', 'fitness'].includes(data.vertical)
+        leadScore: {
+          score: leadScore.score,
+          tier: leadScore.tier
+        },
+        sequenceStarted
       },
       'Quote request submitted successfully',
       201

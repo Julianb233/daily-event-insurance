@@ -212,7 +212,7 @@ export default function RaceDayFlowPage() {
                 <div className="space-y-4">
                   <div className="bg-red-200 border-2 border-red-300 rounded-lg p-4 text-center">
                     <p className="font-semibold text-slate-700 text-sm">
-                      Racer moves to tech partner pag out site to claim their coverage
+                      Racer moves to tech partner payout site to claim their coverage
                     </p>
                   </div>
 
