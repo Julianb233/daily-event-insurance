@@ -240,7 +240,7 @@ export default function ComparisonTable({
             </div>
             <div className="p-6 sm:p-8">
               <p className="text-lg sm:text-xl font-bold text-red-600">
-                You're losing ${annualLoss.toLocaleString()}/year
+                You&apos;re losing ${annualLoss.toLocaleString()}/year
               </p>
             </div>
           </motion.div>

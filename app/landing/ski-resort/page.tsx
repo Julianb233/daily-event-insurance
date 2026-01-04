@@ -69,7 +69,7 @@ export default function SkiResortLandingPage() {
             transition={{ delay: 0.2 }}
             className="text-2xl md:text-3xl font-semibold mb-4 text-blue-50"
           >
-            Every lift ticket is potential commission. You're just not collecting it yet.
+            Every lift ticket is potential commission. You&apos;re just not collecting it yet.
           </motion.p>
 
           <motion.p
@@ -114,7 +114,7 @@ export default function SkiResortLandingPage() {
             The Math Is Simple
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12">
-            Let's say you sell {dailyVisitors} lift tickets per day during peak season:
+            Let&apos;s say you sell {dailyVisitors} lift tickets per day during peak season:
           </p>
 
           <div className="bg-white rounded-xl p-8 border-2 border-blue-500 mb-8">
@@ -175,7 +175,7 @@ export default function SkiResortLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-blue-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "We made $287,000 in commission revenue last season. Setup took one phone call."
+                &quot;We made $287,000 in commission revenue last season. Setup took one phone call.&quot;
               </p>
               <div className="font-bold text-gray-900">Operations Director</div>
               <div className="text-sm text-gray-500">Mountain Resort, Colorado</div>
@@ -192,7 +192,7 @@ export default function SkiResortLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-blue-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "Easiest revenue stream we've ever added. Pays for two full-time staff members."
+                &quot;Easiest revenue stream we&apos;ve ever added. Pays for two full-time staff members.&quot;
               </p>
               <div className="font-bold text-gray-900">GM, Alpine Resort</div>
               <div className="text-sm text-gray-500">Vermont</div>
@@ -311,7 +311,7 @@ export default function SkiResortLandingPage() {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            You're Selling Tickets. We'll Add The Revenue.
+            You&apos;re Selling Tickets. We&apos;ll Add The Revenue.
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -331,7 +331,7 @@ export default function SkiResortLandingPage() {
               </div>
               <h3 className="text-2xl font-bold mb-3">Visitors Opt In</h3>
               <p className="text-gray-600 text-lg">
-                "Add $40 daily coverage?" 65% say yes. Completely automated. Your staff does nothing.
+                &quot;Add $40 daily coverage?&quot; 65% say yes. Completely automated. Your staff does nothing.
               </p>
             </div>
 
@@ -376,7 +376,7 @@ export default function SkiResortLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-blue-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "$3,200 per day during peak season. That's an extra $384,000 this year. Absolutely insane ROI."
+                &quot;$3,200 per day during peak season. That&apos;s an extra $384,000 this year. Absolutely insane ROI.&quot;
               </p>
               <div className="font-bold text-gray-900">Resort Director</div>
               <div className="text-sm text-gray-500">Peak Mountain, Utah</div>
@@ -391,7 +391,7 @@ export default function SkiResortLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-blue-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "Easiest decision I've made as GM. Set up in one call. Haven't touched it since. Making $1,800/day."
+                &quot;Easiest decision I&apos;ve made as GM. Set up in one call. Haven&apos;t touched it since. Making $1,800/day.&quot;
               </p>
               <div className="font-bold text-gray-900">General Manager</div>
               <div className="text-sm text-gray-500">Alpine Valley, Idaho</div>
@@ -405,43 +405,43 @@ export default function SkiResortLandingPage() {
       <section className="py-20">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            You're Probably Thinking...
+            You&apos;re Probably Thinking...
           </h2>
 
           <div className="space-y-6">
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                "Will this slow down our ticketing?"
+                &quot;Will this slow down our ticketing?&quot;
               </h3>
               <p className="text-gray-700">
-                No. It's one checkbox at checkout. Adds 2 seconds max. Most systems auto-populate it.
+                No. It&apos;s one checkbox at checkout. Adds 2 seconds max. Most systems auto-populate it.
               </p>
             </Card>
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                "What if there's a claim?"
+                &quot;What if there&apos;s a claim?&quot;
               </h3>
               <p className="text-gray-700">
-                We handle it. Your staff doesn't touch claims. Ever. That's literally why we exist.
+                We handle it. Your staff doesn&apos;t touch claims. Ever. That&apos;s literally why we exist.
               </p>
             </Card>
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                "How long is the commitment?"
+                &quot;How long is the commitment?&quot;
               </h3>
               <p className="text-gray-700">
-                There isn't one. Try it this season. If you hate it (you won't), cancel via email. Keep the money you made.
+                There isn&apos;t one. Try it this season. If you hate it (you won&apos;t), cancel via email. Keep the money you made.
               </p>
             </Card>
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                "Do I need minimum volume?"
+                &quot;Do I need minimum volume?&quot;
               </h3>
               <p className="text-gray-700">
-                Nope. Whether you're a small local hill or a major resort - doesn't matter. Commission is the same.
+                Nope. Whether you&apos;re a small local hill or a major resort - doesn&apos;t matter. Commission is the same.
               </p>
             </Card>
           </div>
@@ -453,13 +453,13 @@ export default function SkiResortLandingPage() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <Snowflake className="w-16 h-16 mx-auto mb-6 text-blue-200" />
           <h2 className="text-4xl md:text-5xl font-black mb-6">
-            Season's Coming. Get Set Up Now.
+            Season&apos;s Coming. Get Set Up Now.
           </h2>
           <p className="text-2xl mb-4 text-blue-100">
             ${seasonRevenue.toLocaleString()} in additional revenue this season.
           </p>
           <p className="text-xl mb-8 text-blue-200">
-            Or you can leave it on the table. Your call.
+            Or you can leave it on the table. It&apos;s your call.
           </p>
 
           <Button
@@ -476,7 +476,7 @@ export default function SkiResortLandingPage() {
 
           <div className="mt-12 pt-12 border-t border-blue-400/30">
             <p className="text-lg text-blue-200">
-              <strong className="text-white">P.S.</strong> Peak season waits for no one. Every day you delay = ${dailyRevenue} you're not making. Book the call.
+              <strong className="text-white">P.S.</strong> Peak season waits for no one. Every day you delay = ${dailyRevenue} you&apos;re not making. Book the call.
             </p>
           </div>
         </div>

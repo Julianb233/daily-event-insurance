@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import {
@@ -76,11 +76,7 @@ export default function PartnerProfilePage() {
     primaryColor: "#14B8A6",
   })
 
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  async function fetchProfile() {
+  const fetchProfile = useCallback(async () => {
     try {
       const response = await fetch("/api/partner/profile")
       if (!response.ok) throw new Error("Failed to fetch")
@@ -129,7 +125,11 @@ export default function PartnerProfilePage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [session?.user?.name, session?.user?.email])
+
+  useEffect(() => {
+    fetchProfile()
+  }, [fetchProfile])
 
   async function handleSave() {
     setIsSaving(true)

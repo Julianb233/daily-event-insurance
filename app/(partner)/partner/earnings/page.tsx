@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import {
   DollarSign,
@@ -59,27 +59,7 @@ export default function PartnerEarningsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString())
 
-  useEffect(() => {
-    fetchEarnings()
-  }, [selectedYear])
-
-  async function fetchEarnings() {
-    try {
-      setIsLoading(true)
-      const response = await fetch(`/api/partner/earnings?year=${selectedYear}`)
-      if (!response.ok) throw new Error("Failed to fetch")
-      const earningsData = await response.json()
-      setData(earningsData)
-    } catch (err) {
-      console.error("Error:", err)
-      // Generate demo data
-      setData(generateDemoData())
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  function generateDemoData(): EarningsData {
+  const generateDemoData = useCallback((): EarningsData => {
     const months = getLastNMonths(12)
     const earnings: MonthlyEarning[] = months.map((month, index) => {
       const participants = 800 + index * 150 + Math.floor(Math.random() * 200)
@@ -115,7 +95,27 @@ export default function PartnerEarningsPage() {
       earnings,
       chartData,
     }
-  }
+  }, [selectedYear])
+
+  const fetchEarnings = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch(`/api/partner/earnings?year=${selectedYear}`)
+      if (!response.ok) throw new Error("Failed to fetch")
+      const earningsData = await response.json()
+      setData(earningsData)
+    } catch (err) {
+      console.error("Error:", err)
+      // Generate demo data
+      setData(generateDemoData())
+    } finally {
+      setIsLoading(false)
+    }
+  }, [selectedYear, generateDemoData])
+
+  useEffect(() => {
+    fetchEarnings()
+  }, [fetchEarnings])
 
   async function handleSubmitReport() {
     if (!reportParticipants) return

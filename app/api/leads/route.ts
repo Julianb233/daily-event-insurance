@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { db, isDbConfigured } from '@/lib/db';
 import { leads } from '@/lib/db/schema';
 import { successResponse, serverError, validationError } from '@/lib/api-utils';
+import { withAuth, requireAdmin } from '@/lib/api-auth';
 import { desc } from 'drizzle-orm';
 import { calculateLeadScore, type LeadScoringInput } from '@/lib/lead-scoring';
 import { notifySalesTeam } from '@/lib/notifications';
@@ -254,9 +255,11 @@ export async function POST(request: NextRequest) {
 
 // GET - Admin endpoint to list leads (protected)
 export async function GET(request: NextRequest) {
-  // Note: This should be protected but keeping simple for now
-  // In production, wrap with withAuth/requireAdmin
-  try {
+  return withAuth(async () => {
+    // Require admin role to access leads list
+    await requireAdmin()
+
+    try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -347,8 +350,9 @@ export async function GET(request: NextRequest) {
       pagination: { page, limit }
     });
 
-  } catch (error) {
-    console.error('Error fetching leads:', error);
-    return serverError('Failed to fetch leads');
-  }
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+      return serverError('Failed to fetch leads');
+    }
+  })
 }

@@ -121,13 +121,13 @@ export default function WellnessLandingPage() {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-center">
-            Let's Be Honest
+            Let&apos;s Be Honest
           </h2>
 
           <div className="bg-red-50 border-l-4 border-red-500 p-8 mb-8">
             <p className="text-xl text-gray-800 leading-relaxed">
               <strong className="text-red-600">Right now:</strong> Your clients are getting treatments without liability coverage.
-              You're exposed. They're exposed. And you're making $0 from it.
+              You&apos;re exposed. They&apos;re exposed. And you&apos;re making $0 from it.
             </p>
           </div>
 
@@ -203,7 +203,7 @@ export default function WellnessLandingPage() {
 
               <div className="mt-8 p-4 bg-white rounded-lg">
                 <p className="text-center text-lg font-bold text-gray-800">
-                  This is passive income from work you're already doing.
+                  This is passive income from work you&apos;re already doing.
                 </p>
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function WellnessLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-purple-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "Added it to our IV therapy intake. First month: $4,200 in commissions. I did literally nothing."
+                &quot;Added it to our IV therapy intake. First month: $4,200 in commissions. I did literally nothing.&quot;
               </p>
               <div className="font-bold text-gray-900">Dr. Lisa M.</div>
               <div className="text-sm text-gray-500">Vitality Wellness, LA</div>
@@ -255,7 +255,7 @@ export default function WellnessLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-purple-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "My clients actually thank me for offering this. And I'm making an extra $2,800/month. Win-win."
+                &quot;My clients actually thank me for offering this. And I&apos;m making an extra $2,800/month. Win-win.&quot;
               </p>
               <div className="font-bold text-gray-900">Amanda R.</div>
               <div className="text-sm text-gray-500">Serenity Med Spa, NYC</div>
@@ -270,7 +270,7 @@ export default function WellnessLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-purple-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "We offer laser treatments and Botox. This added $68,000 to our bottom line last year."
+                &quot;We offer laser treatments and Botox. This added $68,000 to our bottom line last year.&quot;
               </p>
               <div className="font-bold text-gray-900">Dr. James K.</div>
               <div className="text-sm text-gray-500">Glow Aesthetics, Miami</div>
@@ -284,7 +284,7 @@ export default function WellnessLandingPage() {
       <section className="py-20 bg-purple-50">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            The Numbers Don't Lie
+            The Numbers Don&apos;t Lie
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -292,7 +292,7 @@ export default function WellnessLandingPage() {
               <div className="text-5xl font-black text-purple-600 mb-2">$40</div>
               <div className="text-lg font-bold text-gray-800 mb-2">Per Treatment (Client Pays)</div>
               <p className="text-gray-600">
-                Your clients add this to their treatment cost. Most don't even blink.
+                Your clients add this to their treatment cost. Most don&apos;t even blink.
               </p>
             </div>
 
@@ -326,7 +326,7 @@ export default function WellnessLandingPage() {
               This Is Free Money
             </p>
             <p className="text-xl text-purple-100 mb-6">
-              You're already doing the treatments. Just add protection and collect commission.
+              You&apos;re already doing the treatments. Just add protection and collect commission.
             </p>
             <Button
               size="lg"
@@ -363,7 +363,7 @@ export default function WellnessLandingPage() {
               </div>
               <h3 className="text-2xl font-bold mb-3">Step 2: Clients Choose</h3>
               <p className="text-gray-600 text-lg">
-                They see "Add liability coverage - $40" at checkout. 95% say yes. Automatic.
+                They see &quot;Add liability coverage - $40&quot; at checkout. 95% say yes. Automatic.
               </p>
             </div>
 
@@ -380,7 +380,7 @@ export default function WellnessLandingPage() {
 
           <div className="mt-16 bg-yellow-50 border-2 border-yellow-400 rounded-xl p-8 text-center">
             <p className="text-2xl font-black text-gray-900 mb-2">
-              "But what about customer support?"
+              &quot;But what about customer support?&quot;
             </p>
             <p className="text-xl text-gray-700">
               We handle it. Claims, questions, billing disputes - all us. You just cash checks.
@@ -456,13 +456,13 @@ export default function WellnessLandingPage() {
       <section className="py-20">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            Questions You're Probably Asking
+            Questions You&apos;re Probably Asking
           </h2>
 
           <div className="space-y-6">
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                Q: "My clients won't want to pay extra."
+                Q: &quot;My clients won&apos;t want to pay extra.&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> Wellness clients spend hundreds per treatment. $40 for liability coverage is nothing. Plus, 95% opt-in rate proves they want it.
@@ -471,25 +471,25 @@ export default function WellnessLandingPage() {
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                Q: "I don't have time to manage this."
+                Q: &quot;I don&apos;t have time to manage this.&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> You don't manage anything. Add one checkbox to your intake form. We handle the rest. Literally zero ongoing work.
+                <strong>A:</strong> You don&apos;t manage anything. Add one checkbox to your intake form. We handle the rest. Literally zero ongoing work.
               </p>
             </Card>
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                Q: "What if I want to stop?"
+                Q: &quot;What if I want to stop?&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> Send one email. We turn it off same day. No fees, no penalties, no questions. Keep the commissions you've earned.
+                <strong>A:</strong> Send one email. We turn it off same day. No fees, no penalties, no questions. Keep the commissions you&apos;ve earned.
               </p>
             </Card>
 
             <Card className="p-6 border-2">
               <h3 className="text-xl font-bold mb-3">
-                Q: "How do I get paid?"
+                Q: &quot;How do I get paid?&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> Direct deposit on the 1st of every month. Track everything in your dashboard. Simple as that.
@@ -526,7 +526,7 @@ export default function WellnessLandingPage() {
 
           <div className="mt-12 pt-12 border-t border-purple-400/30">
             <p className="text-lg text-purple-200">
-              <strong className="text-white">P.S.</strong> Every day you wait is another ${Math.round(monthlyRevenue/30)} you're not making. Book the call.
+              <strong className="text-white">P.S.</strong> Every day you wait is another ${Math.round(monthlyRevenue/30)} you&apos;re not making. Book the call.
             </p>
           </div>
         </div>

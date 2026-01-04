@@ -124,10 +124,10 @@ export default function GymLandingPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-center">
-            You're Already Doing The Work
+            You&apos;re Already Doing The Work
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12 leading-relaxed">
-            Your members show up. You train them. They trust you. But you're leaving money on the table.
+            Your members show up. You train them. They trust you. But you&apos;re leaving money on the table.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -137,7 +137,7 @@ export default function GymLandingPage() {
             </Card>
             <Card className="p-6 border-2 border-red-200 bg-red-50">
               <div className="text-red-600 font-bold mb-2 text-lg">Problem #2</div>
-              <p className="text-gray-800 font-semibold">You're liable for injuries but not making anything from risk mitigation</p>
+              <p className="text-gray-800 font-semibold">You&apos;re liable for injuries but not making anything from risk mitigation</p>
             </Card>
             <Card className="p-6 border-2 border-red-200 bg-red-50">
               <div className="text-red-600 font-bold mb-2 text-lg">Problem #3</div>
@@ -151,7 +151,7 @@ export default function GymLandingPage() {
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            Here's How It Works
+            Here&apos;s How It Works
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
@@ -171,7 +171,7 @@ export default function GymLandingPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Members Opt In</h3>
               <p className="text-gray-600">
-                65% of members add $40 daily coverage. Your staff doesn't do anything - it's automatic.
+                65% of members add $40 daily coverage. Your staff doesn&apos;t do anything - it&apos;s automatic.
               </p>
             </div>
 
@@ -188,7 +188,7 @@ export default function GymLandingPage() {
 
           <div className="bg-teal-50 border-2 border-teal-200 rounded-xl p-8 text-center">
             <p className="text-2xl font-bold text-gray-800 mb-2">
-              That's It. That's The Whole Business Model.
+              That&apos;s It. That&apos;s The Whole Business Model.
             </p>
             <p className="text-lg text-gray-600">
               We handle everything else: underwriting, claims, compliance, customer support, billing.
@@ -204,7 +204,7 @@ export default function GymLandingPage() {
             Calculate Your Revenue
           </h2>
           <p className="text-xl text-gray-300 text-center mb-12">
-            Enter your numbers. See your profit. It's that simple.
+            Enter your numbers. See your profit. It&apos;s that simple.
           </p>
 
           <Card className="p-8 bg-white text-gray-900">
@@ -288,7 +288,7 @@ export default function GymLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-teal-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "We added $3,200 per month in the first 30 days. I literally did nothing after the initial setup."
+                &quot;We added $3,200 per month in the first 30 days. I literally did nothing after the initial setup.&quot;
               </p>
               <div className="font-bold text-gray-900">Mike R.</div>
               <div className="text-sm text-gray-500">CrossFit Box, Denver</div>
@@ -303,7 +303,7 @@ export default function GymLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-teal-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "I was skeptical. Then I got my first commission check for $2,870. Now I'm a believer."
+                &quot;I was skeptical. Then I got my first commission check for $2,870. Now I&apos;m a believer.&quot;
               </p>
               <div className="font-bold text-gray-900">Sarah K.</div>
               <div className="text-sm text-gray-500">24/7 Fitness, Austin</div>
@@ -318,7 +318,7 @@ export default function GymLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-teal-200 mb-4" />
               <p className="text-gray-700 mb-4 italic">
-                "Setup took 6 minutes on a Zoom call. We've made $47,000 in commissions this year."
+                &quot;Setup took 6 minutes on a Zoom call. We&apos;ve made $47,000 in commissions this year.&quot;
               </p>
               <div className="font-bold text-gray-900">James P.</div>
               <div className="text-sm text-gray-500">Elite Performance, Miami</div>
@@ -335,7 +335,7 @@ export default function GymLandingPage() {
             Zero Risk. Zero Overhead.
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12">
-            Here's everything you get (and don't have to do):
+            Here&apos;s everything you get (and don&apos;t have to do):
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -383,7 +383,7 @@ export default function GymLandingPage() {
               <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
               <div>
                 <div className="font-bold text-lg mb-1">No Minimum Volume</div>
-                <p className="text-gray-600">10 members or 10,000 - doesn't matter.</p>
+                <p className="text-gray-600">10 members or 10,000 - doesn&apos;t matter.</p>
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function GymLandingPage() {
               You Literally Just Collect Checks
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              We do everything else. That's the deal.
+              We do everything else. That&apos;s the deal.
             </p>
             <Button
               size="lg"
@@ -416,7 +416,7 @@ export default function GymLandingPage() {
           <div className="space-y-6">
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "This sounds too good to be true."
+                Q: &quot;This sounds too good to be true.&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> Fair. But the math is simple: We make money when you make money. We charge $40 per policy, pay you $14 commission, keep $26 to cover insurance and operations. Everyone wins.
@@ -425,34 +425,34 @@ export default function GymLandingPage() {
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "My members won't pay for this."
+                Q: &quot;My members won&apos;t pay for this.&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> Industry data says 65% say yes. But even if only 50% opt in, you're still making thousands per month. Test it and see.
+                <strong>A:</strong> Industry data says 65% say yes. But even if only 50% opt in, you&apos;re still making thousands per month. Test it and see.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "How long is the contract?"
+                Q: &quot;How long is the contract?&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> There isn't one. Cancel anytime via email. No penalties, no questions.
+                <strong>A:</strong> There isn&apos;t one. Cancel anytime via email. No penalties, no questions.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "What's the catch?"
+                Q: &quot;What&apos;s the catch?&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> There isn't one. You make recurring revenue. We get insurance volume. Members get protection. It's aligned incentives.
+                <strong>A:</strong> There isn&apos;t one. You make recurring revenue. We get insurance volume. Members get protection. It&apos;s aligned incentives.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "How fast can I start making money?"
+                Q: &quot;How fast can I start making money?&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> Integration takes 5 minutes. First commission check within 30 days. Most gyms see revenue in week one.

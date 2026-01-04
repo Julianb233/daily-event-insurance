@@ -130,10 +130,10 @@ function ProblemSolutionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Traditional Malpractice Doesn't Fit Your Business
+            Traditional Malpractice Doesn&apos;t Fit Your Business
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Aesthetic and wellness procedures require specialized coverage that traditional policies don't provide
+            Aesthetic and wellness procedures require specialized coverage that traditional policies don&apos;t provide
           </p>
         </div>
 
@@ -274,7 +274,7 @@ function ServicesCoveredSection() {
 
         <div className="mt-12 text-center">
           <p className="text-gray-600 mb-4">
-            Don't see your service? Contact us - we cover most aesthetic procedures.
+            Don&apos;t see your service? Contact us - we cover most aesthetic procedures.
           </p>
           <Button variant="outline" size="lg">
             Check Coverage for Your Services
@@ -512,7 +512,7 @@ function TestimonialsSection() {
                   ))}
                 </div>
                 <p className="text-gray-700 mb-6 italic">
-                  "{testimonial.quote}"
+                  &quot;{testimonial.quote}&quot;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">

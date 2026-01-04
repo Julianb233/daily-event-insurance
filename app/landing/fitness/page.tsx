@@ -112,10 +112,10 @@ export default function FitnessLandingPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-center">
-            Here's The Model
+            Here&apos;s The Model
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12">
-            (It's embarrassingly simple)
+            (It&apos;s embarrassingly simple)
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -250,7 +250,7 @@ export default function FitnessLandingPage() {
               Total Commission From These 3 Events: $11,601
             </p>
             <p className="text-lg text-gray-700">
-              That's just one month. Imagine your whole year.
+              That&apos;s just one month. Imagine your whole year.
             </p>
           </div>
         </div>
@@ -341,7 +341,7 @@ export default function FitnessLandingPage() {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-center">
-            You're Already Managing The Risk
+            You&apos;re Already Managing The Risk
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12">
             Might as well get paid for it.
@@ -374,7 +374,7 @@ export default function FitnessLandingPage() {
               Same Work. Better Margins. Happier Participants.
             </p>
             <p className="text-lg text-gray-700">
-              That's the entire pitch.
+              That&apos;s the entire pitch.
             </p>
           </div>
         </div>
@@ -405,7 +405,7 @@ export default function FitnessLandingPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Participants Choose</h3>
               <p className="text-gray-600">
-                They see "Add event day coverage - $40" during checkout.
+                They see &quot;Add event day coverage - $40&quot; during checkout.
                 82% say yes. Completely automatic.
               </p>
             </div>
@@ -450,7 +450,7 @@ export default function FitnessLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-orange-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "Made $18,000 last year from 6 races. Literally added one checkbox to RunSignUp. That's it."
+                &quot;Made $18,000 last year from 6 races. Literally added one checkbox to RunSignUp. That&apos;s it.&quot;
               </p>
               <div className="font-bold text-gray-900">Marcus T.</div>
               <div className="text-sm text-gray-500">Trail Running Events, Colorado</div>
@@ -467,7 +467,7 @@ export default function FitnessLandingPage() {
               </div>
               <Quote className="w-8 h-8 text-orange-200 mb-4" />
               <p className="text-gray-700 mb-4 italic text-lg">
-                "Our participants actually prefer having the option. And we're making $3,200 per event. Absolute no-brainer."
+                &quot;Our participants actually prefer having the option. And we&apos;re making $3,200 per event. Absolute no-brainer.&quot;
               </p>
               <div className="font-bold text-gray-900">Sarah K.</div>
               <div className="text-sm text-gray-500">Obstacle Course Racing, Texas</div>
@@ -489,16 +489,16 @@ export default function FitnessLandingPage() {
           <div className="space-y-6">
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "Does this work with [my registration platform]?"
+                Q: &quot;Does this work with [my registration platform]?&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> Yes. RunSignUp, Eventbrite, Active.com, custom platforms - we integrate with everything. Worst case, it's a webhook. 5 minutes max.
+                <strong>A:</strong> Yes. RunSignUp, Eventbrite, Active.com, custom platforms - we integrate with everything. Worst case, it&apos;s a webhook. 5 minutes max.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "What about refunds and cancellations?"
+                Q: &quot;What about refunds and cancellations?&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> We handle it all. Participant cancels? Insurance refunds automatically. You keep your commission. Zero headache for you.
@@ -507,16 +507,16 @@ export default function FitnessLandingPage() {
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "Is there a minimum event size?"
+                Q: &quot;Is there a minimum event size?&quot;
               </h3>
               <p className="text-gray-700">
-                <strong>A:</strong> Nope. 50 participants or 5,000 - doesn't matter. Commission is the same per policy.
+                <strong>A:</strong> Nope. 50 participants or 5,000 - doesn&apos;t matter. Commission is the same per policy.
               </p>
             </Card>
 
             <Card className="p-6">
               <h3 className="text-xl font-bold mb-3">
-                Q: "How fast do I get paid?"
+                Q: &quot;How fast do I get paid?&quot;
               </h3>
               <p className="text-gray-700">
                 <strong>A:</strong> Commission paid within 30 days of event completion. Direct deposit. Track it in real-time on your dashboard.
@@ -533,10 +533,10 @@ export default function FitnessLandingPage() {
             Stop Leaving Money On The Table
           </h2>
           <p className="text-2xl mb-4 text-orange-100">
-            ${annualRevenue.toLocaleString()} this year. From work you're already doing.
+            ${annualRevenue.toLocaleString()} this year. From work you&apos;re already doing.
           </p>
           <p className="text-xl mb-8 text-orange-200">
-            Add one checkbox. Make thousands. That's the deal.
+            Add one checkbox. Make thousands. That&apos;s the deal.
           </p>
 
           <Button
@@ -553,7 +553,7 @@ export default function FitnessLandingPage() {
 
           <div className="mt-12 pt-12 border-t border-orange-400/30">
             <p className="text-lg text-orange-200">
-              <strong className="text-white">P.S.</strong> Your next event is worth ${revenuePerEvent.toLocaleString()} in commission. Don't run it without this.
+              <strong className="text-white">P.S.</strong> Your next event is worth ${revenuePerEvent.toLocaleString()} in commission. Don&apos;t run it without this.
             </p>
           </div>
         </div>

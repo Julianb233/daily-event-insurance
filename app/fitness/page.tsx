@@ -133,10 +133,10 @@ function ProblemSolutionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            Traditional Event Insurance Doesn't Work for Competitions
+            Traditional Event Insurance Doesn&apos;t Work for Competitions
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Fitness events need specialized coverage that traditional policies don't provide
+            Fitness events need specialized coverage that traditional policies don&apos;t provide
           </p>
         </div>
 
@@ -155,7 +155,7 @@ function ProblemSolutionSection() {
               {[
                 'Annual policies cost $10,000-$50,000+',
                 'Per-event certificates take weeks to issue',
-                'Doesn\'t cover high-intensity activities',
+                'Doesn&apos;t cover high-intensity activities',
                 'No individual participant tracking',
                 'Venues require proof before booking'
               ].map((item, i) => (
@@ -314,7 +314,7 @@ function HowItWorksSection() {
     {
       number: '04',
       title: 'Earn Commission',
-      description: 'Receive 35% of every $40 policy - that\'s $14 per participant.',
+      description: 'Receive 35% of every $40 policy - that&apos;s $14 per participant.',
       icon: DollarSign
     }
   ]
@@ -515,7 +515,7 @@ function TestimonialsSection() {
                   ))}
                 </div>
                 <p className="text-gray-700 mb-6 italic">
-                  "{testimonial.quote}"
+                  &quot;{testimonial.quote}&quot;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
@@ -694,7 +694,7 @@ function FAQSection() {
   const faqs = [
     {
       question: 'What event types are covered?',
-      answer: 'We cover all fitness and athletic competitions including obstacle course races, CrossFit events, powerlifting meets, triathlons, marathons, cycling events, bootcamps, and more. If you\'re unsure about your specific event type, contact us and we\'ll confirm coverage.'
+      answer: 'We cover all fitness and athletic competitions including obstacle course races, CrossFit events, powerlifting meets, triathlons, marathons, cycling events, bootcamps, and more. If you&apos;re unsure about your specific event type, contact us and we&apos;ll confirm coverage.'
     },
     {
       question: 'How much does coverage cost?',
@@ -702,11 +702,11 @@ function FAQSection() {
     },
     {
       question: 'How do I earn commission?',
-      answer: 'You earn 35% commission on every $40 policy - that\'s $14 per participant. Commissions are paid monthly via direct deposit. With 500 participants per month at 65% opt-in, you\'d earn over $4,500/month.'
+      answer: 'You earn 35% commission on every $40 policy - that&apos;s $14 per participant. Commissions are paid monthly via direct deposit. With 500 participants per month at 65% opt-in, you&apos;d earn over $4,500/month.'
     },
     {
       question: 'Will venues accept this coverage?',
-      answer: 'Yes! We provide instant certificates that meet venue requirements. Most venues accept our coverage immediately because it\'s backed by Mutual of Omaha, a trusted A-rated carrier.'
+      answer: 'Yes! We provide instant certificates that meet venue requirements. Most venues accept our coverage immediately because it&apos;s backed by Mutual of Omaha, a trusted A-rated carrier.'
     },
     {
       question: 'How do participants receive their certificate?',

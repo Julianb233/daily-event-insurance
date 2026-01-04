@@ -292,7 +292,7 @@ export default function OnboardingDocumentsPage() {
             <CheckCircle2 className="w-12 h-12 mx-auto mb-3" />
             <h2 className="text-2xl font-bold mb-2">All Documents Signed!</h2>
             <p className="text-teal-100 mb-4">
-              You're all set. Redirecting to your partner dashboard...
+              You&apos;re all set. Redirecting to your partner dashboard...
             </p>
             <Loader2 className="w-6 h-6 animate-spin mx-auto" />
           </motion.div>
