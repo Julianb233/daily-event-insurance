@@ -68,8 +68,7 @@ Object.defineProperty(window, 'location', {
   writable: true,
 })
 
-// TODO: Complex component tests have async timing issues - skipped for CI
-describe.skip('Documents Onboarding Page', () => {
+describe('Documents Onboarding Page', () => {
   const mockTemplates = [
     {
       id: 'template-1',
@@ -223,7 +222,7 @@ describe.skip('Documents Onboarding Page', () => {
     })
 
     it('reloads page when Try Again is clicked', async () => {
-      const user = userEvent.setup()
+      const user = userEvent.setup({ delay: null })
       setupFetchMock({ templatesError: true })
 
       render(<DocumentsPage />)
@@ -320,11 +319,17 @@ describe.skip('Documents Onboarding Page', () => {
 
       render(<DocumentsPage />)
 
+      // Wait for component to load first
       await waitFor(() => {
-        expect(screen.getByText(/Signed/i)).toBeInTheDocument()
-        const pendingElements = screen.getAllByText(/Pending signature/i)
-        expect(pendingElements.length).toBe(2)
+        expect(screen.getByText('Partner Agreement')).toBeInTheDocument()
       })
+
+      // Check for signed status text (component shows "Signed on {date}")
+      expect(screen.getByText(/Signed on/i)).toBeInTheDocument()
+
+      // Check pending documents count
+      const pendingElements = screen.getAllByText(/Pending signature/i)
+      expect(pendingElements.length).toBe(2)
     })
 
     it('shows Sign button for unsigned documents', async () => {
@@ -467,7 +472,7 @@ describe.skip('Documents Onboarding Page', () => {
 
   describe('DocumentViewer modal', () => {
     it('opens DocumentViewer when Sign button is clicked', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const user = userEvent.setup({ delay: null })
       setupFetchMock()
 
       render(<DocumentsPage />)
@@ -485,7 +490,7 @@ describe.skip('Documents Onboarding Page', () => {
     })
 
     it('passes correct document to DocumentViewer', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const user = userEvent.setup({ delay: null })
       setupFetchMock()
 
       render(<DocumentsPage />)
@@ -507,7 +512,7 @@ describe.skip('Documents Onboarding Page', () => {
     })
 
     it('opens DocumentViewer when View button is clicked', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const user = userEvent.setup({ delay: null })
       const signedStatuses = {
         partner_agreement: { signed: true, signedAt: '2024-01-15T10:00:00Z' },
         w9: { signed: false },
@@ -530,7 +535,7 @@ describe.skip('Documents Onboarding Page', () => {
     })
 
     it('closes DocumentViewer when close is triggered', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const user = userEvent.setup({ delay: null })
       setupFetchMock()
 
       render(<DocumentsPage />)
@@ -558,7 +563,7 @@ describe.skip('Documents Onboarding Page', () => {
 
   describe('Document signing flow', () => {
     it('calls sign API when document is signed', async () => {
-      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      const user = userEvent.setup({ delay: null })
 
       // Mock POST to /api/documents/sign
       mockFetch.mockImplementation((url: string, options?: RequestInit) => {
@@ -652,8 +657,7 @@ describe.skip('Documents Onboarding Page', () => {
     })
   })
 
-  // TODO: Edge case tests need async timing fixes - skipping for now
-  describe.skip('Edge cases', () => {
+  describe('Edge cases', () => {
     it('handles empty templates array', async () => {
       setupFetchMock({ templates: [] })
 
