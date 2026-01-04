@@ -6,6 +6,7 @@ import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { authConfig } from "./auth.config"
+import { authRateLimiter } from "@/lib/rate-limit"
 
 // Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
 // This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
@@ -28,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         // Dev mode bypass
         if (isDevMode) {
           return {
@@ -45,6 +46,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const email = credentials.email as string
         const password = credentials.password as string
+
+        // Rate limiting - use email as identifier for login attempts
+        // This prevents brute force attacks on specific accounts
+        const { success: withinLimit } = authRateLimiter.check(email.toLowerCase())
+        if (!withinLimit) {
+          console.warn(`[SECURITY] Rate limit exceeded for login attempts: ${email}`)
+          throw new Error("Too many login attempts. Please try again later.")
+        }
 
         if (!db) {
           console.error("Database not configured")

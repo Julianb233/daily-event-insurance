@@ -24,6 +24,7 @@ import {
   requiresManualReview,
   type PricingInput,
 } from "@/lib/pricing"
+import { quoteRateLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit"
 
 /**
  * Generate unique quote number
@@ -112,6 +113,14 @@ async function calculateQuotePricing(
  * - metadata: object (optional)
  */
 export async function POST(request: NextRequest) {
+  // Rate limiting - 10 quotes per minute per IP
+  const clientIP = getClientIP(request)
+  const { success: withinLimit, remaining, resetTime } = quoteRateLimiter.check(clientIP)
+
+  if (!withinLimit) {
+    return rateLimitResponse(resetTime - Date.now())
+  }
+
   return withAuth(async () => {
     try {
       const { userId } = await requirePartner()

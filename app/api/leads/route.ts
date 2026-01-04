@@ -9,6 +9,7 @@ import { withAuth, requireAdmin } from '@/lib/api-auth';
 import { desc } from 'drizzle-orm';
 import { calculateLeadScore, type LeadScoringInput } from '@/lib/lead-scoring';
 import { notifySalesTeam } from '@/lib/notifications';
+import { leadRateLimiter, getClientIP, rateLimitResponse } from '@/lib/rate-limit';
 
 // Validation schema for lead submission from quote forms
 const createLeadSchema = z.object({
@@ -96,6 +97,14 @@ function calculateEstimatedRevenue(data: z.infer<typeof createLeadSchema>): numb
 
 // POST - Submit lead from quote form (public endpoint)
 export async function POST(request: NextRequest) {
+  // Rate limiting - 5 lead submissions per 5 minutes per IP
+  const clientIP = getClientIP(request)
+  const { success: withinLimit, remaining, resetTime } = leadRateLimiter.check(clientIP)
+
+  if (!withinLimit) {
+    return rateLimitResponse(resetTime - Date.now())
+  }
+
   try {
     const body = await request.json();
     const validation = createLeadSchema.safeParse(body);
