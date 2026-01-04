@@ -3,9 +3,15 @@ import { NextResponse } from "next/server"
 import { db, users } from "@/lib/db"
 import { eq } from "drizzle-orm"
 
-// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
-// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
-const isDevMode = process.env.NODE_ENV === 'development'
+// SECURITY: Dev mode auth bypass requires explicit opt-in
+// Bypass ONLY if ALL conditions are met:
+// 1. NODE_ENV === 'development'
+// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
+// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
+const shouldBypassAuth =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEV_AUTH_BYPASS === 'true' &&
+  !process.env.AUTH_SECRET
 
 // Mock user for development
 const MOCK_USER = {
@@ -25,9 +31,9 @@ export interface AuthenticatedUser {
  * Throws an error that returns 401 if not authenticated
  */
 export async function requireAuth(): Promise<{ userId: string }> {
-  // Dev mode bypass
-  if (isDevMode) {
-    console.log("[DEV MODE] Auth bypassed - using mock user")
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
+    console.warn("[DEV MODE] Auth bypassed - set AUTH_SECRET to disable")
     return { userId: MOCK_USER.id }
   }
 
@@ -55,9 +61,9 @@ const MOCK_ADMIN = {
  * Requires admin role for API route
  */
 export async function requireAdmin(): Promise<AuthenticatedUser> {
-  // Dev mode bypass for admin
-  if (isDevMode) {
-    console.log("[DEV MODE] Admin auth bypassed - using mock admin")
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
+    console.warn("[DEV MODE] Admin auth bypassed - set AUTH_SECRET to disable")
     return { userId: MOCK_ADMIN.id, user: MOCK_ADMIN }
   }
 
@@ -94,9 +100,9 @@ export async function requireAdmin(): Promise<AuthenticatedUser> {
  * Requires partner role for API route
  */
 export async function requirePartner(): Promise<AuthenticatedUser> {
-  // Dev mode bypass
-  if (isDevMode) {
-    console.log("[DEV MODE] Partner auth bypassed - using mock partner")
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
+    console.warn("[DEV MODE] Partner auth bypassed - set AUTH_SECRET to disable")
     return { userId: MOCK_USER.id, user: MOCK_USER }
   }
 

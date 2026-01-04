@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from './auth';
 
-// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
-// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
-const isDevMode = process.env.NODE_ENV === 'development';
+// SECURITY: Dev mode auth bypass requires explicit opt-in
+// Bypass ONLY if ALL conditions are met:
+// 1. NODE_ENV === 'development'
+// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
+// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
+const shouldBypassAuth =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEV_AUTH_BYPASS === 'true' &&
+  !process.env.AUTH_SECRET;
 
 // Mock users for development
 const MOCK_ADMIN = {
@@ -38,9 +44,9 @@ export async function withAuth<T>(
   request: NextRequest,
   handler: AuthHandler<T>
 ): Promise<T | NextResponse> {
-  // Dev mode bypass
-  if (isDevMode) {
-    console.log('[DEV MODE] Auth bypassed - using mock admin');
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
+    console.warn('[DEV MODE] Auth bypassed - set AUTH_SECRET to disable');
     return handler(request, MOCK_ADMIN);
   }
 
@@ -80,8 +86,8 @@ export async function requireAdmin<T>(
   user: AuthUser,
   handler: AdminHandler<T>
 ): Promise<T | NextResponse> {
-  // Dev mode always grants admin access
-  if (isDevMode) {
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
     return handler();
   }
 
@@ -103,8 +109,8 @@ export async function requirePartner<T>(
   user: AuthUser,
   handler: AdminHandler<T>
 ): Promise<T | NextResponse> {
-  // Dev mode always grants partner access
-  if (isDevMode) {
+  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+  if (shouldBypassAuth) {
     return handler();
   }
 

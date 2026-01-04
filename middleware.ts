@@ -5,9 +5,15 @@ import type { NextRequest } from "next/server"
 
 const { auth } = NextAuth(authConfig)
 
-// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
-// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
-const isDevMode = process.env.NODE_ENV === 'development'
+// SECURITY: Dev mode auth bypass requires explicit opt-in
+// Bypass ONLY if ALL conditions are met:
+// 1. NODE_ENV === 'development'
+// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
+// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
+const shouldBypassAuth =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEV_AUTH_BYPASS === 'true' &&
+  !process.env.AUTH_SECRET
 
 // Route role requirements - more specific routes should come first
 const ROUTE_ROLES: Record<string, string[]> = {
@@ -41,9 +47,9 @@ const publicRoutes = [
   "/api/webhook", // Webhooks need to be public
 ]
 
-// Dev mode middleware - bypasses auth entirely (only in NODE_ENV=development)
+// Dev mode middleware - bypasses auth (requires explicit DEV_AUTH_BYPASS=true)
 function devModeMiddleware() {
-  console.log("[DEV MODE] NextAuth middleware bypassed - NODE_ENV is development")
+  console.warn("[DEV MODE] NextAuth middleware bypassed - set AUTH_SECRET to disable")
   return NextResponse.next()
 }
 
@@ -138,7 +144,7 @@ const productionMiddleware = auth((req) => {
   return response
 })
 
-export default isDevMode ? devModeMiddleware : productionMiddleware
+export default shouldBypassAuth ? devModeMiddleware : productionMiddleware
 
 export const config = {
   matcher: [
