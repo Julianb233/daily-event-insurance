@@ -250,7 +250,7 @@ export default function FitnessLandingPage() {
               Total Commission From These 3 Events: $11,601
             </p>
             <p className="text-lg text-gray-700">
-              That's just one month. Imagine your whole year.
+              That&apos;s just one month. Imagine your whole year.
             </p>
           </div>
         </div>
@@ -405,7 +405,7 @@ export default function FitnessLandingPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Participants Choose</h3>
               <p className="text-gray-600">
-                They see "Add event day coverage - $40" during checkout.
+                They see &quot;Add event day coverage - $40&quot; during checkout.
                 82% say yes. Completely automatic.
               </p>
             </div>

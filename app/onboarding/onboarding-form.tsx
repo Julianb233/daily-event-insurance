@@ -534,7 +534,7 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 )}
               </div>
               <FieldError message={errors.websiteUrl} />
-              <p className="text-xs text-gray-500 mt-1">We'll use this to auto-customize your branding</p>
+              <p className="text-xs text-gray-500 mt-1">We&apos;ll use this to auto-customize your branding</p>
             </div>
           </div>
 

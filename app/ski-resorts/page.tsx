@@ -138,7 +138,7 @@ function ProblemSolutionSection() {
             Your Guests Are One Injury Away From a Lawsuit
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Waivers don't stop lawsuits. Per-skier coverage gives you real protection.
+            Waivers don&apos;t stop lawsuits. Per-skier coverage gives you real protection.
           </p>
         </div>
 
@@ -545,7 +545,7 @@ function TestimonialsSection() {
                   ))}
                 </div>
                 <p className="text-gray-700 mb-6 italic">
-                  "{testimonial.quote}"
+                  &quot;{testimonial.quote}&quot;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -706,7 +706,7 @@ function DemoFormSection() {
               </Button>
 
               <p className="text-sm text-gray-500 text-center">
-                We'll review your setup and have you live before peak season.
+                We&apos;ll review your setup and have you live before peak season.
               </p>
             </form>
           </div>

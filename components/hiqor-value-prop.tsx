@@ -325,7 +325,7 @@ export function HiqorValueProp() {
           {/* Positioning Statement */}
           <div className="text-center mt-10 pt-8 border-t border-white/10">
             <p className="text-xl md:text-2xl font-bold text-white mb-2">
-              "HIQOR is the InsurTech SaaS infrastructure for events-based insurance."
+              &quot;HIQOR is the InsurTech SaaS infrastructure for events-based insurance.&quot;
             </p>
             <p className="text-teal-400 font-semibold">
               Insurance for moments, not time.

@@ -142,7 +142,7 @@ export function WhoWeAreSection() {
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
-            We're the Infrastructure Behind{' '}
+            We&apos;re the Infrastructure Behind{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
               Events-Based Insurance
             </span>
@@ -198,7 +198,7 @@ export function WhoWeAreSection() {
                 The Activation, Data, and Monetization Layer
               </h3>
               <p className="text-lg text-slate-300 mb-8 max-w-3xl">
-                We're the infrastructure that allows insurance to turn on during real-world events—workouts,
+                We&apos;re the infrastructure that allows insurance to turn on during real-world events—workouts,
                 races, games, adventures, and experiences—and turn off automatically when those events end.
               </p>
 

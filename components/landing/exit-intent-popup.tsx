@@ -157,7 +157,7 @@ export function ExitIntentPopup({
                 </div>
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-white">
-                    WAIT! Don't Leave Money Behind
+                    WAIT! Don&apos;t Leave Money Behind
                   </h3>
                 </div>
               </div>
@@ -168,20 +168,20 @@ export function ExitIntentPopup({
               {/* Loss Statement */}
               <div className="text-center mb-6">
                 <p className="text-slate-600 text-sm sm:text-base mb-2">
-                  You're about to leave
+                  You&apos;re about to leave
                 </p>
                 <div className="text-3xl sm:text-4xl font-bold text-red-600 mb-1">
                   ${formattedAnnualLoss}/year
                 </div>
                 <p className="text-slate-500 text-sm">
-                  on the table (that's ${formattedDailyLoss} every single day)
+                  on the table (that&apos;s ${formattedDailyLoss} every single day)
                 </p>
               </div>
 
               {/* Quick Value Props */}
               <div className="bg-slate-50 rounded-xl p-4 mb-6">
                 <p className="text-sm text-slate-600 mb-3 font-medium">
-                  Here's what you're missing:
+                  Here&apos;s what you&apos;re missing:
                 </p>
                 <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start gap-2">

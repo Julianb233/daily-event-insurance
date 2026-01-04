@@ -69,7 +69,7 @@ export default function SkiResortLandingPage() {
             transition={{ delay: 0.2 }}
             className="text-2xl md:text-3xl font-semibold mb-4 text-blue-50"
           >
-            Every lift ticket is potential commission. You're just not collecting it yet.
+            Every lift ticket is potential commission. You&apos;re just not collecting it yet.
           </motion.p>
 
           <motion.p
@@ -114,7 +114,7 @@ export default function SkiResortLandingPage() {
             The Math Is Simple
           </h2>
           <p className="text-xl text-gray-700 text-center mb-12">
-            Let's say you sell {dailyVisitors} lift tickets per day during peak season:
+            Let&apos;s say you sell {dailyVisitors} lift tickets per day during peak season:
           </p>
 
           <div className="bg-white rounded-xl p-8 border-2 border-blue-500 mb-8">
@@ -311,7 +311,7 @@ export default function SkiResortLandingPage() {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            You're Selling Tickets. We'll Add The Revenue.
+            You&apos;re Selling Tickets. We&apos;ll Add The Revenue.
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">

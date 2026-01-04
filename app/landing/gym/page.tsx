@@ -137,7 +137,7 @@ export default function GymLandingPage() {
             </Card>
             <Card className="p-6 border-2 border-red-200 bg-red-50">
               <div className="text-red-600 font-bold mb-2 text-lg">Problem #2</div>
-              <p className="text-gray-800 font-semibold">You're liable for injuries but not making anything from risk mitigation</p>
+              <p className="text-gray-800 font-semibold">You&apos;re liable for injuries but not making anything from risk mitigation</p>
             </Card>
             <Card className="p-6 border-2 border-red-200 bg-red-50">
               <div className="text-red-600 font-bold mb-2 text-lg">Problem #3</div>
@@ -151,7 +151,7 @@ export default function GymLandingPage() {
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-black mb-12 text-center">
-            Here's How It Works
+            Here&apos;s How It Works
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-16">
