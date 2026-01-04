@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { NextResponse } from 'next/server'
 
 // Mock modules before imports
+vi.mock('@/lib/api-auth', () => ({
+  requireAdmin: vi.fn().mockResolvedValue({ userId: 'test-admin' }),
+  withAuth: vi.fn((handler) => handler()),
+}))
+
 vi.mock('@/lib/db', () => ({
   db: null, // Will be overridden in tests
 }))
