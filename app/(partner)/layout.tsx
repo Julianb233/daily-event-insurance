@@ -2,8 +2,9 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar"
 
-// Development mode - bypass auth when NextAuth isn't configured
-const isDevMode = !process.env.AUTH_SECRET
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development'
 
 export const metadata = {
   title: "Partner Portal | Daily Event Insurance",
@@ -32,7 +33,7 @@ export default async function PartnerLayout({
       redirect("/onboarding")
     }
   } else {
-    console.log("[DEV MODE] Partner layout - auth checks bypassed")
+    console.log("[DEV MODE] Partner layout - auth checks bypassed (NODE_ENV=development)")
   }
 
   return (

@@ -38,8 +38,13 @@ export async function POST(request: Request) {
       const passwordErrors = validation.errors.filter(e => e.field === 'password')
       const otherErrors = validation.errors.filter(e => e.field !== 'password')
 
-      if (passwordErrors.length > 0 && otherErrors.length === 0) {
-        // Only password errors - return password-specific message
+      // Only show password-specific message if errors are about requirements (not missing)
+      const isPasswordRequirementError = passwordErrors.length > 0 &&
+        otherErrors.length === 0 &&
+        !passwordErrors.some(e => e.message.toLowerCase().includes('required'))
+
+      if (isPasswordRequirementError) {
+        // Only password requirement errors - return password-specific message
         return NextResponse.json(
           {
             error: "Password does not meet security requirements",

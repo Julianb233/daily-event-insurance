@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import postgres from 'postgres';
+import { requireAdmin, withAuth } from '@/lib/api-auth';
 
-// GET - Fetch voice agent configuration
+// GET - Fetch voice agent configuration (ADMIN ONLY)
 export async function GET() {
-  try {
+  return withAuth(async () => {
+    await requireAdmin();
+
     const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
     if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -57,18 +60,14 @@ Guidelines:
     }
 
     return NextResponse.json(result[0]);
-  } catch (error) {
-    console.error('Error fetching config:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch configuration' },
-      { status: 500 }
-    );
-  }
+  });
 }
 
-// PUT - Update voice agent configuration
+// PUT - Update voice agent configuration (ADMIN ONLY)
 export async function PUT(request: NextRequest) {
-  try {
+  return withAuth(async () => {
+    await requireAdmin();
+
     const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
     if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -130,18 +129,14 @@ export async function PUT(request: NextRequest) {
 
       return NextResponse.json(result[0], { status: 201 });
     }
-  } catch (error) {
-    console.error('Error updating config:', error);
-    return NextResponse.json(
-      { error: 'Failed to update configuration' },
-      { status: 500 }
-    );
-  }
+  });
 }
 
-// POST - Create new voice agent configuration
+// POST - Create new voice agent configuration (ADMIN ONLY)
 export async function POST(request: NextRequest) {
-  try {
+  return withAuth(async () => {
+    await requireAdmin();
+
     const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
     if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -174,11 +169,5 @@ export async function POST(request: NextRequest) {
     `;
 
     return NextResponse.json(result[0], { status: 201 });
-  } catch (error) {
-    console.error('Error creating config:', error);
-    return NextResponse.json(
-      { error: 'Failed to create configuration' },
-      { status: 500 }
-    );
-  }
+  });
 }

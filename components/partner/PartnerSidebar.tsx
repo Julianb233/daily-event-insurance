@@ -18,8 +18,9 @@ import {
   MapPin,
 } from "lucide-react"
 
-// Check dev mode - no AUTH_SECRET means dev mode
-const isDevMode = !process.env.NEXT_PUBLIC_AUTH_SECRET
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development'
 
 // Mock user for development mode
 const MOCK_USER = {
