@@ -23,5 +23,9 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      // Test-only auth secret for E2E tests (required by next-auth)
+      AUTH_SECRET: 'e2e-test-secret-do-not-use-in-production',
+    },
   },
 });
