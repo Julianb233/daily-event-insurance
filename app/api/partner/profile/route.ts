@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, partners, partnerProducts } from "@/lib/db"
+import { db, isDbConfigured, partners, partnerProducts, microsites } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
 
@@ -43,9 +43,19 @@ export async function GET(request: NextRequest) {
       .from(partnerProducts)
       .where(eq(partnerProducts.partnerId, partner.id))
 
+    // Get microsite info if exists
+    const micrositeResult = await db!
+      .select()
+      .from(microsites)
+      .where(eq(microsites.partnerId, partner.id))
+      .limit(1)
+
+    const microsite = micrositeResult.length > 0 ? micrositeResult[0] : null
+
     return NextResponse.json({
       partner,
       products,
+      microsite,
     })
   })
 }

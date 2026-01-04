@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 // GET - Fetch voice agent configuration
 export async function GET() {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const result = await sql`
       SELECT * FROM voice_agent_config
       WHERE is_active = true
@@ -68,11 +69,12 @@ Guidelines:
 // PUT - Update voice agent configuration
 export async function PUT(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const body = await request.json();
 
     if (body.id) {
@@ -140,11 +142,12 @@ export async function PUT(request: NextRequest) {
 // POST - Create new voice agent configuration
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const body = await request.json();
 
     const result = await sql`

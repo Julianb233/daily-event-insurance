@@ -4,6 +4,41 @@ import { partners, partnerDocuments } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { DOCUMENT_TYPES, type DocumentType } from "@/lib/demo-documents"
 
+/**
+ * Trigger the post-signing onboarding automation
+ * Calls the /api/partner/onboarding-complete endpoint
+ */
+async function triggerOnboardingAutomation(partnerId: string): Promise<void> {
+  try {
+    // Get the base URL from environment or construct it
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+
+    console.log(`Triggering onboarding automation for partner: ${partnerId}`)
+
+    const response = await fetch(`${baseUrl}/api/partner/onboarding-complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ partnerId }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(`Automation failed: ${errorData.error || response.statusText}`)
+    }
+
+    const result = await response.json()
+    console.log(`Onboarding automation completed:`, result)
+  } catch (error) {
+    console.error('Error in onboarding automation:', error)
+    // Re-throw to be caught by the caller
+    throw error
+  }
+}
+
 // POST /api/documents/sign - Record a document signature
 export async function POST(request: Request) {
   try {
@@ -109,7 +144,7 @@ export async function POST(request: Request) {
       updatedPartner.w9Signed &&
       updatedPartner.directDepositSigned
 
-    // If all documents signed, update status
+    // If all documents signed, update status and trigger automation
     if (allSigned) {
       await db
         .update(partners)
@@ -120,6 +155,12 @@ export async function POST(request: Request) {
           updatedAt: now,
         })
         .where(eq(partners.id, partnerId))
+
+      // Trigger post-signing automation (FireCrawl, microsite, QR code, Google Sheets)
+      // Run asynchronously so we don't block the response
+      triggerOnboardingAutomation(partnerId).catch((error) => {
+        console.error("Error triggering onboarding automation:", error)
+      })
     } else {
       await db
         .update(partners)
@@ -134,6 +175,7 @@ export async function POST(request: Request) {
       success: true,
       message: `${documentType} signed successfully`,
       allDocumentsSigned: allSigned,
+      automationTriggered: allSigned, // Let client know automation was triggered
       documentStatus: {
         agreementSigned: documentType === DOCUMENT_TYPES.PARTNER_AGREEMENT ? true : updatedPartner.agreementSigned,
         w9Signed: documentType === DOCUMENT_TYPES.W9 ? true : updatedPartner.w9Signed,

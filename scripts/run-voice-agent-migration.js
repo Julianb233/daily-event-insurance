@@ -1,7 +1,11 @@
 const fs = require('fs');
-const { neon } = require('@neondatabase/serverless');
+const postgres = require('postgres');
 
-const sql = neon(process.env.DATABASE_URL);
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL or POSTGRES_PRISMA_URL is required");
+}
+const sql = postgres(connectionString, { ssl: 'require' });
 
 async function run() {
   console.log('Creating voice agent tables...\n');

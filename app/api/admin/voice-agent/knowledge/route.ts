@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 // GET - Fetch knowledge base entries
 export async function GET(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const { searchParams } = new URL(request.url);
     const configId = searchParams.get('config_id');
     const category = searchParams.get('category');
@@ -83,11 +84,12 @@ export async function GET(request: NextRequest) {
 // POST - Create new knowledge base entry
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const body = await request.json();
 
     const {
@@ -153,11 +155,12 @@ export async function POST(request: NextRequest) {
 // PUT - Update knowledge base entry
 export async function PUT(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const body = await request.json();
     const { id } = body;
 
@@ -204,11 +207,12 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete knowledge base entry
 export async function DELETE(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

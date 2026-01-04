@@ -1,32 +1,29 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, partners } from "@/lib/db"
+import { db, isDbConfigured, partners, partnerLocations } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
+import {
+  generateStandaloneMicrosite,
+  generateCheckinMicrosite,
+  generateQRCodeFlyer,
+  prepareBrandingForStorage,
+  type MicrositeConfig
+} from "@/lib/microsite/generator"
+import { fetchPartnerBranding } from "@/lib/firecrawl/client"
 
 /**
  * POST /api/partner/assets/generate
  * Generate personalized marketing assets with partner branding
  *
- * Request body:
- * {
- *   assetType: "flyer" | "email" | "social" | "brochure" | "certificate",
- *   template: string, // template ID
- *   customization?: {
- *     headline?: string,
- *     subheadline?: string,
- *     callToAction?: string,
- *     additionalText?: string
- *   }
- * }
+ * NEW asset types:
+ * - microsite: Full glass morphism landing page
+ * - checkin: Front desk check-in form with lead capture
+ * - qr-flyer: Printable QR code flyer (8.5x11)
+ * - all-digital: Generate all digital assets at once
  *
- * Returns:
- * {
- *   downloadUrl: string,
- *   previewUrl: string,
- *   assetId: string,
- *   expiresAt: string
- * }
+ * Legacy asset types:
+ * - flyer, email, social, brochure, certificate
  */
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
@@ -34,10 +31,13 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { assetType, template, customization = {} } = body
+    const { assetType, template, customization = {}, locationId } = body
 
     // Validate asset type
-    const validAssetTypes = ["flyer", "email", "social", "brochure", "certificate"]
+    const validAssetTypes = [
+      "microsite", "checkin", "qr-flyer", "all-digital",  // New digital assets
+      "flyer", "email", "social", "brochure", "certificate"  // Legacy templates
+    ]
     if (!assetType || !validAssetTypes.includes(assetType)) {
       return NextResponse.json(
         {
@@ -48,16 +48,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate template
-    if (!template) {
-      return NextResponse.json(
-        { error: "Missing template", message: "Template ID is required" },
-        { status: 400 }
-      )
-    }
-
     // Get partner profile for branding
-    let partner = null
+    let partner: any = null
     if (!isDevMode && isDbConfigured()) {
       const partnerResult = await db!
         .select()
@@ -96,6 +88,200 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // =================================================================
+    // NEW: Digital asset generation (microsite, checkin, qr-flyer)
+    // =================================================================
+    const digitalAssetTypes = ["microsite", "checkin", "qr-flyer", "all-digital"]
+    if (digitalAssetTypes.includes(assetType)) {
+      // Fetch branding from partner's website (auto-extract logo + colors)
+      let websiteBranding: { images: string[]; logoUrl?: string; metadata?: any } = { images: [] }
+      const websiteUrl = partner.websiteUrl
+      if (websiteUrl) {
+        try {
+          console.log("[Assets] Fetching branding from:", websiteUrl)
+          websiteBranding = await fetchPartnerBranding(websiteUrl)
+          console.log("[Assets] Extracted logo:", websiteBranding.logoUrl ? "✅ Found" : "❌ Not found")
+        } catch (error) {
+          console.error("[Assets] Error fetching branding:", error)
+        }
+      }
+
+      // Use extracted logo or fall back to stored logo
+      const logoUrl = websiteBranding.logoUrl || partner.logoUrl || "/images/logo-placeholder.png"
+
+      // Update partner with extracted logo if we found a new one
+      if (websiteBranding.logoUrl && websiteBranding.logoUrl !== partner.logoUrl) {
+        await db!
+          .update(partners)
+          .set({
+            logoUrl: websiteBranding.logoUrl,
+            updatedAt: new Date()
+          })
+          .where(eq(partners.id, partner.id))
+        console.log("[Assets] Updated partner logo in database")
+      }
+
+      // Build microsite config
+      const config: MicrositeConfig = {
+        partnerId: partner.id,
+        partnerName: partner.businessName,
+        websiteUrl: websiteUrl,
+        logoUrl: logoUrl,
+        primaryColor: partner.primaryColor || "#14B8A6",
+        type: assetType === "checkin" ? "checkin" : "standalone",
+        businessType: partner.businessType || "other",
+        contactEmail: partner.contactEmail || undefined,
+        contactPhone: partner.contactPhone || undefined,
+      }
+
+      // If generating for a specific location, get location details
+      if (locationId) {
+        const locationResult = await db!
+          .select()
+          .from(partnerLocations)
+          .where(eq(partnerLocations.id, locationId))
+          .limit(1)
+
+        if (locationResult.length > 0) {
+          const location = locationResult[0]
+          config.subdomain = location.customSubdomain || undefined
+        }
+      }
+
+      try {
+        let result: any = {}
+
+        switch (assetType) {
+          case "microsite": {
+            const microsite = await generateStandaloneMicrosite(config)
+            result = {
+              success: true,
+              assetType: "microsite",
+              html: microsite.html,
+              qrCodeDataUrl: microsite.qrCodeDataUrl,
+              micrositeUrl: microsite.url,
+              branding: {
+                logoUrl,
+                primaryColor: config.primaryColor,
+                businessName: partner.businessName
+              }
+            }
+            break
+          }
+
+          case "checkin": {
+            const checkin = await generateCheckinMicrosite(config)
+            result = {
+              success: true,
+              assetType: "checkin",
+              html: checkin.html,
+              qrCodeDataUrl: checkin.qrCodeDataUrl,
+              micrositeUrl: checkin.url,
+              branding: {
+                logoUrl,
+                primaryColor: config.primaryColor,
+                businessName: partner.businessName
+              },
+              instructions: "Display this on a tablet at your front desk for customer check-in"
+            }
+            break
+          }
+
+          case "qr-flyer": {
+            const site = await generateStandaloneMicrosite(config)
+            const flyerHtml = generateQRCodeFlyer({
+              partnerName: config.partnerName,
+              logoUrl: logoUrl,
+              primaryColor: config.primaryColor || "#14B8A6",
+              qrCodeDataUrl: site.qrCodeDataUrl,
+              micrositeUrl: site.url
+            })
+            result = {
+              success: true,
+              assetType: "qr-flyer",
+              html: flyerHtml,
+              qrCodeDataUrl: site.qrCodeDataUrl,
+              micrositeUrl: site.url,
+              branding: {
+                logoUrl,
+                primaryColor: config.primaryColor,
+                businessName: partner.businessName
+              },
+              instructions: "Print this 8.5x11 flyer and display at your front desk. Customers can scan the QR code to get instant coverage."
+            }
+            break
+          }
+
+          case "all-digital": {
+            const fullMicrosite = await generateStandaloneMicrosite(config)
+            const fullCheckin = await generateCheckinMicrosite(config)
+            const fullFlyer = generateQRCodeFlyer({
+              partnerName: config.partnerName,
+              logoUrl: logoUrl,
+              primaryColor: config.primaryColor || "#14B8A6",
+              qrCodeDataUrl: fullMicrosite.qrCodeDataUrl,
+              micrositeUrl: fullMicrosite.url
+            })
+            const brandingData = prepareBrandingForStorage(
+              partner.id,
+              partner.businessName,
+              partner.primaryColor || "#14B8A6",
+              websiteBranding,
+              logoUrl
+            )
+
+            result = {
+              success: true,
+              assetType: "all-digital",
+              microsite: {
+                html: fullMicrosite.html,
+                url: fullMicrosite.url
+              },
+              checkin: {
+                html: fullCheckin.html,
+                url: fullCheckin.url
+              },
+              flyer: {
+                html: fullFlyer
+              },
+              qrCodeDataUrl: fullMicrosite.qrCodeDataUrl,
+              micrositeUrl: fullMicrosite.url,
+              branding: brandingData,
+              quickStart: {
+                step1: "Print the QR flyer and display at your front desk",
+                step2: "Or use the check-in form on a tablet for customer sign-up",
+                step3: "Share your microsite URL with customers via email or social media",
+                step4: "Customers scan QR → fill quick form → get instant coverage"
+              }
+            }
+            break
+          }
+        }
+
+        console.log(`[ASSET GENERATION] Generated ${assetType} for partner ${partner.id}`)
+        return NextResponse.json(result)
+
+      } catch (error) {
+        console.error("[Assets] Error generating digital assets:", error)
+        return NextResponse.json(
+          { error: "Failed to generate assets" },
+          { status: 500 }
+        )
+      }
+    }
+
+    // =================================================================
+    // LEGACY: Template-based asset generation
+    // =================================================================
+
+    // Validate template for legacy types
+    if (!template) {
+      return NextResponse.json(
+        { error: "Missing template", message: "Template ID is required for this asset type" },
+        { status: 400 }
+      )
+    }
+
     // Extract partner branding
     const branding = {
       primaryColor: partner.primaryColor || "#14B8A6",
@@ -105,15 +291,6 @@ export async function POST(request: NextRequest) {
       contactEmail: partner.contactEmail,
       contactPhone: partner.contactPhone,
     }
-
-    // TODO: Integrate with PDF generation service
-    // For now, we'll return a placeholder response
-    // In production, this would:
-    // 1. Load the template from a template engine (e.g., Handlebars, Puppeteer)
-    // 2. Inject partner branding and customization
-    // 3. Generate PDF/PNG using a service like Puppeteer, PDFKit, or an external API
-    // 4. Upload to cloud storage (S3, Cloudflare R2)
-    // 5. Return download URL with expiration
 
     // Generate unique asset ID
     const assetId = `asset-${Date.now()}-${Math.random().toString(36).substring(7)}`
@@ -142,7 +319,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/partner/assets/generate
- * List available templates for asset generation
+ * List available asset types and templates
  */
 export async function GET(request: NextRequest) {
   return withAuth(async () => {
@@ -151,7 +328,44 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const assetType = searchParams.get("assetType")
 
-    // Template library
+    // NEW: Digital asset types (no template required)
+    const digitalAssets = {
+      microsite: {
+        name: "Glass Morphism Microsite",
+        description: "Beautiful full-page landing site with your branding, animated backgrounds, and QR code",
+        features: ["3D glass morphism design", "Animated gradient orbs", "Your logo auto-extracted", "Brand colors applied", "Built-in QR code"],
+        quickStart: true
+      },
+      checkin: {
+        name: "Front Desk Check-In",
+        description: "Customer lead capture form for tablets at your front desk",
+        features: ["Glass morphism design", "Lead capture form", "Auto-sends to your dashboard", "QR code fallback for mobile"],
+        quickStart: true
+      },
+      "qr-flyer": {
+        name: "Printable QR Flyer",
+        description: "8.5x11 print-ready flyer with large QR code and instructions",
+        features: ["Your logo and branding", "Large scannable QR code", "Step-by-step instructions", "Ready to print"],
+        quickStart: true
+      },
+      "all-digital": {
+        name: "Complete Digital Kit",
+        description: "Generate all digital assets at once - microsite, check-in form, and QR flyer",
+        features: ["All 3 assets in one click", "Consistent branding", "Quick start guide included"],
+        quickStart: true
+      }
+    }
+
+    // If requesting digital assets info
+    if (assetType && assetType in digitalAssets) {
+      return NextResponse.json({
+        assetType,
+        ...digitalAssets[assetType as keyof typeof digitalAssets],
+        usage: `POST /api/partner/assets/generate with { "assetType": "${assetType}" }`
+      })
+    }
+
+    // Template library (legacy)
     const templates = {
       flyer: [
         {
@@ -251,10 +465,21 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Return all templates
+    // Return all assets (digital + templates)
     return NextResponse.json({
+      digitalAssets,
       templates,
-      categories: Object.keys(templates),
+      categories: {
+        quickStart: ["microsite", "checkin", "qr-flyer", "all-digital"],
+        legacy: Object.keys(templates)
+      },
+      recommended: "all-digital",
+      quickStartInstructions: {
+        step1: "Call POST /api/partner/assets/generate with { \"assetType\": \"all-digital\" }",
+        step2: "You'll receive HTML for microsite, check-in form, and printable QR flyer",
+        step3: "Print the flyer, display at front desk, customers scan → get coverage",
+        step4: "Your logo and brand colors are automatically extracted from your website"
+      }
     })
   })
 }

@@ -15,6 +15,7 @@ import {
   X,
   Shield,
   ChevronRight,
+  MapPin,
 } from "lucide-react"
 
 // Check dev mode - no AUTH_SECRET means dev mode
@@ -31,6 +32,11 @@ const navItems = [
     label: "Dashboard",
     href: "/partner/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    label: "Locations",
+    href: "/partner/locations",
+    icon: MapPin,
   },
   {
     label: "Earnings",

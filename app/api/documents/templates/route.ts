@@ -1,12 +1,68 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { documentTemplates } from "@/lib/db/schema"
+import { documentTemplates, partners } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { demoDocuments, DOCUMENT_TYPES } from "@/lib/demo-documents"
 
+/**
+ * Auto-populate document content with partner data
+ * Replaces template variables like {{BUSINESS_NAME}}, {{CONTACT_NAME}}, etc.
+ */
+function populateDocumentContent(content: string, partnerData: Record<string, string | null | undefined>): string {
+  const date = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+
+  return content
+    .replace(/\{\{BUSINESS_NAME\}\}/g, partnerData.businessName || '[Business Name]')
+    .replace(/\{\{CONTACT_NAME\}\}/g, partnerData.contactName || '[Contact Name]')
+    .replace(/\{\{CONTACT_EMAIL\}\}/g, partnerData.contactEmail || '[Contact Email]')
+    .replace(/\{\{CONTACT_PHONE\}\}/g, partnerData.contactPhone || '[Contact Phone]')
+    .replace(/\{\{BUSINESS_ADDRESS\}\}/g, partnerData.businessAddress || '[Business Address]')
+    .replace(/\{\{WEBSITE_URL\}\}/g, partnerData.websiteUrl || '[Website URL]')
+    .replace(/\{\{BUSINESS_TYPE\}\}/g, partnerData.businessType || '[Business Type]')
+    .replace(/\{\{DIRECT_CONTACT_NAME\}\}/g, partnerData.directContactName || '[Direct Contact]')
+    .replace(/\{\{DIRECT_CONTACT_EMAIL\}\}/g, partnerData.directContactEmail || '[Direct Contact Email]')
+    .replace(/\{\{DIRECT_CONTACT_PHONE\}\}/g, partnerData.directContactPhone || '[Direct Contact Phone]')
+    .replace(/\{\{DATE\}\}/g, date)
+    .replace(/\{\{YEAR\}\}/g, new Date().getFullYear().toString())
+}
+
 // GET /api/documents/templates - List all active document templates
-export async function GET() {
+// Optional query params: ?partnerId=xxx to auto-populate with partner data
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const partnerId = searchParams.get('partnerId')
+
+    // Fetch partner data if partnerId provided
+    let partnerData: Record<string, string | null | undefined> | null = null
+
+    if (partnerId && db) {
+      const [partner] = await db
+        .select()
+        .from(partners)
+        .where(eq(partners.id, partnerId))
+        .limit(1)
+
+      if (partner) {
+        partnerData = {
+          businessName: partner.businessName,
+          contactName: partner.contactName,
+          contactEmail: partner.contactEmail,
+          contactPhone: partner.contactPhone,
+          businessAddress: partner.businessAddress,
+          websiteUrl: partner.websiteUrl,
+          businessType: partner.businessType,
+          directContactName: partner.directContactName,
+          directContactEmail: partner.directContactEmail,
+          directContactPhone: partner.directContactPhone,
+        }
+      }
+    }
+
     // If db is configured, try to get templates from database
     if (db) {
       const dbTemplates = await db
@@ -23,10 +79,11 @@ export async function GET() {
             id: t.id,
             type: t.type,
             title: t.title,
-            content: t.content,
+            content: partnerData ? populateDocumentContent(t.content, partnerData) : t.content,
             version: t.version,
           })),
           source: "database",
+          populated: !!partnerData,
         })
       }
     }
@@ -39,10 +96,11 @@ export async function GET() {
         id: `demo-${index}`,
         type: doc.type,
         title: doc.title,
-        content: doc.content,
+        content: partnerData ? populateDocumentContent(doc.content, partnerData) : doc.content,
         version: doc.version,
       })),
       source: "demo",
+      populated: !!partnerData,
     })
   } catch (error) {
     console.error("Error fetching document templates:", error)
@@ -58,6 +116,7 @@ export async function GET() {
         version: doc.version,
       })),
       source: "demo-fallback",
+      populated: false,
     })
   }
 }

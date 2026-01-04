@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, decimal, timestamp, integer, primaryKey, index } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, boolean, decimal, timestamp, integer, primaryKey, index, jsonb, serial } from "drizzle-orm/pg-core"
 import type { AdapterAccountType } from "next-auth/adapters"
 
 // ================= NextAuth Tables =================
@@ -71,6 +71,9 @@ export const partners = pgTable("partners", {
   integrationType: text("integration_type").default("widget"), // widget, api, manual
   primaryColor: text("primary_color").default("#14B8A6"),
   logoUrl: text("logo_url"),
+  // Multi-location tracking
+  locationCount: integer("location_count").default(1), // Total number of locations
+  hasMultipleLocations: boolean("has_multiple_locations").default(false),
   status: text("status").default("pending"), // pending, documents_sent, documents_pending, under_review, active, suspended
   // GHL Integration fields
   ghlContactId: text("ghl_contact_id"), // GHL Contact ID
@@ -438,6 +441,70 @@ export const claimDocuments = pgTable("claim_documents", {
   documentTypeIdx: index("idx_claim_documents_type").on(table.documentType),
 }))
 
+// ================= Partner Locations =================
+
+// Partner locations - support for multi-location businesses
+export const partnerLocations = pgTable("partner_locations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+
+  // Location identification
+  locationName: text("location_name").notNull(), // e.g., "Downtown Branch", "Main Gym"
+  locationCode: text("location_code"), // Internal reference code
+  isPrimary: boolean("is_primary").default(false), // Primary/HQ location
+
+  // Address
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  zipCode: text("zip_code").notNull(),
+  country: text("country").default("USA"),
+
+  // Location contact (can be different from main partner contact)
+  contactName: text("contact_name"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  contactRole: text("contact_role"), // e.g., "Manager", "Owner", "Supervisor"
+
+  // Location-specific branding/microsite
+  micrositeId: uuid("microsite_id").references(() => microsites.id), // Links to location-specific microsite
+  qrCodeUrl: text("qr_code_url"), // QR code for this specific location
+  qrCodeColor: text("qr_code_color"), // Custom QR color if different from partner
+  customSubdomain: text("custom_subdomain"), // e.g., "spartan-downtown"
+
+  // Location metrics
+  estimatedMonthlyParticipants: integer("estimated_monthly_participants"),
+  totalPolicies: integer("total_policies").default(0),
+  totalRevenue: decimal("total_revenue", { precision: 12, scale: 2 }).default("0"),
+
+  // Integration settings
+  integrationType: text("integration_type"), // ecommerce, pos, embedded, api
+  embedCode: text("embed_code"), // Generated embed/widget code
+  apiKey: text("api_key"), // Generated API key for this location
+  apiSecretHash: text("api_secret_hash"), // Hashed API secret
+  webhookUrl: text("webhook_url"), // Partner's webhook URL for this location
+  webhookSecret: text("webhook_secret"), // Secret for signing outbound webhooks
+  webhookEvents: text("webhook_events"), // JSON array of subscribed events
+  posTerminalId: text("pos_terminal_id"), // POS terminal identifier
+  ecommercePlatform: text("ecommerce_platform"), // shopify, woocommerce, etc.
+  ecommerceStoreId: text("ecommerce_store_id"), // Store ID on the platform
+
+  // Status
+  status: text("status").default("active"), // active, inactive, pending, closed
+  activatedAt: timestamp("activated_at"),
+  closedAt: timestamp("closed_at"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_locations_partner_id").on(table.partnerId),
+  micrositeIdIdx: index("idx_partner_locations_microsite_id").on(table.micrositeId),
+  statusIdx: index("idx_partner_locations_status").on(table.status),
+  cityStateIdx: index("idx_partner_locations_city_state").on(table.city, table.state),
+  isPrimaryIdx: index("idx_partner_locations_is_primary").on(table.partnerId, table.isPrimary),
+}))
+
 // ================= Microsite & Carrier Management =================
 
 // Microsites - partner branded websites we create and manage
@@ -664,6 +731,70 @@ export const scheduledEmails = pgTable("scheduled_emails", {
   sentAtIdx: index("idx_scheduled_emails_sent_at").on(table.sentAt),
 }))
 
+// ================= Outbound Webhook System =================
+
+// Webhook subscriptions - partner webhook endpoints for receiving event notifications
+export const webhookSubscriptions = pgTable("webhook_subscriptions", {
+  id: serial("id").primaryKey(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+  locationId: uuid("location_id").references(() => partnerLocations.id, { onDelete: "cascade" }),
+
+  // Webhook endpoint configuration
+  webhookUrl: text("webhook_url").notNull(),
+  webhookSecret: text("webhook_secret").notNull(),
+
+  // Subscribed events: policy.created, policy.updated, policy.cancelled, commission.earned, commission.paid, claim.filed, claim.updated
+  events: text("events").array().notNull(), // Array of event types
+
+  // Status
+  isActive: boolean("is_active").default(true).notNull(),
+  failureCount: integer("failure_count").default(0).notNull(),
+  lastFailureAt: timestamp("last_failure_at"),
+  lastTriggeredAt: timestamp("last_triggered_at"),
+  lastSuccessAt: timestamp("last_success_at"),
+
+  // Custom headers for webhook requests (e.g., API keys, auth tokens)
+  customHeaders: jsonb("custom_headers"),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_webhook_subscriptions_partner_id").on(table.partnerId),
+  locationIdIdx: index("idx_webhook_subscriptions_location_id").on(table.locationId),
+  isActiveIdx: index("idx_webhook_subscriptions_is_active").on(table.isActive),
+  partnerActiveIdx: index("idx_webhook_subscriptions_partner_active").on(table.partnerId, table.isActive),
+}))
+
+// Webhook delivery logs - audit trail for webhook deliveries
+export const webhookDeliveryLogs = pgTable("webhook_delivery_logs", {
+  id: serial("id").primaryKey(),
+  subscriptionId: integer("subscription_id").references(() => webhookSubscriptions.id, { onDelete: "cascade" }).notNull(),
+
+  // Event details
+  eventType: text("event_type").notNull(), // The event type that triggered this delivery
+  payload: jsonb("payload").notNull(), // The full webhook payload sent
+
+  // Response tracking
+  statusCode: integer("status_code"), // HTTP response status code
+  responseBody: text("response_body"), // Response body (truncated if too long)
+  responseTimeMs: integer("response_time_ms"), // Response time in milliseconds
+  errorMessage: text("error_message"), // Error message if delivery failed
+
+  // Delivery status
+  deliveredAt: timestamp("delivered_at"),
+  success: boolean("success").notNull(),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  subscriptionIdIdx: index("idx_webhook_delivery_logs_subscription_id").on(table.subscriptionId),
+  eventTypeIdx: index("idx_webhook_delivery_logs_event_type").on(table.eventType),
+  successIdx: index("idx_webhook_delivery_logs_success").on(table.success),
+  deliveredAtIdx: index("idx_webhook_delivery_logs_delivered_at").on(table.deliveredAt),
+  subscriptionEventIdx: index("idx_webhook_delivery_logs_subscription_event").on(table.subscriptionId, table.eventType),
+}))
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
@@ -711,3 +842,9 @@ export type EmailSequence = typeof emailSequences.$inferSelect
 export type NewEmailSequence = typeof emailSequences.$inferInsert
 export type ScheduledEmail = typeof scheduledEmails.$inferSelect
 export type NewScheduledEmail = typeof scheduledEmails.$inferInsert
+export type PartnerLocation = typeof partnerLocations.$inferSelect
+export type NewPartnerLocation = typeof partnerLocations.$inferInsert
+export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect
+export type NewWebhookSubscription = typeof webhookSubscriptions.$inferInsert
+export type WebhookDeliveryLog = typeof webhookDeliveryLogs.$inferSelect
+export type NewWebhookDeliveryLog = typeof webhookDeliveryLogs.$inferInsert

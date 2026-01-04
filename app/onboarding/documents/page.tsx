@@ -52,31 +52,37 @@ export default function OnboardingDocumentsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch document templates
-        const templatesRes = await fetch("/api/documents/templates")
-        const templatesData = await templatesRes.json()
-
-        if (templatesData.success) {
-          setTemplates(templatesData.templates)
-        } else {
-          throw new Error("Failed to load document templates")
-        }
-
-        // Fetch partner info and document status
+        // First, fetch partner info
         const partnerRes = await fetch("/api/partner/me")
+        let currentPartnerId: string | null = null
+
         if (partnerRes.ok) {
           const partnerData = await partnerRes.json()
           if (partnerData.partner) {
-            setPartnerId(partnerData.partner.id)
+            currentPartnerId = partnerData.partner.id
+            setPartnerId(currentPartnerId)
 
             // Fetch document signing status
-            const statusRes = await fetch(`/api/documents/sign?partnerId=${partnerData.partner.id}`)
+            const statusRes = await fetch(`/api/documents/sign?partnerId=${currentPartnerId}`)
             const statusData = await statusRes.json()
 
             if (statusData.success) {
               setDocumentStatuses(statusData.documents)
             }
           }
+        }
+
+        // Fetch document templates (with partner data for auto-population if available)
+        const templatesUrl = currentPartnerId
+          ? `/api/documents/templates?partnerId=${currentPartnerId}`
+          : "/api/documents/templates"
+        const templatesRes = await fetch(templatesUrl)
+        const templatesData = await templatesRes.json()
+
+        if (templatesData.success) {
+          setTemplates(templatesData.templates)
+        } else {
+          throw new Error("Failed to load document templates")
         }
       } catch (err) {
         console.error("Error loading documents:", err)

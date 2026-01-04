@@ -11,6 +11,11 @@ import {
   ArrowRight,
   Sparkles,
   Target,
+  Globe,
+  QrCode,
+  ExternalLink,
+  Copy,
+  Check,
 } from "lucide-react"
 import Link from "next/link"
 import { EarningsChart } from "@/components/partner/EarningsChart"
@@ -39,22 +44,47 @@ interface EarningsData {
   }>
 }
 
+interface MicrositeData {
+  id: string
+  domain?: string | null
+  subdomain?: string | null
+  siteName: string
+  status: string
+  qrCodeUrl?: string | null
+  launchedAt?: string | null
+}
+
 export default function PartnerDashboardPage() {
   const [earningsData, setEarningsData] = useState<EarningsData | null>(null)
+  const [micrositeData, setMicrositeData] = useState<MicrositeData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    async function fetchEarnings() {
+    async function fetchData() {
       try {
-        const response = await fetch("/api/partner/earnings")
-        if (!response.ok) {
-          throw new Error("Failed to fetch earnings data")
+        // Fetch earnings
+        const earningsResponse = await fetch("/api/partner/earnings")
+        if (earningsResponse.ok) {
+          const data = await earningsResponse.json()
+          setEarningsData(data)
+        } else {
+          // Use demo data if API fails
+          const demoData = generateDemoData()
+          setEarningsData(demoData)
         }
-        const data = await response.json()
-        setEarningsData(data)
+
+        // Fetch profile with microsite info
+        const profileResponse = await fetch("/api/partner/profile")
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json()
+          if (profileData.microsite) {
+            setMicrositeData(profileData.microsite)
+          }
+        }
       } catch (err) {
-        console.error("Error fetching earnings:", err)
+        console.error("Error fetching data:", err)
         // Use demo data if API fails
         const demoData = generateDemoData()
         setEarningsData(demoData)
@@ -63,8 +93,28 @@ export default function PartnerDashboardPage() {
       }
     }
 
-    fetchEarnings()
+    fetchData()
   }, [])
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy:", err)
+    }
+  }
+
+  const getMicrositeUrl = () => {
+    if (micrositeData?.domain) {
+      return `https://${micrositeData.domain}`
+    }
+    if (micrositeData?.subdomain) {
+      return `https://${micrositeData.subdomain}.dailyeventinsurance.com`
+    }
+    return null
+  }
 
   // Generate demo data for display
   function generateDemoData(): EarningsData {
@@ -296,11 +346,92 @@ export default function PartnerDashboardPage() {
         </motion.div>
       </div>
 
+      {/* Microsite & QR Code Section */}
+      {micrositeData && micrositeData.status === 'live' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
+          className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-6 shadow-lg border border-teal-100 mb-8"
+        >
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Microsite Info */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
+                  <Globe className="w-6 h-6 text-teal-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Your Microsite</h3>
+                  <p className="text-sm text-slate-600">Share this link with your customers</p>
+                </div>
+              </div>
+
+              {getMicrositeUrl() && (
+                <div className="bg-white rounded-xl p-4 border border-teal-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-sm font-medium text-slate-500">Microsite URL</span>
+                    <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                      Live
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-sm text-teal-700 bg-teal-50 px-3 py-2 rounded-lg font-mono truncate">
+                      {getMicrositeUrl()}
+                    </code>
+                    <button
+                      onClick={() => copyToClipboard(getMicrositeUrl()!)}
+                      className="p-2 hover:bg-teal-100 rounded-lg transition-colors"
+                      title="Copy URL"
+                    >
+                      {copied ? (
+                        <Check className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <Copy className="w-5 h-5 text-slate-500" />
+                      )}
+                    </button>
+                    <a
+                      href={getMicrositeUrl()!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 hover:bg-teal-100 rounded-lg transition-colors"
+                      title="Open in new tab"
+                    >
+                      <ExternalLink className="w-5 h-5 text-slate-500" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* QR Code */}
+            {micrositeData.qrCodeUrl && (
+              <div className="lg:w-48 flex flex-col items-center">
+                <div className="flex items-center gap-2 mb-3">
+                  <QrCode className="w-5 h-5 text-teal-600" />
+                  <span className="text-sm font-medium text-slate-700">QR Code</span>
+                </div>
+                <div className="bg-white p-3 rounded-xl border border-teal-200 shadow-sm">
+                  <img
+                    src={micrositeData.qrCodeUrl}
+                    alt="Microsite QR Code"
+                    className="w-36 h-36"
+                  />
+                </div>
+                <p className="text-xs text-slate-500 mt-2 text-center">
+                  Scan to access your customer portal
+                </p>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+
       {/* Quick Actions */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.7 }}
+        transition={{ duration: 0.4, delay: 0.8 }}
         className="grid md:grid-cols-3 gap-4"
       >
         <Link

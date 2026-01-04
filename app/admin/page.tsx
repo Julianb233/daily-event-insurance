@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   FileText,
@@ -10,6 +11,7 @@ import {
   Users,
   Shield,
   Layers,
+  RefreshCw,
 } from "lucide-react"
 
 const adminSections = [
@@ -48,12 +50,11 @@ const adminSections = [
   },
   {
     title: "Partner Management",
-    description: "View and manage partner accounts, approvals, and tier overrides",
+    description: "View and manage partner accounts, QR codes, revenue, and performance metrics",
     href: "/admin/partners",
     icon: Users,
     color: "bg-green-100 text-green-600",
     borderColor: "border-green-200 hover:border-green-400",
-    disabled: true,
   },
   {
     title: "Analytics Dashboard",
@@ -66,7 +67,48 @@ const adminSections = [
   },
 ]
 
+interface DashboardStats {
+  totalPartners: number
+  activePartners: number
+  totalPolicies: number
+  totalRevenue: number
+}
+
 export default function AdminPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch("/api/admin/partners?limit=1")
+        const data = await response.json()
+        if (data.success && data.summary) {
+          setStats({
+            totalPartners: data.summary.totalPartners,
+            activePartners: data.summary.activePartners,
+            totalPolicies: data.summary.totalPolicies,
+            totalRevenue: data.summary.totalRevenue
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStats()
+  }, [])
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -86,20 +128,28 @@ export default function AdminPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-1">Partner Resources</p>
-            <p className="text-2xl font-bold text-gray-900">16</p>
-          </div>
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-1">Document Templates</p>
-            <p className="text-2xl font-bold text-gray-900">3</p>
+            <p className="text-sm text-gray-500 mb-1">Total Partners</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {loading ? <RefreshCw className="w-5 h-5 animate-spin text-gray-400" /> : stats?.totalPartners || 0}
+            </p>
           </div>
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
             <p className="text-sm text-gray-500 mb-1">Active Partners</p>
-            <p className="text-2xl font-bold text-gray-900">--</p>
+            <p className="text-2xl font-bold text-green-600">
+              {loading ? <RefreshCw className="w-5 h-5 animate-spin text-gray-400" /> : stats?.activePartners || 0}
+            </p>
           </div>
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <p className="text-sm text-gray-500 mb-1">System Status</p>
-            <p className="text-lg font-bold text-green-600">Operational</p>
+            <p className="text-sm text-gray-500 mb-1">Total Policies</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {loading ? <RefreshCw className="w-5 h-5 animate-spin text-gray-400" /> : stats?.totalPolicies || 0}
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500 mb-1">Total Revenue</p>
+            <p className="text-2xl font-bold text-emerald-600">
+              {loading ? <RefreshCw className="w-5 h-5 animate-spin text-gray-400" /> : formatCurrency(stats?.totalRevenue || 0)}
+            </p>
           </div>
         </div>
 

@@ -1,15 +1,16 @@
-import { neon } from "@neondatabase/serverless"
+import postgres from "postgres"
 import { config } from "dotenv"
 
 config({ path: ".env.local" })
 
 async function runMigration() {
-  if (!process.env.DATABASE_URL) {
-    console.error("DATABASE_URL not set")
+  const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL
+  if (!connectionString) {
+    console.error("DATABASE_URL or POSTGRES_PRISMA_URL not set")
     process.exit(1)
   }
 
-  const sql = neon(process.env.DATABASE_URL)
+  const sql = postgres(connectionString, { ssl: 'require' })
 
   console.log("Adding missing indexes...")
 

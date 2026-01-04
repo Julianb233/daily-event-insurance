@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 // Type for voice call records
 interface VoiceCall {
@@ -24,11 +24,12 @@ interface VoiceCall {
 // GET - Fetch voice agent analytics
 export async function GET(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const { searchParams } = new URL(request.url);
     const configId = searchParams.get('config_id');
 
@@ -128,11 +129,12 @@ export async function GET(request: NextRequest) {
 // POST - Record call analytics (called by voice agent after call ends)
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.DATABASE_URL) {
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (!connectionString) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
     }
 
-    const sql = neon(process.env.DATABASE_URL);
+    const sql = postgres(connectionString, { ssl: 'require' });
     const body = await request.json();
 
     const {

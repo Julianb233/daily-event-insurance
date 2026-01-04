@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/neon-http"
-import { neon } from "@neondatabase/serverless"
+import { drizzle } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
 import * as schema from "./schema"
 
 // Check if database is configured
@@ -12,8 +12,10 @@ function createDb() {
     return null
   }
 
-  const sql = neon(process.env.DATABASE_URL!)
-  return drizzle(sql, { schema })
+  // Use postgres driver for Supabase/PostgreSQL
+  const connectionString = process.env.DATABASE_URL!
+  const client = postgres(connectionString, { ssl: 'require' })
+  return drizzle(client, { schema })
 }
 
 export const db = createDb()

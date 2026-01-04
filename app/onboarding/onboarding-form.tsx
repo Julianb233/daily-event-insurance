@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -14,6 +14,7 @@ import {
   Rocket,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Copy,
   Check,
   Download,
@@ -26,9 +27,52 @@ import {
   TrendingUp,
   BookOpen,
   Mail,
-  Loader2
+  Loader2,
+  AlertCircle,
+  Wand2,
+  MessageCircle,
+  Bot
 } from "lucide-react"
 import { RevenueCalculator } from "@/components/revenue-calculator"
+import { IntegrationAssistant } from "@/components/onboarding/IntegrationAssistant"
+
+// Validation helpers
+const validateEmail = (email: string): string | null => {
+  if (!email) return "Email is required"
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) return "Please enter a valid email address"
+  return null
+}
+
+const validatePhone = (phone: string): string | null => {
+  if (!phone) return "Phone number is required"
+  const digitsOnly = phone.replace(/\D/g, "")
+  if (digitsOnly.length < 10) return "Please enter a valid phone number"
+  return null
+}
+
+const validateUrl = (url: string): string | null => {
+  if (!url) return null // Optional field
+  try {
+    new URL(url.startsWith("http") ? url : `https://${url}`)
+    return null
+  } catch {
+    return "Please enter a valid website URL"
+  }
+}
+
+// Smart defaults based on business type
+const businessDefaults: Record<string, {
+  products: string[],
+  estimatedParticipants: number,
+  optInRate: number
+}> = {
+  gym: { products: ["liability", "equipment"], estimatedParticipants: 500, optInRate: 65 },
+  climbing: { products: ["liability", "equipment", "cancellation"], estimatedParticipants: 300, optInRate: 70 },
+  yoga: { products: ["liability"], estimatedParticipants: 200, optInRate: 60 },
+  rental: { products: ["liability", "equipment"], estimatedParticipants: 400, optInRate: 75 },
+  other: { products: ["liability"], estimatedParticipants: 300, optInRate: 65 },
+}
 
 // Shared form data interface
 interface OnboardingFormData {
@@ -61,9 +105,10 @@ interface OnboardingFormData {
 interface StepperProps {
   currentStep: number
   totalSteps: number
+  formData?: OnboardingFormData
 }
 
-function Stepper({ currentStep, totalSteps }: StepperProps) {
+function Stepper({ currentStep, totalSteps, formData }: StepperProps) {
   const steps = [
     { number: 1, title: "Customize", icon: Settings },
     { number: 2, title: "Business Info", icon: Building2 },
@@ -71,8 +116,57 @@ function Stepper({ currentStep, totalSteps }: StepperProps) {
     { number: 4, title: "Go Live", icon: Rocket },
   ]
 
+  // Calculate completion percentage based on filled fields
+  const calculateProgress = () => {
+    if (!formData) return ((currentStep - 1) / (totalSteps - 1)) * 100
+
+    let filledFields = 0
+    let totalFields = 12 // Core required fields
+
+    // Step 1 fields (customize)
+    if (formData.selectedProducts.length > 0) filledFields++
+    if (formData.primaryColor) filledFields++
+
+    // Step 2 fields (business info) - 6 essential fields
+    if (formData.businessName) filledFields++
+    if (formData.businessType) filledFields++
+    if (formData.contactName) filledFields++
+    if (formData.email) filledFields++
+    if (formData.phone) filledFields++
+    if (formData.websiteUrl) filledFields++
+
+    // Step 3 fields (integration)
+    if (formData.integrationType) filledFields++
+
+    // Bonus for optional fields
+    if (formData.address) filledFields++
+    if (formData.estimatedMonthlyParticipants) filledFields++
+    if (formData.estimatedCustomers) filledFields++
+
+    return Math.min(100, (filledFields / totalFields) * 100)
+  }
+
+  const progress = calculateProgress()
+  const timeRemaining = Math.max(1, Math.ceil((100 - progress) / 25)) // Roughly 1 min per 25%
+
   return (
     <div className="w-full max-w-4xl mx-auto mb-12">
+      {/* Progress Summary */}
+      <div className="mb-4 text-center">
+        <p className="text-sm text-gray-600">
+          Step {currentStep} of {totalSteps} • About {timeRemaining} minute{timeRemaining > 1 ? 's' : ''} remaining
+        </p>
+        <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden max-w-md mx-auto">
+          <motion.div
+            className="h-full bg-gradient-to-r from-[#14B8A6] to-[#0D9488]"
+            initial={{ width: "0%" }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          />
+        </div>
+        <p className="text-xs text-gray-500 mt-1">{Math.round(progress)}% Complete</p>
+      </div>
+
       <div className="relative">
         {/* Progress Bar */}
         <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200 -z-10">
@@ -125,6 +219,58 @@ function Stepper({ currentStep, totalSteps }: StepperProps) {
   )
 }
 
+// Sticky Earnings Preview Banner
+function EarningsPreview({ formData }: { formData: OnboardingFormData }) {
+  // Calculate estimated monthly earnings based on selections
+  const calculateEarnings = () => {
+    const monthlyParticipants = parseInt(formData.estimatedMonthlyParticipants) || 500
+    const optInRate = formData.businessType
+      ? businessDefaults[formData.businessType]?.optInRate || 65
+      : 65
+    const avgPolicyValue = 4.99
+    const commissionRate = 0.40
+
+    const estimatedPolicies = Math.round(monthlyParticipants * (optInRate / 100))
+    const estimatedEarnings = estimatedPolicies * avgPolicyValue * commissionRate
+
+    return {
+      policies: estimatedPolicies,
+      earnings: estimatedEarnings.toFixed(0),
+      optInRate,
+    }
+  }
+
+  const { policies, earnings, optInRate } = calculateEarnings()
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-3xl mx-auto mb-6"
+    >
+      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-teal-200 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#14B8A6] to-[#0D9488] flex items-center justify-center">
+              <DollarSign className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700">Estimated Monthly Earnings</p>
+              <p className="text-xs text-gray-500">
+                ~{policies} policies @ {optInRate}% opt-in rate
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-[#14B8A6]">${earnings}</p>
+            <p className="text-xs text-gray-500">passive income</p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 interface Step1Props {
   formData: OnboardingFormData
   setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
@@ -132,7 +278,94 @@ interface Step1Props {
   onBack: () => void
 }
 
+// Inline validation error component
+function FieldError({ message }: { message: string | null }) {
+  if (!message) return null
+  return (
+    <motion.p
+      initial={{ opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-1 text-sm text-red-500 flex items-center gap-1"
+    >
+      <AlertCircle className="w-3.5 h-3.5" />
+      {message}
+    </motion.p>
+  )
+}
+
 function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props) {
+  const [showOptional, setShowOptional] = useState(false)
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [isAutoFilling, setIsAutoFilling] = useState(false)
+
+  // Track which fields have been touched (for showing validation)
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+  }
+
+  // Validation errors (only show for touched fields)
+  const errors = {
+    businessName: touched.businessName && !formData.businessName ? "Business name is required" : null,
+    businessType: touched.businessType && !formData.businessType ? "Please select a business type" : null,
+    contactName: touched.contactName && !formData.contactName ? "Contact name is required" : null,
+    email: touched.email ? validateEmail(formData.email) : null,
+    phone: touched.phone ? validatePhone(formData.phone) : null,
+    websiteUrl: touched.websiteUrl ? validateUrl(formData.websiteUrl) : null,
+  }
+
+  // Check if essential fields are valid for continue button
+  const canContinue =
+    formData.businessName &&
+    formData.businessType &&
+    formData.contactName &&
+    formData.email &&
+    !validateEmail(formData.email) &&
+    formData.phone &&
+    !validatePhone(formData.phone)
+
+  // Auto-fill from website (simulated - would call FireCrawl API)
+  const handleWebsiteAutoFill = async () => {
+    if (!formData.websiteUrl || validateUrl(formData.websiteUrl)) return
+
+    setIsAutoFilling(true)
+    try {
+      // Call FireCrawl API to extract business info
+      const response = await fetch("/api/onboarding/scrape-website", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: formData.websiteUrl }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // Auto-populate fields from scraped data
+        setFormData(prev => ({
+          ...prev,
+          businessName: data.businessName || prev.businessName,
+          primaryColor: data.primaryColor || prev.primaryColor,
+          // Don't overwrite already-filled fields
+        }))
+      }
+    } catch (error) {
+      console.error("Auto-fill failed:", error)
+    } finally {
+      setIsAutoFilling(false)
+    }
+  }
+
+  // Apply smart defaults when business type changes
+  useEffect(() => {
+    if (formData.businessType && businessDefaults[formData.businessType]) {
+      const defaults = businessDefaults[formData.businessType]
+      setFormData(prev => ({
+        ...prev,
+        selectedProducts: prev.selectedProducts.length === 1 && prev.selectedProducts[0] === "liability"
+          ? defaults.products
+          : prev.selectedProducts,
+        estimatedMonthlyParticipants: prev.estimatedMonthlyParticipants || String(defaults.estimatedParticipants),
+      }))
+    }
+  }, [formData.businessType, setFormData])
 
   return (
     <motion.div
@@ -149,11 +382,12 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
-            <p className="text-sm text-gray-600">Tell us about your business</p>
+            <p className="text-sm text-gray-600">Just 6 quick fields to get started</p>
           </div>
         </div>
 
         <div className="space-y-6">
+          {/* Essential Fields - Only 6 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="businessName" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -164,13 +398,15 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 type="text"
                 value={formData.businessName}
                 onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                onBlur={() => handleBlur("businessName")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                  errors.businessName ? "border-red-300 bg-red-50" : "border-gray-300"
+                }`}
                 placeholder="Peak Performance Gym"
                 aria-required="true"
-                aria-describedby="businessName-hint"
                 autoComplete="organization"
               />
-              <span id="businessName-hint" className="sr-only">Enter your business name</span>
+              <FieldError message={errors.businessName} />
             </div>
 
             <div>
@@ -181,55 +417,42 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 id="businessType"
                 value={formData.businessType}
                 onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                onBlur={() => handleBlur("businessType")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                  errors.businessType ? "border-red-300 bg-red-50" : "border-gray-300"
+                }`}
                 aria-required="true"
-                aria-describedby="businessType-hint"
               >
                 <option value="">Select type</option>
-                <option value="gym">Gym</option>
+                <option value="gym">Gym / Fitness Center</option>
                 <option value="climbing">Climbing Facility</option>
+                <option value="yoga">Yoga / Pilates Studio</option>
                 <option value="rental">Equipment Rental</option>
                 <option value="other">Other</option>
               </select>
-              <span id="businessType-hint" className="sr-only">Select your business type from the dropdown</span>
+              <FieldError message={errors.businessType} />
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">
-              Business Address *
-            </label>
-            <input
-              id="address"
-              type="text"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-              placeholder="123 Main St, City, State ZIP"
-              aria-required="true"
-              aria-describedby="address-hint"
-              autoComplete="street-address"
-            />
-            <span id="address-hint" className="sr-only">Enter your full business address</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="contactName" className="block text-sm font-semibold text-gray-700 mb-2">
-                Contact Name *
+                Your Name *
               </label>
               <input
                 id="contactName"
                 type="text"
                 value={formData.contactName}
                 onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                onBlur={() => handleBlur("contactName")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                  errors.contactName ? "border-red-300 bg-red-50" : "border-gray-300"
+                }`}
                 placeholder="John Smith"
                 aria-required="true"
-                aria-describedby="contactName-hint"
                 autoComplete="name"
               />
-              <span id="contactName-hint" className="sr-only">Enter the primary contact name</span>
+              <FieldError message={errors.contactName} />
             </div>
 
             <div>
@@ -241,13 +464,15 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                onBlur={() => handleBlur("email")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                  errors.email ? "border-red-300 bg-red-50" : "border-gray-300"
+                }`}
                 placeholder="john@example.com"
                 aria-required="true"
-                aria-describedby="email-hint"
                 autoComplete="email"
               />
-              <span id="email-hint" className="sr-only">Enter your business email address</span>
+              <FieldError message={errors.email} />
             </div>
           </div>
 
@@ -261,153 +486,174 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                onBlur={() => handleBlur("phone")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                  errors.phone ? "border-red-300 bg-red-50" : "border-gray-300"
+                }`}
                 placeholder="(555) 123-4567"
                 aria-required="true"
-                aria-describedby="phone-hint"
                 autoComplete="tel"
               />
-              <span id="phone-hint" className="sr-only">Enter your business phone number</span>
+              <FieldError message={errors.phone} />
             </div>
 
             <div>
-              <label htmlFor="estimatedCustomers" className="block text-sm font-semibold text-gray-700 mb-2">
-                Estimated Daily Customers *
+              <label htmlFor="websiteUrl" className="block text-sm font-semibold text-gray-700 mb-2">
+                Website URL
               </label>
-              <select
-                id="estimatedCustomers"
-                value={formData.estimatedCustomers}
-                onChange={(e) => setFormData({ ...formData, estimatedCustomers: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                aria-required="true"
-                aria-describedby="estimatedCustomers-hint"
+              <div className="relative">
+                <input
+                  id="websiteUrl"
+                  type="url"
+                  value={formData.websiteUrl}
+                  onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
+                  onBlur={() => {
+                    handleBlur("websiteUrl")
+                    handleWebsiteAutoFill()
+                  }}
+                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
+                    errors.websiteUrl ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
+                  placeholder="https://yourcompany.com"
+                  autoComplete="url"
+                />
+                {formData.websiteUrl && !errors.websiteUrl && (
+                  <button
+                    type="button"
+                    onClick={handleWebsiteAutoFill}
+                    disabled={isAutoFilling}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-[#14B8A6] transition-colors"
+                    title="Auto-fill from website"
+                  >
+                    {isAutoFilling ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Wand2 className="w-5 h-5" />
+                    )}
+                  </button>
+                )}
+              </div>
+              <FieldError message={errors.websiteUrl} />
+              <p className="text-xs text-gray-500 mt-1">We'll use this to auto-customize your branding</p>
+            </div>
+          </div>
+
+          {/* Collapsible Optional Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <button
+              type="button"
+              onClick={() => setShowOptional(!showOptional)}
+              className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors w-full"
+            >
+              <motion.div
+                animate={{ rotate: showOptional ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
               >
-                <option value="">Select range</option>
-                <option value="1-50">1-50 customers/day</option>
-                <option value="51-100">51-100 customers/day</option>
-                <option value="101-250">101-250 customers/day</option>
-                <option value="250+">250+ customers/day</option>
-              </select>
-              <span id="estimatedCustomers-hint" className="sr-only">Select your estimated daily customer volume</span>
-            </div>
-          </div>
+                <ChevronDown className="w-5 h-5" />
+              </motion.div>
+              More Details (Optional)
+              <span className="text-xs text-gray-400 font-normal ml-2">
+                Address, team size, secondary contact
+              </span>
+            </button>
 
-          {/* Website URL */}
-          <div>
-            <label htmlFor="websiteUrl" className="block text-sm font-semibold text-gray-700 mb-2">
-              Website URL
-            </label>
-            <input
-              id="websiteUrl"
-              type="url"
-              value={formData.websiteUrl}
-              onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-              placeholder="https://yourcompany.com"
-              aria-describedby="websiteUrl-hint"
-              autoComplete="url"
-            />
-            <span id="websiteUrl-hint" className="sr-only">Enter your business website URL</span>
-          </div>
+            <AnimatePresence>
+              {showOptional && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-6 space-y-6">
+                    {/* Address */}
+                    <div>
+                      <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Business Address
+                      </label>
+                      <input
+                        id="address"
+                        type="text"
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                        placeholder="123 Main St, City, State ZIP"
+                        autoComplete="street-address"
+                      />
+                    </div>
 
-          {/* Direct Contact Section */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Direct Point of Contact (Optional)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="directContactName" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contact Person Name
-                </label>
-                <input
-                  id="directContactName"
-                  type="text"
-                  value={formData.directContactName}
-                  onChange={(e) => setFormData({ ...formData, directContactName: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                  placeholder="Jane Doe"
-                  aria-describedby="directContactName-hint"
-                  autoComplete="name"
-                />
-                <span id="directContactName-hint" className="sr-only">Enter direct contact person name</span>
-              </div>
+                    {/* Business Volume */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="estimatedCustomers" className="block text-sm font-semibold text-gray-700 mb-2">
+                          Daily Customers
+                        </label>
+                        <select
+                          id="estimatedCustomers"
+                          value={formData.estimatedCustomers}
+                          onChange={(e) => setFormData({ ...formData, estimatedCustomers: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                        >
+                          <option value="">Select range</option>
+                          <option value="1-50">1-50 customers/day</option>
+                          <option value="51-100">51-100 customers/day</option>
+                          <option value="101-250">101-250 customers/day</option>
+                          <option value="250+">250+ customers/day</option>
+                        </select>
+                      </div>
 
-              <div>
-                <label htmlFor="directContactEmail" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contact Email
-                </label>
-                <input
-                  id="directContactEmail"
-                  type="email"
-                  value={formData.directContactEmail}
-                  onChange={(e) => setFormData({ ...formData, directContactEmail: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                  placeholder="jane@company.com"
-                  aria-describedby="directContactEmail-hint"
-                  autoComplete="email"
-                />
-                <span id="directContactEmail-hint" className="sr-only">Enter direct contact email</span>
-              </div>
-            </div>
+                      <div>
+                        <label htmlFor="estimatedMonthlyParticipants" className="block text-sm font-semibold text-gray-700 mb-2">
+                          Monthly Participants
+                        </label>
+                        <input
+                          id="estimatedMonthlyParticipants"
+                          type="number"
+                          min="0"
+                          value={formData.estimatedMonthlyParticipants}
+                          onChange={(e) => setFormData({ ...formData, estimatedMonthlyParticipants: e.target.value })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                          placeholder="1000"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Used for revenue estimates</p>
+                      </div>
+                    </div>
 
-            <div className="mt-6">
-              <label htmlFor="directContactPhone" className="block text-sm font-semibold text-gray-700 mb-2">
-                Contact Phone
-              </label>
-              <input
-                id="directContactPhone"
-                type="tel"
-                value={formData.directContactPhone}
-                onChange={(e) => setFormData({ ...formData, directContactPhone: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                placeholder="(555) 123-4567"
-                aria-describedby="directContactPhone-hint"
-                autoComplete="tel"
-              />
-              <span id="directContactPhone-hint" className="sr-only">Enter direct contact phone</span>
-            </div>
-          </div>
-
-          {/* Participant Count Section */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Volume</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="estimatedMonthlyParticipants" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Estimated Monthly Participants *
-                </label>
-                <input
-                  id="estimatedMonthlyParticipants"
-                  type="number"
-                  min="0"
-                  value={formData.estimatedMonthlyParticipants}
-                  onChange={(e) => setFormData({ ...formData, estimatedMonthlyParticipants: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                  placeholder="1000"
-                  aria-required="true"
-                  aria-describedby="estimatedMonthlyParticipants-hint"
-                />
-                <p className="text-xs text-gray-500 mt-1">Total people passing through monthly</p>
-                <span id="estimatedMonthlyParticipants-hint" className="sr-only">Enter estimated monthly participants</span>
-              </div>
-
-              <div>
-                <label htmlFor="estimatedAnnualParticipants" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Estimated Annual Participants
-                </label>
-                <input
-                  id="estimatedAnnualParticipants"
-                  type="number"
-                  min="0"
-                  value={formData.estimatedAnnualParticipants}
-                  onChange={(e) => setFormData({ ...formData, estimatedAnnualParticipants: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
-                  placeholder="12000"
-                  aria-describedby="estimatedAnnualParticipants-hint"
-                />
-                <p className="text-xs text-gray-500 mt-1">Total people passing through annually</p>
-                <span id="estimatedAnnualParticipants-hint" className="sr-only">Enter estimated annual participants</span>
-              </div>
-            </div>
+                    {/* Secondary Contact */}
+                    <div className="bg-gray-50 rounded-xl p-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-4">Secondary Contact</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input
+                          type="text"
+                          value={formData.directContactName}
+                          onChange={(e) => setFormData({ ...formData, directContactName: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all text-sm"
+                          placeholder="Name"
+                          autoComplete="name"
+                        />
+                        <input
+                          type="email"
+                          value={formData.directContactEmail}
+                          onChange={(e) => setFormData({ ...formData, directContactEmail: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all text-sm"
+                          placeholder="Email"
+                          autoComplete="email"
+                        />
+                        <input
+                          type="tel"
+                          value={formData.directContactPhone}
+                          onChange={(e) => setFormData({ ...formData, directContactPhone: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all text-sm"
+                          placeholder="Phone"
+                          autoComplete="tel"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -424,11 +670,26 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onNext}
+            whileHover={{ scale: canContinue ? 1.02 : 1 }}
+            whileTap={{ scale: canContinue ? 0.98 : 1 }}
+            onClick={() => {
+              // Touch all fields to show validation
+              setTouched({
+                businessName: true,
+                businessType: true,
+                contactName: true,
+                email: true,
+                phone: true,
+                websiteUrl: true,
+              })
+              if (canContinue) onNext()
+            }}
             aria-label="Continue to integration selection"
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
+            className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
+              canContinue
+                ? "bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white hover:shadow-lg"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+            }`}
           >
             Continue
             <ChevronRight className="w-5 h-5" aria-hidden="true" />
@@ -1222,6 +1483,8 @@ export default function OnboardingForm() {
   const [isComplete, setIsComplete] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showAIAssistant, setShowAIAssistant] = useState(false)
+  const [detectedPlatform, setDetectedPlatform] = useState<string | null>(null)
 
   // Shared form data across all steps
   const [formData, setFormData] = useState<OnboardingFormData>({
@@ -1371,7 +1634,10 @@ export default function OnboardingForm() {
         {!isComplete && currentStep === 3 && <RevenueCalculator />}
 
         {/* Stepper */}
-        {!isComplete && <Stepper currentStep={currentStep} totalSteps={4} />}
+        {!isComplete && <Stepper currentStep={currentStep} totalSteps={4} formData={formData} />}
+
+        {/* Earnings Preview - Show on steps 2-4 */}
+        {!isComplete && currentStep >= 2 && <EarningsPreview formData={formData} />}
 
         {/* Steps */}
         <AnimatePresence mode="wait">
@@ -1419,9 +1685,60 @@ export default function OnboardingForm() {
 
           {isComplete && <SuccessState />}
         </AnimatePresence>
+
+        {/* AI Integration Assistant - Show on Integration step */}
+        {!isComplete && currentStep === 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mx-auto mt-8"
+          >
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    Need Help With Integration?
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Our AI assistant can help you integrate with Mindbody, Shopify, Square, Stripe, and more.
+                    Get step-by-step guidance and custom code snippets for your platform.
+                  </p>
+                  <button
+                    onClick={() => setShowAIAssistant(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Chat with AI Assistant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       <Footer />
+
+      {/* AI Integration Assistant Chat Widget */}
+      <IntegrationAssistant
+        partnerId={formData.businessName ? formData.businessName.toLowerCase().replace(/\s+/g, "-") : undefined}
+        partnerName={formData.businessName || undefined}
+        businessType={formData.businessType || undefined}
+        isOpen={showAIAssistant}
+        onOpenChange={setShowAIAssistant}
+        onPlatformDetected={(platform) => {
+          setDetectedPlatform(platform)
+          // Auto-select appropriate integration type based on platform
+          if (platform === "generic-widget") {
+            setFormData(prev => ({ ...prev, integrationType: "widget" }))
+          } else if (["mindbody", "zen-planner", "square", "stripe", "shopify", "woocommerce"].includes(platform)) {
+            setFormData(prev => ({ ...prev, integrationType: "api" }))
+          }
+        }}
+      />
     </main>
   )
 }
