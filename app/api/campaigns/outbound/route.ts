@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { successResponse, serverError, validationError } from '@/lib/api-utils'
 import { startOutboundSequence, stopOutboundSequence } from '@/lib/email/sequences-outbound'
+import { requireAdmin, withAuth } from '@/lib/api-auth'
 
 // Validation schema for starting an outbound campaign
 const startCampaignSchema = z.object({
@@ -23,9 +24,13 @@ const stopCampaignSchema = z.object({
 /**
  * POST /api/campaigns/outbound
  * Start an outbound email sequence for a prospect
+ * SECURITY: Requires admin authentication
  */
 export async function POST(request: NextRequest) {
-  try {
+  return withAuth(async () => {
+    // Require admin access to manage campaigns
+    await requireAdmin()
+
     const body = await request.json()
     const validation = startCampaignSchema.safeParse(body)
 
@@ -62,19 +67,19 @@ export async function POST(request: NextRequest) {
       'Outbound campaign started successfully',
       201
     )
-
-  } catch (error) {
-    console.error('Error starting outbound campaign:', error)
-    return serverError('Failed to start campaign')
-  }
+  })
 }
 
 /**
  * DELETE /api/campaigns/outbound
  * Stop an outbound sequence (when prospect replies or converts)
+ * SECURITY: Requires admin authentication
  */
 export async function DELETE(request: NextRequest) {
-  try {
+  return withAuth(async () => {
+    // Require admin access to manage campaigns
+    await requireAdmin()
+
     const body = await request.json()
     const validation = stopCampaignSchema.safeParse(body)
 
@@ -94,19 +99,19 @@ export async function DELETE(request: NextRequest) {
       { leadId, stopped: true },
       'Campaign stopped successfully'
     )
-
-  } catch (error) {
-    console.error('Error stopping outbound campaign:', error)
-    return serverError('Failed to stop campaign')
-  }
+  })
 }
 
 /**
  * GET /api/campaigns/outbound?leadId=xxx
  * Get status of outbound sequence
+ * SECURITY: Requires admin authentication
  */
 export async function GET(request: NextRequest) {
-  try {
+  return withAuth(async () => {
+    // Require admin access to view campaign status
+    await requireAdmin()
+
     const { searchParams } = new URL(request.url)
     const leadId = searchParams.get('leadId')
 
@@ -114,7 +119,7 @@ export async function GET(request: NextRequest) {
       return validationError('leadId parameter is required')
     }
 
-    const { startOutboundSequence, getOutboundSequenceStatus } = await import('@/lib/email/sequences-outbound')
+    const { getOutboundSequenceStatus } = await import('@/lib/email/sequences-outbound')
     const result = await getOutboundSequenceStatus(leadId)
 
     if (result.error) {
@@ -125,9 +130,5 @@ export async function GET(request: NextRequest) {
       sequence: result.sequence,
       emails: result.scheduledEmails,
     })
-
-  } catch (error) {
-    console.error('Error fetching campaign status:', error)
-    return serverError('Failed to fetch campaign status')
-  }
+  })
 }

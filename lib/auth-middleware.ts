@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from './auth';
 
-// Development mode - bypass auth when NextAuth isn't configured
-const isDevMode = !process.env.AUTH_SECRET;
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development';
 
 // Mock users for development
 const MOCK_ADMIN = {

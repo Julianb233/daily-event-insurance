@@ -5,8 +5,9 @@ import type { NextRequest } from "next/server"
 
 const { auth } = NextAuth(authConfig)
 
-// Development mode - bypass auth when NextAuth isn't configured
-const isDevMode = !process.env.AUTH_SECRET
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development'
 
 // Route role requirements - more specific routes should come first
 const ROUTE_ROLES: Record<string, string[]> = {
@@ -40,9 +41,9 @@ const publicRoutes = [
   "/api/webhook", // Webhooks need to be public
 ]
 
-// Dev mode middleware - bypasses auth entirely
+// Dev mode middleware - bypasses auth entirely (only in NODE_ENV=development)
 function devModeMiddleware() {
-  console.log("[DEV MODE] NextAuth middleware bypassed - no AUTH_SECRET configured")
+  console.log("[DEV MODE] NextAuth middleware bypassed - NODE_ENV is development")
   return NextResponse.next()
 }
 
@@ -115,13 +116,9 @@ const productionMiddleware = auth((req) => {
     }
 
     if (nextUrl.pathname.startsWith("/api/")) {
-      // API routes return 403 Forbidden with detailed error
+      // API routes return 403 Forbidden - SECURITY: Don't expose role requirements
       return NextResponse.json(
-        {
-          error: "Forbidden: Insufficient permissions",
-          required: requiredRoles,
-          current: userRole || "none"
-        },
+        { error: "Forbidden", message: "Insufficient permissions" },
         { status: 403 }
       )
     }

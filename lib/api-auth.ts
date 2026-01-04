@@ -3,8 +3,9 @@ import { NextResponse } from "next/server"
 import { db, users } from "@/lib/db"
 import { eq } from "drizzle-orm"
 
-// Development mode - bypass auth when NextAuth isn't configured
-const isDevMode = !process.env.AUTH_SECRET
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development'
 
 // Mock user for development
 const MOCK_USER = {

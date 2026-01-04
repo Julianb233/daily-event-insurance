@@ -7,8 +7,9 @@ import { eq } from "drizzle-orm"
 import bcrypt from "bcryptjs"
 import { authConfig } from "./auth.config"
 
-// Development mode check
-const isDevMode = !process.env.AUTH_SECRET
+// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
+// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
+const isDevMode = process.env.NODE_ENV === 'development'
 
 // Create NextAuth instance
 export const { handlers, auth, signIn, signOut } = NextAuth({
