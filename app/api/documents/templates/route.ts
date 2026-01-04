@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { documentTemplates, partners } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { demoDocuments, DOCUMENT_TYPES } from "@/lib/demo-documents"
+import { requireAdmin, withAuth } from "@/lib/api-auth"
 
 /**
  * Auto-populate document content with partner data
@@ -121,63 +122,80 @@ export async function GET(request: Request) {
   }
 }
 
-// POST /api/documents/templates - Create a new template (admin only)
+/**
+ * POST /api/documents/templates - Create a new template
+ * SECURITY: Requires admin authentication
+ */
 export async function POST(request: Request) {
-  try {
-    const body = await request.json()
-    const { type, title, content, version = "1.0" } = body
+  return withAuth(async () => {
+    // Require admin access to modify document templates
+    const { userId } = await requireAdmin()
 
-    if (!type || !title || !content) {
-      return NextResponse.json(
-        { success: false, error: "Missing required fields: type, title, content" },
-        { status: 400 }
-      )
-    }
+    try {
+      const body = await request.json()
+      const { type, title, content, version = "1.0" } = body
 
-    // Validate type is one of allowed types
-    const validTypes = Object.values(DOCUMENT_TYPES)
-    if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { success: false, error: `Invalid type. Must be one of: ${validTypes.join(", ")}` },
-        { status: 400 }
-      )
-    }
+      if (!type || !title || !content) {
+        return NextResponse.json(
+          { success: false, error: "Missing required fields: type, title, content" },
+          { status: 400 }
+        )
+      }
 
-    // Check database connection
-    if (!db) {
+      // Validate type is one of allowed types
+      const validTypes = Object.values(DOCUMENT_TYPES)
+      if (!validTypes.includes(type)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid type. Must be one of: ${validTypes.join(", ")}` },
+          { status: 400 }
+        )
+      }
+
+      // Check database connection
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
+        )
+      }
+
+      // Deactivate existing template of same type
+      await db
+        .update(documentTemplates)
+        .set({ isActive: false, updatedAt: new Date() })
+        .where(eq(documentTemplates.type, type))
+
+      // Create new template
+      const [newTemplate] = await db
+        .insert(documentTemplates)
+        .values({
+          type,
+          title,
+          content,
+          version,
+          isActive: true,
+        })
+        .returning()
+
+      // Audit log for template modification
+      console.log('[AUDIT] Document template modified:', {
+        timestamp: new Date().toISOString(),
+        action: 'TEMPLATE_UPDATE',
+        modifiedBy: userId,
+        templateType: type,
+        newVersion: version,
+      })
+
+      return NextResponse.json({
+        success: true,
+        template: newTemplate,
+      })
+    } catch (error) {
+      console.error("Error creating document template:", error)
       return NextResponse.json(
-        { success: false, error: "Database not configured" },
+        { success: false, error: "Failed to create template" },
         { status: 500 }
       )
     }
-
-    // Deactivate existing template of same type
-    await db
-      .update(documentTemplates)
-      .set({ isActive: false, updatedAt: new Date() })
-      .where(eq(documentTemplates.type, type))
-
-    // Create new template
-    const [newTemplate] = await db
-      .insert(documentTemplates)
-      .values({
-        type,
-        title,
-        content,
-        version,
-        isActive: true,
-      })
-      .returning()
-
-    return NextResponse.json({
-      success: true,
-      template: newTemplate,
-    })
-  } catch (error) {
-    console.error("Error creating document template:", error)
-    return NextResponse.json(
-      { success: false, error: "Failed to create template" },
-      { status: 500 }
-    )
-  }
+  })
 }
