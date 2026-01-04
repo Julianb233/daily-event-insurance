@@ -91,6 +91,7 @@ describe('/api/auth/register', () => {
       const data = await response.json()
 
       expect(response.status).toBe(400)
+      // Missing password is a general validation error, not a password strength issue
       expect(data.error).toBe('Validation failed')
       expect(data.details).toEqual(
         expect.arrayContaining([
