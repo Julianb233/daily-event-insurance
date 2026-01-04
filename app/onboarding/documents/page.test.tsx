@@ -29,11 +29,11 @@ vi.mock('framer-motion', () => ({
 
 // Mock components
 vi.mock('@/components/header', () => ({
-  Header: () => <header data-testid="header">Header</header>,
+  default: () => <header data-testid="header">Header</header>,
 }))
 
 vi.mock('@/components/footer', () => ({
-  Footer: () => <footer data-testid="footer">Footer</footer>,
+  default: () => <footer data-testid="footer">Footer</footer>,
 }))
 
 // Mock DocumentViewer with controllable behavior
