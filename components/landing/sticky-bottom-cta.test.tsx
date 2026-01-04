@@ -6,8 +6,8 @@ import { StickyBottomCTA } from './sticky-bottom-cta';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { initial, animate, exit, transition, ...validProps } = props;
+      // Destructure animation props to exclude them from DOM
+      const { initial: _initial, animate: _animate, exit: _exit, transition: _transition, ...validProps } = props;
       return <div {...validProps}>{children}</div>;
     },
   },

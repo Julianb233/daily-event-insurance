@@ -26,7 +26,7 @@ async function main() {
 
   // Create authenticated client (verbose: 0=off, 1=info, 2=debug)
   const client = await createStagehandClient({ verbose: 1 })
-  const { page, getCredentials, close } = client
+  const { stagehand, page, getCredentials, close } = client
 
   try {
     // Get credentials from 1Password
@@ -40,31 +40,26 @@ async function main() {
       waitUntil: "domcontentloaded"
     })
 
-    // Perform login
+    // Perform login using stagehand.act (AI-powered actions)
     console.log("📝 Filling login form...")
-    await page.act({
-      action: "Type in the username: %username%",
-      variables: { username: creds.username },
-    })
-    await page.act("Click continue")
+    await stagehand.act(`Type in the username: ${creds.username}`)
+    await stagehand.act("Click continue")
 
-    await page.act({
-      action: "Type in the password: %password%",
-      variables: { password: creds.password },
-    })
-    await page.act("Click the sign in button")
+    await stagehand.act(`Type in the password: ${creds.password}`)
+    await stagehand.act("Click the sign in button")
 
-    await page.waitForLoadState("domcontentloaded")
+    // Wait for page to settle after login
+    await page.waitForLoadState("networkidle", 30000)
     console.log("✅ Login successful!")
 
-    // Extract data from dashboard
+    // Extract data from dashboard using stagehand.extract
     console.log("📊 Extracting project data...")
-    const result = await page.extract({
-      instruction: "Extract the project ID of the Browserbase account",
-      schema: z.object({
+    const result = await stagehand.extract(
+      "Extract the project ID of the Browserbase account",
+      z.object({
         projectId: z.string(),
-      }),
-    })
+      })
+    )
 
     console.log("📋 Extracted data:", result)
 

@@ -62,24 +62,26 @@ export async function searchKnowledgeBase(
  */
 export async function generateRAGResponse(
   userMessage: string,
-  conversationHistory: ChatMessage[] = []
+  conversationHistory: ChatMessage[] = [],
+  systemPrompt?: string
 ): Promise<string> {
   // Search knowledge base for relevant context
   const relevantContext = await searchKnowledgeBase(userMessage, 3)
-  
+
   // Build context string
   const contextText = relevantContext
     .map(entry => entry.content)
     .join('\n\n')
-  
+
   // Generate response using context
   // In production, this would use an LLM (OpenAI, Anthropic, etc.)
   const response = await generateResponseWithContext(
     userMessage,
     contextText,
-    conversationHistory
+    conversationHistory,
+    systemPrompt
   )
-  
+
   return response
 }
 
@@ -89,19 +91,85 @@ export async function generateRAGResponse(
 async function generateResponseWithContext(
   userMessage: string,
   context: string,
-  history: ChatMessage[]
+  history: ChatMessage[],
+  systemPrompt?: string
 ): Promise<string> {
   // Placeholder implementation
   // In production, call OpenAI/Anthropic API with:
   // - System prompt with context
   // - Conversation history
   // - User message
-  
-  if (context) {
+
+  // Use agent-aware response generation
+  const response = generateAgentResponse(userMessage, systemPrompt)
+
+  if (context && response === null) {
     return `Based on our information: ${context.substring(0, 200)}... I can help you with that. ${generateBasicResponse(userMessage)}`
   }
-  
-  return generateBasicResponse(userMessage)
+
+  return response || generateBasicResponse(userMessage)
+}
+
+/**
+ * Generate agent-specific response based on system prompt
+ */
+function generateAgentResponse(message: string, systemPrompt?: string): string | null {
+  if (!systemPrompt) return null
+
+  const lowerMessage = message.toLowerCase()
+  const isSupport = systemPrompt.includes('Alex') && systemPrompt.includes('support')
+  const isSales = systemPrompt.includes('Jordan') && systemPrompt.includes('partnership')
+  const isOnboarding = systemPrompt.includes('Sam') && systemPrompt.includes('onboarding')
+
+  // Support agent responses
+  if (isSupport) {
+    if (lowerMessage.includes('certificate') || lowerMessage.includes('didn\'t receive')) {
+      return 'I\'m sorry you haven\'t received your certificate! Certificates are sent instantly via email after purchase. Please check your spam folder first. If you still can\'t find it, I can look up your policy and resend it. What email did you use when purchasing?'
+    }
+    if (lowerMessage.includes('claim') || lowerMessage.includes('file')) {
+      return 'I can help you understand the claims process. To file a claim, you\'ll need to email claims@dailyeventinsurance.com within 30 days of the incident with your policy number and a description of what happened. Our claims team will guide you through the next steps. What happened at your event?'
+    }
+    if (lowerMessage.includes('refund')) {
+      return 'I can help with your refund request. If your coverage period hasn\'t started yet, you\'re eligible for a full refund. If coverage has begun, refunds are prorated. Can you share your policy number so I can check the status?'
+    }
+    if (lowerMessage.includes('coverage') || lowerMessage.includes('include') || lowerMessage.includes('covered')) {
+      return 'Our daily coverage typically includes accident medical expense coverage, general liability, and personal liability protection. The specific coverage depends on your activity type and policy. Would you like me to explain the coverage for your specific activity?'
+    }
+  }
+
+  // Sales agent responses
+  if (isSales) {
+    if (lowerMessage.includes('how much') || lowerMessage.includes('earn') || lowerMessage.includes('money')) {
+      return 'Great question! You\'ll earn 15-25% commission on every policy sold - that\'s typically $1.50-3.00 per sale. If you have 500 drop-ins per month and 25% opt for coverage, that\'s about $250/month in passive income. Want me to calculate based on your specific visitor numbers?'
+    }
+    if (lowerMessage.includes('catch') || lowerMessage.includes('cost') || lowerMessage.includes('risk')) {
+      return 'There\'s no catch! We make money when customers buy coverage, and we share that with you because you\'re making the connection. There are zero upfront costs, no monthly fees, and no contracts. If your customers don\'t buy, neither of us makes money - but you haven\'t lost anything. It\'s aligned incentives.'
+    }
+    if (lowerMessage.includes('how does it work') || lowerMessage.includes('work')) {
+      return 'It\'s simple: You put up a QR code at your front desk. Customers scan it, purchase coverage in 2 minutes on their phone, and get their certificate instantly. You don\'t handle any money or paperwork - we do everything. You just earn commission on every sale. Want me to show you the customer experience?'
+    }
+    if (lowerMessage.includes('join') || lowerMessage.includes('sign up') || lowerMessage.includes('get started')) {
+      return 'Awesome! Getting started takes about 5 minutes. You\'ll enter your business info, set up your payout method, and then you can download QR codes immediately. You could literally be earning by tomorrow. Ready to sign up? I can walk you through it.'
+    }
+  }
+
+  // Onboarding agent responses
+  if (isOnboarding) {
+    if (lowerMessage.includes('qr') || lowerMessage.includes('code')) {
+      return 'Great question! To set up your QR codes: Go to your Partner Portal at dailyeventinsurance.com/partner, click "Marketing Materials", and you\'ll see downloadable QR code posters. Print them and put them at your front desk, near waivers, or in your check-in area. Customers scan and purchase right on their phones!'
+    }
+    if (lowerMessage.includes('paid') || lowerMessage.includes('payment') || lowerMessage.includes('payout')) {
+      return 'You\'ll get paid monthly by the 15th for the previous month\'s sales. Set up your payout method in your Partner Portal under "Account Settings" > "Payout Info". You can choose direct deposit or PayPal. Once it\'s set up, payments are automatic!'
+    }
+    if (lowerMessage.includes('staff') || lowerMessage.includes('train') || lowerMessage.includes('tell')) {
+      return 'Keep it simple for your staff! Just train them to mention: "Would you like day coverage for $8?" when customers check in. We have a quick reference card you can print. The QR code does the rest - customers purchase themselves. Your team doesn\'t need to handle money or paperwork.'
+    }
+    if (lowerMessage.includes('track') || lowerMessage.includes('earning') || lowerMessage.includes('dashboard')) {
+      return 'Your Partner Dashboard shows everything in real-time: total sales, commission earned, conversion rates, and pending payouts. Log in at dailyeventinsurance.com/partner to see your stats. You can also download reports for your records!'
+    }
+  }
+
+  return null
 }
 
 /**

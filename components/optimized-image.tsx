@@ -9,7 +9,7 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   fallbackSrc?: string
 }
 
-export function OptimizedImage({ src, fallbackSrc, ...props }: OptimizedImageProps) {
+export function OptimizedImage({ src, fallbackSrc, alt, ...props }: OptimizedImageProps) {
   // Convert PNG/JPG to WebP path
   const webpSrc = src.replace(/\.(png|jpg|jpeg)$/i, '.webp')
 
@@ -19,6 +19,7 @@ export function OptimizedImage({ src, fallbackSrc, ...props }: OptimizedImagePro
       <source srcSet={webpSrc} type="image/webp" />
       <Image
         src={fallbackSrc || src}
+        alt={alt}
         {...props}
       />
     </picture>

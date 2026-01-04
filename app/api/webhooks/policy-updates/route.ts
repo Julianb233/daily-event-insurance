@@ -10,22 +10,35 @@ import {
 } from "@/lib/api-responses"
 import crypto from "crypto"
 
-// Webhook secret for signature verification
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || "dev-webhook-secret"
+// Webhook secret for signature verification (required in production)
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
 /**
  * Verify webhook signature
  */
 function verifySignature(payload: string, signature: string): boolean {
-  const expectedSignature = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
-    .update(payload)
-    .digest("hex")
+  if (!WEBHOOK_SECRET) {
+    return false
+  }
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  )
+  try {
+    const expectedSignature = crypto
+      .createHmac("sha256", WEBHOOK_SECRET!)
+      .update(payload)
+      .digest("hex")
+
+    // Ensure same length before comparing
+    const sigBuffer = Buffer.from(signature)
+    const expectedBuffer = Buffer.from(expectedSignature)
+
+    if (sigBuffer.length !== expectedBuffer.length) {
+      return false
+    }
+
+    return crypto.timingSafeEqual(sigBuffer, expectedBuffer)
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -46,12 +59,24 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get("x-webhook-signature")
     const payload = await request.text()
 
-    // Verify signature (skip in dev mode)
-    if (!isDevMode && signature) {
+    // Verify signature (required in production)
+    if (!isDevMode) {
+      if (!WEBHOOK_SECRET) {
+        console.error("[Webhook] WEBHOOK_SECRET not configured - rejecting request")
+        return serverError("Webhook secret not configured")
+      }
+
+      if (!signature) {
+        console.error("[Webhook] Missing x-webhook-signature header")
+        return unauthorizedError("Missing webhook signature")
+      }
+
       if (!verifySignature(payload, signature)) {
         console.error("[Webhook] Invalid signature")
         return unauthorizedError("Invalid webhook signature")
       }
+    } else if (!signature) {
+      console.warn("[Webhook] DEV MODE: Skipping signature verification")
     }
 
     const body = JSON.parse(payload)

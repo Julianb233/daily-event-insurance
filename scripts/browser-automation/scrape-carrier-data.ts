@@ -28,7 +28,7 @@ async function main() {
   }
 
   const client = await createStagehandClient({ verbose: 1 })
-  const { page, close } = client
+  const { stagehand, page, close } = client
 
   try {
     // Example: Navigate to a public insurance carrier directory
@@ -39,12 +39,12 @@ async function main() {
       waitUntil: "domcontentloaded",
     })
 
-    // Use AI-powered extraction
+    // Use AI-powered extraction via stagehand
     console.log("📊 Extracting carrier data...")
-    const result = await page.extract({
-      instruction: "Extract all insurance carrier names, their AM Best ratings if shown, and their specialty event types",
-      schema: CarrierDataSchema,
-    })
+    const result = await stagehand.extract(
+      "Extract all insurance carrier names, their AM Best ratings if shown, and their specialty event types",
+      CarrierDataSchema
+    )
 
     console.log("📋 Found carriers:", JSON.stringify(result, null, 2))
 

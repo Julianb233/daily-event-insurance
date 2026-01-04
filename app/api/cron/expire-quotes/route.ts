@@ -21,11 +21,19 @@ import { successResponse, serverError } from "@/lib/api-responses"
  */
 export async function GET(request: NextRequest) {
   try {
-    // Optional: Verify cron secret for security
+    // Required: Verify cron secret for security
     const authHeader = request.headers.get("authorization")
     const cronSecret = process.env.CRON_SECRET
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret) {
+      console.error("[Cron] CRON_SECRET not configured - rejecting request")
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      )
+    }
+
+    if (authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

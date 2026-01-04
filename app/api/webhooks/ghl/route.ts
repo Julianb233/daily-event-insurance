@@ -1,6 +1,75 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db, isDbConfigured, partners, partnerDocuments, webhookEvents } from "@/lib/db"
 import { eq, and } from "drizzle-orm"
+import { createHmac, timingSafeEqual } from "crypto"
+import { z } from "zod"
+
+// Environment variable for webhook secret
+const GHL_WEBHOOK_SECRET = process.env.GHL_WEBHOOK_SECRET
+
+// Zod schemas for payload validation
+const basePayloadSchema = z.object({
+  event: z.string().optional(),
+  type: z.string().optional(),
+}).passthrough()
+
+const documentPayloadSchema = z.object({
+  documentId: z.string().uuid().optional(),
+  documentType: z.enum(["partner_agreement", "w9", "direct_deposit"]).optional(),
+  contactId: z.string().optional(),
+  partnerId: z.string().uuid().optional(),
+  signedAt: z.string().datetime().optional(),
+  viewedAt: z.string().datetime().optional(),
+  reason: z.string().optional(),
+})
+
+const contactPayloadSchema = z.object({
+  contactId: z.string().optional(),
+  customFields: z.record(z.string()).optional(),
+})
+
+const opportunityPayloadSchema = z.object({
+  opportunityId: z.string().optional(),
+  contactId: z.string().optional(),
+  stageId: z.string().optional(),
+  stageName: z.string().optional(),
+})
+
+const partnerPayloadSchema = z.object({
+  partnerId: z.string().uuid().optional(),
+  contactId: z.string().optional(),
+  approvedBy: z.string().optional(),
+  reason: z.string().optional(),
+})
+
+/**
+ * Verify HMAC-SHA256 signature from GoHighLevel
+ */
+function verifyGHLSignature(payload: string, signature: string): boolean {
+  if (!GHL_WEBHOOK_SECRET) {
+    console.error("[GHL Webhook] GHL_WEBHOOK_SECRET not configured")
+    return false
+  }
+
+  try {
+    const expectedSignature = createHmac("sha256", GHL_WEBHOOK_SECRET)
+      .update(payload)
+      .digest("hex")
+
+    // Use timing-safe comparison to prevent timing attacks
+    const sigBuffer = Buffer.from(signature, "hex")
+    const expectedBuffer = Buffer.from(expectedSignature, "hex")
+
+    if (sigBuffer.length !== expectedBuffer.length) {
+      return false
+    }
+
+    return timingSafeEqual(sigBuffer, expectedBuffer)
+  } catch {
+    console.error("[GHL Webhook] Signature verification error")
+    return false
+  }
+}
 
 /**
  * POST /api/webhooks/ghl
@@ -15,22 +84,75 @@ import { eq, and } from "drizzle-orm"
  */
 export async function POST(request: NextRequest) {
   try {
-    const payload = await request.json()
+    // Get raw body for signature verification
+    const rawBody = await request.text()
+
+    // Verify webhook signature (required in production)
+    const signature = request.headers.get("x-ghl-signature")
+    const isDevMode = process.env.NODE_ENV === "development"
+
+    if (!isDevMode) {
+      if (!GHL_WEBHOOK_SECRET) {
+        console.error("[GHL Webhook] GHL_WEBHOOK_SECRET not configured - rejecting request")
+        return NextResponse.json(
+          { error: "Webhook secret not configured" },
+          { status: 500 }
+        )
+      }
+
+      if (!signature) {
+        console.error("[GHL Webhook] Missing x-ghl-signature header")
+        return NextResponse.json(
+          { error: "Missing signature" },
+          { status: 401 }
+        )
+      }
+
+      if (!verifyGHLSignature(rawBody, signature)) {
+        console.error("[GHL Webhook] Invalid signature")
+        return NextResponse.json(
+          { error: "Invalid signature" },
+          { status: 401 }
+        )
+      }
+    } else if (!signature) {
+      console.warn("[GHL Webhook] DEV MODE: Skipping signature verification")
+    }
+
+    // Parse and validate payload
+    let payload: unknown
+    try {
+      payload = JSON.parse(rawBody)
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON payload" },
+        { status: 400 }
+      )
+    }
+
+    // Validate base payload structure
+    const baseResult = basePayloadSchema.safeParse(payload)
+    if (!baseResult.success) {
+      console.error("[GHL Webhook] Invalid payload structure:", baseResult.error)
+      return NextResponse.json(
+        { error: "Invalid payload structure", details: baseResult.error.flatten() },
+        { status: 400 }
+      )
+    }
+    // Use validated payload data
+    const validatedPayload = baseResult.data
+
 
     // Log the webhook event
-    console.log("[GHL Webhook] Received event:", JSON.stringify(payload, null, 2))
-
-    // Verify webhook authenticity (optional - add secret verification)
-    const webhookSecret = request.headers.get("x-ghl-signature")
-    // TODO: Implement signature verification if GHL provides it
+    console.log("[GHL Webhook] Received event:", JSON.stringify(validatedPayload, null, 2))
 
     // Store the webhook event for audit purposes
     if (isDbConfigured() && db) {
       try {
         await db.insert(webhookEvents).values({
           source: "ghl",
-          eventType: payload.event || payload.type || "unknown",
-          payload: JSON.stringify(payload),
+          eventType: validatedPayload.event || validatedPayload.type || "unknown",
+          payload: JSON.stringify(validatedPayload),
           processed: false,
         })
       } catch (logError) {
@@ -39,7 +161,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Route to appropriate handler based on event type
-    const eventType = payload.event || payload.type
+    const eventType = validatedPayload.event || validatedPayload.type
 
     switch (eventType) {
       case "document.signed":
@@ -91,21 +213,23 @@ export async function POST(request: NextRequest) {
 /**
  * Handle document signed event
  */
-async function handleDocumentSigned(payload: {
-  documentId?: string;
-  documentType?: string;
-  contactId?: string;
-  partnerId?: string;
-  signedAt?: string;
-}) {
-  console.log("[GHL Webhook] Document signed:", payload)
+async function handleDocumentSigned(payload: unknown) {
+  // Validate payload with Zod
+  const result = documentPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid document.signed payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Document signed:", validatedPayload)
 
   if (!isDbConfigured() || !db) {
     console.log("[GHL Webhook] Database not configured, skipping")
     return
   }
 
-  const { documentType, contactId, partnerId, signedAt } = payload
+  const { documentType, contactId, partnerId, signedAt } = validatedPayload
 
   // Find partner by GHL contact ID or partner ID
   let partner
@@ -131,7 +255,7 @@ async function handleDocumentSigned(payload: {
   }
 
   // Update document status
-  if (documentType && payload.documentId) {
+  if (documentType && validatedPayload.documentId) {
     await db
       .update(partnerDocuments)
       .set({
@@ -199,18 +323,19 @@ async function handleDocumentSigned(payload: {
 /**
  * Handle document viewed event
  */
-async function handleDocumentViewed(payload: {
-  documentId?: string;
-  documentType?: string;
-  contactId?: string;
-  partnerId?: string;
-  viewedAt?: string;
-}) {
-  console.log("[GHL Webhook] Document viewed:", payload)
+async function handleDocumentViewed(payload: unknown) {
+  const result = documentPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid document.viewed payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Document viewed:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { documentType, contactId, partnerId, viewedAt } = payload
+  const { documentType, contactId, partnerId, viewedAt } = validatedPayload
 
   // Find partner
   let partner
@@ -265,18 +390,19 @@ async function handleDocumentViewed(payload: {
 /**
  * Handle document declined event
  */
-async function handleDocumentDeclined(payload: {
-  documentId?: string;
-  documentType?: string;
-  contactId?: string;
-  partnerId?: string;
-  reason?: string;
-}) {
-  console.log("[GHL Webhook] Document declined:", payload)
+async function handleDocumentDeclined(payload: unknown) {
+  const result = documentPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid document.declined payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Document declined:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { documentType, contactId, partnerId } = payload
+  const { documentType, contactId, partnerId } = validatedPayload
 
   let partner
   if (partnerId) {
@@ -326,17 +452,19 @@ async function handleDocumentDeclined(payload: {
 /**
  * Handle document expired event
  */
-async function handleDocumentExpired(payload: {
-  documentId?: string;
-  documentType?: string;
-  contactId?: string;
-  partnerId?: string;
-}) {
-  console.log("[GHL Webhook] Document expired:", payload)
+async function handleDocumentExpired(payload: unknown) {
+  const result = documentPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid document.expired payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Document expired:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { documentType, contactId, partnerId } = payload
+  const { documentType, contactId, partnerId } = validatedPayload
 
   let partner
   if (partnerId) {
@@ -377,40 +505,45 @@ async function handleDocumentExpired(payload: {
 /**
  * Handle contact updated event
  */
-async function handleContactUpdated(payload: {
-  contactId?: string;
-  customFields?: Record<string, string>;
-}) {
-  console.log("[GHL Webhook] Contact updated:", payload)
+async function handleContactUpdated(payload: unknown) {
+  const result = contactPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid contact.updated payload:", result.error.flatten())
+    return
+  }
+
+  console.log("[GHL Webhook] Contact updated:", result.data)
   // Sync any relevant fields from GHL to our database if needed
 }
 
 /**
  * Handle opportunity stage changed event
  */
-async function handleOpportunityStageChanged(payload: {
-  opportunityId?: string;
-  contactId?: string;
-  stageId?: string;
-  stageName?: string;
-}) {
-  console.log("[GHL Webhook] Opportunity stage changed:", payload)
+async function handleOpportunityStageChanged(payload: unknown) {
+  const result = opportunityPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid opportunity.stage_changed payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Opportunity stage changed:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { contactId, stageName } = payload
+  const { contactId, stageName } = validatedPayload
 
   if (!contactId || !stageName) return
 
-  const result = await db
+  const partnerResult = await db
     .select()
     .from(partners)
     .where(eq(partners.ghlContactId, contactId))
     .limit(1)
 
-  if (result.length === 0) return
+  if (partnerResult.length === 0) return
 
-  const partner = result[0]
+  const partner = partnerResult[0]
 
   // Map GHL stage names to our status
   let newStatus: string | null = null
@@ -450,16 +583,19 @@ async function handleOpportunityStageChanged(payload: {
 /**
  * Handle partner approved event (custom workflow trigger)
  */
-async function handlePartnerApproved(payload: {
-  partnerId?: string;
-  contactId?: string;
-  approvedBy?: string;
-}) {
-  console.log("[GHL Webhook] Partner approved:", payload)
+async function handlePartnerApproved(payload: unknown) {
+  const result = partnerPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid partner.approved payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Partner approved:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { partnerId, contactId } = payload
+  const { partnerId, contactId } = validatedPayload
 
   let partner
   if (partnerId) {
@@ -499,16 +635,19 @@ async function handlePartnerApproved(payload: {
 /**
  * Handle partner rejected event
  */
-async function handlePartnerRejected(payload: {
-  partnerId?: string;
-  contactId?: string;
-  reason?: string;
-}) {
-  console.log("[GHL Webhook] Partner rejected:", payload)
+async function handlePartnerRejected(payload: unknown) {
+  const result = partnerPayloadSchema.safeParse(payload)
+  if (!result.success) {
+    console.error("[GHL Webhook] Invalid partner.rejected payload:", result.error.flatten())
+    return
+  }
+
+  const validatedPayload = result.data
+  console.log("[GHL Webhook] Partner rejected:", validatedPayload)
 
   if (!isDbConfigured() || !db) return
 
-  const { partnerId, contactId } = payload
+  const { partnerId, contactId } = validatedPayload
 
   let partner
   if (partnerId) {
