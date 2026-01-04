@@ -73,6 +73,13 @@ export async function POST(request: NextRequest) {
       contactName, contact_name,
       contactEmail, contact_email,
       contactPhone, contact_phone,
+      businessAddress, business_address,
+      websiteUrl, website_url,
+      directContactName, direct_contact_name,
+      directContactEmail, direct_contact_email,
+      directContactPhone, direct_contact_phone,
+      estimatedMonthlyParticipants, estimated_monthly_participants,
+      estimatedAnnualParticipants, estimated_annual_participants,
       integrationType, integration_type,
       primaryColor, primary_color,
       logoUrl, logo_url,
@@ -85,6 +92,13 @@ export async function POST(request: NextRequest) {
     const finalContactName = contact_name || contactName
     const finalContactEmail = contact_email || contactEmail
     const finalContactPhone = contact_phone || contactPhone
+    const finalBusinessAddress = business_address || businessAddress
+    const finalWebsiteUrl = website_url || websiteUrl
+    const finalDirectContactName = direct_contact_name || directContactName
+    const finalDirectContactEmail = direct_contact_email || directContactEmail
+    const finalDirectContactPhone = direct_contact_phone || directContactPhone
+    const finalEstimatedMonthlyParticipants = estimated_monthly_participants || estimatedMonthlyParticipants
+    const finalEstimatedAnnualParticipants = estimated_annual_participants || estimatedAnnualParticipants
     const finalIntegrationType = integration_type || integrationType
     const finalPrimaryColor = primary_color || primaryColor
     const finalLogoUrl = logo_url || logoUrl
@@ -107,6 +121,13 @@ export async function POST(request: NextRequest) {
         contactName: finalContactName,
         contactEmail: finalContactEmail,
         contactPhone: finalContactPhone || null,
+        businessAddress: finalBusinessAddress || null,
+        websiteUrl: finalWebsiteUrl || null,
+        directContactName: finalDirectContactName || null,
+        directContactEmail: finalDirectContactEmail || null,
+        directContactPhone: finalDirectContactPhone || null,
+        estimatedMonthlyParticipants: finalEstimatedMonthlyParticipants ? parseInt(finalEstimatedMonthlyParticipants) : null,
+        estimatedAnnualParticipants: finalEstimatedAnnualParticipants ? parseInt(finalEstimatedAnnualParticipants) : null,
         integrationType: finalIntegrationType || "widget",
         primaryColor: finalPrimaryColor || "#14B8A6",
         logoUrl: finalLogoUrl || null,

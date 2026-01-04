@@ -61,6 +61,13 @@ export const partners = pgTable("partners", {
   contactName: text("contact_name").notNull(),
   contactEmail: text("contact_email").notNull(),
   contactPhone: text("contact_phone"),
+  businessAddress: text("business_address"),
+  websiteUrl: text("website_url"),
+  directContactName: text("direct_contact_name"),
+  directContactEmail: text("direct_contact_email"),
+  directContactPhone: text("direct_contact_phone"),
+  estimatedMonthlyParticipants: integer("estimated_monthly_participants"),
+  estimatedAnnualParticipants: integer("estimated_annual_participants"),
   integrationType: text("integration_type").default("widget"), // widget, api, manual
   primaryColor: text("primary_color").default("#14B8A6"),
   logoUrl: text("logo_url"),
@@ -82,6 +89,7 @@ export const partners = pgTable("partners", {
 }, (table) => ({
   statusIdx: index("idx_partners_status").on(table.status),
   businessTypeIdx: index("idx_partners_business_type").on(table.businessType),
+  websiteUrlIdx: index("idx_partners_website_url").on(table.websiteUrl),
 }))
 
 // Partner products - product configurations per partner
@@ -466,6 +474,7 @@ export const microsites = pgTable("microsites", {
   // Status
   status: text("status").default("building"), // building, review, live, suspended, archived
   launchedAt: timestamp("launched_at"),
+  qrCodeUrl: text("qr_code_url"), // QR code URL for microsite
 
   // Analytics
   totalVisitors: integer("total_visitors").default(0),

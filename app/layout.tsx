@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
 import { SessionProvider } from "@/components/providers/session-provider"
+import { Chatbot } from "@/app/components/chatbot/Chatbot"
 import "./globals.css"
 
 const roboto = Roboto({
@@ -163,6 +164,7 @@ export default function RootLayout({
         <SessionProvider>
           <SmoothScroll>{children}</SmoothScroll>
         </SessionProvider>
+        <Chatbot />
         <Analytics />
       </body>
     </html>

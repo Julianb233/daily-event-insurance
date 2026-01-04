@@ -11,6 +11,13 @@ export interface Partner {
   contact_name: string
   contact_email: string
   contact_phone?: string
+  business_address?: string
+  website_url?: string
+  direct_contact_name?: string
+  direct_contact_email?: string
+  direct_contact_phone?: string
+  estimated_monthly_participants?: number
+  estimated_annual_participants?: number
   integration_type: "widget" | "api" | "manual"
   primary_color?: string
   logo_url?: string

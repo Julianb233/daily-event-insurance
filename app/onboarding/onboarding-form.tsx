@@ -40,6 +40,12 @@ interface OnboardingFormData {
   email: string
   phone: string
   estimatedCustomers: string
+  websiteUrl: string
+  directContactName: string
+  directContactEmail: string
+  directContactPhone: string
+  estimatedMonthlyParticipants: string
+  estimatedAnnualParticipants: string
   // Step 2: Integration
   integrationType: string
   // Step 3: Customize
@@ -283,6 +289,124 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 <option value="250+">250+ customers/day</option>
               </select>
               <span id="estimatedCustomers-hint" className="sr-only">Select your estimated daily customer volume</span>
+            </div>
+          </div>
+
+          {/* Website URL */}
+          <div>
+            <label htmlFor="websiteUrl" className="block text-sm font-semibold text-gray-700 mb-2">
+              Website URL
+            </label>
+            <input
+              id="websiteUrl"
+              type="url"
+              value={formData.websiteUrl}
+              onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+              placeholder="https://yourcompany.com"
+              aria-describedby="websiteUrl-hint"
+              autoComplete="url"
+            />
+            <span id="websiteUrl-hint" className="sr-only">Enter your business website URL</span>
+          </div>
+
+          {/* Direct Contact Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Direct Point of Contact (Optional)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="directContactName" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Contact Person Name
+                </label>
+                <input
+                  id="directContactName"
+                  type="text"
+                  value={formData.directContactName}
+                  onChange={(e) => setFormData({ ...formData, directContactName: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                  placeholder="Jane Doe"
+                  aria-describedby="directContactName-hint"
+                  autoComplete="name"
+                />
+                <span id="directContactName-hint" className="sr-only">Enter direct contact person name</span>
+              </div>
+
+              <div>
+                <label htmlFor="directContactEmail" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Contact Email
+                </label>
+                <input
+                  id="directContactEmail"
+                  type="email"
+                  value={formData.directContactEmail}
+                  onChange={(e) => setFormData({ ...formData, directContactEmail: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                  placeholder="jane@company.com"
+                  aria-describedby="directContactEmail-hint"
+                  autoComplete="email"
+                />
+                <span id="directContactEmail-hint" className="sr-only">Enter direct contact email</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <label htmlFor="directContactPhone" className="block text-sm font-semibold text-gray-700 mb-2">
+                Contact Phone
+              </label>
+              <input
+                id="directContactPhone"
+                type="tel"
+                value={formData.directContactPhone}
+                onChange={(e) => setFormData({ ...formData, directContactPhone: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                placeholder="(555) 123-4567"
+                aria-describedby="directContactPhone-hint"
+                autoComplete="tel"
+              />
+              <span id="directContactPhone-hint" className="sr-only">Enter direct contact phone</span>
+            </div>
+          </div>
+
+          {/* Participant Count Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Volume</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="estimatedMonthlyParticipants" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Estimated Monthly Participants *
+                </label>
+                <input
+                  id="estimatedMonthlyParticipants"
+                  type="number"
+                  min="0"
+                  value={formData.estimatedMonthlyParticipants}
+                  onChange={(e) => setFormData({ ...formData, estimatedMonthlyParticipants: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                  placeholder="1000"
+                  aria-required="true"
+                  aria-describedby="estimatedMonthlyParticipants-hint"
+                />
+                <p className="text-xs text-gray-500 mt-1">Total people passing through monthly</p>
+                <span id="estimatedMonthlyParticipants-hint" className="sr-only">Enter estimated monthly participants</span>
+              </div>
+
+              <div>
+                <label htmlFor="estimatedAnnualParticipants" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Estimated Annual Participants
+                </label>
+                <input
+                  id="estimatedAnnualParticipants"
+                  type="number"
+                  min="0"
+                  value={formData.estimatedAnnualParticipants}
+                  onChange={(e) => setFormData({ ...formData, estimatedAnnualParticipants: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all"
+                  placeholder="12000"
+                  aria-describedby="estimatedAnnualParticipants-hint"
+                />
+                <p className="text-xs text-gray-500 mt-1">Total people passing through annually</p>
+                <span id="estimatedAnnualParticipants-hint" className="sr-only">Enter estimated annual participants</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1108,6 +1232,12 @@ export default function OnboardingForm() {
     email: "",
     phone: "",
     estimatedCustomers: "",
+    websiteUrl: "",
+    directContactName: "",
+    directContactEmail: "",
+    directContactPhone: "",
+    estimatedMonthlyParticipants: "",
+    estimatedAnnualParticipants: "",
     integrationType: "",
     selectedProducts: ["liability"],
     pricing: {
@@ -1143,6 +1273,12 @@ export default function OnboardingForm() {
           contact_email: formData.email,
           contact_phone: formData.phone,
           estimated_daily_customers: formData.estimatedCustomers,
+          website_url: formData.websiteUrl || undefined,
+          direct_contact_name: formData.directContactName || undefined,
+          direct_contact_email: formData.directContactEmail || undefined,
+          direct_contact_phone: formData.directContactPhone || undefined,
+          estimated_monthly_participants: formData.estimatedMonthlyParticipants ? parseInt(formData.estimatedMonthlyParticipants) : undefined,
+          estimated_annual_participants: formData.estimatedAnnualParticipants ? parseInt(formData.estimatedAnnualParticipants) : undefined,
           integration_type: formData.integrationType,
           primary_color: formData.primaryColor,
           products: formData.selectedProducts.map(productId => ({
