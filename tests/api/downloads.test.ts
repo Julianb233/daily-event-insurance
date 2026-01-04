@@ -145,19 +145,20 @@ describe("Download API", () => {
         },
       }
 
+      // Expected response structure for asset generation with partner branding
       const expectedResponse = {
-        downloadUrl: expect.stringContaining("/api/downloads/marketing/generated-flyer"),
-        previewUrl: expect.stringContaining("/preview/generated-flyer"),
-        assetId: expect.stringMatching(/^asset-/),
-        expiresAt: expect.any(String),
+        downloadUrl: "/api/downloads/marketing/generated-flyer-123.pdf",
+        previewUrl: "/preview/generated-flyer-123",
+        assetId: "asset-abc123",
+        expiresAt: new Date().toISOString(),
         metadata: {
           assetType: "flyer",
           template: "flyer-modern",
           customization: body.customization,
-          branding: expect.objectContaining({
-            primaryColor: expect.any(String),
-            businessName: expect.any(String),
-          }),
+          branding: {
+            primaryColor: "#1E40AF",
+            businessName: "Partner Insurance Co",
+          },
         },
       }
 
@@ -168,19 +169,23 @@ describe("Download API", () => {
 
   describe("GET /api/partner/assets/generate", () => {
     it("should return all templates when no filter", async () => {
+      // Expected response structure for asset generation
+      const expectedCategories = ["flyer", "email", "social", "brochure", "certificate"]
+
       const expectedResponse = {
-        templates: expect.objectContaining({
-          flyer: expect.any(Array),
-          email: expect.any(Array),
-          social: expect.any(Array),
-          brochure: expect.any(Array),
-          certificate: expect.any(Array),
-        }),
-        categories: expect.arrayContaining(["flyer", "email", "social", "brochure", "certificate"]),
+        templates: {
+          flyer: [],
+          email: [],
+          social: [],
+          brochure: [],
+          certificate: [],
+        },
+        categories: expectedCategories,
       }
 
       expect(expectedResponse.categories).toContain("flyer")
       expect(expectedResponse.categories).toContain("email")
+      expect(expectedResponse.categories).toHaveLength(5)
     })
 
     it("should filter templates by asset type", async () => {

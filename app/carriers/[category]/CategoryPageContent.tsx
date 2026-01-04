@@ -561,7 +561,7 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
               Platform Integrations
             </h2>
             <p className="text-lg text-slate-600">
-              We're integrated with leading {category.shortTitle.toLowerCase()} platforms for seamless distribution.
+              We&apos;re integrated with leading {category.shortTitle.toLowerCase()} platforms for seamless distribution.
             </p>
           </motion.div>
 
