@@ -1,12 +1,37 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { StickyBottomCTA } from './sticky-bottom-cta';
 
-// TODO: Scroll behavior tests have window.scrollY issues in jsdom - needs fix
-describe.skip('StickyBottomCTA', () => {
+// Mock framer-motion to avoid animation timing issues in tests
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { initial, animate, exit, transition, ...validProps } = props;
+      return <div {...validProps}>{children}</div>;
+    },
+  },
+  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
+}));
+
+// Helper to mock scrollY in jsdom
+function mockScrollY(value: number) {
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value,
+  });
+}
+
+describe('StickyBottomCTA', () => {
   beforeEach(() => {
     // Reset window scroll position
-    window.scrollY = 0;
+    mockScrollY(0);
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('Rendering', () => {
@@ -15,7 +40,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test message"
           buttonText="Click me"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={127.5}
         />
       );
@@ -29,7 +54,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={1234.56}
         />
       );
@@ -42,7 +67,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={50000}
         />
       );
@@ -55,7 +80,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={127.49}
         />
       );
@@ -66,7 +91,7 @@ describe.skip('StickyBottomCTA', () => {
 
   describe('Button Interactions', () => {
     it('should call onClick when button is clicked', () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       render(
         <StickyBottomCTA
           text="Test"
@@ -87,14 +112,17 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action Button"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
 
-      const button = screen.getByText('Action Button');
-      expect(button).toBeInTheDocument();
-      expect(button.tagName).toBe('BUTTON');
+      const buttonText = screen.getByText('Action Button');
+      expect(buttonText).toBeInTheDocument();
+      // The text is inside a span, so find the closest button ancestor
+      const button = buttonText.closest('button');
+      expect(button).not.toBeNull();
+      expect(button?.tagName).toBe('BUTTON');
     });
   });
 
@@ -104,7 +132,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -118,7 +146,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test message"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -134,32 +162,33 @@ describe.skip('StickyBottomCTA', () => {
 
   describe('Scroll Behavior', () => {
     it('should hide component when scrolling down past threshold', async () => {
-      const { rerender } = render(
+      render(
         <StickyBottomCTA
           text="Test message"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
 
-      // Mock scroll position
-      Object.defineProperty(window, 'scrollY', {
-        writable: true,
-        configurable: true,
-        value: 300,
-      });
+      // Initially visible
+      expect(screen.getByText('Test message')).toBeInTheDocument();
+
+      // Mock scroll position past threshold (200)
+      mockScrollY(300);
 
       // Trigger scroll event
-      fireEvent.scroll(window, { target: { scrollY: 300 } });
+      act(() => {
+        fireEvent.scroll(window);
+      });
 
-      // Wait for debounce timeout
-      await waitFor(
-        () => {
-          expect(screen.queryByText('Test message')).not.toBeInTheDocument();
-        },
-        { timeout: 200 }
-      );
+      // Advance timers past debounce timeout (100ms)
+      act(() => {
+        vi.advanceTimersByTime(150);
+      });
+
+      // Should be hidden after scroll
+      expect(screen.queryByText('Test message')).not.toBeInTheDocument();
     });
 
     it('should show component when scrolling back up before threshold', async () => {
@@ -167,44 +196,40 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test message"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
 
-      // Scroll down
-      Object.defineProperty(window, 'scrollY', {
-        writable: true,
-        configurable: true,
-        value: 300,
-      });
-      fireEvent.scroll(window, { target: { scrollY: 300 } });
-
-      await waitFor(() => {
-        expect(screen.queryByText('Test message')).not.toBeInTheDocument();
+      // Scroll down past threshold
+      mockScrollY(300);
+      act(() => {
+        fireEvent.scroll(window);
+        vi.advanceTimersByTime(150);
       });
 
-      // Scroll back up
-      Object.defineProperty(window, 'scrollY', {
-        writable: true,
-        configurable: true,
-        value: 100,
-      });
-      fireEvent.scroll(window, { target: { scrollY: 100 } });
+      // Should be hidden
+      expect(screen.queryByText('Test message')).not.toBeInTheDocument();
 
-      await waitFor(() => {
-        expect(screen.getByText('Test message')).toBeInTheDocument();
+      // Scroll back up below threshold
+      mockScrollY(100);
+      act(() => {
+        fireEvent.scroll(window);
+        vi.advanceTimersByTime(150);
       });
+
+      // Should be visible again
+      expect(screen.getByText('Test message')).toBeInTheDocument();
     });
 
     it('should use passive event listener for scroll', () => {
-      const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
 
       render(
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -226,7 +251,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -240,7 +265,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -254,7 +279,7 @@ describe.skip('StickyBottomCTA', () => {
 
   describe('Cleanup', () => {
     it('should clean up event listeners on unmount', () => {
-      const removeEventListenerSpy = jest.spyOn(
+      const removeEventListenerSpy = vi.spyOn(
         window,
         'removeEventListener'
       );
@@ -263,7 +288,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -279,13 +304,13 @@ describe.skip('StickyBottomCTA', () => {
     });
 
     it('should clear timeout on unmount', () => {
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       const { unmount } = render(
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -307,7 +332,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Original text"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -318,7 +343,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Updated text"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -332,7 +357,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={100}
         />
       );
@@ -343,7 +368,7 @@ describe.skip('StickyBottomCTA', () => {
         <StickyBottomCTA
           text="Test"
           buttonText="Action"
-          onClick={jest.fn()}
+          onClick={vi.fn()}
           lossPerDay={500}
         />
       );
@@ -352,8 +377,8 @@ describe.skip('StickyBottomCTA', () => {
     });
 
     it('should handle callback function changes', () => {
-      const onClick1 = jest.fn();
-      const onClick2 = jest.fn();
+      const onClick1 = vi.fn();
+      const onClick2 = vi.fn();
 
       const { rerender } = render(
         <StickyBottomCTA
