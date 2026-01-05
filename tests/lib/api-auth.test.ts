@@ -1,29 +1,14 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextResponse } from 'next/server'
 
-// Mock the auth module
-const mockAuth = vi.fn()
-vi.mock('@/lib/auth', () => ({
-  auth: () => mockAuth(),
-}))
-
-// Mock the database
-const mockSelect = vi.fn()
-const mockFrom = vi.fn()
-const mockWhere = vi.fn()
-const mockLimit = vi.fn()
-
-vi.mock('@/lib/db', () => ({
-  db: {
-    select: () => ({
-      from: () => ({
-        where: () => ({
-          limit: () => mockLimit(),
-        }),
-      }),
-    }),
-  },
-  users: {},
+// Mock createClient from supabase/server
+const mockGetUser = vi.fn()
+vi.mock('@/lib/supabase/server', () => ({
+  createClient: vi.fn().mockResolvedValue({
+    auth: {
+      getUser: () => mockGetUser(),
+    },
+  }),
 }))
 
 // Import after mocks
@@ -39,188 +24,226 @@ import {
 describe('API Authentication Utilities', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // Reset env vars
-    vi.stubEnv('NODE_ENV', 'production')
-    vi.stubEnv('DEV_AUTH_BYPASS', '')
-    vi.stubEnv('AUTH_SECRET', 'test-secret')
-  })
-
-  afterEach(() => {
-    vi.unstubAllEnvs()
   })
 
   describe('requireAuth', () => {
     it('should return userId when session exists', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'test@example.com', role: 'user' },
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: 'user-123', email: 'test@example.com' } },
+        error: null,
       })
 
-      // Note: Due to module-level evaluation of shouldBypassAuth,
-      // we need to re-import or test with actual session flow
-      // This test verifies the auth function is called
-      try {
-        const result = await requireAuth()
-        expect(result.userId).toBeDefined()
-      } catch (error) {
-        // Auth check happens at module load time
-        expect(mockAuth).toHaveBeenCalled()
-      }
+      const result = await requireAuth()
+      expect(result.userId).toBe('user-123')
     })
 
     it('should throw 401 when no session exists', async () => {
-      mockAuth.mockResolvedValue(null)
-
-      try {
-        await requireAuth()
-        expect.fail('Should have thrown')
-      } catch (error) {
-        if (error instanceof NextResponse) {
-          const json = await error.json()
-          expect(json.error).toBe('Unauthorized')
-        }
-      }
-    })
-
-    it('should throw 401 when session has no user id', async () => {
-      mockAuth.mockResolvedValue({
-        user: { email: 'test@example.com' }, // no id
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
       })
 
       try {
         await requireAuth()
         expect.fail('Should have thrown')
       } catch (error) {
-        if (error instanceof NextResponse) {
-          const json = await error.json()
-          expect(json.error).toBe('Unauthorized')
-        }
+        expect(error).toBeInstanceOf(NextResponse)
+        const json = await (error as NextResponse).json()
+        expect(json.error).toBe('Unauthorized')
+      }
+    })
+
+    it('should throw 401 when auth error occurs', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: new Error('Auth error'),
+      })
+
+      try {
+        await requireAuth()
+        expect.fail('Should have thrown')
+      } catch (error) {
+        expect(error).toBeInstanceOf(NextResponse)
+        const json = await (error as NextResponse).json()
+        expect(json.error).toBe('Unauthorized')
       }
     })
   })
 
   describe('requireAdmin', () => {
     it('should return user data for admin role', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'admin-123', email: 'admin@test.com', role: 'admin' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'admin-123',
+            email: 'admin@test.com',
+            user_metadata: { role: 'admin' },
+          },
+        },
+        error: null,
       })
-      mockLimit.mockResolvedValue([{ id: 'admin-123', name: 'Admin User' }])
 
-      try {
-        const result = await requireAdmin()
-        expect(result.userId).toBeDefined()
-      } catch (error) {
-        // Verify auth was called
-        expect(mockAuth).toHaveBeenCalled()
-      }
+      const result = await requireAdmin()
+      expect(result.userId).toBe('admin-123')
+      expect(result.user.id).toBe('admin-123')
     })
 
     it('should throw 403 for non-admin users', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'user@test.com', role: 'user' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'user@test.com',
+            user_metadata: { role: 'user' },
+          },
+        },
+        error: null,
       })
 
       try {
         await requireAdmin()
         expect.fail('Should have thrown')
       } catch (error) {
-        if (error instanceof NextResponse) {
-          const json = await error.json()
-          expect(json.error).toBe('Forbidden')
-          expect(json.message).toBe('Admin access required')
-        }
+        expect(error).toBeInstanceOf(NextResponse)
+        const response = error as NextResponse
+        expect(response.status).toBe(403)
+        const json = await response.json()
+        expect(json.error).toBe('Forbidden')
+        expect(json.message).toBe('Admin access required')
       }
     })
 
     it('should throw 403 for partner users', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'partner-123', email: 'partner@test.com', role: 'partner' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'partner-123',
+            email: 'partner@test.com',
+            user_metadata: { role: 'partner' },
+          },
+        },
+        error: null,
       })
 
       try {
         await requireAdmin()
         expect.fail('Should have thrown')
       } catch (error) {
-        if (error instanceof NextResponse) {
-          const json = await error.json()
-          expect(json.error).toBe('Forbidden')
-        }
+        expect(error).toBeInstanceOf(NextResponse)
+        const response = error as NextResponse
+        expect(response.status).toBe(403)
+      }
+    })
+
+    it('should throw 401 when not authenticated', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      })
+
+      try {
+        await requireAdmin()
+        expect.fail('Should have thrown')
+      } catch (error) {
+        expect(error).toBeInstanceOf(NextResponse)
+        const response = error as NextResponse
+        expect(response.status).toBe(401)
       }
     })
   })
 
   describe('requirePartner', () => {
     it('should return user data for partner role', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'partner-123', email: 'partner@test.com', role: 'partner' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'partner-123',
+            email: 'partner@test.com',
+            user_metadata: { role: 'partner' },
+          },
+        },
+        error: null,
       })
-      mockLimit.mockResolvedValue([{ id: 'partner-123', name: 'Partner User' }])
 
-      try {
-        const result = await requirePartner()
-        expect(result.userId).toBeDefined()
-      } catch (error) {
-        expect(mockAuth).toHaveBeenCalled()
-      }
+      const result = await requirePartner()
+      expect(result.userId).toBe('partner-123')
     })
 
     it('should allow admin users as partners', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'admin-123', email: 'admin@test.com', role: 'admin' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'admin-123',
+            email: 'admin@test.com',
+            user_metadata: { role: 'admin' },
+          },
+        },
+        error: null,
       })
-      mockLimit.mockResolvedValue([{ id: 'admin-123', name: 'Admin User' }])
 
-      try {
-        const result = await requirePartner()
-        expect(result.userId).toBeDefined()
-      } catch (error) {
-        // Admin role should be allowed
-        expect(mockAuth).toHaveBeenCalled()
-      }
+      const result = await requirePartner()
+      expect(result.userId).toBe('admin-123')
     })
 
     it('should throw 403 for regular users', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'user@test.com', role: 'user' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'user@test.com',
+            user_metadata: { role: 'user' },
+          },
+        },
+        error: null,
       })
 
       try {
         await requirePartner()
         expect.fail('Should have thrown')
       } catch (error) {
-        if (error instanceof NextResponse) {
-          const json = await error.json()
-          expect(json.error).toBe('Forbidden')
-          expect(json.message).toBe('Partner access required')
-        }
+        expect(error).toBeInstanceOf(NextResponse)
+        const response = error as NextResponse
+        expect(response.status).toBe(403)
+        const json = await response.json()
+        expect(json.error).toBe('Forbidden')
+        expect(json.message).toBe('Partner access required')
       }
     })
   })
 
   describe('getAuthenticatedUser', () => {
     it('should return user when authenticated', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'test@example.com', role: 'user' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'test@example.com',
+            user_metadata: { role: 'user', name: 'Test User' },
+          },
+        },
+        error: null,
       })
-      mockLimit.mockResolvedValue([{ id: 'user-123', name: 'Test User', email: 'test@example.com' }])
 
       const result = await getAuthenticatedUser()
-
-      if (result) {
-        expect(result.userId).toBe('user-123')
-        expect(result.user).toBeDefined()
-      }
+      expect(result).not.toBeNull()
+      expect(result?.userId).toBe('user-123')
+      expect(result?.user.email).toBe('test@example.com')
     })
 
     it('should return null when not authenticated', async () => {
-      mockAuth.mockResolvedValue(null)
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      })
 
       const result = await getAuthenticatedUser()
       expect(result).toBeNull()
     })
 
-    it('should return null when session has no user id', async () => {
-      mockAuth.mockResolvedValue({
-        user: { email: 'test@example.com' }, // missing id
+    it('should return null on auth error', async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: new Error('Auth error'),
       })
 
       const result = await getAuthenticatedUser()
@@ -230,8 +253,15 @@ describe('API Authentication Utilities', () => {
 
   describe('hasRole', () => {
     it('should return true when user has the role', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'test@example.com', role: 'admin' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'test@example.com',
+            user_metadata: { role: 'admin' },
+          },
+        },
+        error: null,
       })
 
       const result = await hasRole('admin')
@@ -239,8 +269,15 @@ describe('API Authentication Utilities', () => {
     })
 
     it('should return false when user does not have the role', async () => {
-      mockAuth.mockResolvedValue({
-        user: { id: 'user-123', email: 'test@example.com', role: 'user' },
+      mockGetUser.mockResolvedValue({
+        data: {
+          user: {
+            id: 'user-123',
+            email: 'test@example.com',
+            user_metadata: { role: 'user' },
+          },
+        },
+        error: null,
       })
 
       const result = await hasRole('admin')
@@ -248,14 +285,10 @@ describe('API Authentication Utilities', () => {
     })
 
     it('should return false when not authenticated', async () => {
-      mockAuth.mockResolvedValue(null)
-
-      const result = await hasRole('admin')
-      expect(result).toBe(false)
-    })
-
-    it('should return false when session has no user', async () => {
-      mockAuth.mockResolvedValue({})
+      mockGetUser.mockResolvedValue({
+        data: { user: null },
+        error: null,
+      })
 
       const result = await hasRole('admin')
       expect(result).toBe(false)
@@ -313,36 +346,52 @@ describe('API Auth - Role Hierarchy', () => {
   })
 
   it('admin should have access to admin routes', async () => {
-    mockAuth.mockResolvedValue({
-      user: { id: 'admin-123', role: 'admin' },
+    mockGetUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'admin-123',
+          user_metadata: { role: 'admin' },
+        },
+      },
+      error: null,
     })
-    mockLimit.mockResolvedValue([{ id: 'admin-123' }])
 
-    // This tests the logic flow, actual auth check depends on module state
-    expect(mockAuth).toBeDefined()
+    const result = await requireAdmin()
+    expect(result.userId).toBe('admin-123')
   })
 
   it('partner should have access to partner routes', async () => {
-    mockAuth.mockResolvedValue({
-      user: { id: 'partner-123', role: 'partner' },
+    mockGetUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'partner-123',
+          user_metadata: { role: 'partner' },
+        },
+      },
+      error: null,
     })
-    mockLimit.mockResolvedValue([{ id: 'partner-123' }])
 
-    expect(mockAuth).toBeDefined()
+    const result = await requirePartner()
+    expect(result.userId).toBe('partner-123')
   })
 
   it('user should NOT have access to partner routes', async () => {
-    mockAuth.mockResolvedValue({
-      user: { id: 'user-123', role: 'user' },
+    mockGetUser.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-123',
+          user_metadata: { role: 'user' },
+        },
+      },
+      error: null,
     })
 
     try {
       await requirePartner()
       expect.fail('Should have thrown')
     } catch (error) {
-      if (error instanceof NextResponse) {
-        expect(error.status).toBe(403)
-      }
+      expect(error).toBeInstanceOf(NextResponse)
+      expect((error as NextResponse).status).toBe(403)
     }
   })
 })

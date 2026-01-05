@@ -127,13 +127,14 @@ body {
 }
 
 @theme inline {
-  --font-sans: var(--font-roboto), "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --font-sans: "Mona Sans", var(--font-roboto), "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --font-serif: var(--font-libre-baskerville), "Georgia", serif;
   --font-gochi: "Gochi Hand", cursive;
   --font-oswald: var(--font-oswald);
   --font-brier: "Brier", sans-serif;
   --font-mona: "Mona Sans", sans-serif;
+  --font-roboto: var(--font-roboto), sans-serif;
 
   /* Color variables using HiQor palette */
   --color-teal-500: var(--teal-500);
