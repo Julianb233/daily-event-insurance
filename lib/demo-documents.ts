@@ -4,6 +4,8 @@
 export const DOCUMENT_TYPES = {
   PARTNER_AGREEMENT: "partner_agreement",
   JOINT_MARKETING_AGREEMENT: "joint_marketing_agreement",
+  MUTUAL_NDA: "mutual_nda",
+  SPONSORSHIP_AGREEMENT: "sponsorship_agreement",
   W9: "w9",
   DIRECT_DEPOSIT: "direct_deposit",
 } as const
@@ -22,7 +24,7 @@ export const demoDocuments: DocumentTemplate[] = [
     type: DOCUMENT_TYPES.PARTNER_AGREEMENT,
     title: "Partner Agreement",
     version: "1.0",
-    content: \`
+    content: `
 # Partner Agreement
 
 **Parties**
@@ -196,13 +198,13 @@ The following Fee Schedule is valid at the Time of Execution. It may be subject 
 | Marketing Fee HIQOR | $15.00 |
 | Marketing Fee to Partner | $15.00 |
 | Technology Fee (paid by MOO to HIQOR, not shared) | $8.00 |
-\`,
+`,
   },
   {
     type: DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT,
     title: "Joint Marketing Agreement",
     version: "1.0",
-    content: \`
+    content: `
 # Joint Marketing Agreement
 
 **Effective Date:** Upon Digital Signature
@@ -371,46 +373,108 @@ Aaron Drew
 Title: Founder & CEO
 
 Date: {{DATE}}
-\`,
+`,
   },
   {
-    type: DOCUMENT_TYPES.W9,
-    title: "W-9 Tax Information",
+    type: DOCUMENT_TYPES.MUTUAL_NDA,
+    title: "Mutual Non-Disclosure Agreement",
     version: "1.0",
     content: `
-# W - 9 Request for Taxpayer Identification Number
+# MUTUAL NON-DISCLOSURE AGREEMENT
 
-  ** Purpose:** To provide your tax identification information for commission payments.
+**Effective Date:** {{DATE}}
 
-> ** Important:** This is a simplified collection form.For complete IRS W - 9, visit[irs.gov](https://www.irs.gov/forms-pubs/about-form-w-9).
+This mutual non-disclosure agreement (this "Agreement") is effective as of {{DATE}}, between HIQOR, Inc., a Delaware corporation ("HIQOR"), and {{BUSINESS_NAME}}, a {{BUSINESS_ENTITY_TYPE}} ("Company").
 
-    ---
+The parties plan to engage in discussions about a potential business transaction (the "Purpose"). The parties may disclose to each other certain confidential information in connection with the Purpose, and the parties desire to maintain the confidentiality of that information.
+
+For the following agreement, HIQOR includes any company, directly or indirectly, controlled by, controlling or under common control with HIQOR, Inc ("Affiliates"), now or in the future.
+
+The parties therefore agree as follows:
+
+1. **Confidential Information.** "Confidential Information" means all information disclosed by one party (the "Discloser") to the other party (the "Receiver"), while this Agreement is in effect. Confidential Information may be in any form and includes (i) trade secrets, (ii) reproductions of Confidential Information, and (iii) materials prepared by the Receiver which contain Confidential Information.
+
+2. **Non-Confidential Information.** Confidential Information does not include:
+    - **Publicly Known.** Information that is publicly known other than due to an act or failure to act by Receiver;
+    - **Previously Known.** Information that was rightfully known by Receiver prior to its disclosure by or on behalf of Discloser;
+    - **Independently Developed.** Information that is independently developed by Receiver without reference to Discloser’s Confidential Information; or
+    - **Independent Source.** Information that is rightfully acquired by Receiver from a third party; provided, the third party has the right to disclose such information without breaching an obligation of confidentiality to the Discloser.
+
+3. **Confidentiality Obligation.** The Receiver shall: (i) maintain the Discloser’s Confidential Information in strict confidence; (ii) use Confidential Information only for the Purpose; and (iii) not disclose Confidential Information to any third party.
+
+4. **Permitted Disclosure.** The Receiver may disclose Confidential Information to its employees and consultants ("Representatives") who need to know the Confidential Information as required to pursue the Purpose; provided, that such Representatives are informed of the confidential nature of the Confidential Information and agree to use and protect the Confidential Information in accordance with the terms of this Agreement.
+
+5. **Compelled Disclosure.** Receiver may disclose Confidential Information to the extent required by any order, subpoena, law, statute or regulation; provided, that Receiver promptly notifies Discloser upon receipt of such request to enable Discloser to prevent or limit the disclosure.
+
+6. **Return of Confidential Information.** Upon Discloser’s written request, Receiver will promptly destroy or return to Discloser all documents and other tangible materials, regardless of form, containing or consisting of Confidential Information, prepared by or on behalf of Receiver that contain or are based upon Confidential Information. Where Confidential Information is destroyed, Receiver must certify such destruction in writing to Discloser.
+
+7. **No Obligation to Transact.** This agreement does not create a joint venture, partnership, agency relationship, or other business relationship between the parties or impose on either party an obligation to disclose Confidential Information or enter into a further agreement.
+
+8. **Ownership.** All Confidential Information remains the sole and exclusive property of the Discloser. Nothing in this Agreement is intended to grant any rights to Receiver, by license or otherwise, in or to any Confidential Information, or any patent, trade secrets, copyright or other intellectual property or proprietary rights of Discloser, except as specified in this Agreement.
+
+9. **No Warranty.** All Confidential Information IS provided by DISCLOSER "AS IS".
+
+10. **Term.** This Agreement will remain in effect for a period of five (5) years from the date of last disclosure of Confidential Information by either party, at which time it will terminate. Notwithstanding the foregoing, with respect to Confidential Information that is considered a trade secret under applicable law, Receiver’s obligations of confidentiality and non-use hereunder shall survive the expiration or termination of this Agreement until such information is no longer considered a trade secret under applicable law.
+
+11. **Equitable Relief.** The unauthorized use or disclosure of Confidential Information may cause Discloser to incur irreparable harm and significant damages, the degree of which may be difficult to ascertain. Accordingly, Discloser will be entitled to seek immediate equitable relief to enjoin any unauthorized use or disclosure of its Confidential Information, in addition to any other rights and remedies that it may have at law or otherwise.
+
+12. **Miscellaneous.** This Agreement will be governed and construed in accordance with the laws of the State of Delaware, excluding its body of law controlling conflict of laws. This Agreement is the complete and exclusive understanding and agreement between the parties regarding the subject matter of this Agreement and supersedes all prior agreements, understandings and communications, oral or written, between the parties regarding the subject matter of this Agreement. If any provision of this Agreement is held invalid or unenforceable by a court of competent jurisdiction, that provision of this Agreement will be enforced to the maximum extent permissible and the other provisions of this Agreement will remain in full force and effect. Neither party may assign this Agreement, in whole or in part, by operation of law or otherwise, without the other party’s prior written consent, and any attempted assignment without such consent will be void. This Agreement may be executed in counterparts, each of which will be deemed an original, but all of which together will constitute one and the same instrument.
+
+Each party is signing this Agreement on the date stated in the introductory clause.
+
+**HIQOR, INC.**
+
+_____________________________________
+[Digital Signature]
+Name: Aaron Drew
+Title: Founder & CEO
+
+**{{BUSINESS_NAME}}**
+
+_____________________________________
+[Digital Signature]
+Name: {{CONTACT_NAME}}
+Title: [Partner Title]
+`,
+  },
+{
+  type: DOCUMENT_TYPES.W9,
+    title: "W-9 Tax Information",
+      version: "1.0",
+        content: `
+# W-9 Request for Taxpayer Identification Number
+
+**Purpose:** To provide your tax identification information for commission payments.
+
+> **Important:** This is a simplified collection form. For complete IRS W-9, visit [irs.gov](https://www.irs.gov/forms-pubs/about-form-w-9).
+
+---
 
 ## Part I: Identification
 
 Please provide the following information for tax reporting purposes:
 
 ### Business Information
-  - ** Legal Business Name:** (as shown on your tax return)
-- ** Business Name / DBA:** (if different from above)
-- ** Federal Tax Classification:**
-  -[] Individual / Sole Proprietor
-    - [] C Corporation
-      - [] S Corporation
-        - [] Partnership
-          - [] LLC(specify classification)
-            - [] Other
+- **Legal Business Name:** (as shown on your tax return)
+- **Business Name/DBA:** (if different from above)
+- **Federal Tax Classification:**
+  - [ ] Individual/Sole Proprietor
+  - [ ] C Corporation
+  - [ ] S Corporation
+  - [ ] Partnership
+  - [ ] LLC (specify classification)
+  - [ ] Other
 
 ### Tax Identification
-  - ** Taxpayer Identification Number(TIN):**
-    - Social Security Number(SSN): XXX - XX - XXXX
-      - OR Employer Identification Number(EIN): XX - XXXXXXX
+- **Taxpayer Identification Number (TIN):**
+  - Social Security Number (SSN): XXX-XX-XXXX
+  - OR Employer Identification Number (EIN): XX-XXXXXXX
 
 ### Address
-  - ** Street Address:**
-- ** City, State, ZIP:**
+- **Street Address:**
+- **City, State, ZIP:**
 
-  ---
+---
 
 ## Part II: Certification
 
@@ -418,21 +482,150 @@ Under penalties of perjury, I certify that:
 
 1. The number shown on this form is my correct taxpayer identification number
 2. I am not subject to backup withholding
-3. I am a U.S.citizen or other U.S.person
-4. The FATCA code(s) entered on this form(if any) is correct
+3. I am a U.S. citizen or other U.S. person
+4. The FATCA code(s) entered on this form (if any) is correct
 
 ---
 
-** The IRS does not require your consent to any provision of this document other than the certifications required to avoid backup withholding.**
+**The IRS does not require your consent to any provision of this document other than the certifications required to avoid backup withholding.**
 
-  By signing below, you certify that the information provided is accurate and complete.
+By signing below, you certify that the information provided is accurate and complete.
 `,
   },
-  {
-    type: DOCUMENT_TYPES.DIRECT_DEPOSIT,
+{
+  type: DOCUMENT_TYPES.SPONSORSHIP_AGREEMENT,
+    title: "Sponsorship Agreement",
+      version: "1.0",
+        content: `
+# SPONSORSHIP AGREEMENT
+
+THIS SPONSORSHIP AGREEMENT (this "Agreement"), effective {{DATE}} (the "Effective Date"), is by and between {{BUSINESS_NAME}}, a {{BUSINESS_ENTITY_TYPE}} ("Sponsor"), and Mutual of Omaha Insurance Company, a Nebraska corporation ("Mutual"), each a "Party" and collectively the "Parties". For purposes of this Agreement, "Sponsor" and "Mutual" includes each respective corporation, its affiliates and their officers, directors, employees, agents and consultants. The Parties agree as follows:
+
+**Arrangement.** The Parties desire to create a mutually beneficial business arrangement whereby individuals participating in Sponsor events ("Sponsor Participants") can obtain and receive coverage under Mutual’s individual accidental death and dismemberment policy (the "Policy" or "Policies"). As intended at that time of execution of this Agreement, premium for Sponsor Participants’ Policies would be paid for by a third-party.
+
+**Related Agreement.** The Parties acknowledge that Mutual has entered into a separate agreement with HIQOR, Inc. ("HIQOR") (the "Related Agreement") that addresses, among other things, payment of premiums for the Policies on behalf of those Sponsor Participants who have completed an application and received a Voucher (as described below). Nothing herein imposes obligations on HIQOR, which is not a party to this Agreement.
+
+**Term, Termination, and Suspension of Sales.** The term of this Agreement shall commence on the Effective Date and shall continue for a period of one (1) year ("Initial Term"). This Agreement shall automatically renew for one or more additional one (1) year periods (each a "Renewal Term") unless a Party gives written notice prior to thirty (30) days before the end of the Initial Term or Renewal Term then in effect of their intention not to renew this Agreement, in which case the Agreement shall terminate at the end of the Initial Term or Renewal Term.
+
+This Agreement may be terminated at any time upon the mutual agreement of the Parties, or upon thirty (30) days’ prior written notice. for good cause, which for the purposes of this provision shall mean a breach of any material term of this Agreement, except that any such notice will not result in termination if the breaching Party cures the breach before the thirty (30) day period elapses. After termination, no new Vouchers will be provided to Sponsor Participants.
+
+Further, Mutual may immediately suspend the providing of Vouchers, honoring of Vouchers, and marketing of the Policies, at its sole discretion, for material deviation from the terms of this Agreement or Mutual’s policies. Mutual may also immediately suspend the providing of Vouchers, honoring of Vouchers, and marketing of the Policies, at its sole discretion, in the event of:
+- threatened or actual litigation;
+- continued performance that results in, or could be reasonably expected to result in, a violation of any applicable or prospective law, regulation, or order of any government or regulatory authority;
+- material changes to a Party’s business operations that would be required to comply with current, evolving, or newly imposed regulatory requirements.
+
+This Agreement shall also terminate upon the termination of the Related Agreement unless otherwise agreed to by the Parties in writing.
+
+After termination, no new Vouchers will be provided to Sponsor Participants. Sponsor acknowledges that for Vouchers issued prior to termination (or for events already scheduled as of termination), premium payment obligations (if any) are governed by the Related Agreement between Mutual and HIQOR.
+
+**Compensation.** No compensation shall be payable to Sponsor by Mutual as the result of this arrangement or sale of the Policies.
+
+**Sale of Policies.** The Parties agree that all Policies will be sold through Mutual’s online sales portal. Mutual will provide Sponsor with a unique link to the sales portal for Sponsor to provide Sponsor Participants. Sponsor shall provide the link to Sponsor Participants only after a completed purchase of a Sponsor race event. Along with the link, Sponsor Participants shall also receive a voucher number (each a "Voucher") to be used during checkout. When a Voucher is used, billing for the premium will occur pursuant to the Related Agreement between Mutual and HIQOR.
+
+**Payment of Policy Premium.** Sponsor understands Mutual shall have no obligation to pay premiums, issue policies, or pay premiums in the event of HIQOR’s non-performance or breach of the Related Agreement.
+
+**No Solicitation and Producer of Record.** Sponsor will not solicit the Policies. Only the process outlined in the Sale of Policies section shall be used to solicit the Policies. Sure HIIS Insurance Services, LLC shall be the producer of record for all sales unless agreed otherwise by the Parties in writing.
+
+**Servicing Policies.** Mutual shall have the sole and exclusive right to administer and service all insurance Policies issued under this Agreement. This includes, but is not limited to, the authority to handle underwriting, Policy issuance, endorsements, renewals, cancellations, claims administration, billing, and customer service.
+All communications with policyholders regarding Policy terms, benefits, claims, or any other related questions shall be directed to Mutual.
+
+**Control Over Marketing.** Sponsor agrees that all advertising, promotional, materials, public marketing communications ("Marketing Material") related to the insurance products or services offered by Mutual shall be subject to Mutual’s prior written review and approval.
+Sponsor shall submit all proposed Marketing Materials to Mutual for review no less than 14 days prior to the intended publication, distribution, or use. Mutual shall, at its sole discretion, have the right to approve, reject, or require modifications to any such materials at its sole discretion.
+All approved Marketing Materials must comply with applicable laws and regulations, as well as Mutual’s brand guidelines, advertising policies, and any other applicable standards as communicated by Mutual.
+
+**Sale and Marketing Restrictions.** At no time shall Policies be marketed or referred to as "free" or as an inducement to purchase tickets to Sponsor events. Payment of the Policies’ premium by HIQOR shall be clearly and conspicuously disclosed.
+
+**Trademarks, Trade Names, Etc.** No Party may use the other Party’s name, logo, trademarks, tradenames, or other identifying marks ("Marks") in any marketing materials, communications, press releases, customer lists, or similar communications without such other Party’s prior, written consent. Each Party may use the other Party’s Marks solely as necessary to fulfill its obligations under this Agreement or as expressly permitted within this Agreement, provided such use complies with any guidelines provided by the owner of the Marks. This Agreement does not grant any Party any ownership, license, or other rights in the other Party’s Marks except as expressly stated herein.
+
+**No Press Release.** Each of the Parties acknowledge and agree not to issue any press release to publicize the existence of this Agreement or any of the terms hereof without the express prior written consent of the other Party.
+
+**Notice of Complaint, Litigation or Regulatory Proceeding.** Sponsor shall promptly notify Mutual of any complaint (oral or written) from a consumer, purchaser or applicant for a product (including any representative acting on their behalf, directly or indirectly from a regulatory agency), expressing a grievance. This notice includes any potential, threatened, or actual litigation with respect to this Agreement or any product. Sponsor shall take all steps necessary to cooperate with Mutual in any investigation or legal proceeding relating to the services provided under this Agreement. A copy of any correspondence or document received shall accompany each notice. Nothing herein relieves Sponsor from their obligation to provide notice to their insurer or fidelity bond issuer of any such claim, complaint or lawsuit. Sponsor shall not respond to any complaint, lawsuit, legal or regulatory proceeding for or on behalf of Mutual in connection with any matter pertaining to this Agreement without Mutual’s prior written consent.
+
+**Indemnification.** Each Party ("Indemnifying Party") agrees to indemnify, defend and hold the other party ("Indemnified Party") and their shareholders, directors, officers, employees, agents, subsidiaries, and affiliates ("Indemnified Party Indemnitees") harmless from and against any and all losses, injuries, claims, demands, liabilities, obligations, suits, penalties, forfeitures, costs or expenses of every type or kind, including reasonable attorneys’ fees actually incurred, disbursements and costs of investigation which are imposed upon, incurred by or asserted against the Indemnified Party Indemnitees to the extent it results from: (i) the breach of this Agreement by Indemnifying Party; (ii) the negligent act or omission of Indemnifying Party or any officer, employee or agent under the control or supervision of Indemnifying Party; or (iii) the violation of any applicable laws, regulations or rules by Indemnifying Party or any officer, employee or agent under the control or supervision of Indemnifying Party. No Party shall be liable to the other Party, or to any third party claiming through a Party, for indirect, incidental, special or consequential damages, punitive or exemplary loss, damage, cost or expense arising out of or relating to this Agreement. The terms hereof shall survive the termination or expiration of this Agreement.
+
+**Right to Audit.** During the term of this Agreement and for a period of one year thereafter, Mutual shall have the right, upon at least five (5) business days’ prior written notice and during normal business hours, to audit and inspect Sponsor’s marketing materials, advertising content, promotional campaigns, and sales practices used in connection with the promotion, marketing, or sale of the Policies covered under this Agreement. The purpose of such audit shall be to ensure compliance with the branding guidelines, regulatory requirements, and the terms of this Agreement.
+Sponsor shall provide full and prompt access to all relevant marketing collateral (including digital, print, and social media content), training materials, sales scripts, customer-facing communications, and any other documentation or records related to its sales and marketing activities. Mutual may also conduct reasonable interviews with relevant personnel involved in sales or marketing efforts.
+
+Sponsor shall cooperate in good faith and provide all information reasonably requested by Mutual in connection with such audits. Audits shall be conducted in a manner designed to minimize disruption to Sponsor’s operations.
+
+If any audit reveals a material deviation from the agreed marketing standards, misrepresentation, or other non-compliant sales practices, Sponsor shall promptly take corrective action as directed by Mutual.
+
+Each Party shall bear its own costs associated with the audit; provided, however, that if material non-compliance is discovered, the non-complying Party shall reimburse Mutual for the reasonable costs of the audit and any associated enforcement efforts.
+
+**Independent Contractor.** The relationship of the Parties established under this Agreement is that of independent contractors, and no Party is a partner, employee, agent or joint venture partner of or with the other Party, and no Party has the right or authority to assume or create any obligation on behalf of the other Party.
+
+**Confidentiality.** Sponsor and Mutual agree not to disclose and to keep confidential all information concerning their respective business practices, strategies, the operating procedures and pricing structures which are not generally known to the public, and to employ reasonable measures designed to prevent such information from being divulged to third parties. Notwithstanding the foregoing, no information shall be considered confidential which: (i) is known to the receiving party, without an obligation of confidentiality, prior to disclosure by the disclosing party; (ii) is disclosed to the receiving party by a third party who was free to lawfully disclose such information to the disclosing party; (iii) is publicly available other than as a result of a breach by the receiving party of its obligation of confidentiality set forth herein; or (iv) is independently developed by the receiving party without the use of confidential information as evidenced by the receiving party’s business records. The terms hereof shall survive the termination or expiration of this Agreement.
+
+**Reports.** Sponsor will provide Mutual with such reports in the format, frequency and intervals as the Parties mutually agree upon.
+
+**Assignment.** The rights and obligations of each Party under this Agreement are personal and not assignable, either voluntarily or by obligation of law, without the prior written consent of the other Party. Subject to the foregoing, all provisions contained in this Agreement will extend to and be binding upon the Parties and their respective successors and permitted assigns.
+
+**Notices.** Any notice required or permitted under this Agreement shall be in writing, delivered personally, by email, or sent by U.S. Mail with all postage prepaid or by express mail or overnight courier to the following:
+
+If to Mutual:
+Mutual of Omaha Insurance Company
+3300 Mutual of Omaha Plaza
+Omaha, NE 68175
+Attention: ______________
+Telephone: (402) 351- _____
+Email: ____________@mutualofomaha.com
+
+With a copy to:
+Mutual of Omaha Insurance Company
+Mutual of Omaha Plaza
+Omaha, NE 68175
+Attention: General Counsel
+Email: sendlegalnoticeshere@mutualofomaha.com
+
+If to Sponsor:
+{{BUSINESS_NAME}}
+{{CONTACT_NAME}}
+{{BUSINESS_ADDRESS}}
+
+All "hard copy" notices shall be effective upon delivery to the address of the addressee (even if such addressee refuses delivery thereof); notices sent by electronic mail shall be effective on the business day of transmission to the proper electronic mail addresses if transmitted before 5:00 p.m. (local time at the Party to whom notice is sent). To be effective as "notice" pursuant to this Agreement, any notice sent by electronic mail shall include the following phrase in all caps in the subject line thereof: "NOTICE DELIVERED PURSUANT TO SPONSORSHIP AGREEMENT" with confirmation of receipt.
+
+**Waiver.** Failure to insist upon strict compliance with any of the terms, covenants or conditions of this Agreement shall not be deemed a waiver of such terms, covenants or conditions.
+
+**Choice of Law.** This Agreement shall be governed by, and construed in accordance with, the laws of the State of Nebraska without regard to conflict of laws principles.
+
+**Entire Agreement.** This Agreement and any Exhibits attached hereto, embody the entire agreement between the Parties and supersedes any and all prior and/or contemporaneous agreements, written or verbal, between the Parties pertaining to the subject matter hereof, with the exception of any confidentiality or non-disclosure agreement, whose terms will remain effective for any period up to the Effective Date of this Agreement. No modification, amendment or deletion of the terms and conditions hereof shall be effective unless made in writing and signed by the Parties.
+
+**Attorney’s Fees.** If any action at law or in equity is necessary to enforce the terms of this Agreement, the prevailing Party will be entitled to reasonable fees of attorneys, accountants, and other professionals, and costs and expenses in addition to any other relief to which such prevailing Party may be entitled.
+
+**Severability.** Should any part of this Agreement be declared invalid, illegal or unenforceable by a court of competent jurisdiction or other body having jurisdiction over the matter, such ruling shall not affect the validity, legality or enforceability of any remaining provisions, which provisions shall remain in full force and effect.
+
+**Survival of Certain Provisions.** Only those provisions in the Agreement, which by their sense and context are meant to survive expiration or termination of the Agreement, including, but not limited to, all confidentiality and indemnification provisions, shall survive after termination.
+
+**Legal Compliance.** In performing services under this Agreement, the Parties will comply, at their own cost, with all applicable federal, state and local laws and regulations and act in an ethical and professional manner.
+
+**Regulatory Review.** The Parties agree that the performance of services under this Agreement may be subject to examination oversight by Mutual’s regulators ("Regulators"). Sponsor agrees to cooperate with any requests of the Regulators related to this Agreement.
+
+**Counterparts; Electronic And Facsimile Signatures.** This Agreement may be signed by manual, electronic or facsimile signature in several counterparts of like form, each of which when so executed shall be deemed to be an original and such counterparts together shall constitute one and the same instrument.
+
+The Parties hereto have caused this Agreement to be duly executed and shall be deemed effective as of the Effective Date.
+
+**{{BUSINESS_NAME}}**
+
+__________________________________
+[Digital Signature]
+Name: {{CONTACT_NAME}}
+Title: [Partner Title]
+Date: {{DATE}}
+
+**MUTUAL OF OMAHA INSURANCE COMPANY**
+
+_________________________________
+[Digital Signature]
+Name: [Mutual of Omaha Representative]
+Title: [Title]
+Date: {{DATE}}
+`,
+  },
+{
+  type: DOCUMENT_TYPES.DIRECT_DEPOSIT,
     title: "Direct Deposit Authorization",
-    version: "1.0",
-    content: `
+      version: "1.0",
+        content: `
 # Direct Deposit Authorization Form
 
   ** Purpose:** To authorize Daily Event Insurance to initiate commission payments directly to your bank account.

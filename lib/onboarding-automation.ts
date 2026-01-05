@@ -49,23 +49,25 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         throw new Error("Partner not found")
     }
 
-    // Check if Joint Marketing Agreement is signed
-    const jointMarketingDoc = await db
+    // Check for required agreements
+    const signedDocs = await db
         .select()
         .from(partnerDocuments)
         .where(
             and(
                 eq(partnerDocuments.partnerId, partnerId),
-                eq(partnerDocuments.documentType, DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT),
                 eq(partnerDocuments.status, "signed")
             )
         )
-        .limit(1)
+
+    const isJointMarketingSigned = signedDocs.some(d => d.documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT)
+    const isMutualNdaSigned = signedDocs.some(d => d.documentType === DOCUMENT_TYPES.MUTUAL_NDA)
+    const isSponsorshipAgreementSigned = signedDocs.some(d => d.documentType === DOCUMENT_TYPES.SPONSORSHIP_AGREEMENT)
 
     // Verify required legal agreements are signed
     // W9 and Direct Deposit are now optional for "Go Live"
-    if (!partner.agreementSigned || jointMarketingDoc.length === 0) {
-        throw new Error("Legal agreements (Partner Agreement & Joint Marketing Agreement) must be signed before completing onboarding")
+    if (!partner.agreementSigned || !isJointMarketingSigned || !isMutualNdaSigned || !isSponsorshipAgreementSigned) {
+        throw new Error("All required legal agreements (Partner Agreement, Joint Marketing Agreement, Mutual NDA, Sponsorship Agreement) must be signed before completing onboarding")
     }
 
     console.log(`Starting onboarding completion for partner: ${partner.businessName} (${partnerId})`)

@@ -18,6 +18,8 @@ import {
   Receipt,
   Building2,
   Handshake,
+  Shield,
+  Award,
 } from "lucide-react"
 
 interface DocumentTemplate {
@@ -36,6 +38,8 @@ interface DocumentStatus {
 const documentIcons: Record<string, React.ElementType> = {
   [DOCUMENT_TYPES.PARTNER_AGREEMENT]: Building2,
   [DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT]: Handshake,
+  [DOCUMENT_TYPES.MUTUAL_NDA]: Shield,
+  [DOCUMENT_TYPES.SPONSORSHIP_AGREEMENT]: Award,
   [DOCUMENT_TYPES.W9]: Receipt,
   [DOCUMENT_TYPES.DIRECT_DEPOSIT]: FileText,
 }
