@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth, requirePartner, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, partners, partnerProducts, partnerDocuments } from "@/lib/db"
+import { createAdminClient } from "@/lib/supabase/server"
 import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
 import { getGHLClient, isGHLConfigured } from "@/lib/ghl"
@@ -142,19 +143,37 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    try {
+      // Update user role to partner
+      // We need admin client to bypass RLS and update user metadata
+      const supabaseAdmin = createAdminClient()
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        userId,
+        { user_metadata: { role: 'partner' } }
+      )
+
+      if (updateError) {
+        console.error("Failed to update user role:", updateError)
+        // We don't fail the request here, but log it
+        // The user might need manual role update or re-signin
+      }
+    } catch (error) {
+      console.error("Error updating user role:", error)
+    }
+
     // Create product configurations
     const productConfigs = products && Array.isArray(products) && products.length > 0
       ? products.map((p: { product_type: string; is_enabled?: boolean; customer_price?: number }) => ({
-          partnerId: partner.id,
-          productType: p.product_type,
-          isEnabled: p.is_enabled ?? true,
-          customerPrice: String(p.customer_price ?? 4.99),
-        }))
+        partnerId: partner.id,
+        productType: p.product_type,
+        isEnabled: p.is_enabled ?? true,
+        customerPrice: String(p.customer_price ?? 4.99),
+      }))
       : [
-          { partnerId: partner.id, productType: "liability", isEnabled: true, customerPrice: "4.99" },
-          { partnerId: partner.id, productType: "equipment", isEnabled: false, customerPrice: "9.99" },
-          { partnerId: partner.id, productType: "cancellation", isEnabled: false, customerPrice: "14.99" },
-        ]
+        { partnerId: partner.id, productType: "liability", isEnabled: true, customerPrice: "4.99" },
+        { partnerId: partner.id, productType: "equipment", isEnabled: false, customerPrice: "9.99" },
+        { partnerId: partner.id, productType: "cancellation", isEnabled: false, customerPrice: "14.99" },
+      ]
 
     try {
       await db!.insert(partnerProducts).values(productConfigs)

@@ -202,28 +202,7 @@ export function DEIIntroSection() {
         }}
       />
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:gap-3 z-20 pb-safe"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-      >
-        <span className="text-teal-600 text-[10px] md:text-xs font-medium tracking-[0.25em] uppercase drop-shadow-lg">
-          Scroll to Explore
-        </span>
-        <motion.div
-          className="w-5 h-8 md:w-6 md:h-10 border-2 border-teal-500/50 rounded-full flex justify-center pt-1.5 md:pt-2"
-          animate={{ borderColor: ["rgba(20,184,166,0.5)", "rgba(20,184,166,0.9)", "rgba(20,184,166,0.5)"] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-        >
-          <motion.div
-            className="w-1 h-2 md:w-1.5 md:h-2.5 bg-teal-500 rounded-full"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-          />
-        </motion.div>
-      </motion.div>
+      {/* Scroll indicator - hidden since section is now in middle of page */}
 
       {/* Bottom gradient fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none" />
@@ -231,7 +210,7 @@ export function DEIIntroSection() {
   )
 
   return (
-    <section id="home" ref={sectionRef} className="relative w-full min-h-screen h-[100dvh] overflow-hidden bg-white">
+    <section id="home" ref={sectionRef} className="relative w-full min-h-[80vh] py-16 md:py-24 overflow-hidden bg-white">
       <HeroContent />
     </section>
   )

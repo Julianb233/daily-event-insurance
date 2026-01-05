@@ -45,6 +45,7 @@ export default function SignUpPage() {
         options: {
           data: {
             name: name || undefined,
+            role: 'user',
           },
         },
       })

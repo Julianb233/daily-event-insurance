@@ -4,7 +4,7 @@ import { updateSession } from "@/lib/supabase/middleware"
 // Route role requirements - more specific routes should come first
 const ROUTE_ROLES: Record<string, string[]> = {
   "/api/admin": ["admin"],
-  "/api/partner": ["partner", "admin"],
+  "/api/partner": ["user", "partner", "admin"],
   "/partner": ["partner", "admin"],
   "/onboarding": ["user", "partner", "admin"], // Any authenticated user can access onboarding
 }
@@ -19,6 +19,9 @@ const publicRoutes = [
   "/insurance-disclosure",
   "/industries",
   "/categories",
+  "/carriers", // Carrier pages for insurance partners
+  "/race-day-flow", // Race day coverage flow diagram
+  "/blog", // Blog posts and articles
   "/for-gyms",
   "/for-climbing",
   "/for-rentals",

@@ -80,7 +80,7 @@ const eventActivatedFeatures = [
 
 export function HiqorValueProp() {
   return (
-    <section className="relative bg-white py-16 md:py-24 overflow-hidden">
+    <section className="relative bg-white pt-40 md:pt-48 pb-16 md:pb-24 overflow-hidden">
       {/* Background subtle pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
         <div

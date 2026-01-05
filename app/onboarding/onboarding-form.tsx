@@ -188,13 +188,12 @@ function Stepper({ currentStep, totalSteps, formData }: StepperProps) {
             return (
               <div key={step.number} className="flex flex-col items-center gap-2 relative z-10">
                 <motion.div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                    isCompleted
-                      ? "bg-[#14B8A6] text-white"
-                      : isCurrent
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isCompleted
+                    ? "bg-[#14B8A6] text-white"
+                    : isCurrent
                       ? "bg-[#14B8A6] text-white ring-4 ring-[#14B8A6]/20"
                       : "bg-white border-2 border-gray-300 text-gray-400"
-                  }`}
+                    }`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: step.number * 0.1 }}
@@ -205,9 +204,8 @@ function Stepper({ currentStep, totalSteps, formData }: StepperProps) {
                     <Icon className="w-5 h-5" />
                   )}
                 </motion.div>
-                <span className={`text-xs font-medium hidden sm:block ${
-                  isCurrent ? "text-[#14B8A6]" : "text-gray-500"
-                }`}>
+                <span className={`text-xs font-medium hidden sm:block ${isCurrent ? "text-[#14B8A6]" : "text-gray-500"
+                  }`}>
                   {step.title}
                 </span>
               </div>
@@ -399,9 +397,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 value={formData.businessName}
                 onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                 onBlur={() => handleBlur("businessName")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                  errors.businessName ? "border-red-300 bg-red-50" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.businessName ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
                 placeholder="Peak Performance Gym"
                 aria-required="true"
                 autoComplete="organization"
@@ -418,9 +415,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 value={formData.businessType}
                 onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
                 onBlur={() => handleBlur("businessType")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                  errors.businessType ? "border-red-300 bg-red-50" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.businessType ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
                 aria-required="true"
               >
                 <option value="">Select type</option>
@@ -445,9 +441,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 value={formData.contactName}
                 onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
                 onBlur={() => handleBlur("contactName")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                  errors.contactName ? "border-red-300 bg-red-50" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.contactName ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
                 placeholder="John Smith"
                 aria-required="true"
                 autoComplete="name"
@@ -465,9 +460,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 onBlur={() => handleBlur("email")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                  errors.email ? "border-red-300 bg-red-50" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.email ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
                 placeholder="john@example.com"
                 aria-required="true"
                 autoComplete="email"
@@ -487,9 +481,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 onBlur={() => handleBlur("phone")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                  errors.phone ? "border-red-300 bg-red-50" : "border-gray-300"
-                }`}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.phone ? "border-red-300 bg-red-50" : "border-gray-300"
+                  }`}
                 placeholder="(555) 123-4567"
                 aria-required="true"
                 autoComplete="tel"
@@ -511,9 +504,8 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
                     handleBlur("websiteUrl")
                     handleWebsiteAutoFill()
                   }}
-                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${
-                    errors.websiteUrl ? "border-red-300 bg-red-50" : "border-gray-300"
-                  }`}
+                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none transition-all ${errors.websiteUrl ? "border-red-300 bg-red-50" : "border-gray-300"
+                    }`}
                   placeholder="https://yourcompany.com"
                   autoComplete="url"
                 />
@@ -685,11 +677,10 @@ function Step1BusinessInfo({ formData, setFormData, onNext, onBack }: Step1Props
               if (canContinue) onNext()
             }}
             aria-label="Continue to integration selection"
-            className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
-              canContinue
-                ? "bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white hover:shadow-lg"
-                : "bg-gray-200 text-gray-500 cursor-not-allowed"
-            }`}
+            className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${canContinue
+              ? "bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white hover:shadow-lg"
+              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+              }`}
           >
             Continue
             <ChevronRight className="w-5 h-5" aria-hidden="true" />
@@ -809,11 +800,10 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
               role="radio"
               aria-checked={selectedIntegration === option.id}
               tabIndex={selectedIntegration === option.id ? 0 : -1}
-              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
-                selectedIntegration === option.id
-                  ? "border-[#14B8A6] bg-[#14B8A6]/5"
-                  : "border-gray-200 hover:border-[#14B8A6]/50"
-              }`}
+              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${selectedIntegration === option.id
+                ? "border-[#14B8A6] bg-[#14B8A6]/5"
+                : "border-gray-200 hover:border-[#14B8A6]/50"
+                }`}
             >
               {option.recommended && (
                 <div className="absolute -top-3 right-4 px-3 py-1 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white text-xs font-bold rounded-full">
@@ -836,11 +826,10 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
                 </div>
 
                 <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedIntegration === option.id
-                      ? "border-[#14B8A6] bg-[#14B8A6]"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedIntegration === option.id
+                    ? "border-[#14B8A6] bg-[#14B8A6]"
+                    : "border-gray-300"
+                    }`}
                   aria-hidden="true"
                 >
                   {selectedIntegration === option.id && (
@@ -1029,11 +1018,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack, isFirstStep }: 
               <motion.div
                 key={product.id}
                 whileHover={{ scale: 1.01 }}
-                className={`p-6 border-2 rounded-xl transition-all ${
-                  isSelected
-                    ? "border-[#14B8A6] bg-[#14B8A6]/5"
-                    : "border-gray-200"
-                }`}
+                className={`p-6 border-2 rounded-xl transition-all ${isSelected
+                  ? "border-[#14B8A6] bg-[#14B8A6]/5"
+                  : "border-gray-200"
+                  }`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3">
@@ -1042,11 +1030,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack, isFirstStep }: 
                       role="checkbox"
                       aria-checked={isSelected}
                       aria-label={`${isSelected ? "Deselect" : "Select"} ${product.name}`}
-                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
-                        isSelected
-                          ? "border-[#14B8A6] bg-[#14B8A6]"
-                          : "border-gray-300"
-                      }`}
+                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${isSelected
+                        ? "border-[#14B8A6] bg-[#14B8A6]"
+                        : "border-gray-300"
+                        }`}
                     >
                       {isSelected && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                     </button>
@@ -1273,19 +1260,16 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
               <motion.div
                 key={item.id}
                 whileHover={{ scale: 1.01 }}
-                className={`p-6 border-2 rounded-xl transition-all ${
-                  isCompleted
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-200"
-                }`}
+                className={`p-6 border-2 rounded-xl transition-all ${isCompleted
+                  ? "border-green-500 bg-green-50"
+                  : "border-gray-200"
+                  }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${
-                    isCompleted ? "bg-green-500" : "bg-gray-100"
-                  }`}>
-                    <Icon className={`w-6 h-6 ${
-                      isCompleted ? "text-white" : "text-gray-600"
-                    }`} />
+                  <div className={`p-3 rounded-lg ${isCompleted ? "bg-green-500" : "bg-gray-100"
+                    }`}>
+                    <Icon className={`w-6 h-6 ${isCompleted ? "text-white" : "text-gray-600"
+                      }`} />
                   </div>
 
                   <div className="flex-1">
@@ -1300,11 +1284,10 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
                         role="checkbox"
                         aria-checked={isCompleted}
                         aria-label={`Mark ${item.title} as ${isCompleted ? "incomplete" : "complete"}`}
-                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
-                          isCompleted
-                            ? "border-green-500 bg-green-500"
-                            : "border-gray-300"
-                        }`}
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${isCompleted
+                          ? "border-green-500 bg-green-500"
+                          : "border-gray-300"
+                          }`}
                       >
                         {isCompleted && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                       </button>
@@ -1557,27 +1540,11 @@ export default function OnboardingForm() {
         throw new Error(errorData.error || "Failed to create partner account")
       }
 
-      // 2. Update user role to partner via API
-      if (session?.user) {
-        const roleResponse = await fetch("/api/user/role", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ role: "partner" }),
-        })
+      // 2. Refresh session to get updated role (set by api/partner)
+      await updateSession()
 
-        if (!roleResponse.ok) {
-          console.error("Failed to update user role")
-        }
-
-        // Refresh the session to get the updated role
-        // The JWT callback will now refetch the role from the database
-        await updateSession()
-
-        // Wait a brief moment for the session to fully propagate
-        // This prevents race conditions where the redirect happens
-        // before the new role is available in the session
-        await new Promise(resolve => setTimeout(resolve, 500))
-      }
+      // Wait a brief moment for the session to fully propagate
+      await new Promise(resolve => setTimeout(resolve, 500))
 
       // 3. Show success state briefly then redirect
       setIsComplete(true)
@@ -1585,7 +1552,7 @@ export default function OnboardingForm() {
       // Redirect to partner dashboard after 2 seconds
       // Session is now guaranteed to have the updated role
       setTimeout(() => {
-        router.push("/partner/dashboard")
+        router.push("/onboarding/documents")
       }, 2000)
 
     } catch (err) {
@@ -1649,7 +1616,7 @@ export default function OnboardingForm() {
                   formData={formData}
                   setFormData={setFormData}
                   onNext={handleNext}
-                  onBack={() => {}} // No back on first step
+                  onBack={() => { }} // No back on first step
                   isFirstStep={true}
                 />
               )}
