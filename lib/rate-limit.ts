@@ -208,3 +208,15 @@ export const quoteRateLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 10 // 10 quotes per minute
 })
+
+/** Webhook limiter: 10 webhooks per hour per partner (creation/updates) */
+export const webhookRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10 // 10 webhook operations per hour
+})
+
+/** Scrape limiter: 10 scrapes per 5 minutes per user */
+export const scrapeRateLimiter = createRateLimiter({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 10 // 10 scrapes per 5 minutes
+})

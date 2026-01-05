@@ -4,7 +4,29 @@ import { db, isDbConfigured, partners } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 import { generateWebhookSecret, WebhookEventType } from "@/lib/webhooks/outbound"
+import { webhookRateLimiter, getClientIP, rateLimitResponse } from "@/lib/rate-limit"
 import postgres from "postgres"
+
+// SSRF Protection: Block private/internal IP ranges
+const BLOCKED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]']
+const PRIVATE_IP_PATTERNS = [
+  /^10\./,                          // 10.0.0.0/8
+  /^172\.(1[6-9]|2[0-9]|3[0-1])\./, // 172.16.0.0/12
+  /^192\.168\./,                    // 192.168.0.0/16
+  /^169\.254\./,                    // Link-local
+  /^127\./,                         // Loopback
+  /^0\./,                           // Current network
+]
+
+function isPrivateOrLocalhost(hostname: string): boolean {
+  const lowerHostname = hostname.toLowerCase()
+  if (BLOCKED_HOSTS.includes(lowerHostname)) return true
+  for (const pattern of PRIVATE_IP_PATTERNS) {
+    if (pattern.test(hostname)) return true
+  }
+  if (lowerHostname.endsWith('.local') || lowerHostname.endsWith('.internal')) return true
+  return false
+}
 
 // Valid webhook event types
 const VALID_EVENTS: WebhookEventType[] = [
@@ -71,6 +93,26 @@ interface WebhookRow {
 }
 
 function formatWebhook(row: WebhookRow) {
+  // Safe JSON parsing with error handling
+  let events: string[] = []
+  let headers: Record<string, string> | null = null
+
+  try {
+    events = JSON.parse(row.events || "[]")
+  } catch (e) {
+    console.error(`[Webhook ${row.id}] Invalid events JSON:`, e)
+    events = []
+  }
+
+  if (row.headers) {
+    try {
+      headers = JSON.parse(row.headers)
+    } catch (e) {
+      console.error(`[Webhook ${row.id}] Invalid headers JSON:`, e)
+      headers = null
+    }
+  }
+
   return {
     id: row.id,
     partnerId: row.partner_id,
@@ -78,9 +120,9 @@ function formatWebhook(row: WebhookRow) {
     url: row.url,
     // Don't expose the full secret, just show it exists
     hasSecret: !!row.secret,
-    events: JSON.parse(row.events || "[]"),
+    events,
     isActive: row.is_active,
-    headers: row.headers ? JSON.parse(row.headers) : null,
+    headers,
     lastTriggeredAt: row.last_triggered_at,
     lastSuccessAt: row.last_success_at,
     lastFailureAt: row.last_failure_at,
@@ -152,8 +194,9 @@ export async function GET(request: NextRequest) {
     } catch (error: any) {
       await sql.end()
       console.error("[Webhooks API] Error fetching webhooks:", error)
+      // SECURITY: Don't expose internal error details
       return NextResponse.json(
-        { error: "Database error", message: error.message },
+        { error: "Database error", message: "Failed to fetch webhooks" },
         { status: 500 }
       )
     }
@@ -167,6 +210,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
     const { userId } = await requirePartner()
+
+    // Rate limiting
+    const clientIP = getClientIP(request)
+    const { success: withinLimit } = webhookRateLimiter.check(`webhook-${userId}`)
+    if (!withinLimit) {
+      return rateLimitResponse(60 * 60 * 1000) // 1 hour
+    }
 
     if (!isDbConfigured()) {
       return NextResponse.json(
@@ -200,12 +250,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // URL length limit
+    if (body.url.length > 2048) {
+      return NextResponse.json(
+        { error: "Validation error", message: "Webhook URL too long (max 2048 characters)" },
+        { status: 400 }
+      )
+    }
+
     // Validate URL format
+    let webhookUrl: URL
     try {
-      new URL(body.url)
+      webhookUrl = new URL(body.url)
     } catch {
       return NextResponse.json(
         { error: "Validation error", message: "Invalid webhook URL format" },
+        { status: 400 }
+      )
+    }
+
+    // SECURITY: SSRF Protection - block private/internal addresses
+    if (isPrivateOrLocalhost(webhookUrl.hostname)) {
+      console.warn(`[SECURITY] Webhook SSRF attempt blocked: ${webhookUrl.hostname}`)
+      return NextResponse.json(
+        { error: "Validation error", message: "Webhook URL cannot point to private or internal addresses" },
         { status: 400 }
       )
     }
@@ -285,8 +353,9 @@ export async function POST(request: NextRequest) {
     } catch (error: any) {
       await sql.end()
       console.error("[Webhooks API] Error creating webhook:", error)
+      // SECURITY: Don't expose internal error details
       return NextResponse.json(
-        { error: "Database error", message: error.message },
+        { error: "Database error", message: "Failed to create webhook" },
         { status: 500 }
       )
     }

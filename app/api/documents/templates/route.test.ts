@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { NextResponse } from 'next/server'
 
+// Mock auth module to prevent next-auth from loading
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn().mockResolvedValue({ user: { id: 'test-admin', role: 'admin' } }),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+}))
+
 // Mock modules before imports
 vi.mock('@/lib/api-auth', () => ({
   requireAdmin: vi.fn().mockResolvedValue({ userId: 'test-admin' }),

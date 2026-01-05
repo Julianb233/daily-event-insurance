@@ -79,7 +79,15 @@ export async function POST(request: NextRequest) {
       console.warn("[Webhook] DEV MODE: Skipping signature verification")
     }
 
-    const body = JSON.parse(payload)
+    let body: any
+    try {
+      body = JSON.parse(payload)
+    } catch (e) {
+      console.error("[Webhook] Invalid JSON payload:", e)
+      return validationError("Invalid JSON payload", {
+        payload: ["Request body must be valid JSON"]
+      })
+    }
     const { event_type, policy_id, data, timestamp } = body
 
     // Validate required fields
@@ -145,7 +153,8 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error("[Webhook] Error:", error)
-    return serverError(error.message || "Webhook processing failed")
+    // SECURITY: Don't expose internal error details
+    return serverError("Webhook processing failed")
   }
 }
 
@@ -207,7 +216,15 @@ async function handleClaimFiled(policyId: string, data: any) {
 
   if (policyResult.length > 0) {
     const policy = policyResult[0]
-    const existingMetadata = policy.metadata ? JSON.parse(policy.metadata) : {}
+    let existingMetadata: Record<string, any> = {}
+    if (policy.metadata) {
+      try {
+        existingMetadata = JSON.parse(policy.metadata)
+      } catch (e) {
+        console.error(`[Webhook] Invalid metadata JSON for policy ${policyId}:`, e)
+        existingMetadata = {}
+      }
+    }
 
     const updatedMetadata = {
       ...existingMetadata,

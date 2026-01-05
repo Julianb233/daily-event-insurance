@@ -111,17 +111,39 @@ export async function GET(
 
       const policy = policyResult[0]
 
-      // Parse JSON fields if they exist
+      // Parse JSON fields if they exist (with error handling)
+      let eventDetails = null
+      let metadata = null
+
+      if (policy.eventDetails) {
+        try {
+          eventDetails = JSON.parse(policy.eventDetails)
+        } catch (e) {
+          console.error(`[Policy ${policy.id}] Invalid eventDetails JSON:`, e)
+          eventDetails = null
+        }
+      }
+
+      if (policy.metadata) {
+        try {
+          metadata = JSON.parse(policy.metadata)
+        } catch (e) {
+          console.error(`[Policy ${policy.id}] Invalid metadata JSON:`, e)
+          metadata = null
+        }
+      }
+
       const enrichedPolicy = {
         ...policy,
-        eventDetails: policy.eventDetails ? JSON.parse(policy.eventDetails) : null,
-        metadata: policy.metadata ? JSON.parse(policy.metadata) : null,
+        eventDetails,
+        metadata,
       }
 
       return successResponse({ policy: enrichedPolicy })
     } catch (error: any) {
       console.error("[Partner Policies] GET [policyId] Error:", error)
-      return serverError(error.message || "Failed to fetch policy details")
+      // SECURITY: Don't expose internal error details
+      return serverError("Failed to fetch policy details")
     }
   })
 }
@@ -291,7 +313,8 @@ export async function PATCH(
       return serverError("Invalid action")
     } catch (error: any) {
       console.error("[Partner Policies] PATCH [policyId] Error:", error)
-      return serverError(error.message || "Failed to update policy")
+      // SECURITY: Don't expose internal error details
+      return serverError("Failed to update policy")
     }
   })
 }

@@ -150,14 +150,19 @@ export async function GET(
     // Determine content type
     const contentType = getContentType(asset)
 
+    // Escape filename for Content-Disposition header (prevent header injection)
+    const safeFilename = asset.replace(/"/g, '\\"').replace(/[\r\n]/g, '')
+
     // Return file with appropriate headers
     return new NextResponse(fileBuffer, {
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${asset}"`,
+        "Content-Disposition": `attachment; filename="${safeFilename}"`,
         "Content-Length": fileBuffer.length.toString(),
-        "Cache-Control": "public, max-age=31536000, immutable", // Cache for 1 year
+        "Cache-Control": "private, max-age=3600", // 1 hour, private (requires auth)
+        "X-Content-Type-Options": "nosniff", // Prevent MIME sniffing
+        "X-Frame-Options": "DENY", // Prevent framing
       },
     })
   })
