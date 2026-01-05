@@ -89,9 +89,13 @@ export async function POST(request: NextRequest) {
 
     // Verify webhook signature (required in production)
     const signature = request.headers.get("x-ghl-signature")
-    const isDevMode = process.env.NODE_ENV === "development"
+    // SECURITY: Dev mode signature bypass requires explicit opt-in
+    const shouldBypassSignature =
+      process.env.NODE_ENV === 'development' &&
+      process.env.DEV_AUTH_BYPASS === 'true' &&
+      !process.env.GHL_WEBHOOK_SECRET
 
-    if (!isDevMode) {
+    if (!shouldBypassSignature) {
       if (!GHL_WEBHOOK_SECRET) {
         console.error("[GHL Webhook] GHL_WEBHOOK_SECRET not configured - rejecting request")
         return NextResponse.json(
@@ -116,7 +120,7 @@ export async function POST(request: NextRequest) {
         )
       }
     } else if (!signature) {
-      console.warn("[GHL Webhook] DEV MODE: Skipping signature verification")
+      console.warn("[GHL Webhook] DEV MODE: Signature verification bypassed (DEV_AUTH_BYPASS=true)")
     }
 
     // Parse and validate payload
