@@ -4,13 +4,13 @@
  * Client-Side RBAC Hooks
  *
  * React hooks for role-based access control in client components.
- * These hooks use NextAuth's session to check roles.
+ * These hooks use Supabase Auth session to check roles.
  *
  * IMPORTANT: Client-side checks are for UI only. Always verify permissions
  * on the server for actual security.
  */
 
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/components/providers/session-provider';
 import { useMemo } from 'react';
 
 /**

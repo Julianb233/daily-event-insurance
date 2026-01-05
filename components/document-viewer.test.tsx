@@ -267,10 +267,11 @@ describe('DocumentViewer', () => {
     })
   })
 
-  // Note: Validation error tests removed because the button is disabled
-  // when validation conditions aren't met (disabled={signing || !signature.trim() || !agreed}),
-  // making it impossible to trigger validation errors by clicking a disabled button.
-  // The component's design prevents invalid submissions at the UI level.
+  // Note: Lines 37-38 and 41-42 contain defense-in-depth validation that sets
+  // error messages. These cannot be triggered through normal UI interaction because
+  // the button is disabled when validation conditions aren't met. This is intentional -
+  // the validation provides an extra safety layer if someone bypasses the disabled state.
+  // We test that the button IS disabled in those conditions instead.
 
   describe('Signing process', () => {
     it('calls onSign with correct arguments on valid submission', async () => {

@@ -1,137 +1,29 @@
-import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { db } from "@/lib/db"
-import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
-import bcrypt from "bcryptjs"
-import { authConfig } from "./auth.config"
-import { authRateLimiter } from "@/lib/rate-limit"
-
-// SECURITY: Dev mode auth bypass requires explicit opt-in
-// Bypass ONLY if ALL conditions are met:
-// 1. NODE_ENV === 'development'
-// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
-const shouldBypassAuth =
-  process.env.NODE_ENV === 'development' &&
-  process.env.DEV_AUTH_BYPASS === 'true'
-
-// Create NextAuth instance
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  adapter: db ? DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as any : undefined, // Type assertion needed due to @auth/drizzle-adapter version mismatch
-  session: { strategy: "jwt" },
-  providers: [
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, request) {
-        // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
-        if (shouldBypassAuth) {
-          console.warn("[DEV MODE] Auth bypassed - set AUTH_SECRET to disable")
-          return {
-            id: "dev_user_001",
-            email: "demo@partner.dev",
-            name: "Demo Partner",
-            role: "partner",
-          }
-        }
-
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const email = credentials.email as string
-        const password = credentials.password as string
-
-        // Rate limiting - use email as identifier for login attempts
-        // This prevents brute force attacks on specific accounts
-        const { success: withinLimit } = authRateLimiter.check(email.toLowerCase())
-        if (!withinLimit) {
-          console.warn(`[SECURITY] Rate limit exceeded for login attempts: ${email}`)
-          throw new Error("Too many login attempts. Please try again later.")
-        }
-
-        if (!db) {
-          console.error("Database not configured")
-          return null
-        }
-
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1)
-
-        if (!user || !user.passwordHash) {
-          return null
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.passwordHash)
-
-        if (!passwordMatch) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role || "user",
-        }
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user, trigger }) {
-      // Initial sign-in: set user data from credentials
-      if (user && user.id) {
-        token.id = user.id
-        token.role = (user as any).role
-      }
-
-      // On session update or token refresh, refetch role from database
-      // This ensures role changes (e.g., after onboarding) are immediately reflected
-      if ((trigger === "update" || !user) && token.id && db) {
-        try {
-          const [dbUser] = await db
-            .select({ role: users.role })
-            .from(users)
-            .where(eq(users.id, token.id as string))
-            .limit(1)
-
-          if (dbUser) {
-            token.role = dbUser.role || "user"
-          }
-        } catch (error) {
-          console.error("Failed to refresh user role from database:", error)
-          // Keep existing role on error
-        }
-      }
-
-      return token
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
-      }
-      return session
-    },
-  },
-})
+import { createClient } from "@/lib/supabase/server"
 
 // ================= Auth Helper Functions =================
 
 export type Role = "admin" | "user" | "partner" | "moderator" | "viewer"
+
+/**
+ * Get current session (Supabase)
+ */
+export async function auth() {
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return null
+  }
+
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata?.name,
+      role: user.user_metadata?.role || "user",
+    },
+  }
+}
 
 /**
  * Get current user's role
@@ -281,4 +173,12 @@ export async function checkPermission(permission: string): Promise<boolean> {
   const userRole = await getUserRole()
   const allowedRoles = PERMISSIONS[permission] || []
   return allowedRoles.includes(userRole)
+}
+
+/**
+ * Sign out user (client-side helper)
+ */
+export async function signOut() {
+  const supabase = await createClient()
+  await supabase.auth.signOut()
 }

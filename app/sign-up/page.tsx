@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -36,32 +36,30 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
-      // Register the user
-      const registerRes = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+      const supabase = createClient()
+
+      // Sign up with Supabase Auth
+      const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || undefined,
+          },
+        },
       })
 
-      const registerData = await registerRes.json()
-
-      if (!registerRes.ok) {
-        setError(registerData.error || "Registration failed")
+      if (authError) {
+        setError(authError.message || "Registration failed")
         setIsLoading(false)
         return
       }
 
-      // Auto sign-in after registration
-      const signInResult = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (signInResult?.error) {
-        setError("Account created but sign-in failed. Please sign in manually.")
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        // Email confirmation required
+        setError("Please check your email to confirm your account.")
         setIsLoading(false)
-        router.push("/sign-in")
         return
       }
 

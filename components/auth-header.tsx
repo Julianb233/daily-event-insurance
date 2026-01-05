@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "@/components/providers/session-provider"
 import { User, LogOut } from "lucide-react"
 
 export function AuthHeader() {
-  const { data: session, status } = useSession()
+  const { data: session, status, signOut } = useSession()
   const isLoading = status === "loading"
 
   if (isLoading) {
@@ -43,7 +43,7 @@ export function AuthHeader() {
             <span className="hidden sm:inline">{session.user.name || session.user.email}</span>
           </Link>
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={signOut}
             className="p-2 text-gray-500 hover:text-red-600 bg-white rounded-lg shadow-sm hover:shadow transition-all"
             title="Sign Out"
           >

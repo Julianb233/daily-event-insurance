@@ -1,19 +1,5 @@
-import NextAuth from "next-auth"
-import { authConfig } from "@/lib/auth.config"
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-
-const { auth } = NextAuth(authConfig)
-
-// SECURITY: Dev mode auth bypass requires explicit opt-in
-// Bypass ONLY if ALL conditions are met:
-// 1. NODE_ENV === 'development'
-// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
-// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
-const shouldBypassAuth =
-  process.env.NODE_ENV === 'development' &&
-  process.env.DEV_AUTH_BYPASS === 'true' &&
-  !process.env.AUTH_SECRET
+import { NextResponse, type NextRequest } from "next/server"
+import { updateSession } from "@/lib/supabase/middleware"
 
 // Route role requirements - more specific routes should come first
 const ROUTE_ROLES: Record<string, string[]> = {
@@ -22,9 +8,6 @@ const ROUTE_ROLES: Record<string, string[]> = {
   "/partner": ["partner", "admin"],
   "/onboarding": ["user", "partner", "admin"], // Any authenticated user can access onboarding
 }
-
-// Session refresh interval - refresh role from DB if session older than this (ms)
-const SESSION_REFRESH_THRESHOLD = 5 * 60 * 1000 // 5 minutes
 
 // Public routes (no auth required)
 const publicRoutes = [
@@ -47,12 +30,6 @@ const publicRoutes = [
   "/api/webhook", // Webhooks need to be public
 ]
 
-// Dev mode middleware - bypasses auth (requires explicit DEV_AUTH_BYPASS=true)
-function devModeMiddleware() {
-  console.warn("[DEV MODE] NextAuth middleware bypassed - set AUTH_SECRET to disable")
-  return NextResponse.next()
-}
-
 // Helper to check if user has required role
 function hasRequiredRole(userRole: string | undefined, requiredRoles: string[]): boolean {
   if (!userRole) return false
@@ -69,16 +46,12 @@ function getRequiredRoles(pathname: string): string[] | null {
   return null
 }
 
-// Production middleware with NextAuth - checks both authentication AND role
-const productionMiddleware = auth((req) => {
-  const { nextUrl } = req
-  const isLoggedIn = !!req.auth
-  const userRole = req.auth?.user?.role as string | undefined
-  const response = NextResponse.next()
+export async function middleware(request: NextRequest) {
+  const { nextUrl } = request
 
   // Allow API auth routes
   if (nextUrl.pathname.startsWith("/api/auth")) {
-    return response
+    return NextResponse.next()
   }
 
   // Check if public route
@@ -87,15 +60,30 @@ const productionMiddleware = auth((req) => {
   )
 
   if (isPublic) {
-    return response
+    // Still refresh the session for public routes
+    const { supabaseResponse } = await updateSession(request)
+    return supabaseResponse
   }
+
+  // Get Supabase session
+  const { user, supabaseResponse } = await updateSession(request)
+  const isLoggedIn = !!user
+
+  // Get user role from Supabase user metadata
+  // The role is stored in user_metadata when the user signs up or is updated
+  const userRole = user?.user_metadata?.role as string | undefined
 
   // Get required roles for this path
   const requiredRoles = getRequiredRoles(nextUrl.pathname)
 
-  // If no role requirements, allow access (unprotected route)
+  // If no role requirements, allow access if authenticated
   if (!requiredRoles) {
-    return response
+    if (!isLoggedIn) {
+      const signInUrl = new URL("/sign-in", nextUrl.origin)
+      signInUrl.searchParams.set("callbackUrl", nextUrl.pathname)
+      return NextResponse.redirect(signInUrl)
+    }
+    return supabaseResponse
   }
 
   // Check authentication first
@@ -112,7 +100,7 @@ const productionMiddleware = auth((req) => {
     if (nextUrl.pathname.startsWith("/partner")) {
       // User trying to access partner area without partner role
       // Redirect to onboarding if they're a regular user
-      if (userRole === "user") {
+      if (userRole === "user" || !userRole) {
         return NextResponse.redirect(new URL("/onboarding", nextUrl.origin))
       }
       // Otherwise redirect to home with error
@@ -134,17 +122,15 @@ const productionMiddleware = auth((req) => {
   }
 
   // Add security headers to response
-  response.headers.set("X-Frame-Options", "DENY")
-  response.headers.set("X-Content-Type-Options", "nosniff")
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
-  response.headers.set("X-XSS-Protection", "1; mode=block")
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+  supabaseResponse.headers.set("X-Frame-Options", "DENY")
+  supabaseResponse.headers.set("X-Content-Type-Options", "nosniff")
+  supabaseResponse.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
+  supabaseResponse.headers.set("X-XSS-Protection", "1; mode=block")
+  supabaseResponse.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+  supabaseResponse.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 
-  return response
-})
-
-export default shouldBypassAuth ? devModeMiddleware : productionMiddleware
+  return supabaseResponse
+}
 
 export const config = {
   matcher: [

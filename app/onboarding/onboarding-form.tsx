@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/components/providers/session-provider"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import {
@@ -1478,7 +1478,7 @@ function SuccessState() {
 
 export default function OnboardingForm() {
   const router = useRouter()
-  const { data: session, update: updateSession } = useSession()
+  const { data: session, refresh: updateSession } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [isComplete, setIsComplete] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)

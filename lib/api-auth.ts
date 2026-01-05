@@ -1,29 +1,14 @@
-import { auth } from "./auth"
 import { NextResponse } from "next/server"
-import { db, users } from "@/lib/db"
-import { eq } from "drizzle-orm"
-
-// SECURITY: Dev mode auth bypass requires explicit opt-in
-// Bypass ONLY if ALL conditions are met:
-// 1. NODE_ENV === 'development'
-// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
-// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
-const shouldBypassAuth =
-  process.env.NODE_ENV === 'development' &&
-  process.env.DEV_AUTH_BYPASS === 'true' &&
-  !process.env.AUTH_SECRET
-
-// Mock user for development
-const MOCK_USER = {
-  id: "dev_user_001",
-  email: "demo@partner.dev",
-  name: "Demo Partner",
-  role: "partner",
-}
+import { createClient } from "@/lib/supabase/server"
 
 export interface AuthenticatedUser {
   userId: string
-  user: any
+  user: {
+    id: string
+    email: string
+    name?: string
+    role?: string
+  }
 }
 
 /**
@@ -31,91 +16,68 @@ export interface AuthenticatedUser {
  * Throws an error that returns 401 if not authenticated
  */
 export async function requireAuth(): Promise<{ userId: string }> {
-  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
-  if (shouldBypassAuth) {
-    console.warn("[DEV MODE] Auth bypassed - set AUTH_SECRET to disable")
-    return { userId: MOCK_USER.id }
-  }
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  const session = await auth()
-
-  if (!session?.user?.id) {
+  if (error || !user) {
     throw NextResponse.json(
       { error: "Unauthorized", message: "Authentication required" },
       { status: 401 }
     )
   }
 
-  return { userId: session.user.id }
-}
-
-// Mock admin user for development
-const MOCK_ADMIN = {
-  id: "dev_admin_001",
-  email: "admin@dailyeventinsurance.com",
-  name: "Demo Admin",
-  role: "admin",
+  return { userId: user.id }
 }
 
 /**
  * Requires admin role for API route
  */
 export async function requireAdmin(): Promise<AuthenticatedUser> {
-  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
-  if (shouldBypassAuth) {
-    console.warn("[DEV MODE] Admin auth bypassed - set AUTH_SECRET to disable")
-    return { userId: MOCK_ADMIN.id, user: MOCK_ADMIN }
-  }
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  const session = await auth()
-
-  if (!session?.user?.id) {
+  if (error || !user) {
     throw NextResponse.json(
       { error: "Unauthorized", message: "Authentication required" },
       { status: 401 }
     )
   }
 
-  if (session.user.role !== "admin") {
+  const userRole = user.user_metadata?.role as string | undefined
+
+  if (userRole !== "admin") {
     throw NextResponse.json(
       { error: "Forbidden", message: "Admin access required" },
       { status: 403 }
     )
   }
 
-  let user = null
-  if (db) {
-    const [dbUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.user.id))
-      .limit(1)
-    user = dbUser
+  return {
+    userId: user.id,
+    user: {
+      id: user.id,
+      email: user.email!,
+      name: user.user_metadata?.name,
+      role: userRole,
+    },
   }
-
-  return { userId: session.user.id, user: user || session.user }
 }
 
 /**
  * Requires partner role for API route
  */
 export async function requirePartner(): Promise<AuthenticatedUser> {
-  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
-  if (shouldBypassAuth) {
-    console.warn("[DEV MODE] Partner auth bypassed - set AUTH_SECRET to disable")
-    return { userId: MOCK_USER.id, user: MOCK_USER }
-  }
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  const session = await auth()
-
-  if (!session?.user?.id) {
+  if (error || !user) {
     throw NextResponse.json(
       { error: "Unauthorized", message: "Authentication required" },
       { status: 401 }
     )
   }
 
-  const userRole = session.user.role
+  const userRole = user.user_metadata?.role as string | undefined
   const isPartner = userRole === "partner" || userRole === "admin"
 
   if (!isPartner) {
@@ -125,53 +87,51 @@ export async function requirePartner(): Promise<AuthenticatedUser> {
     )
   }
 
-  let user = null
-  if (db) {
-    const [dbUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.user.id))
-      .limit(1)
-    user = dbUser
+  return {
+    userId: user.id,
+    user: {
+      id: user.id,
+      email: user.email!,
+      name: user.user_metadata?.name,
+      role: userRole,
+    },
   }
-
-  return { userId: session.user.id, user: user || session.user }
 }
 
 /**
  * Gets the authenticated user if available, returns null otherwise
  */
 export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> {
-  const session = await auth()
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (!session?.user?.id) {
+  if (error || !user) {
     return null
   }
 
-  let user = null
-  if (db) {
-    const [dbUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.user.id))
-      .limit(1)
-    user = dbUser
+  return {
+    userId: user.id,
+    user: {
+      id: user.id,
+      email: user.email!,
+      name: user.user_metadata?.name,
+      role: user.user_metadata?.role,
+    },
   }
-
-  return user ? { userId: session.user.id, user } : null
 }
 
 /**
  * Checks if current user has a specific role
  */
 export async function hasRole(role: string): Promise<boolean> {
-  const session = await auth()
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (!session?.user) {
+  if (error || !user) {
     return false
   }
 
-  return session.user.role === role
+  return user.user_metadata?.role === role
 }
 
 /**

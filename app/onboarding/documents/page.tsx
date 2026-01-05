@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { useSession } from "next-auth/react"
+import { useSession } from "@/components/providers/session-provider"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { DocumentViewer } from "@/components/document-viewer"

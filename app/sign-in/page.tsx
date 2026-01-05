@@ -1,7 +1,7 @@
 "use client"
 
 import { Suspense, useState } from "react"
-import { signIn } from "next-auth/react"
+import { createClient } from "@/lib/supabase/client"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -13,10 +13,13 @@ function SignInForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/partner/dashboard"
+  const errorParam = searchParams.get("error")
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [error, setError] = useState(
+    errorParam === "auth_callback_error" ? "Authentication failed. Please try again." : ""
+  )
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,14 +28,20 @@ function SignInForm() {
     setIsLoading(true)
 
     try {
-      const result = await signIn("credentials", {
+      const supabase = createClient()
+      const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
-        redirect: false,
       })
 
-      if (result?.error) {
-        setError("Invalid email or password")
+      if (authError) {
+        if (authError.message.includes("Invalid login credentials")) {
+          setError("Invalid email or password")
+        } else if (authError.message.includes("Too many requests")) {
+          setError("Too many login attempts. Please try again later.")
+        } else {
+          setError(authError.message)
+        }
         setIsLoading(false)
         return
       }

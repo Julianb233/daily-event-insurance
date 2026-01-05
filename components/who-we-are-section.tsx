@@ -62,14 +62,14 @@ function NotCard({ item, index }: { item: typeof notCards[0]; index: number }) {
       >
         {/* Glow effect on hover */}
         <motion.div
-          className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-slate-400/20 via-slate-300/30 to-slate-400/20 blur-xl"
+          className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-red-300/20 via-red-200/30 to-red-300/20 blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         />
 
         {/* Card */}
-        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/80 hover:shadow-xl transition-shadow duration-500 overflow-hidden">
+        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg border-2 border-red-200/60 hover:border-red-300/80 hover:shadow-xl transition-all duration-500 overflow-hidden">
           {/* X mark overlay */}
           <div className="absolute top-4 right-4">
             <motion.div

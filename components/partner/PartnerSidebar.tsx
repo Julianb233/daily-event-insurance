@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "@/components/providers/session-provider"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard,
@@ -17,16 +17,6 @@ import {
   ChevronRight,
   MapPin,
 } from "lucide-react"
-
-// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
-// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
-const isDevMode = process.env.NODE_ENV === 'development'
-
-// Mock user for development mode
-const MOCK_USER = {
-  name: "Demo Partner",
-  email: "demo@partner.dev",
-}
 
 const navItems = [
   {
@@ -67,13 +57,11 @@ function SidebarInnerContent({
   onSignOut,
   setIsMobileOpen,
   pathname,
-  isDevMode: devMode
 }: {
   user: UserData
   onSignOut: () => void
   setIsMobileOpen: (open: boolean) => void
   pathname: string
-  isDevMode: boolean
 }) {
   const displayName = user?.name || user?.email?.split("@")[0] || "Partner"
   const initials = displayName[0]?.toUpperCase() || "P"
@@ -110,7 +98,7 @@ function SidebarInnerContent({
         </div>
         <div className="mt-3 pt-3 border-t border-slate-200">
           <span className="inline-flex items-center px-2 py-1 bg-teal-100 text-teal-700 text-xs font-medium rounded-full">
-            {devMode ? "Dev Mode" : "Active Partner"}
+            Active Partner
           </span>
         </div>
       </div>
@@ -157,19 +145,14 @@ function SidebarInnerContent({
 export function PartnerSidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { data: session, signOut } = useSession()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
-  // Determine user data - use session or mock
-  const user: UserData = session?.user || MOCK_USER
-  const isInDevMode = isDevMode || status === "unauthenticated"
+  // Determine user data from session
+  const user: UserData = session?.user || { name: "Partner", email: "" }
 
   const handleSignOut = async () => {
-    if (isDevMode) {
-      router.push("/")
-    } else {
-      await signOut({ callbackUrl: "/" })
-    }
+    await signOut()
   }
 
   return (
@@ -181,7 +164,6 @@ export function PartnerSidebar() {
           onSignOut={handleSignOut}
           setIsMobileOpen={setIsMobileOpen}
           pathname={pathname}
-          isDevMode={isInDevMode}
         />
       </aside>
 
@@ -230,7 +212,6 @@ export function PartnerSidebar() {
                 onSignOut={handleSignOut}
                 setIsMobileOpen={setIsMobileOpen}
                 pathname={pathname}
-                isDevMode={isInDevMode}
               />
             </motion.aside>
           </>

@@ -125,40 +125,53 @@ export function DEITrustBadges() {
         {/* Divider */}
         <div className="h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mb-12" />
 
-        {/* Trusted By Leading Facilities Section */}
-        <div className="text-center mb-12">
-          <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8">
+        {/* Trusted By Leading Facilities Section - Sliding Kicker */}
+        <div className="mb-12 overflow-hidden">
+          <p className="text-teal-400/70 text-xs uppercase tracking-[0.3em] mb-8 text-center">
             Trusted by Leading Facilities In
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {industryTypes.map((industry, index) => {
-              const IconComponent = industry.icon
-              return (
-                <motion.div
-                  key={industry.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="group relative"
-                >
-                  <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/10">
-                    {/* Icon with gradient background */}
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${industry.color} opacity-20 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center`}>
-                      <IconComponent className="w-7 h-7 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Sliding Marquee Container */}
+          <div className="relative">
+            {/* Fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
+
+            {/* Scrolling content */}
+            <motion.div
+              className="flex gap-6"
+              animate={{
+                x: [0, -1200],
+              }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 20,
+                  ease: "linear",
+                },
+              }}
+            >
+              {/* Double the items for seamless loop */}
+              {[...industryTypes, ...industryTypes].map((industry, index) => {
+                const IconComponent = industry.icon
+                return (
+                  <div
+                    key={`${industry.name}-${index}`}
+                    className="group flex-shrink-0"
+                  >
+                    <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white border border-slate-200 hover:border-teal-300 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/10 w-40">
+                      {/* Icon with gradient background */}
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${industry.color} opacity-30 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center`}>
+                        <IconComponent className="w-7 h-7 text-white" />
+                      </div>
+                      <span className="text-xs md:text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors text-center whitespace-nowrap">
+                        {industry.name}
+                      </span>
                     </div>
-                    {/* Grayscale icon overlay */}
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
-                      <IconComponent className="w-7 h-7 text-slate-400" />
-                    </div>
-                    <span className="text-xs md:text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors text-center">
-                      {industry.name}
-                    </span>
                   </div>
-                </motion.div>
-              )
-            })}
+                )
+              })}
+            </motion.div>
           </div>
         </div>
 

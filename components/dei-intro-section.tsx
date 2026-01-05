@@ -68,9 +68,9 @@ export function DEIIntroSection() {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-6 md:mb-8"
+          className="mb-8 md:mb-10"
         >
-          <div className="relative w-48 h-20 md:w-72 md:h-28 lg:w-96 lg:h-36">
+          <div className="relative w-64 h-28 md:w-96 md:h-40 lg:w-[480px] lg:h-48">
             <Image
               src="/images/logo-color.png"
               alt="Daily Event Insurance - Events-based insurance platform"
@@ -104,10 +104,10 @@ export function DEIIntroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/80 border border-slate-200 rounded-full mb-4 md:mb-6"
+          className="inline-flex items-center gap-3 px-6 py-3 bg-slate-100/80 border border-slate-200 rounded-full mb-6 md:mb-8"
         >
-          <span className="text-teal-600 font-bold text-xs md:text-sm tracking-wide">HIQOR</span>
-          <span className="text-slate-500 text-xs md:text-sm">Events-Based InsurTech Platform</span>
+          <span className="text-teal-600 font-bold text-base md:text-lg lg:text-xl tracking-wide">HIQOR</span>
+          <span className="text-slate-500 text-sm md:text-base lg:text-lg">Events-Based InsurTech Platform</span>
         </motion.div>
 
         {/* Headline */}
@@ -204,7 +204,7 @@ export function DEIIntroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:gap-3 z-20 pb-safe"
+        className="absolute bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:gap-3 z-20 pb-safe"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
         transition={{ delay: 1.2, duration: 0.8 }}
