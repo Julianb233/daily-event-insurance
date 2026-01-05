@@ -9,6 +9,8 @@ import { Mail, Lock, User, Loader2, Rocket, ArrowRight, CheckCircle2 } from "luc
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 
+import { signUp } from "./actions"
+
 export default function SignUpPage() {
   const router = useRouter()
 
@@ -37,41 +39,19 @@ export default function SignUpPage() {
 
     setIsLoading(true)
 
+    const formData = new FormData()
+    formData.append("email", email)
+    formData.append("password", password)
+    formData.append("name", name)
+
     try {
-      const supabase = createClient()
+      const result = await signUp(formData)
 
-      // Sign up with Supabase Auth
-      const { data, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name || undefined,
-            role: 'user',
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (authError) {
-        setError(authError.message || "Registration failed")
+      if (result?.error) {
+        setError(result.error)
         setIsLoading(false)
-        return
       }
-
-      // Check if session exists (auto-login enabled) or if verification needed
-      if (data.session) {
-        // Auto-login successful
-        router.push("/onboarding")
-        router.refresh()
-      } else if (data.user && !data.session) {
-        // User created but verification required
-        setSuccess(true)
-        setIsLoading(false)
-      } else {
-        // Fallback for unknown state
-        router.push("/onboarding")
-      }
+      // If success, the action calls redirect(), so execution stops here or unmounts
     } catch (err) {
       console.error("Signup error:", err)
       setError("An error occurred. Please try again.")
