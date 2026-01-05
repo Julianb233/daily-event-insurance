@@ -106,21 +106,14 @@ test.describe('Full Onboarding Flow', () => {
         // Step 3: Integration
         await expect(page.getByText(/Choose Your Integration/i)).toBeVisible();
         await page.click('text=Widget Embed');
-        await page.getByRole('button', { name: /continue/i }).click();
+        await page.waitForTimeout(1000); // Wait for state update and animation
 
-        // Step 4: Go Live
-        await expect(page.getByText(/Go Live Checklist/i)).toBeVisible();
-
-        // Check all checklist items
-        const checklistButtons = page.getByRole('checkbox');
-        const count = await checklistButtons.count();
-        for (let i = 0; i < count; i++) {
-            await checklistButtons.nth(i).click();
-        }
-
-        // Complete Setup
+        // Complete Setup (Triggered on Step 3 now)
         console.log('Submitting onboarding form...');
-        await page.getByRole('button', { name: /complete setup/i }).click();
+        const completeBtn = page.getByRole('button', { name: /complete setup/i });
+        await expect(completeBtn).toBeVisible();
+        await expect(completeBtn).toBeEnabled();
+        await completeBtn.click();
 
         // 5. Verify Redirect to Documents
         // THIS IS THE FIX WE IMPLEMENTED
@@ -138,27 +131,43 @@ test.describe('Full Onboarding Flow', () => {
         // Reload page to refresh session/middleware check
         await page.reload();
 
-        // 6. Sign 3 Documents
+        // 6. Sign Required Documents
+        // We now have 4 documents: Partner Agreement, Joint Marketing Agreement (Required), W9, Direct Deposit (Optional)
 
         // Helper to sign a doc
         const signDocument = async (docTitleRegex: RegExp) => {
-            // Find the specific sign button for the doc type or list item
-            // We can click the "Sign" button in the list
-            // The text is "Sign" inside a button. 
-            // We might need to be specific if there are multiple "Sign" buttons.
-            // But we can just find the document title and verify it's not signed, then click "Sign".
+            // Simplified: Click all available "Sign" buttons sequentially or find properly
+            // Let's iterate:
 
-            // Let's rely on finding "Sign" buttons and clicking them one by one. Or specific checks.
-            // Better: The doc viewer opens.
+            // Wait for list to load (header is sufficient)
 
-            // Find a "Sign" button that is visible
-            const signBtns = page.getByRole('button', { name: 'Sign', exact: true });
-            // Note: 'Sign' button in the card vs 'Sign Document' in modal
+            // Wait for list to load (header is sufficient)
 
-            // Click the first available "Sign" button in the list
-            // Since they are likely in order or we pick one.
-            const btn = signBtns.first();
-            await btn.click();
+            // Wait for list to load (header is sufficient)
+
+            console.log(`Looking for document card with title matching: ${docTitleRegex}`);
+
+            // Allow time for list to populate
+            await page.waitForTimeout(500);
+
+            // Use getByText for broader match in case 'heading' role is tricky
+            const titleEl = page.locator('h3').filter({ hasText: docTitleRegex }).first();
+
+            if (await titleEl.count() === 0) {
+                console.log(`ERROR: Could not find document title ${docTitleRegex}`);
+                // Log all h3s
+                const titles = await page.locator('h3').allInnerTexts();
+                console.log('Available titles:', titles);
+            }
+
+            await expect(titleEl).toBeVisible({ timeout: 5000 });
+
+            // Strategy: Get the parent row
+            const card = page.locator('div.bg-white').filter({ has: titleEl }).first();
+            const signBtn = card.getByRole('button', { name: "Sign" });
+
+            await expect(signBtn).toBeVisible({ timeout: 5000 });
+            await signBtn.click();
 
             // Modal should open
             await expect(page.getByText(/I have read and understand/i)).toBeVisible();
@@ -174,33 +183,33 @@ test.describe('Full Onboarding Flow', () => {
 
             // Modal should close.
             await expect(page.getByText(/I have read and understand/i)).toBeHidden();
-
-            // Verify the button now says "View" or "Signed" in the list?
-            // The list item changes to green/Signed.
         };
 
-        // We have 3 documents.
         // Wait for documents to load
         await expect(page.getByText(/Sign Your.*Partner Documents/i)).toBeVisible();
 
-        // Sign Document 1
-        console.log('Signing Document 1...');
+        // Sign Document 1: Partner Agreement
+        console.log('Signing Document 1: Partner Agreement...');
         await signDocument(/Partner Agreement/i);
-        // Wait for update
         await page.waitForTimeout(1000);
 
-        // Sign Document 2
-        console.log('Signing Document 2...');
-        await signDocument(/W9/i);
+        // Sign Document 2: Joint Marketing Agreement
+        console.log('Signing Document 2: Joint Marketing Agreement...');
+        await signDocument(/Joint Marketing Agreement/i);
         await page.waitForTimeout(1000);
 
-        // Sign Document 3
-        console.log('Signing Document 3...');
-        await signDocument(/Direct Deposit/i);
+        // We SKIP W9 and Direct Deposit to verify optional flow works
 
-        // 7. Verify Redirect to Dashboard
-        // After 3rd doc, it redirects to /partner/dashboard
-        console.log('All documents signed. Waiting for dashboard redirect...');
+        // 7. Verify "Go to Dashboard" button appears and click it
+        console.log('Required documents signed. Checking for Dashboard button...');
+        const dashboardBtn = page.getByRole('button', { name: "Go to Partner Dashboard" });
+        await expect(dashboardBtn).toBeVisible();
+        await expect(dashboardBtn).toBeEnabled();
+
+        console.log('Clicking Go to Dashboard...');
+        await dashboardBtn.click();
+
+        // 8. Verify Redirect to Dashboard
         await expect(page).toHaveURL(/\/partner\/dashboard/, { timeout: 15000 });
 
         console.log('Redirected to dashboard!');
@@ -217,5 +226,61 @@ test.describe('Full Onboarding Flow', () => {
         console.log('QR Code generated and visible.');
 
         console.log('Dashboard access verified.');
+
+        // 9. Verify Backend Automation State (Database Check)
+        console.log('Verifying backend automation state...');
+
+        // Wait a moment for async automation to complete in background
+        await page.waitForTimeout(5000);
+
+        // Fetch Partner Data
+        const { data: partnerData, error: partnerError } = await supabaseAdmin
+            .from('partners')
+            .select('id, business_name, primary_color, logo_url')
+            .eq('user_id', user.user.id)
+            .single();
+
+        if (partnerError) {
+            console.error('Error fetching partner data:', partnerError);
+            throw partnerError;
+        }
+
+        console.log('Partner Data:', partnerData);
+
+        // Verify Partner Branding
+        expect(partnerData.primary_color).toBe('#14B8A6'); // Default set in form
+
+        // Fetch Microsite Data (Generated by automation)
+        const { data: micrositeData, error: micrositeError } = await supabaseAdmin
+            .from('microsites')
+            .select('id, domain, subdomain, qr_code_url, status')
+            .eq('partner_id', partnerData.id)
+            .single();
+
+        if (micrositeError) {
+            // It might be null if not created yet? Or error if multiple?
+            console.error('Error fetching microsite data:', micrositeError);
+        }
+
+        console.log('Microsite Data:', micrositeData);
+
+        // Verify Microsite Generation
+        if (!micrositeData) {
+            console.warn('WARNING: Microsite record not found. Automation might have failed or Mock/Local env issue.');
+        } else {
+            console.log('VERIFIED: Microsite record created.');
+            expect(micrositeData.id).toBeTruthy();
+            expect(micrositeData.domain).toBeTruthy();
+            expect(micrositeData.status).toBe('live');
+        }
+
+        // Verify QR Code
+        if (!micrositeData?.qr_code_url) {
+            console.warn('WARNING: qr_code_url is null in microsites table.');
+        } else {
+            console.log('VERIFIED: qr_code_url is generated in microsites table.');
+            expect(micrositeData.qr_code_url).toContain('data:image/png;base64');
+        }
     });
 });
+

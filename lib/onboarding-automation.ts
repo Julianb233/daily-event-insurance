@@ -1,11 +1,12 @@
 import { db } from "@/lib/db"
-import { partners, microsites } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { partners, microsites, partnerDocuments } from "@/lib/db/schema"
+import { eq, and } from "drizzle-orm"
 import { fetchPartnerBranding } from "@/lib/firecrawl/client"
 import { generateStandaloneMicrosite, generateIntegratedMicrosite } from "@/lib/microsite/generator"
 import { generateQRCode } from "@/lib/qrcode/generator"
 import { appendPartnerToSheet } from "@/lib/google-sheets/client"
 import { appendPartnerToExcel, type PartnerLogEntry } from "@/lib/excel/logger"
+import { DOCUMENT_TYPES } from "@/lib/demo-documents"
 
 export interface OnboardingResult {
     partnerId: string
@@ -48,9 +49,23 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         throw new Error("Partner not found")
     }
 
-    // Verify all documents are signed
-    if (!partner.agreementSigned || !partner.w9Signed || !partner.directDepositSigned) {
-        throw new Error("All documents must be signed before completing onboarding")
+    // Check if Joint Marketing Agreement is signed
+    const jointMarketingDoc = await db
+        .select()
+        .from(partnerDocuments)
+        .where(
+            and(
+                eq(partnerDocuments.partnerId, partnerId),
+                eq(partnerDocuments.documentType, DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT),
+                eq(partnerDocuments.status, "signed")
+            )
+        )
+        .limit(1)
+
+    // Verify required legal agreements are signed
+    // W9 and Direct Deposit are now optional for "Go Live"
+    if (!partner.agreementSigned || jointMarketingDoc.length === 0) {
+        throw new Error("Legal agreements (Partner Agreement & Joint Marketing Agreement) must be signed before completing onboarding")
     }
 
     console.log(`Starting onboarding completion for partner: ${partner.businessName} (${partnerId})`)

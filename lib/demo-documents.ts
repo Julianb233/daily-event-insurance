@@ -3,6 +3,7 @@
 
 export const DOCUMENT_TYPES = {
   PARTNER_AGREEMENT: "partner_agreement",
+  JOINT_MARKETING_AGREEMENT: "joint_marketing_agreement",
   W9: "w9",
   DIRECT_DEPOSIT: "direct_deposit",
 } as const
@@ -83,6 +84,48 @@ By signing below, Partner acknowledges reading, understanding, and agreeing to a
 `,
   },
   {
+    type: DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT,
+    title: "Joint Marketing Agreement",
+    version: "1.0",
+    content: `
+# Joint Marketing Agreement
+
+**Effective Date:** Upon Digital Signature
+
+This Joint Marketing Agreement ("Agreement") outlines the co-marketing activities between Daily Event Insurance ("Company") and the Partner.
+
+## 1. Co-Marketing Activities
+
+Both parties agree to engage in the following co-marketing activities to promote the partnership:
+
+- **Microsite**: Company will provide a branded microsite for Partner to direct customers.
+- **Social Media**: Both parties may announce the partnership on their respective social media channels.
+- **Email Marketing**: Partner agrees to include Company's insurance options in relevant customer communications (e.g., booking confirmations).
+- **Press Release**: A joint press release may be issued upon mutual agreement.
+
+## 2. Brand Usage
+
+- **Company Assets**: Partner may use Company's logo and brand assets solely for the purpose of promoting the insurance products.
+- **Partner Assets**: Partner grants Company a license to use Partner's name and logo on the Company's website and marketing materials to identify Partner as a partner.
+
+## 3. Marketing Materials
+
+Company will provide Partner with approved marketing materials (banners, flyers, email templates). Partner agrees not to modify these materials without prior written consent from Company.
+
+## 4. Regulatory Compliance
+
+All marketing activities must comply with applicable insurance advertising regulations. Partner shall not make any false or misleading statements about the insurance products.
+
+## 5. Expenses
+
+Unless otherwise agreed in writing, each party shall bear its own costs and expenses related to the co-marketing activities.
+
+---
+
+By signing below, Partner agrees to the terms of this Joint Marketing Agreement.
+`,
+  },
+  {
     type: DOCUMENT_TYPES.W9,
     title: "W-9 Tax Information",
     version: "1.0",
@@ -144,7 +187,7 @@ By signing below, you certify that the information provided is accurate and comp
     content: `
 # Direct Deposit Authorization Form
 
-**Purpose:** To authorize Daily Event Insurance to deposit commission payments directly to your bank account.
+**Purpose:** To authorize Daily Event Insurance to initiate commission payments directly to your bank account.
 
 ---
 

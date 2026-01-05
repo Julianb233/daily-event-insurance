@@ -915,16 +915,27 @@ function Step2Integration({ formData, setFormData, onNext, onBack, isSubmitting 
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+            whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
             onClick={onNext}
-            disabled={!selectedIntegration}
-            aria-label="Continue to customize coverage"
-            aria-disabled={!selectedIntegration}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white font-semibold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2"
+            disabled={!selectedIntegration || isSubmitting}
+            aria-label="Complete setup"
+            className={`flex items-center gap-2 px-8 py-3 font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${selectedIntegration && !isSubmitting
+              ? "bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white hover:shadow-lg"
+              : "bg-gray-200 text-gray-500 cursor-not-allowed"
+              }`}
           >
-            Continue
-            <ChevronRight className="w-5 h-5" aria-hidden="true" />
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Setting up...
+              </>
+            ) : (
+              <>
+                Complete Setup
+                <Sparkles className="w-5 h-5" aria-hidden="true" />
+              </>
+            )}
           </motion.button>
         </div>
       </div>

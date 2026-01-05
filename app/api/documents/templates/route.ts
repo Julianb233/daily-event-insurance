@@ -72,18 +72,35 @@ export async function GET(request: Request) {
         .where(eq(documentTemplates.isActive, true))
         .orderBy(documentTemplates.type)
 
-      // If we have templates in DB, return those
-      if (dbTemplates.length > 0) {
+      // Merge DB templates with missing demo templates
+      // This ensures new document types added to code appear even if not yet in DB
+
+      const dbTemplateTypes = new Set(dbTemplates.map(t => t.type))
+
+      const mergedTemplates = [
+        ...dbTemplates.map(t => ({
+          id: t.id,
+          type: t.type,
+          title: t.title,
+          content: partnerData ? populateDocumentContent(t.content, partnerData) : t.content,
+          version: t.version,
+        })),
+        ...demoDocuments
+          .filter(doc => !dbTemplateTypes.has(doc.type))
+          .map((doc, index) => ({
+            id: `demo-fallback-${index}`,
+            type: doc.type,
+            title: doc.title,
+            content: partnerData ? populateDocumentContent(doc.content, partnerData) : doc.content,
+            version: doc.version,
+          }))
+      ]
+
+      if (mergedTemplates.length > 0) {
         return NextResponse.json({
           success: true,
-          templates: dbTemplates.map((t) => ({
-            id: t.id,
-            type: t.type,
-            title: t.title,
-            content: partnerData ? populateDocumentContent(t.content, partnerData) : t.content,
-            version: t.version,
-          })),
-          source: "database",
+          templates: mergedTemplates,
+          source: "database-merged",
           populated: !!partnerData,
         })
       }

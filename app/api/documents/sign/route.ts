@@ -127,12 +127,26 @@ export async function POST(request: Request) {
         .where(eq(partners.id, partnerId))
         .limit(1)
 
-      const allSigned =
-        updatedPartner.agreementSigned &&
-        updatedPartner.w9Signed &&
-        updatedPartner.directDepositSigned
+      // Check if Joint Marketing Agreement is signed (stored in partnerDocuments, not partners table)
+      const jointMarketingDoc = await db
+        .select()
+        .from(partnerDocuments)
+        .where(
+          and(
+            eq(partnerDocuments.partnerId, partnerId),
+            eq(partnerDocuments.documentType, DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT),
+            eq(partnerDocuments.status, "signed")
+          )
+        )
+        .limit(1)
 
-      // If all documents signed, update status and trigger automation
+      const isJointMarketingSigned = jointMarketingDoc.length > 0
+
+      // New requirement: Only Partner Agreement and Joint Marketing Agreement are required for "Go Live"
+      // W9 and Direct Deposit can be skipped/done later
+      const allSigned = updatedPartner.agreementSigned && isJointMarketingSigned
+
+      // If all legal agreements signed, update status and trigger automation
       if (allSigned) {
         await db
           .update(partners)
@@ -171,6 +185,7 @@ export async function POST(request: Request) {
         automationTriggered: allSigned, // Let client know automation was triggered
         documentStatus: {
           agreementSigned: documentType === DOCUMENT_TYPES.PARTNER_AGREEMENT ? true : updatedPartner.agreementSigned,
+          jointMarketingSigned: documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT ? true : isJointMarketingSigned,
           w9Signed: documentType === DOCUMENT_TYPES.W9 ? true : updatedPartner.w9Signed,
           directDepositSigned: documentType === DOCUMENT_TYPES.DIRECT_DEPOSIT ? true : updatedPartner.directDepositSigned,
         },
@@ -248,6 +263,8 @@ export async function GET(request: Request) {
           )
         )
 
+      const isJointMarketingSigned = signedDocs.some(d => d.documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT)
+
       return NextResponse.json({
         success: true,
         partnerId,
@@ -256,6 +273,10 @@ export async function GET(request: Request) {
           partner_agreement: {
             signed: partner.agreementSigned || false,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.PARTNER_AGREEMENT)?.signedAt,
+          },
+          joint_marketing_agreement: {
+            signed: isJointMarketingSigned,
+            signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT)?.signedAt,
           },
           w9: {
             signed: partner.w9Signed || false,
@@ -266,7 +287,8 @@ export async function GET(request: Request) {
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.DIRECT_DEPOSIT)?.signedAt,
           },
         },
-        allSigned: partner.agreementSigned && partner.w9Signed && partner.directDepositSigned,
+        // Only require agreements for "allSigned" (which triggers "Go Live")
+        allSigned: partner.agreementSigned && isJointMarketingSigned,
       })
     } catch (error) {
       console.error("Error fetching document status:", error)
