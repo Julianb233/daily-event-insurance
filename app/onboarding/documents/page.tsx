@@ -53,7 +53,7 @@ export default function OnboardingDocumentsPage() {
     async function fetchData() {
       try {
         // First, fetch partner info
-        const partnerRes = await fetch("/api/partner/me")
+        const partnerRes = await fetch("/api/partner")
         let currentPartnerId: string | null = null
 
         if (partnerRes.ok) {
@@ -226,17 +226,15 @@ export default function OnboardingDocumentsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`bg-white rounded-xl shadow-lg border-2 p-6 transition-all ${
-                  isSigned
+                className={`bg-white rounded-xl shadow-lg border-2 p-6 transition-all ${isSigned
                     ? "border-green-200 bg-green-50/50"
                     : "border-gray-100 hover:border-teal-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                      isSigned ? "bg-green-100" : "bg-teal-100"
-                    }`}
+                    className={`w-14 h-14 rounded-xl flex items-center justify-center ${isSigned ? "bg-green-100" : "bg-teal-100"
+                      }`}
                   >
                     <Icon
                       className={`w-7 h-7 ${isSigned ? "text-green-600" : "text-teal-600"}`}
@@ -267,11 +265,10 @@ export default function OnboardingDocumentsPage() {
                       setSelectedDocument(template)
                       setIsViewerOpen(true)
                     }}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
-                      isSigned
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${isSigned
                         ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
                         : "bg-teal-600 text-white hover:bg-teal-700"
-                    }`}
+                      }`}
                   >
                     {isSigned ? "View" : "Sign"}
                     <ChevronRight className="w-4 h-4" />

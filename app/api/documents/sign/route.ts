@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { completePartnerOnboarding } from "@/lib/onboarding-automation"
 import { db } from "@/lib/db"
 import { partners, partnerDocuments } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -9,37 +10,6 @@ import { requirePartner, withAuth } from "@/lib/api-auth"
  * Trigger the post-signing onboarding automation
  * Calls the /api/partner/onboarding-complete endpoint
  */
-async function triggerOnboardingAutomation(partnerId: string): Promise<void> {
-  try {
-    // Get the base URL from environment or construct it
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000'
-
-    console.log(`Triggering onboarding automation for partner: ${partnerId}`)
-
-    const response = await fetch(`${baseUrl}/api/partner/onboarding-complete`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ partnerId }),
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Automation failed: ${errorData.error || response.statusText}`)
-    }
-
-    const result = await response.json()
-    console.log(`Onboarding automation completed:`, result)
-  } catch (error) {
-    console.error('Error in onboarding automation:', error)
-    // Re-throw to be caught by the caller
-    throw error
-  }
-}
-
 // POST /api/documents/sign - Record a document signature
 // SECURITY: Requires partner authentication and ownership verification
 export async function POST(request: Request) {
@@ -175,10 +145,15 @@ export async function POST(request: Request) {
           .where(eq(partners.id, partnerId))
 
         // Trigger post-signing automation (FireCrawl, microsite, QR code, Google Sheets)
-        // Run asynchronously so we don't block the response
-        triggerOnboardingAutomation(partnerId).catch((error) => {
+        // We call it directly to avoid middleware auth issues with loopback fetch
+        try {
+          // We await it to ensure it completes reliably.
+          // In a high-traffic app we might use a queue, but here it's fine.
+          await completePartnerOnboarding(partnerId)
+        } catch (error) {
           console.error("Error triggering onboarding automation:", error)
-        })
+          // We don't fail the request because the document IS signed
+        }
       } else {
         await db
           .update(partners)
@@ -209,6 +184,7 @@ export async function POST(request: Request) {
     }
   })
 }
+
 
 // GET /api/documents/sign?partnerId=xxx - Get partner's document signing status
 // SECURITY: Requires partner authentication and ownership verification

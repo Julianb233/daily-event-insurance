@@ -147,7 +147,7 @@ describe('Documents Onboarding Page', () => {
         })
       }
 
-      if (url.includes('/api/partner/me')) {
+      if (url === '/api/partner') {
         if (partnerError) {
           return Promise.resolve({
             ok: false,
@@ -183,7 +183,7 @@ describe('Documents Onboarding Page', () => {
   describe('Loading state', () => {
     it('shows loading spinner and text initially', async () => {
       // Keep fetch pending to show loading state
-      mockFetch.mockImplementation(() => new Promise(() => {}))
+      mockFetch.mockImplementation(() => new Promise(() => { }))
 
       render(<DocumentsPage />)
 
@@ -191,7 +191,7 @@ describe('Documents Onboarding Page', () => {
     })
 
     it('renders header and footer during loading', async () => {
-      mockFetch.mockImplementation(() => new Promise(() => {}))
+      mockFetch.mockImplementation(() => new Promise(() => { }))
 
       render(<DocumentsPage />)
 
@@ -573,7 +573,7 @@ describe('Documents Onboarding Page', () => {
             json: () => Promise.resolve({ success: true, templates: mockTemplates }),
           })
         }
-        if (url.includes('/api/partner/me')) {
+        if (url === '/api/partner') {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve({ success: true, partner: mockPartner }),
