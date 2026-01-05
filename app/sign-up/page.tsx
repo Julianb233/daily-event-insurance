@@ -55,15 +55,7 @@ export default function SignUpPage() {
         return
       }
 
-      // Check if email confirmation is required
-      if (data.user && !data.session) {
-        // Email confirmation required
-        setError("Please check your email to confirm your account.")
-        setIsLoading(false)
-        return
-      }
-
-      // Redirect to onboarding
+      // Redirect to onboarding after successful signup
       router.push("/onboarding")
       router.refresh()
     } catch (err) {
