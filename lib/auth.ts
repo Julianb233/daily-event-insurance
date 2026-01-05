@@ -36,8 +36,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, request) {
-        // Dev mode bypass
-        if (isDevMode) {
+        // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
+        if (shouldBypassAuth) {
+          console.warn("[DEV MODE] Auth bypassed - set AUTH_SECRET to disable")
           return {
             id: "dev_user_001",
             email: "demo@partner.dev",
