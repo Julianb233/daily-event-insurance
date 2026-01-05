@@ -210,7 +210,11 @@ export function DEIIntroSection() {
   )
 
   return (
-    <section id="home" ref={sectionRef} className="relative w-full min-h-[80vh] py-16 md:py-24 overflow-hidden bg-white">
+    <section
+      id="home"
+      ref={sectionRef}
+      className="relative w-full min-h-[75vh] py-10 md:py-16 overflow-hidden bg-white"
+    >
       <HeroContent />
     </section>
   )

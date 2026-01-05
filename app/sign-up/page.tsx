@@ -130,7 +130,7 @@ export default function SignUpPage() {
                   alt="Daily Event Insurance"
                   width={200}
                   height={60}
-                  className="h-12 w-auto"
+                  className="h-14 sm:h-16 w-auto"
                   priority
                 />
               </motion.div>
@@ -167,11 +167,11 @@ export default function SignUpPage() {
                     </div>
                     <h3 className="text-xl font-bold mb-2">Check your email</h3>
                     <p className="text-gray-600 mb-6">
-                      We've sent a verification link to <span className="font-semibold">{email}</span>.
+                      We&apos;ve sent a verification link to <span className="font-semibold">{email}</span>.
                       Please click the link to activate your account.
                     </p>
                     <div className="text-sm text-gray-500">
-                      <p>Don't see it? Check your spam folder.</p>
+                      <p>Don&apos;t see it? Check your spam folder.</p>
                       <button
                         type="button"
                         onClick={() => window.location.reload()}
