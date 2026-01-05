@@ -34,7 +34,7 @@ test.describe('Full Onboarding Flow', () => {
         const timestamp = Date.now();
         userEmail = `test.verified.${timestamp}@gmail.com`; // Using gmail.com
         const password = 'Password123!';
-        const businessName = `Verified Business ${timestamp}`;
+        const businessName = `Ocean Pacific Gym ${timestamp}`;
 
         console.log(`Creating verified user: ${userEmail}`);
 
@@ -207,10 +207,14 @@ test.describe('Full Onboarding Flow', () => {
 
         // 8. Verify Dashboard Content & Automation
         // Check for "Your Microsite" section
-        // Note: This depends on server-side automation (GHL/Microsite creation) which might not run in this test env
-        // await expect(page.getByText(/Your Microsite/i)).toBeVisible();
-        // Check for QR Code presence (img alt="Microsite QR Code")
-        // await expect(page.getByAltText('Microsite QR Code')).toBeVisible();
+        // Note: This IS running in the test environment, so we should verify it.
+        await expect(page.getByText(/Your Microsite/i)).toBeVisible({ timeout: 10000 });
+        console.log('Microsite section visible.');
+
+        // Check for QR Code presence (img alt="Microsite QR Code" or similar)
+        // Based on the component, usually it's "Microsite QR Code"
+        await expect(page.getByAltText(/QR Code/i)).toBeVisible();
+        console.log('QR Code generated and visible.');
 
         console.log('Dashboard access verified.');
     });

@@ -119,12 +119,19 @@ export default function SignUpPage() {
             {/* Header */}
             <div className="text-center mb-8">
               <motion.div
-                className="w-16 h-16 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-2xl flex items-center justify-center mx-auto mb-4"
+                className="flex justify-center mb-6"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring" }}
               >
-                <Rocket className="w-8 h-8 text-white" />
+                <Image
+                  src="/images/logo-color.png"
+                  alt="Daily Event Insurance"
+                  width={200}
+                  height={60}
+                  className="h-12 w-auto"
+                  priority
+                />
               </motion.div>
               <h1 className="text-3xl font-bold text-gray-900">Create your account</h1>
               <p className="mt-2 text-gray-600">Start earning in minutes</p>
