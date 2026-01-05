@@ -44,10 +44,11 @@ async function triggerOnboardingAutomation(partnerId: string): Promise<void> {
 // SECURITY: Requires partner authentication and ownership verification
 export async function POST(request: Request) {
   return withAuth(async () => {
-    try {
-      // Require partner authentication
-      const { userId } = await requirePartner()
+    // Require partner authentication
+    // SECURITY: This must be outside try-catch to properly return 401/403
+    const { userId } = await requirePartner()
 
+    try {
       const body = await request.json()
       const { partnerId, documentType, signature, signedByName, signedByEmail } = body
 
@@ -61,8 +62,10 @@ export async function POST(request: Request) {
       // Validate document type
       const validTypes = Object.values(DOCUMENT_TYPES)
       if (!validTypes.includes(documentType)) {
+        // SECURITY: Don't expose valid types in production
+        const isProduction = process.env.NODE_ENV === "production"
         return NextResponse.json(
-          { success: false, error: `Invalid documentType. Must be one of: ${validTypes.join(", ")}` },
+          { success: false, error: isProduction ? "Invalid document type" : `Invalid documentType. Must be one of: ${validTypes.join(", ")}` },
           { status: 400 }
         )
       }
@@ -211,10 +214,11 @@ export async function POST(request: Request) {
 // SECURITY: Requires partner authentication and ownership verification
 export async function GET(request: Request) {
   return withAuth(async () => {
-    try {
-      // Require partner authentication
-      const { userId } = await requirePartner()
+    // Require partner authentication
+    // SECURITY: This must be outside try-catch to properly return 401/403
+    const { userId } = await requirePartner()
 
+    try {
       const { searchParams } = new URL(request.url)
       const partnerId = searchParams.get("partnerId")
 

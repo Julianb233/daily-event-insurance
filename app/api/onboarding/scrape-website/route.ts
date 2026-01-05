@@ -57,17 +57,18 @@ function isPrivateOrLocalhost(hostname: string): boolean {
  */
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
+    // Require authentication - any logged-in user can use during onboarding
+    // SECURITY: This must be outside try-catch to properly return 401
+    await requireAuth()
+
+    // Rate limiting
+    const clientIP = getClientIP(request)
+    const { success: withinLimit } = apiRateLimiter.check(clientIP)
+    if (!withinLimit) {
+      return rateLimitResponse(60 * 1000) // 1 minute
+    }
+
     try {
-      // Require authentication - any logged-in user can use during onboarding
-      await requireAuth()
-
-      // Rate limiting
-      const clientIP = getClientIP(request)
-      const { success: withinLimit } = apiRateLimiter.check(clientIP)
-      if (!withinLimit) {
-        return rateLimitResponse(60 * 1000) // 1 minute
-      }
-
       const { url } = await request.json()
 
       if (!url) {
