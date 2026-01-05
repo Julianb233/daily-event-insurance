@@ -1,40 +1,10 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
-import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
 import { SessionProvider } from "@/components/providers/session-provider"
 import { Chatbot } from "@/app/components/chatbot/Chatbot"
 import "./globals.css"
-
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700", "900"],
-  subsets: ["latin"],
-  variable: "--font-roboto",
-  display: "swap",
-})
-
-const alexBrush = Alex_Brush({
-  weight: ["400"],
-  subsets: ["latin"],
-  variable: "--font-alex-brush",
-  display: "swap",
-})
-
-const libreBaskerville = Libre_Baskerville({
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-libre-baskerville",
-  display: "swap",
-})
-
-const oswald = Oswald({
-  weight: ["300", "400", "500", "700"],
-  subsets: ["latin"],
-  variable: "--font-oswald",
-  display: "swap",
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://dailyeventinsurance.com"),
@@ -159,7 +129,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable}`}
+        className="font-sans antialiased overflow-x-hidden bg-white"
       >
         <SessionProvider>
           <SmoothScroll>{children}</SmoothScroll>

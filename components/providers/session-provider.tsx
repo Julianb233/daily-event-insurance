@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import type { User, Session } from "@supabase/supabase-js"
 
 interface AuthSession {
@@ -39,7 +39,12 @@ export function SessionProvider({ children }: SessionProviderProps) {
   const [session, setSession] = useState<AuthSession | null>(null)
   const [status, setStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading")
 
-  const supabase = createClient()
+  const [supabase] = useState(() => {
+    // Avoid creating a browser client during server-side prerender/build.
+    if (typeof window === "undefined") return null
+    if (!isSupabaseConfigured()) return null
+    return createClient()
+  })
 
   const updateSession = useCallback((user: User | null) => {
     if (user) {
@@ -59,11 +64,13 @@ export function SessionProvider({ children }: SessionProviderProps) {
   }, [])
 
   const refresh = useCallback(async () => {
+    if (!supabase) return
     const { data: { user } } = await supabase.auth.getUser()
     updateSession(user)
   }, [supabase, updateSession])
 
   const signOut = useCallback(async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
     setSession(null)
     setStatus("unauthenticated")
@@ -71,6 +78,11 @@ export function SessionProvider({ children }: SessionProviderProps) {
   }, [supabase])
 
   useEffect(() => {
+    if (!supabase) {
+      setSession(null)
+      setStatus("unauthenticated")
+      return
+    }
     // Get initial session
     supabase.auth.getUser().then(({ data: { user } }) => {
       updateSession(user)

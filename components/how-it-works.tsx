@@ -17,7 +17,7 @@ const steps: Step[] = [
   {
     number: 1,
     title: 'Sign Up in Minutes',
-    description: 'Quick registration with no upfront costs or contracts.',
+    description: 'Free to partner. No fees. No contracts. No price increases required.',
     details: [
       'Fill out a simple online form',
       'No credit card required',
@@ -25,25 +25,25 @@ const steps: Step[] = [
       'Free setup and integration support'
     ],
     icon: <Building2 className="w-8 h-8" />,
-    highlight: 'Free to join'
+    highlight: '$0 cost'
   },
   {
     number: 2,
-    title: 'Add to Your Checkout',
-    description: 'Seamlessly embed insurance into your existing flow.',
+    title: 'Make It Required at Signup',
+    description: 'Add coverage to signup / checkout and toggle it to mandatory.',
     details: [
       'Simple API or no-code widget',
       'Works with any booking system',
       'Branded to match your site',
-      'Mobile-optimized experience'
+      'Optional or required—your choice'
     ],
     icon: <Puzzle className="w-8 h-8" />,
     highlight: '48 hours to go live'
   },
   {
     number: 3,
-    title: 'Earn on Every Sale',
-    description: 'Get paid commission for each policy your customers purchase.',
+    title: 'Get Compensated + Protected',
+    description: 'You’re paid per activation, and your business gains more protection.',
     details: [
       'Earn $2-5 per policy sold',
       'Automatic monthly payouts',
@@ -283,7 +283,7 @@ export function HowItWorks() {
             How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Works</span>
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Join hundreds of partners earning passive income by offering instant insurance coverage at checkout
+            You pay $0. You don’t raise prices. You make coverage mandatory at signup—and you get compensated while adding protection.
           </p>
         </motion.div>
 
@@ -310,7 +310,7 @@ export function HowItWorks() {
                 </h3>
                 <p className="text-slate-600 mb-6">
                   Every time a customer adds insurance at checkout, you earn commission.
-                  No inventory, no overhead, no customer service—just passive income that grows with your business.
+                  No inventory, no overhead, no extra customer service—just a compliant flow that pays you and adds protection.
                 </p>
                 <ul className="space-y-3">
                   {[
@@ -380,7 +380,7 @@ export function HowItWorks() {
             </svg>
           </motion.a>
           <p className="mt-4 text-slate-500 text-sm">
-            No contracts. No setup fees. Start earning in 24 hours.
+            $0 cost to your business. No setup fees. No price increases required.
           </p>
         </motion.div>
       </div>

@@ -65,6 +65,12 @@
   --sidebar-accent-foreground: var(--slate-800);
   --sidebar-border: var(--slate-200);
   --sidebar-ring: var(--teal-600);
+
+  /* Font variable fallbacks (avoid build-time Google font fetches) */
+  --font-roboto: "Mona Sans";
+  --font-libre-baskerville: "Georgia";
+  --font-alex-brush: cursive;
+  --font-oswald: "Mona Sans";
 }
 
 html,
