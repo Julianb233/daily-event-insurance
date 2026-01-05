@@ -4,9 +4,25 @@ import { db, isDbConfigured, partners, partnerLocations } from "@/lib/db"
 import { eq, and } from "drizzle-orm"
 import postgres from "postgres"
 
+// SECURITY: Module-level connection pool (reused across requests)
+// Only created once when module loads, not per-request
+let sqlPool: ReturnType<typeof postgres> | null = null
+
+function getSqlPool() {
+  if (!sqlPool && process.env.DATABASE_URL) {
+    sqlPool = postgres(process.env.DATABASE_URL, {
+      ssl: "require",
+      max: 10, // Connection pool size
+      idle_timeout: 20, // Close idle connections after 20 seconds
+    })
+  }
+  return sqlPool
+}
+
 /**
  * GET /api/partner/locations/[locationId]/stats
  * Get real-time stats for a specific location
+ * SECURITY: Verifies partner ownership before returning any data
  */
 export async function GET(
   request: NextRequest,
@@ -80,41 +96,56 @@ export async function GET(
     }
 
     // Query real-time stats using raw SQL for complex aggregations
-    const connectionString = process.env.DATABASE_URL!
-    const sql = postgres(connectionString, { ssl: "require" })
+    // SECURITY: Use connection pool instead of per-request connections
+    const sql = getSqlPool()
+
+    if (!sql) {
+      return NextResponse.json(
+        { error: "Database not configured" },
+        { status: 500 }
+      )
+    }
 
     try {
-      // Get aggregate stats
+      // SECURITY: Defense in depth - include partner_id in SQL queries
+      // Even though we verified ownership above, this prevents any bypass attempts
+      const partnerId = partner.id
+
+      // Get aggregate stats with partner authorization
       const statsResult = await sql`
         SELECT
           COUNT(*)::int AS total_policies,
-          COALESCE(SUM(premium::numeric), 0) AS total_premium,
-          COALESCE(SUM(commission::numeric), 0) AS total_commission,
-          COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days')::int AS policies_30_days,
-          COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days')::int AS policies_7_days,
-          COUNT(*) FILTER (WHERE created_at >= DATE_TRUNC('day', NOW()))::int AS policies_today,
-          MAX(created_at) AS last_policy_at
-        FROM policies
-        WHERE location_id = ${locationId}
+          COALESCE(SUM(p.premium::numeric), 0) AS total_premium,
+          COALESCE(SUM(p.commission::numeric), 0) AS total_commission,
+          COUNT(*) FILTER (WHERE p.created_at >= NOW() - INTERVAL '30 days')::int AS policies_30_days,
+          COUNT(*) FILTER (WHERE p.created_at >= NOW() - INTERVAL '7 days')::int AS policies_7_days,
+          COUNT(*) FILTER (WHERE p.created_at >= DATE_TRUNC('day', NOW()))::int AS policies_today,
+          MAX(p.created_at) AS last_policy_at
+        FROM policies p
+        INNER JOIN partner_locations pl ON pl.id = p.location_id
+        WHERE p.location_id = ${locationId}
+          AND pl.partner_id = ${partnerId}
       `
 
-      // Get recent policies
+      // Get recent policies with partner authorization
       const recentPolicies = await sql`
         SELECT
-          id,
-          policy_number AS "policyNumber",
-          customer_name AS "customerName",
-          event_type AS "eventType",
-          premium,
-          commission,
-          created_at AS "createdAt"
-        FROM policies
-        WHERE location_id = ${locationId}
-        ORDER BY created_at DESC
+          p.id,
+          p.policy_number AS "policyNumber",
+          p.customer_name AS "customerName",
+          p.event_type AS "eventType",
+          p.premium,
+          p.commission,
+          p.created_at AS "createdAt"
+        FROM policies p
+        INNER JOIN partner_locations pl ON pl.id = p.location_id
+        WHERE p.location_id = ${locationId}
+          AND pl.partner_id = ${partnerId}
+        ORDER BY p.created_at DESC
         LIMIT 10
       `
 
-      await sql.end()
+      // Note: Don't close connection pool - it's reused across requests
 
       const stats = statsResult[0]
 
@@ -131,7 +162,6 @@ export async function GET(
       })
     } catch (error) {
       console.error("[Stats] Error fetching location stats:", error)
-      await sql.end()
       return NextResponse.json(
         { error: "Failed to fetch stats" },
         { status: 500 }

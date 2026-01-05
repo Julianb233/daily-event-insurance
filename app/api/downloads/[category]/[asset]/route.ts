@@ -59,10 +59,14 @@ export async function GET(
 
     // Validate category
     if (!isValidCategory(category)) {
+      // SECURITY: Don't expose valid categories in production
+      const isProduction = process.env.NODE_ENV === "production"
       return NextResponse.json(
         {
           error: "Invalid category",
-          message: `Category must be one of: ${VALID_CATEGORIES.join(", ")}`,
+          message: isProduction
+            ? "Invalid category provided"
+            : `Category must be one of: ${VALID_CATEGORIES.join(", ")}`,
         },
         { status: 400 }
       )
@@ -79,10 +83,14 @@ export async function GET(
     // Validate file extension
     const ext = asset.split(".").pop()?.toLowerCase()
     if (!ext || !(ext in VALID_FILE_TYPES)) {
+      // SECURITY: Don't expose valid file types in production
+      const isProduction = process.env.NODE_ENV === "production"
       return NextResponse.json(
         {
           error: "Invalid file type",
-          message: `File type must be one of: ${Object.keys(VALID_FILE_TYPES).join(", ")}`,
+          message: isProduction
+            ? "Invalid file type"
+            : `File type must be one of: ${Object.keys(VALID_FILE_TYPES).join(", ")}`,
         },
         { status: 400 }
       )

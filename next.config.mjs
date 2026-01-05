@@ -1,7 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
+    // Enable Next.js automatic image optimization
+    unoptimized: false,
+    // Define allowed image formats for optimization
+    formats: ['image/avif', 'image/webp'],
+    // Define device sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    // Define image sizes for next/image component
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Allow images from these domains
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.vercel.app',
+      },
+      {
+        protocol: 'https',
+        hostname: 'dailyeventinsurance.com',
+      },
+    ],
   },
   async headers() {
     return [

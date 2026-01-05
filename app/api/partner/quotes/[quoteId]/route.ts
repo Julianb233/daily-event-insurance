@@ -113,8 +113,10 @@ export async function PATCH(
       // Validate action
       const validActions = ["accept", "decline", "update-customer"]
       if (!action || !validActions.includes(action)) {
+        // SECURITY: Don't expose valid action values in production
+        const isProduction = process.env.NODE_ENV === "production"
         return validationError("Invalid action", {
-          action: [`Must be one of: ${validActions.join(", ")}`]
+          action: [isProduction ? "Invalid action provided" : `Must be one of: ${validActions.join(", ")}`]
         })
       }
 

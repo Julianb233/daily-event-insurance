@@ -297,11 +297,15 @@ export async function POST(request: NextRequest) {
 
     const invalidEvents = events.filter((e: string) => !VALID_EVENTS.includes(e as WebhookEventType))
     if (invalidEvents.length > 0) {
+      // SECURITY: Don't expose valid event types in production
+      const isProduction = process.env.NODE_ENV === "production"
       return NextResponse.json(
         {
           error: "Validation error",
-          message: `Invalid event types: ${invalidEvents.join(", ")}`,
-          validEvents: VALID_EVENTS,
+          message: isProduction
+            ? "Invalid event types provided"
+            : `Invalid event types: ${invalidEvents.join(", ")}`,
+          ...(isProduction ? {} : { validEvents: VALID_EVENTS }),
         },
         { status: 400 }
       )

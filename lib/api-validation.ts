@@ -171,12 +171,23 @@ export function safeValidate<T extends z.ZodType>(
 
 /**
  * Format Zod validation errors for API response
+ * SECURITY: In production, returns generic messages to prevent information disclosure
  */
 export function formatZodErrors(error: z.ZodError): Record<string, string[]> {
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  // In production, return generic error without exposing field structure
+  if (isProduction) {
+    return {
+      _error: ["Invalid request data. Please check your input and try again."]
+    }
+  }
+
+  // In development, provide detailed errors for debugging
   const formatted: Record<string, string[]> = {}
 
   error.errors.forEach((err) => {
-    const path = err.path.join(".")
+    const path = err.path.join(".") || "_error"
     if (!formatted[path]) {
       formatted[path] = []
     }
@@ -184,4 +195,12 @@ export function formatZodErrors(error: z.ZodError): Record<string, string[]> {
   })
 
   return formatted
+}
+
+/**
+ * Get a generic validation error message for production
+ * Use this instead of exposing specific field errors
+ */
+export function getGenericValidationError(): string {
+  return "Invalid request data. Please verify your input."
 }
