@@ -145,8 +145,10 @@ export async function POST(request: Request) {
       // Validate type is one of allowed types
       const validTypes = Object.values(DOCUMENT_TYPES)
       if (!validTypes.includes(type)) {
+        // SECURITY: Don't expose valid types in production
+        const isProduction = process.env.NODE_ENV === "production"
         return NextResponse.json(
-          { success: false, error: `Invalid type. Must be one of: ${validTypes.join(", ")}` },
+          { success: false, error: isProduction ? "Invalid document type" : `Invalid type. Must be one of: ${validTypes.join(", ")}` },
           { status: 400 }
         )
       }

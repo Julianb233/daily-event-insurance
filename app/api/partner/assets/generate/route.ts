@@ -39,10 +39,14 @@ export async function POST(request: NextRequest) {
       "flyer", "email", "social", "brochure", "certificate"  // Legacy templates
     ]
     if (!assetType || !validAssetTypes.includes(assetType)) {
+      // SECURITY: Don't expose valid asset types in production
+      const isProduction = process.env.NODE_ENV === "production"
       return NextResponse.json(
         {
           error: "Invalid asset type",
-          message: `Asset type must be one of: ${validAssetTypes.join(", ")}`,
+          message: isProduction
+            ? "Invalid asset type provided"
+            : `Asset type must be one of: ${validAssetTypes.join(", ")}`,
         },
         { status: 400 }
       )

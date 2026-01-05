@@ -1,8 +1,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
+// Mock api-auth module to bypass authentication
+vi.mock('@/lib/api-auth', () => ({
+  requirePartner: vi.fn().mockResolvedValue({ userId: 'test-user', user: { id: 'test-user', role: 'partner' } }),
+  withAuth: vi.fn((handler) => handler()),
+}))
+
+// Mock auth module to prevent next-auth from loading (ESM resolution issue)
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn().mockResolvedValue({ user: { id: 'test-user', role: 'partner' } }),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+}))
+
 // Mock modules before imports
 vi.mock('@/lib/db', () => ({
   db: null, // Will be overridden in tests
+  users: { id: 'id' },
 }))
 
 vi.mock('@/lib/db/schema', () => ({
@@ -187,6 +201,7 @@ describe('/api/documents/sign', () => {
     it('returns 400 when document is already signed', async () => {
       const mockPartner = {
         id: 'partner-123',
+        userId: 'test-user', // Must match requirePartner mock's userId for ownership check
         agreementSigned: false,
         w9Signed: false,
         directDepositSigned: false,
@@ -305,6 +320,7 @@ describe('/api/documents/sign', () => {
     it('returns success response with correct structure when signing succeeds', async () => {
       const mockPartner = {
         id: 'partner-123',
+        userId: 'test-user', // Must match requirePartner mock's userId for ownership check
         agreementSigned: false,
         w9Signed: true,
         directDepositSigned: false,
@@ -412,12 +428,14 @@ describe('/api/documents/sign', () => {
 
       expect(response.status).toBe(404)
       expect(data.success).toBe(false)
-      expect(data.error).toContain('Partner not found')
+      // SECURITY: Returns generic "Not found" to prevent partner enumeration
+      expect(data.error).toContain('Not found')
     })
 
     it('returns success with document status when partner found', async () => {
       const mockPartner = {
         id: 'partner-123',
+        userId: 'test-user', // Must match requirePartner mock's userId for ownership check
         agreementSigned: true,
         w9Signed: false,
         directDepositSigned: true,
@@ -491,6 +509,7 @@ describe('/api/documents/sign', () => {
     it('correctly identifies when all documents are signed', async () => {
       const mockPartner = {
         id: 'partner-123',
+        userId: 'test-user', // Must match requirePartner mock's userId for ownership check
         agreementSigned: true,
         w9Signed: true,
         directDepositSigned: true,

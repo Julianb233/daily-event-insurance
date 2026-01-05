@@ -231,11 +231,15 @@ export async function PATCH(
         )
         if (invalidEvents.length > 0) {
           await sql.end()
+          // SECURITY: Don't expose valid event types in production
+          const isProduction = process.env.NODE_ENV === "production"
           return NextResponse.json(
             {
               error: "Validation error",
-              message: `Invalid event types: ${invalidEvents.join(", ")}`,
-              validEvents: VALID_EVENTS,
+              message: isProduction
+                ? "Invalid event types provided"
+                : `Invalid event types: ${invalidEvents.join(", ")}`,
+              ...(isProduction ? {} : { validEvents: VALID_EVENTS }),
             },
             { status: 400 }
           )

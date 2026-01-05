@@ -54,16 +54,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // SECURITY: Don't expose valid values in production
+    const isProduction = process.env.NODE_ENV === "production"
+
     if (!RESOURCE_CATEGORIES.includes(category)) {
       return NextResponse.json(
-        { success: false, error: `Invalid category. Must be one of: ${RESOURCE_CATEGORIES.join(", ")}` },
+        { success: false, error: isProduction ? "Invalid category" : `Invalid category. Must be one of: ${RESOURCE_CATEGORIES.join(", ")}` },
         { status: 400 }
       )
     }
 
     if (!RESOURCE_TYPES.includes(resourceType)) {
       return NextResponse.json(
-        { success: false, error: `Invalid resourceType. Must be one of: ${RESOURCE_TYPES.join(", ")}` },
+        { success: false, error: isProduction ? "Invalid resource type" : `Invalid resourceType. Must be one of: ${RESOURCE_TYPES.join(", ")}` },
         { status: 400 }
       )
     }
@@ -127,16 +130,19 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validation
+    // SECURITY: Don't expose valid values in production
+    const isProduction = process.env.NODE_ENV === "production"
+
     if (category && !RESOURCE_CATEGORIES.includes(category)) {
       return NextResponse.json(
-        { success: false, error: `Invalid category. Must be one of: ${RESOURCE_CATEGORIES.join(", ")}` },
+        { success: false, error: isProduction ? "Invalid category" : `Invalid category. Must be one of: ${RESOURCE_CATEGORIES.join(", ")}` },
         { status: 400 }
       )
     }
 
     if (resourceType && !RESOURCE_TYPES.includes(resourceType)) {
       return NextResponse.json(
-        { success: false, error: `Invalid resourceType. Must be one of: ${RESOURCE_TYPES.join(", ")}` },
+        { success: false, error: isProduction ? "Invalid resource type" : `Invalid resourceType. Must be one of: ${RESOURCE_TYPES.join(", ")}` },
         { status: 400 }
       )
     }

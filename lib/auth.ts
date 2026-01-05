@@ -8,9 +8,15 @@ import bcrypt from "bcryptjs"
 import { authConfig } from "./auth.config"
 import { authRateLimiter } from "@/lib/rate-limit"
 
-// Development mode check - SECURITY: Use NODE_ENV, not AUTH_SECRET absence
-// This ensures production ALWAYS requires auth even if AUTH_SECRET is misconfigured
-const isDevMode = process.env.NODE_ENV === 'development'
+// SECURITY: Dev mode auth bypass requires explicit opt-in
+// Bypass ONLY if ALL conditions are met:
+// 1. NODE_ENV === 'development'
+// 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
+// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
+const shouldBypassAuth =
+  process.env.NODE_ENV === 'development' &&
+  process.env.DEV_AUTH_BYPASS === 'true' &&
+  !process.env.AUTH_SECRET
 
 // Create NextAuth instance
 export const { handlers, auth, signIn, signOut } = NextAuth({
