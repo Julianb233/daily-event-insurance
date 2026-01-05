@@ -16,6 +16,7 @@ import {
   Shield,
   ChevronRight,
   MapPin,
+  FileText,
 } from "lucide-react"
 
 const navItems = [
@@ -38,6 +39,11 @@ const navItems = [
     label: "Materials",
     href: "/partner/materials",
     icon: FolderOpen,
+  },
+  {
+    label: "Documents",
+    href: "/partner/documents",
+    icon: FileText,
   },
   {
     label: "Profile",
@@ -112,11 +118,10 @@ function SidebarInnerContent({
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileOpen(false)}
-              className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/25"
-                  : "text-slate-600 hover:bg-slate-100"
-              }`}
+              className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/25"
+                : "text-slate-600 hover:bg-slate-100"
+                }`}
             >
               <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-400 group-hover:text-teal-500"}`} />
               <span className="font-medium">{item.label}</span>

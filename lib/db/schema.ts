@@ -150,6 +150,7 @@ export const partnerDocuments = pgTable("partner_documents", {
   documentType: text("document_type").notNull(), // partner_agreement, w9, direct_deposit
   ghlDocumentId: text("ghl_document_id"), // GHL Document ID
   status: text("status").default("pending"), // pending, sent, viewed, signed, declined, expired
+  contentSnapshot: text("content_snapshot"), // Stores the enacted content at time of signing
   sentAt: timestamp("sent_at"),
   viewedAt: timestamp("viewed_at"),
   signedAt: timestamp("signed_at"),

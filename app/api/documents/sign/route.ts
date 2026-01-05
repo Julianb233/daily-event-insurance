@@ -3,7 +3,7 @@ import { completePartnerOnboarding } from "@/lib/onboarding-automation"
 import { db } from "@/lib/db"
 import { partners, partnerDocuments } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
-import { DOCUMENT_TYPES, type DocumentType } from "@/lib/demo-documents"
+import { DOCUMENT_TYPES, type DocumentType, getDocumentByType } from "@/lib/demo-documents"
 import { requirePartner, withAuth } from "@/lib/api-auth"
 
 /**
@@ -93,10 +93,27 @@ export async function POST(request: Request) {
 
       // Record the signature in partnerDocuments
       const now = new Date()
+      // Generate content snapshot
+      const template = getDocumentByType(documentType as any)
+      let contentSnapshot = template?.content || ""
+
+      if (contentSnapshot) {
+        // Replace placeholders
+        contentSnapshot = contentSnapshot
+          .replace(/{{BUSINESS_NAME}}/g, partner.businessName)
+          .replace(/{{BUSINESS_ADDRESS}}/g, partner.businessAddress || "[Address Not Provided]")
+          .replace(/{{CONTACT_NAME}}/g, partner.contactName)
+          .replace(/{{DATE}}/g, now.toLocaleDateString())
+
+        // Append signature block
+        contentSnapshot += `\n\n---\n\n**Electronically Signed By:** ${signature}\n**Date:** ${now.toISOString()}\n**IP Address:** ${request.headers.get("x-forwarded-for") || "Unknown"}`
+      }
+
       await db.insert(partnerDocuments).values({
         partnerId,
         documentType,
         status: "signed",
+        contentSnapshot, // Save the snapshot
         signedAt: now,
         createdAt: now,
         updatedAt: now,
@@ -280,26 +297,32 @@ export async function GET(request: Request) {
           partner_agreement: {
             signed: partner.agreementSigned || false,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.PARTNER_AGREEMENT)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.PARTNER_AGREEMENT)?.contentSnapshot,
           },
           joint_marketing_agreement: {
             signed: isJointMarketingSigned,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.JOINT_MARKETING_AGREEMENT)?.contentSnapshot,
           },
           mutual_nda: {
             signed: isMutualNdaSigned,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.MUTUAL_NDA)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.MUTUAL_NDA)?.contentSnapshot,
           },
           sponsorship_agreement: {
             signed: isSponsorshipAgreementSigned,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.SPONSORSHIP_AGREEMENT)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.SPONSORSHIP_AGREEMENT)?.contentSnapshot,
           },
           w9: {
             signed: partner.w9Signed || false,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.W9)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.W9)?.contentSnapshot,
           },
           direct_deposit: {
             signed: partner.directDepositSigned || false,
             signedAt: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.DIRECT_DEPOSIT)?.signedAt,
+            contentSnapshot: signedDocs.find((d) => d.documentType === DOCUMENT_TYPES.DIRECT_DEPOSIT)?.contentSnapshot,
           },
         },
         // Only require agreements for "allSigned" (which triggers "Go Live")

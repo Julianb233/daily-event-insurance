@@ -330,7 +330,17 @@ export default function OnboardingDocumentsPage() {
           setIsViewerOpen(false)
           setSelectedDocument(null)
         }}
-        document={selectedDocument}
+        document={
+          selectedDocument
+            ? {
+              ...selectedDocument,
+              content:
+                (documentStatuses[selectedDocument.type]?.signed &&
+                  (documentStatuses[selectedDocument.type] as any).contentSnapshot) ||
+                selectedDocument.content,
+            }
+            : null
+        }
         onSign={handleSign}
         isSigned={selectedDocument ? documentStatuses[selectedDocument.type]?.signed : false}
       />

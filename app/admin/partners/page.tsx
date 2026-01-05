@@ -103,6 +103,29 @@ export default function AdminPartnersPage() {
   const [businessTypeFilter, setBusinessTypeFilter] = useState("")
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null)
   const [showQrModal, setShowQrModal] = useState(false)
+  const [viewingDocumentsFor, setViewingDocumentsFor] = useState<Partner | null>(null)
+  const [partnerDocuments, setPartnerDocuments] = useState<any[]>([])
+  const [viewDocument, setViewDocument] = useState<any | null>(null)
+  const [loadingDocs, setLoadingDocs] = useState(false)
+
+  // Fetch documents for a partner
+  const fetchPartnerDocuments = async (partner: Partner) => {
+    setViewingDocumentsFor(partner)
+    setLoadingDocs(true)
+    try {
+      const res = await fetch(`/api/admin/partners/${partner.id}/documents`)
+      const data = await res.json()
+      if (data.success) {
+        setPartnerDocuments(data.documents)
+      } else {
+        console.error("Failed to load documents")
+      }
+    } catch (err) {
+      console.error("Error loading documents:", err)
+    } finally {
+      setLoadingDocs(false)
+    }
+  }
 
   const fetchPartners = useCallback(async () => {
     setLoading(true)
@@ -483,6 +506,13 @@ export default function AdminPartnersPage() {
                               </a>
                             )}
                             <button
+                              onClick={() => fetchPartnerDocuments(partner)}
+                              className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
+                              title="View Documents"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
                               className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
                               title="More Actions"
                             >
@@ -615,6 +645,89 @@ export default function AdminPartnersPage() {
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-xs text-gray-500">Conversion</p>
                     <p className="font-semibold text-gray-900">{selectedPartner.metrics.conversionRate.toFixed(1)}%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Documents List Modal */}
+        {viewingDocumentsFor && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">
+                  Documents - {viewingDocumentsFor.businessName}
+                </h3>
+                <button
+                  onClick={() => setViewingDocumentsFor(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <XCircle className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
+                {loadingDocs ? (
+                  <div className="flex items-center justify-center py-12">
+                    <RefreshCw className="w-6 h-6 animate-spin text-teal-600" />
+                  </div>
+                ) : partnerDocuments.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    No documents signed yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {partnerDocuments.map((doc) => (
+                      <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.status === 'signed' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
+                            }`}>
+                            <FileText className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 capitalize">
+                              {doc.documentType.replace(/_/g, " ")}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Signed: {new Date(doc.signedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setViewDocument({
+                            id: doc.id,
+                            title: doc.documentType.replace(/_/g, " ").toUpperCase(),
+                            type: doc.documentType,
+                            version: "1.0",
+                            content: doc.contentSnapshot || "No content snapshot available."
+                          })}
+                          className="px-4 py-2 bg-white border border-gray-200 shadow-sm text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+                        >
+                          View Content
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Document Modal */}
+        {viewDocument && (
+          <div className="fixed inset-0 z-[60]">
+            <div className="absolute inset-0 bg-black/50" onClick={() => setViewDocument(null)} />
+            <div className="relative pointer-events-none flex items-center justify-center h-full">
+              <div className="pointer-events-auto bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] m-4 flex flex-col">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h2 className="font-semibold text-gray-900">{viewDocument.title}</h2>
+                  <button onClick={() => setViewDocument(null)} className="p-2 hover:bg-gray-100 rounded-lg"><XCircle className="w-5 h-5" /></button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-6">
+                  <div className="prose prose-sm max-w-none">
+                    <pre className="whitespace-pre-wrap font-sans text-sm">{viewDocument.content}</pre>
                   </div>
                 </div>
               </div>

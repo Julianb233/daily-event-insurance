@@ -198,6 +198,16 @@ test.describe('Full Onboarding Flow', () => {
         await signDocument(/Joint Marketing Agreement/i);
         await page.waitForTimeout(1000);
 
+        // Sign Document 3: Mutual NDA (New)
+        console.log('Signing Document 3: Mutual Non-Disclosure Agreement...');
+        await signDocument(/Mutual Non-Disclosure Agreement/i);
+        await page.waitForTimeout(1000);
+
+        // Sign Document 4: Sponsorship Agreement (New)
+        console.log('Signing Document 4: Sponsorship Agreement...');
+        await signDocument(/Sponsorship Agreement/i);
+        await page.waitForTimeout(1000);
+
         // We SKIP W9 and Direct Deposit to verify optional flow works
 
         // 7. Verify "Go to Dashboard" button appears and click it
