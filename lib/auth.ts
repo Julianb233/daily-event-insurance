@@ -12,11 +12,9 @@ import { authRateLimiter } from "@/lib/rate-limit"
 // Bypass ONLY if ALL conditions are met:
 // 1. NODE_ENV === 'development'
 // 2. DEV_AUTH_BYPASS === 'true' (explicit opt-in)
-// 3. AUTH_SECRET is NOT set (prevents bypass in prod-like environments)
 const shouldBypassAuth =
   process.env.NODE_ENV === 'development' &&
-  process.env.DEV_AUTH_BYPASS === 'true' &&
-  !process.env.AUTH_SECRET
+  process.env.DEV_AUTH_BYPASS === 'true'
 
 // Create NextAuth instance
 export const { handlers, auth, signIn, signOut } = NextAuth({
