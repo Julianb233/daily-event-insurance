@@ -113,7 +113,6 @@ function Stepper({ currentStep, totalSteps, formData }: StepperProps) {
     { number: 1, title: "Customize", icon: Settings },
     { number: 2, title: "Business Info", icon: Building2 },
     { number: 3, title: "Integration", icon: Code2 },
-    { number: 4, title: "Go Live", icon: Rocket },
   ]
 
   // Calculate completion percentage based on filled fields
@@ -696,9 +695,10 @@ interface Step2Props {
   setFormData: React.Dispatch<React.SetStateAction<OnboardingFormData>>
   onNext: () => void
   onBack: () => void
+  isSubmitting?: boolean
 }
 
-function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props) {
+function Step2Integration({ formData, setFormData, onNext, onBack, isSubmitting }: Step2Props) {
   const [copied, setCopied] = useState(false)
   const selectedIntegration = formData.integrationType
   const setSelectedIntegration = (value: string) => setFormData(prev => ({ ...prev, integrationType: value }))
@@ -1495,7 +1495,7 @@ export default function OnboardingForm() {
   })
 
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, 4))
+    setCurrentStep((prev) => Math.min(prev + 1, 3))
   }
 
   const handleBack = () => {
@@ -1601,7 +1601,7 @@ export default function OnboardingForm() {
         {!isComplete && currentStep === 3 && <RevenueCalculator />}
 
         {/* Stepper */}
-        {!isComplete && <Stepper currentStep={currentStep} totalSteps={4} formData={formData} />}
+        {!isComplete && <Stepper currentStep={currentStep} totalSteps={3} formData={formData} />}
 
         {/* Earnings Preview - Show on steps 2-4 */}
         {!isComplete && currentStep >= 2 && <EarningsPreview formData={formData} />}
@@ -1634,17 +1634,9 @@ export default function OnboardingForm() {
                 <Step2Integration
                   formData={formData}
                   setFormData={setFormData}
-                  onNext={handleNext}
+                  onNext={handleComplete}
                   onBack={handleBack}
-                />
-              )}
-              {/* Step 4: Go Live */}
-              {currentStep === 4 && (
-                <Step4GoLive
-                  formData={formData}
-                  onBack={handleBack}
-                  onComplete={handleComplete}
-                  isSubmitting={isSubmitting}
+                  isSubmitting={isSubmitting} // Pass submitting state
                 />
               )}
             </>
