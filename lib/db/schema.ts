@@ -1,9 +1,11 @@
 import { pgTable, uuid, text, boolean, decimal, timestamp, integer, primaryKey, index, jsonb, serial } from "drizzle-orm/pg-core"
-import type { AdapterAccountType } from "next-auth/adapters"
 
-// ================= NextAuth Tables =================
+// Account type - oauth, email, credentials, etc.
+type AccountType = "oauth" | "email" | "credentials" | "oidc" | "webauthn"
 
-// Users table - authentication
+// ================= Auth Tables =================
+
+// Users table - authentication (works with Supabase Auth)
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name"),
@@ -19,7 +21,7 @@ export const users = pgTable("users", {
 // Accounts table - for OAuth providers
 export const accounts = pgTable("accounts", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  type: text("type").$type<AdapterAccountType>().notNull(),
+  type: text("type").$type<AccountType>().notNull(),
   provider: text("provider").notNull(),
   providerAccountId: text("provider_account_id").notNull(),
   refresh_token: text("refresh_token"),

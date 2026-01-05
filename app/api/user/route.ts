@@ -58,12 +58,11 @@ export async function GET() {
     }
   }
 
-  // Fallback to session data
+  // Fallback to session data (image not available in session)
   return NextResponse.json({
     id: session.user.id,
     email: session.user.email,
     name: session.user.name,
-    image: session.user.image,
     role: session.user.role,
   });
 }

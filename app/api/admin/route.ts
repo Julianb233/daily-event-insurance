@@ -19,8 +19,8 @@ export async function GET() {
       message: 'Admin access granted',
       admin: {
         id: user.id,
-        email: user.emailAddresses[0]?.emailAddress,
-        role: user.publicMetadata?.role || user.privateMetadata?.role,
+        email: user.email,
+        role: user.role,
       },
       // Example admin data
       stats: {
