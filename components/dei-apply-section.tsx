@@ -211,7 +211,7 @@ export function ApplySection() {
             Limited partnerships available in your area. Lock in your spot before competitors do.
           </p>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            247 facilities already earning. Setup takes 48 hours. Zero setup fees.
+            $0 cost to your business. No price increases required. 247 facilities already earning. Setup takes 48 hours.
           </p>
         </motion.div>
 

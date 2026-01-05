@@ -133,8 +133,36 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
         >
-          Coverage turns on when your event starts. Turns off when it ends. Earn revenue while protecting participants.
+          Coverage turns on when your event starts. Turns off when it ends. Get compensated while adding protection.
         </motion.p>
+
+        {/* Core promise (make it unmistakable) */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.85 }}
+          className="mt-6 md:mt-8 w-full max-w-3xl px-4 pointer-events-auto"
+        >
+          <div className="bg-white/80 backdrop-blur-sm border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
+            <ul className="grid gap-3 md:grid-cols-3 text-sm md:text-base text-slate-700 font-semibold">
+              <li className="flex items-center justify-center gap-2 text-center">
+                <span className="inline-flex h-2 w-2 rounded-full bg-teal-500" />
+                $0 cost to your business
+              </li>
+              <li className="flex items-center justify-center gap-2 text-center">
+                <span className="inline-flex h-2 w-2 rounded-full bg-teal-500" />
+                No price increases required
+              </li>
+              <li className="flex items-center justify-center gap-2 text-center">
+                <span className="inline-flex h-2 w-2 rounded-full bg-teal-500" />
+                Make coverage required at signup
+              </li>
+            </ul>
+            <p className="mt-3 text-xs md:text-sm text-slate-500 text-center">
+              You get compensated per activation, and your business gets more protection.
+            </p>
+          </div>
+        </motion.div>
 
         {/* Social proof */}
         <motion.p

@@ -14,7 +14,7 @@ const benefits: Benefit[] = [
   {
     icon: DollarSign,
     title: "New Revenue Stream",
-    description: "Earn commission on every policy sold. Turn liability into profit.",
+    description: "Earn commission on every activation. You pay $0 and don’t need to raise prices.",
   },
   {
     icon: ShieldCheck,
@@ -24,7 +24,7 @@ const benefits: Benefit[] = [
   {
     icon: ToggleRight,
     title: "Optional or Required",
-    description: "Your choice: offer coverage as an add-on, or make it a simple checkbox requirement.",
+    description: "Make coverage mandatory at signup/check-in, or offer it as an add-on—your choice.",
   },
   {
     icon: Zap,

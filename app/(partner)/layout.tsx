@@ -2,6 +2,9 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar"
 
+// Partner portal requires request-time auth; do not prerender at build time.
+export const dynamic = "force-dynamic"
+
 // SECURITY: Dev mode auth bypass requires explicit opt-in
 // Bypass ONLY if ALL conditions are met:
 // 1. NODE_ENV === 'development'
