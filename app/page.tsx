@@ -32,20 +32,20 @@ export default function Home() {
       {/* 1. Header - Navigation bar */}
       <Header />
 
-      {/* 2. HIQOR Value Proposition - Event-activated insurance (HIQOR first) */}
-      <HiqorValueProp />
-
-      {/* 3. Problem We Solve - Static vs dynamic risk (Section vs Coverage comparison) */}
-      <ProblemWeSolveSection />
-
-      {/* 4. DEI Intro Section - "Insurance for Moments, Not Time" (after comparison) */}
+      {/* 2. DEI Intro Section - "Insurance for Moments, Not Time" */}
       <DEIIntroSection />
 
-      {/* 5. DEI Trust Badges - Stats and partner types */}
+      {/* 3. DEI Trust Badges - Stats and partner types */}
       <DEITrustBadges />
 
-      {/* 6. Who We Are - Infrastructure positioning */}
+      {/* 4. Who We Are - Infrastructure positioning */}
       <WhoWeAreSection />
+
+      {/* 5. Problem We Solve - Static vs dynamic risk */}
+      <ProblemWeSolveSection />
+
+      {/* 6. HIQOR Value Proposition - Event-activated insurance */}
+      <HiqorValueProp />
 
       {/* 7. Data Advantage - Experience intelligence & digital health */}
       <DataAdvantageSection />
