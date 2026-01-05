@@ -56,7 +56,7 @@ export default function GetStarted() {
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left Column - CTA Content */}
-          <div className="text-white">
+          <div className="text-white text-center">
             <div className="inline-flex items-center rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm mb-6">
               <span className="mr-2">🚀</span>
               Ready to Transform Your Business
@@ -79,7 +79,7 @@ export default function GetStarted() {
                 'Competitive commission structure',
                 'White-label options available'
               ].map((benefit, index) => (
-                <li key={index} className="flex items-start">
+                <li key={index} className="flex items-start justify-center text-center">
                   <CheckCircle2 className="h-6 w-6 text-teal-200 mr-3 flex-shrink-0 mt-0.5" />
                   <span className="text-teal-50 text-lg">{benefit}</span>
                 </li>
@@ -87,7 +87,7 @@ export default function GetStarted() {
             </ul>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:partnerships@dailyeventinsurance.com?subject=Schedule a Demo"
                 className="group inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-teal-600 bg-white rounded-lg shadow-lg hover:bg-teal-50 transition-all duration-200 hover:shadow-xl hover:scale-105"
@@ -107,7 +107,7 @@ export default function GetStarted() {
             {/* Contact Info */}
             <div className="mt-10 pt-8 border-t border-white/20">
               <p className="text-teal-100 text-sm mb-3">Prefer to talk directly?</p>
-              <div className="flex flex-col sm:flex-row gap-4 text-white">
+              <div className="flex flex-col sm:flex-row justify-center gap-4 text-white">
                 <a
                   href="mailto:partnerships@dailyeventinsurance.com"
                   className="inline-flex items-center hover:text-teal-100 transition-colors"

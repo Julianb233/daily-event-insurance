@@ -106,14 +106,14 @@ export function ValueStack() {
                   transition={{ delay: 0.1 + index * 0.08 }}
                   className="group"
                 >
-                  <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3 py-3 px-4 rounded-lg hover:bg-teal-50/50 transition-colors">
+                  <div className="flex flex-col items-center text-center gap-3 py-3 px-4 rounded-lg hover:bg-teal-50/50 transition-colors">
                     {/* Checkmark icon */}
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.2 + index * 0.08, type: "spring", stiffness: 200 }}
-                      className="flex-shrink-0 mt-0.5"
+                      className="flex-shrink-0"
                     >
                       <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center">
                         <svg className="w-3 h-3 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
@@ -127,15 +127,13 @@ export function ValueStack() {
                     </motion.div>
 
                     {/* Label and description */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline justify-between gap-4">
+                    <div className="w-full">
+                      <div className="flex flex-col items-center gap-1">
                         <span className="text-slate-700 font-semibold text-sm md:text-base">
                           {item.label}
                         </span>
 
                         {/* Dotted line */}
-                        <div className="flex-1 border-b-2 border-dotted border-slate-300 mb-1.5 hidden sm:block" />
-
                         {/* Value */}
                         <span className="text-teal-600 font-bold text-sm md:text-base whitespace-nowrap">
                           {item.value}

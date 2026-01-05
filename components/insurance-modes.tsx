@@ -206,7 +206,7 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
           )}
 
           {/* Icon Container */}
-          <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
+          <div className="mb-6 relative flex justify-center" style={{ transform: "translateZ(20px)" }}>
             <div className="relative inline-flex items-center justify-center">
               {/* Background Glow */}
               <motion.div
@@ -239,13 +239,13 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
           </div>
 
           {/* Content */}
-          <div style={{ transform: "translateZ(10px)" }}>
+          <div className="text-center" style={{ transform: "translateZ(10px)" }}>
             {/* Title & Subtitle */}
             <div className="mb-4">
               <h3
                 className={`text-2xl md:text-3xl font-bold mb-2 ${
                   mode.highlight ? "text-teal-600" : "text-sky-600"
-                } group-hover:scale-105 transition-transform duration-300 origin-left`}
+                } group-hover:scale-105 transition-transform duration-300 origin-center`}
               >
                 {mode.title}
               </h3>
@@ -257,15 +257,15 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
 
             {/* Key Details */}
             <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
-                <Users className="w-5 h-5 text-teal-500 flex-shrink-0 sm:mt-1" />
+              <div className="flex flex-col items-center text-center gap-3">
+                <Users className="w-5 h-5 text-teal-500 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-slate-700">Customer Experience</p>
                   <p className="text-sm text-slate-600">{mode.customerExperience}</p>
                 </div>
               </div>
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-3">
-                <DollarSign className="w-5 h-5 text-teal-500 flex-shrink-0 sm:mt-1" />
+              <div className="flex flex-col items-center text-center gap-3">
+                <DollarSign className="w-5 h-5 text-teal-500 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-slate-700">Payment Model</p>
                   <p className="text-sm text-slate-600">{mode.paymentModel}</p>
@@ -283,7 +283,7 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
                 {mode.benefits.map((benefit, i) => (
                   <motion.li
                     key={i}
-                    className="flex items-start gap-2.5 text-sm md:text-base text-slate-700"
+                    className="flex items-start justify-center gap-2.5 text-sm md:text-base text-slate-700 text-center"
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -317,7 +317,7 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
               </h4>
               <ul className="space-y-1.5">
                 {mode.bestFor.map((item, i) => (
-                  <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
+                  <li key={i} className="text-sm text-slate-700 flex items-start justify-center gap-2 text-center">
                     <span
                       className={`inline-block w-1.5 h-1.5 rounded-full mt-1.5 ${
                         mode.highlight ? "bg-teal-500" : "bg-sky-500"
@@ -443,13 +443,13 @@ export default function InsuranceModes() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="text-center mt-16 md:mt-20"
         >
-          <div className="inline-flex items-start gap-3 p-6 bg-gradient-to-r from-slate-50 to-white rounded-2xl border border-slate-200 shadow-lg max-w-3xl">
-            <div className="flex-shrink-0 mt-1">
+          <div className="inline-flex flex-col items-center gap-3 p-6 bg-gradient-to-r from-slate-50 to-white rounded-2xl border border-slate-200 shadow-lg max-w-3xl">
+            <div className="flex-shrink-0">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
                 <Shield className="w-5 h-5 text-white" />
               </div>
             </div>
-            <div className="text-left">
+            <div className="text-center">
               <h4 className="text-lg font-bold text-slate-900 mb-2">Not sure which to choose?</h4>
               <p className="text-base text-slate-600 leading-relaxed">
                 Our partner success team will help you analyze your customer base, booking patterns, and business goals

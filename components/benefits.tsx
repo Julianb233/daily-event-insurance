@@ -142,7 +142,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
           />
 
           {/* Icon Container */}
-          <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
+          <div className="mb-6 relative flex justify-center" style={{ transform: "translateZ(20px)" }}>
             <div className="relative inline-flex items-center justify-center">
               {/* Background Glow */}
               <motion.div
@@ -169,7 +169,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
           </div>
 
           {/* Content */}
-          <div style={{ transform: "translateZ(10px)" }}>
+          <div className="text-center" style={{ transform: "translateZ(10px)" }}>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 group-hover:text-teal-600 transition-colors duration-300">
               {benefit.title}
             </h3>

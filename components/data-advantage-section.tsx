@@ -116,11 +116,11 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: numbe
         />
 
         {/* Card */}
-        <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} hover:shadow-xl transition-shadow duration-500 overflow-hidden`}>
+        <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} hover:shadow-xl transition-shadow duration-500 overflow-hidden text-center`}>
           {/* Header */}
           <div className="mb-6">
             <motion.div
-              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg mx-auto`}
               animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, -5, 5, 0] : 0 }}
               transition={{ duration: 0.4 }}
             >
@@ -143,7 +143,7 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: numbe
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 + i * 0.1 }}
-                className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-700"
+                className="flex items-center justify-center gap-3 text-slate-700"
               >
                 <feature.icon className={`w-5 h-5 ${colors.text} flex-shrink-0`} />
                 <span className="text-sm">{feature.text}</span>
@@ -272,8 +272,8 @@ export function DataAdvantageSection() {
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl" />
 
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
+            <div className="relative z-10 flex flex-col items-center justify-between gap-6 text-center">
+              <div className="flex flex-col items-center gap-4">
                 <div className="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center">
                   <Shield className="w-6 h-6 text-teal-400" />
                 </div>
@@ -287,7 +287,7 @@ export function DataAdvantageSection() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap justify-center gap-3">
                 {['Carrier-Safe', 'Privacy-First', 'IPO-Grade'].map((badge, i) => (
                   <motion.span
                     key={badge}

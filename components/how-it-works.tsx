@@ -130,7 +130,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
         />
 
         {/* Card content */}
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden">
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden text-center flex flex-col items-center">
           {/* Animated gradient border */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500/0 via-teal-500/10 to-teal-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -187,7 +187,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
             {step.details.map((detail, i) => (
               <motion.li
                 key={i}
-                className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-2 text-sm text-slate-600"
+                className="flex items-center justify-center gap-2 text-sm text-slate-600"
                 initial={{ opacity: 0, x: -10 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.4 + index * 0.2 + i * 0.1 }}
@@ -304,7 +304,7 @@ export function HowItWorks() {
           <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-teal-400/5 to-teal-500/10 rounded-3xl blur-2xl" />
           <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-teal-200/50 shadow-xl">
             <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
+              <div className="text-center">
                 <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
                   Your Revenue, <span className="text-teal-600">Your Way</span>
                 </h3>
@@ -321,7 +321,7 @@ export function HowItWorks() {
                   ].map((item, i) => (
                     <motion.li
                       key={i}
-                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-700"
+                      className="flex items-center justify-center gap-3 text-slate-700"
                       initial={{ opacity: 0, x: -20 }}
                       animate={isInView ? { opacity: 1, x: 0 } : {}}
                       transition={{ delay: 1 + i * 0.1 }}

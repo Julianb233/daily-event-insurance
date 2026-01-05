@@ -5,6 +5,7 @@
 
 import { Stagehand } from "@browserbasehq/stagehand"
 import { createClient } from "@1password/sdk"
+import type { Page } from "@playwright/test"
 
 export interface StagehandClientOptions {
   headless?: boolean
@@ -37,8 +38,7 @@ export async function createStagehandClient(options: StagehandClientOptions = {}
 
   // Access page via context after init - Stagehand V3 uses context.pages() method
   // Get the first page from the pages array - cast to Playwright Page type for proper typing
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const page = stagehand.context.pages()[0] as any
+  const page = stagehand.context.pages()[0] as unknown as Page
 
   return {
     stagehand,
