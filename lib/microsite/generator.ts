@@ -90,6 +90,7 @@ export async function generateStandaloneMicrosite(
 
   // Generate HTML
   const html = generateStandaloneHTML({
+    partnerId: config.partnerId,
     partnerName: config.partnerName,
     logoUrl,
     primaryColor: config.primaryColor || '#14B8A6',
@@ -203,7 +204,12 @@ export async function generateCheckinMicrosite(
 /**
  * Generate standalone microsite HTML with 3D glass morphism design
  */
+/**
+ * Generate standalone microsite HTML - LEAD FORM / CHECK-IN STYLE
+ * Replaced landing page design with simple check-in form per user request.
+ */
 export function generateStandaloneHTML(config: {
+  partnerId: string
   partnerName: string
   logoUrl: string
   primaryColor: string
@@ -211,387 +217,294 @@ export function generateStandaloneHTML(config: {
   qrCodeDataUrl: string
   micrositeUrl: string
 }): string {
-  const { partnerName, logoUrl, primaryColor, branding, qrCodeDataUrl, micrositeUrl } = config
+  const { partnerId, partnerName, logoUrl, primaryColor, branding, micrositeUrl } = config
   const colors = extractColorsFromBranding(primaryColor)
   const ogImage = branding.logoUrl || logoUrl
+
+  // "Check-In" style copy
+  const headline = 'Check In & Get Protected'
+  const subtitle = `Welcome to ${partnerName}. Please sign in to activate your coverage.`
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Insurance - ${partnerName}</title>
+  <title>${partnerName} - Check In</title>
   
-  <!-- Open Graph / Social Sharing -->
-  <meta property="og:title" content="Get Event Insurance - ${partnerName}" />
-  <meta property="og:description" content="Instant accident and medical coverage for your activity. Get covered in under 2 minutes for just $4.99." />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Check In - ${partnerName}" />
+  <meta property="og:description" content="Member check-in and coverage activation." />
   <meta property="og:image" content="${ogImage}" />
-  <meta property="og:url" content="${micrositeUrl}" />
   <meta property="og:type" content="website" />
   
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Get Event Insurance - ${partnerName}" />
-  <meta name="twitter:description" content="Instant accident and medical coverage. Get covered today." />
-  <meta name="twitter:image" content="${ogImage}" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
-      background: ${colors.gradient};
-      background-attachment: fixed;
-      color: #1a1a2e;
-      line-height: 1.6;
-      overflow-x: hidden;
+      background: linear-gradient(135deg, ${primaryColor}15 0%, ${colors.secondary}10 50%, #f8fafc 100%);
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
 
-    /* Animated background orbs */
-    .bg-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.4;
-      animation: float 20s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .bg-orb-1 { width: 600px; height: 600px; background: ${primaryColor}40; top: -200px; right: -200px; animation-delay: 0s; }
-    .bg-orb-2 { width: 400px; height: 400px; background: ${colors.secondary}60; bottom: -100px; left: -100px; animation-delay: -7s; }
-    .bg-orb-3 { width: 300px; height: 300px; background: ${colors.accent}30; top: 50%; left: 50%; animation-delay: -14s; }
-
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(30px, -30px) scale(1.05); }
-      66% { transform: translate(-20px, 20px) scale(0.95); }
-    }
+    /* Ambient Background */
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.3; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: ${primaryColor}; top: -150px; right: -150px; }
+    .orb-2 { width: 400px; height: 400px; background: ${colors.secondary}; bottom: -100px; left: -100px; }
 
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
       position: relative;
       z-index: 1;
     }
 
-    /* Glass card styling */
     .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 24px;
-      box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      padding: 2rem;
     }
 
-    .glass-card:hover {
-      transform: translateY(-4px);
-      box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.2);
-    }
-
-    header {
-      padding: 2.5rem;
-      margin-bottom: 2rem;
+    .header {
       text-align: center;
+      margin-bottom: 2rem;
     }
 
     .logo-container {
-      width: 140px;
-      height: 140px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 1.5rem;
       background: white;
-      border-radius: 28px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.1),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
       overflow: hidden;
     }
+    
+    .logo { 
+      max-width: 80%; 
+      max-height: 80%; 
+      object-fit: contain; 
+    }
 
-    .logo {
-      max-width: 100px;
-      max-height: 100px;
-      object-fit: contain;
+    .partner-initial {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: ${primaryColor};
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, ${primaryColor} 0%, ${colors.accent} 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #1e293b;
       margin-bottom: 0.5rem;
     }
 
     .subtitle {
       color: #64748b;
-      font-size: 1.1rem;
-      font-weight: 500;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
-    .hero {
-      padding: 4rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+    .form-group {
+      margin-bottom: 1.25rem;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, ${primaryColor}10 0%, transparent 100%);
-      border-radius: 24px;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
       color: #475569;
-      max-width: 500px;
-      margin: 0 auto 2rem;
+      margin-bottom: 0.5rem;
     }
 
-    .price-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, ${primaryColor} 0%, ${colors.accent} 100%);
+    input, select {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: ${primaryColor};
+      box-shadow: 0 0 0 3px ${primaryColor}20;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: ${primaryColor};
       color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 100px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
       font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 20px ${primaryColor}40;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+      box-shadow: 0 4px 12px ${primaryColor}40;
     }
 
-    .cta-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: linear-gradient(135deg, ${primaryColor} 0%, ${colors.accent} 100%);
-      color: white;
-      padding: 1.25rem 2.5rem;
-      border-radius: 16px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.1rem;
-      box-shadow:
-        0 8px 30px ${primaryColor}40,
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
+    .submit-btn:hover {
+      filter: brightness(110%);
+      transform: translateY(-1px);
     }
 
-    .cta-button:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow:
-        0 12px 40px ${primaryColor}50,
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-
-    .cta-button svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .feature-card {
-      padding: 2rem;
+    .waiver-text {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 1.5rem;
       text-align: center;
+      line-height: 1.5;
     }
 
-    .feature-icon {
+    .success-view {
+      display: none;
+      text-align: center;
+      padding: 2rem 0;
+    }
+    
+    .success-icon {
       width: 64px;
       height: 64px;
-      margin: 0 auto 1.25rem;
-      background: linear-gradient(135deg, ${primaryColor}20 0%, ${colors.secondary}30 100%);
-      border-radius: 16px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0 auto 1.5rem;
     }
+    
+    .success-icon svg { width: 32px; height: 32px; }
 
-    .feature-icon svg {
-      width: 32px;
-      height: 32px;
-      color: ${primaryColor};
-    }
-
-    .feature-card h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 0.5rem;
-    }
-
-    .feature-card p {
-      color: #64748b;
-      font-size: 0.95rem;
-    }
-
-    .qr-section {
-      padding: 3rem;
-      text-align: center;
-      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-    }
-
-    .qr-code-wrapper {
-      width: 220px;
-      height: 220px;
-      margin: 1.5rem auto;
-      padding: 16px;
-      background: white;
-      border-radius: 20px;
-      box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.1),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-    }
-
-    .qr-code {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .qr-section h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 0.5rem;
-    }
-
-    .qr-section p {
-      color: #64748b;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #64748b;
-      font-size: 0.875rem;
-    }
-
-    footer a {
-      color: ${primaryColor};
-      text-decoration: none;
-    }
   </style>
 </head>
 <body>
-  <div class="bg-orb bg-orb-1"></div>
-  <div class="bg-orb bg-orb-2"></div>
-  <div class="bg-orb bg-orb-3"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
   <div class="container">
-    <header class="glass-card">
-      <div class="logo-container">
-        <img src="${logoUrl}" alt="${partnerName} Logo" class="logo" />
-      </div>
-      <h1>${partnerName}</h1>
-      <p class="subtitle">Partnered with Daily Event Insurance</p>
-    </header>
-
-    <div class="hero glass-card">
-      <div class="hero-content">
-        <h2>Protect Your Activity Today</h2>
-        <p>Get instant event liability coverage for your next adventure</p>
-        <div class="price-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          </svg>
-          Starting at just $4.99
+    <div class="glass-card">
+      
+      <!-- Form View -->
+      <div id="form-view">
+        <div class="header">
+          ${logoUrl && logoUrl !== '/placeholder-logo.png' 
+            ? `<div class="logo-container"><img src="${logoUrl}" alt="${partnerName}" class="logo"></div>`
+            : `<div class="logo-container"><img src="/images/logo-color.png" alt="Daily Event Insurance" class="logo"></div>`
+          }
+          <h1>${headline}</h1>
+          <p class="subtitle">${subtitle}</p>
         </div>
-        <br/>
-        <a href="${micrositeUrl}/quote" class="cta-button">
-          Get Covered Now
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
+
+        <form id="checkin-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="First and Last Name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="activity">Activity</label>
+            <select id="activity" name="activity">
+              <option value="standard">Standard Check-In</option>
+              <option value="class">Class / Session</option>
+              <option value="event">Private Event</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">Check In</button>
+          
+          <p class="waiver-text">
+            By checking in, you acknowledge that insurance coverage for this activity is provided by Daily Event Insurance under the terms of the master policy.
+          </p>
+        </form>
       </div>
+
+      <!-- Success View -->
+      <div id="success-view" class="success-view">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+        <h2>You're Signed In!</h2>
+        <p style="color: #64748b; margin-top: 0.5rem;">Your coverage is now active.</p>
+        <p style="font-size: 0.875rem; color: #94a3b8; margin-top: 2rem;">Redirecting...</p>
+      </div>
+
     </div>
-
-    <div class="features">
-      <div class="feature-card glass-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 6v6l4 2"></path>
-          </svg>
-        </div>
-        <h3>Instant Coverage</h3>
-        <p>Get your policy in under 2 minutes. Coverage starts immediately.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-        </div>
-        <h3>Full Protection</h3>
-        <p>Comprehensive accident and medical coverage for accidents and injuries.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-            <path d="M8 21h8M12 17v4"></path>
-          </svg>
-        </div>
-        <h3>Easy Claims</h3>
-        <p>Simple online claims process if you ever need it.</p>
-      </div>
-    </div>
-
-    <div class="qr-section glass-card">
-      <h3>Scan to Get Started</h3>
-      <div class="qr-code-wrapper">
-        <img src="${qrCodeDataUrl}" alt="QR Code" class="qr-code" />
-      </div>
-      <p>Scan this QR code with your phone to get instant coverage</p>
-    </div>
-
-    <footer>
-      <p>Powered by <a href="https://dailyeventinsurance.com">Daily Event Insurance</a></p>
-    </footer>
   </div>
+
+  <script>
+    document.getElementById('checkin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Checking in...';
+      btn.disabled = true;
+
+      const formData = {
+      const formData = {
+        partnerId: '${partnerId}', // We need to inject this from config
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        activity: document.getElementById('activity').value,
+        source: 'checkin-kiosk',
+        micrositeUrl: '${micrositeUrl}'
+      };
+
+      try {
+        const response = await fetch('/api/checkin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          document.getElementById('form-view').style.display = 'none';
+          document.getElementById('success-view').style.display = 'block';
+          
+          // Reset after delay
+          setTimeout(() => {
+             window.location.reload();
+          }, 3000);
+        } else {
+          throw new Error('Check-in failed');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('There was an issue checking in. Please try again.');
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>`
 }
@@ -599,7 +512,7 @@ export function generateStandaloneHTML(config: {
 /**
  * Generate integrated microsite HTML (widget)
  */
-function generateIntegratedHTML(config: {
+export function generateIntegratedHTML(config: {
   partnerName: string
   logoUrl: string
   primaryColor: string
