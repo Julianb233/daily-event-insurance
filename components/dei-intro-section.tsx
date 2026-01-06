@@ -1,20 +1,11 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 
 export function DEIIntroSection() {
-  const [showContent, setShowContent] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -24,10 +15,6 @@ export function DEIIntroSection() {
   // Logo stays fixed during scroll
   const logoScale = useTransform(scrollYProgress, [0, 1], [1, 1])
   const logoOpacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 0.9])
-
-  useEffect(() => {
-    setShowContent(true)
-  }, [])
 
 
   const HeroContent = () => (
@@ -60,7 +47,7 @@ export function DEIIntroSection() {
 
       {/* Main content - centered */}
       <motion.div
-        className="absolute inset-0 z-[5] flex flex-col items-center justify-center pointer-events-none px-6 md:px-8"
+        className="relative z-[5] pointer-events-none mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-7xl flex-col items-center justify-center px-6 pt-16 pb-10 md:px-8 md:pt-20 md:pb-12"
         style={{ scale: logoScale, opacity: logoOpacity }}
       >
         {/* Company Logo */}
@@ -210,7 +197,7 @@ export function DEIIntroSection() {
   )
 
   return (
-    <section id="home" ref={sectionRef} className="relative w-full min-h-[80vh] py-16 md:py-24 overflow-hidden bg-white">
+    <section id="home" ref={sectionRef} className="relative w-full overflow-hidden bg-white">
       <HeroContent />
     </section>
   )
