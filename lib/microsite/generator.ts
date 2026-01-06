@@ -203,7 +203,7 @@ export async function generateCheckinMicrosite(
 /**
  * Generate standalone microsite HTML with 3D glass morphism design
  */
-function generateStandaloneHTML(config: {
+export function generateStandaloneHTML(config: {
   partnerName: string
   logoUrl: string
   primaryColor: string
