@@ -45,6 +45,7 @@ export async function GET(
     // This ensures that any DB updates (new logo, colors) are immediately reflected
     // without needing a rebuild.
     const html = generateStandaloneHTML({
+        partnerId: microsite.partner.id,
         partnerName: microsite.partner.businessName,
         logoUrl: microsite.microsite.logoUrl || "",
         primaryColor: microsite.microsite.primaryColor || "#14B8A6",
