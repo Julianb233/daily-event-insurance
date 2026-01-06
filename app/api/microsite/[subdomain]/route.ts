@@ -1,0 +1,56 @@
+import { NextRequest, NextResponse } from "next/server"
+import { db } from "@/lib/db"
+import { microsites, partners } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
+import { generateStandaloneHTML } from "@/lib/microsite/generator"
+import { notFound } from "next/navigation"
+
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { subdomain: string } }
+) {
+    const subdomain = params.subdomain
+
+    if (!subdomain) {
+        return new NextResponse("Subdomain required", { status: 400 })
+    }
+
+    // Fetch microsite data
+    const [microsite] = await db
+        .select({
+            microsite: microsites,
+            partner: partners
+        })
+        .from(microsites)
+        .innerJoin(partners, eq(microsites.partnerId, partners.id))
+        .where(eq(microsites.subdomain, subdomain))
+        .limit(1)
+
+    if (!microsite) {
+        console.error(`Microsite not found for subdomain: ${subdomain}`)
+        return new NextResponse("Microsite not found", { status: 404 })
+    }
+
+    // Generate HTML on the fly
+    // This ensures that any DB updates (new logo, colors) are immediately reflected
+    // without needing a rebuild.
+    const html = generateStandaloneHTML({
+        partnerName: microsite.partner.businessName,
+        logoUrl: microsite.microsite.logoUrl || "",
+        primaryColor: microsite.microsite.primaryColor || "#14B8A6",
+        branding: {
+            images: microsite.partner.brandingImages || [],
+            logoUrl: microsite.partner.logoUrl || undefined
+        },
+        qrCodeDataUrl: microsite.microsite.qrCodeUrl || "",
+        micrositeUrl: `https://${microsite.microsite.domain}`
+    })
+
+    return new NextResponse(html, {
+        headers: {
+            "Content-Type": "text/html",
+            // Cache for 1 minute to reduce DB load but allow reasonably fast updates
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+        },
+    })
+}

@@ -45,7 +45,13 @@ export async function fetchPartnerBranding(websiteUrl: string): Promise<FireCraw
       throw new Error(`FireCrawl API error: ${response.statusText}`)
     }
 
-    const data = await response.json()
+    const json = await response.json()
+
+    if (!json.success || !json.data) {
+      throw new Error(`FireCrawl API returned unsuccessful response: ${JSON.stringify(json)}`)
+    }
+
+    const data = json.data
 
     // Extract logo (usually in header/nav or first image)
     const logoUrl = extractLogo(data)

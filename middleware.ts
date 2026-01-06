@@ -63,6 +63,38 @@ export async function middleware(request: NextRequest) {
     nextUrl.pathname === route || nextUrl.pathname.startsWith(route + "/")
   )
 
+  // Subdomain handling
+  const hostname = request.headers.get("host") || ""
+  // Remove port if present
+  const domain = hostname.split(":")[0]
+
+  // Define main domain (change locally or via env)
+  // For local dev with localhost, we might need a workaround or specific host mapping
+  const currentHost = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "dailyeventinsurance.com"
+
+  // Check if it's a subdomain 
+  // e.g. "ocean-pacific.dailyeventinsurance.com" -> subdomain is "ocean-pacific"
+  // "www.dailyeventinsurance.com" -> subdomain is "www"
+  // "dailyeventinsurance.com" -> subdomain is null
+  let subdomain = null
+  if (domain.endsWith(`.${currentHost}`) && domain !== `www.${currentHost}`) {
+    subdomain = domain.replace(`.${currentHost}`, "")
+  }
+
+  // Special case for localhost testing
+  if (domain.includes("localhost") && domain !== "localhost") {
+    subdomain = domain.split(".")[0]
+  }
+
+  // If valid subdomain found and not an API/static route, rewrite to microsite handler
+  if (subdomain && !nextUrl.pathname.startsWith("/_next") && !nextUrl.pathname.startsWith("/api")) {
+    // Rewrite to the microsite route handler
+    // We use a route handler to serve raw HTML
+    console.log(`[Middleware] Rewriting subdomain ${subdomain} to /api/microsite/${subdomain}`)
+    const url = new URL(`/api/microsite/${subdomain}`, request.url)
+    return NextResponse.rewrite(url)
+  }
+
   if (isPublic) {
     // Still refresh the session for public routes
     const { supabaseResponse } = await updateSession(request)
