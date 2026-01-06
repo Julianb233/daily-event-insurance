@@ -1010,24 +1010,25 @@ function generateCheckinHTML(config: {
       };
 
       try {
-        const response = await fetch('/api/leads', {
+        const response = await fetch('/api/checkin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
 
         if (response.ok) {
+          const result = await response.json();
           document.getElementById('form-view').style.display = 'none';
           document.getElementById('success-view').style.display = 'block';
 
           // Redirect to quote page after 2 seconds
           setTimeout(() => {
-            window.location.href = '${micrositeUrl}/quote?email=' + encodeURIComponent(formData.email);
+            window.location.href = result.data.redirectUrl || '${micrositeUrl}/quote?email=' + encodeURIComponent(formData.email);
           }, 2000);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
-        // Still redirect on error
+        // Fallback redirect
         window.location.href = '${micrositeUrl}/quote?email=' + encodeURIComponent(formData.email);
       }
     });

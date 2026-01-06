@@ -32,8 +32,8 @@ async function runTest() {
     }
 
     // 1. Setup Test Partner
-    const businessName = "Gold's Gym Venice"
-    const websiteUrl = "https://www.goldsgym.com"
+    const businessName = "Ocean Pacific Gym"
+    const websiteUrl = "https://oceanpacificgym.com"
 
     console.log(`\n1. Creating test partner: ${businessName}`)
 
@@ -48,8 +48,8 @@ async function runTest() {
     const [partner] = await db.insert(partners).values({
         businessName,
         businessType: "gym",
-        contactName: "Joe Gold",
-        contactEmail: "joe@goldsgym.com",
+        contactName: "Manager",
+        contactEmail: "info@oceanpacificgym.com",
         websiteUrl,
         status: "pending", // Will be updated to active by onboarding
         integrationType: "widget"
@@ -97,7 +97,7 @@ async function runTest() {
         logoUrl: branding.logoUrl,
         primaryColor: primaryColor,
         businessType: "gym",
-        subdomain: "golds-gym-venice"
+        subdomain: "ocean-pacific-gym"
     })
 
     console.log("   Microsite generated successfully!")
@@ -110,8 +110,8 @@ async function runTest() {
     await db.insert(microsites).values({
         partnerId: partner.id,
         siteName: partner.businessName,
-        subdomain: "golds-gym-venice", // Path-based routing slug
-        domain: `dailyeventinsurance.com/golds-gym-venice`,
+        subdomain: "ocean-pacific-gym", // Path-based routing slug
+        domain: `dailyeventinsurance.com/ocean-pacific-gym`,
         logoUrl: branding.logoUrl,
         primaryColor: primaryColor,
         qrCodeUrl: result.qrCodeDataUrl,
