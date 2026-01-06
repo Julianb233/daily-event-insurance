@@ -8,10 +8,10 @@ import { eq, desc } from 'drizzle-orm';
 /**
  * GET - Retrieve leads for a specific partner (partner dashboard)
  */
-async function handler(request: NextRequest, { params }: { params: { partnerId: string } }) {
+async function handler(request: NextRequest, { params }: { params: Promise<{ partnerId: string }> }) {
     // Ensure the requester is a partner and matches the partnerId in the URL
     await requirePartner();
-    const { partnerId } = params;
+    const { partnerId } = await params;
 
     if (!partnerId) {
         return NextResponse.json({ success: false, message: 'partnerId required' }, { status: 400 });
@@ -90,4 +90,6 @@ async function handler(request: NextRequest, { params }: { params: { partnerId: 
     });
 }
 
-export const GET = withAuth(handler);
+export async function GET(request: NextRequest, context: { params: Promise<{ partnerId: string }> }) {
+    return withAuth(() => handler(request, context));
+}

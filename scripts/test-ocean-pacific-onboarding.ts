@@ -2,7 +2,6 @@ import { config } from "dotenv"
 config({ path: ".env.local" })
 
 // Move other imports to inside run() or keep non-side-effecting ones here.
-import { doc as drizzleDoc } from "drizzle-orm"
 // schema usually doesn't have side effects, but let's be safe.
 import { eq } from "drizzle-orm"
 import { DOCUMENT_TYPES } from "@/lib/demo-documents"
@@ -89,8 +88,7 @@ async function run() {
             partnerId: partner.id,
             documentType: docType,
             status: 'signed',
-            signedAt: new Date(),
-            url: 'https://example.com/mock-doc.pdf'
+            signedAt: new Date()
         })
     }
     console.log("✅ Required documents marked as signed.")

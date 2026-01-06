@@ -20,7 +20,7 @@ async function testConnection() {
         console.log("✅ SSL 'require' worked. Result:", result.length)
         await client.end()
     } catch (e) {
-        console.log("❌ SSL 'require' failed:", e.message)
+        console.log("❌ SSL 'require' failed:", (e as Error).message)
     }
 
     console.log("Testing with ssl: false...")
@@ -31,7 +31,7 @@ async function testConnection() {
         console.log("✅ SSL false worked. Result:", result2.length)
         await client2.end()
     } catch (e) {
-        console.log("❌ SSL false failed:", e.message)
+        console.log("❌ SSL false failed:", (e as Error).message)
     }
 }
 

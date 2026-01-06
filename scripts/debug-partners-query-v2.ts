@@ -6,8 +6,8 @@ async function debugQuery() {
     console.log("Starting debug query with dynamic import...")
 
     // Dynamic import to ensure env is loaded first
-    const { db } = await import("../lib/db/index.ts")
-    const { partners, microsites, policies, leads } = await import("../lib/db/schema.ts")
+    const { db } = await import("../lib/db/index")
+    const { partners, microsites, policies, leads } = await import("../lib/db/schema")
     const { eq, desc, sql, count } = await import("drizzle-orm")
 
     try {

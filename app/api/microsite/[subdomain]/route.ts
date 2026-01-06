@@ -26,7 +26,7 @@ export async function GET(
     }
 
     // Fetch microsite data
-    const [microsite] = await db
+    const [microsite] = await db!
         .select({
             microsite: microsites,
             partner: partners
@@ -49,7 +49,7 @@ export async function GET(
         logoUrl: microsite.microsite.logoUrl || "",
         primaryColor: microsite.microsite.primaryColor || "#14B8A6",
         branding: {
-            images: microsite.partner.brandingImages || [],
+            images: (microsite.partner.brandingImages as string[]) || [],
             logoUrl: microsite.partner.logoUrl || undefined
         },
         qrCodeDataUrl: microsite.microsite.qrCodeUrl || "",

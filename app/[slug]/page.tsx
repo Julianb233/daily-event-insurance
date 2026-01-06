@@ -9,9 +9,9 @@ import MicroSiteForm from "./_components/MicroSiteForm"
 export const dynamic = "force-dynamic"
 
 interface PageProps {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 // Helper to generate color palette from primary color
@@ -41,10 +41,11 @@ function generatePalette(primaryColor: string) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const microsite = await db
+    const { slug } = await params
+    const microsite = await db!
         .select()
         .from(microsites)
-        .where(eq(microsites.subdomain, params.slug))
+        .where(eq(microsites.subdomain, slug))
         .limit(1)
 
     if (!microsite.length) {
@@ -60,15 +61,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function MicrositePage({ params }: PageProps) {
+    const { slug } = await params
     // Fetch microsite data
-    const result = await db
+    const result = await db!
         .select({
             microsite: microsites,
             partner: partners,
         })
         .from(microsites)
         .innerJoin(partners, eq(microsites.partnerId, partners.id))
-        .where(eq(microsites.subdomain, params.slug))
+        .where(eq(microsites.subdomain, slug))
         .limit(1)
 
     if (!result.length) {
@@ -77,7 +79,7 @@ export default async function MicrositePage({ params }: PageProps) {
 
     const { microsite, partner } = result[0]
     const colors = generatePalette(microsite.primaryColor || "#14B8A6")
-    const qrCodeUrl = microsite.qrCodeUrl || "/placeholder-qr.png"
+    const qrCodeUrl = microsite.qrCodeUrl || "/placeholder-qr.png" // Safe default or handle null
     const logoUrl = microsite.logoUrl || partner.logoUrl || "/placeholder-logo.png"
 
     // Business specific copy
@@ -130,7 +132,7 @@ export default async function MicrositePage({ params }: PageProps) {
                     <div className="p-8 pt-0">
                         <MicroSiteForm
                             partnerId={partner.id}
-                            micrositeUrl={`https://dailyeventinsurance.com/${params.slug}`}
+                            micrositeUrl={`https://dailyeventinsurance.com/${slug}`}
                             colors={colors}
                         />
                     </div>

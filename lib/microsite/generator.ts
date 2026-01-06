@@ -77,7 +77,7 @@ export async function generateStandaloneMicrosite(
   // Generate microsite URL
   const micrositeUrl = config.customDomain
     ? `https://${config.customDomain}`
-    : `https://dailyeventinsurance.com/${config.subdomain || config.partnerId}`
+    : `https://${config.subdomain}.dailyeventinsurance.com`
 
   // Generate QR code
   const qrCodeDataUrl = await generateQRCode(micrositeUrl, {
@@ -169,7 +169,7 @@ export async function generateCheckinMicrosite(
   // Generate microsite URL
   const micrositeUrl = config.customDomain
     ? `https://${config.customDomain}`
-    : `https://dailyeventinsurance.com/${config.subdomain || config.partnerId}`
+    : `https://${config.subdomain}.dailyeventinsurance.com`
 
   // Generate QR code
   const qrCodeDataUrl = await generateQRCode(micrositeUrl, {
