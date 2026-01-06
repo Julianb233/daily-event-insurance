@@ -213,6 +213,7 @@ export function generateStandaloneHTML(config: {
 }): string {
   const { partnerName, logoUrl, primaryColor, branding, qrCodeDataUrl, micrositeUrl } = config
   const colors = extractColorsFromBranding(primaryColor)
+  const ogImage = branding.logoUrl || logoUrl
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -220,6 +221,19 @@ export function generateStandaloneHTML(config: {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Insurance - ${partnerName}</title>
+  
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="Get Event Insurance - ${partnerName}" />
+  <meta property="og:description" content="Instant accident and medical coverage for your activity. Get covered in under 2 minutes for just $4.99." />
+  <meta property="og:image" content="${ogImage}" />
+  <meta property="og:url" content="${micrositeUrl}" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Get Event Insurance - ${partnerName}" />
+  <meta name="twitter:description" content="Instant accident and medical coverage. Get covered today." />
+  <meta name="twitter:image" content="${ogImage}" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
