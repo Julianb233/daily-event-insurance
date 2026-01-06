@@ -4,6 +4,8 @@ import { db } from '@/lib/db';
 import { leads, microsites } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
+import { submitToSure } from '@/lib/sure/client';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -28,6 +30,26 @@ export async function POST(request: Request) {
         micrositeId = microsite.id;
     }
 
+    // Call Sure API (Mock)
+    let sureResult = null;
+    try {
+        const [firstName, ...rest] = name.split(' ');
+        const lastName = rest.join(' ') || 'Unknown';
+        
+        sureResult = await submitToSure({
+            firstName,
+            lastName,
+            email,
+            phone,
+            activity: activity || 'gym-visit',
+            micrositeUrl: micrositeUrl || '',
+            partnerId
+        });
+    } catch (e) {
+        console.error('Sure API Failed:', e);
+        // Continue to save lead even if Sure fails, but log it
+    }
+
     // Insert into leads table
     const [lead] = await db!.insert(leads).values({
       partnerId,
@@ -36,12 +58,16 @@ export async function POST(request: Request) {
       email,
       phone: phone || null,
       source: source || 'checkin-kiosk',
-      vertical: 'gym', // Defaulting to gym for this flow, or could be passed from form
-      formData: JSON.stringify({ activity, micrositeUrl }),
-      status: 'new'
+      vertical: 'gym', 
+      formData: JSON.stringify({ 
+          activity, 
+          micrositeUrl,
+          surePolicy: sureResult 
+      }),
+      status: sureResult?.success ? 'qualified' : 'new'
     }).returning();
 
-    return NextResponse.json({ success: true, leadId: lead.id });
+    return NextResponse.json({ success: true, leadId: lead.id, policy: sureResult });
 
   } catch (error) {
     console.error('Check-in API Error:', error);
