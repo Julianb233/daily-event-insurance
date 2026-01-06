@@ -446,6 +446,43 @@ export function generateStandaloneHTML(config: {
         </form>
       </div>
 
+      </div>
+
+      <!-- Features Section -->
+      <div class="features-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding: 0 2rem 2rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 1rem; padding-top: 2rem;">
+        <div style="text-align: center;">
+          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
+            <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </div>
+          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Instant</h3>
+          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">Active now</p>
+        </div>
+        
+        <div style="text-align: center;">
+          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
+             <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Protected</h3>
+          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">Med Included</p>
+        </div>
+
+        <div style="text-align: center;">
+          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
+             <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+              <path d="M8 21h8M12 17v4"></path>
+            </svg>
+          </div>
+          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Easy</h3>
+          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">No paperwork</p>
+        </div>
+      </div>
+
       <!-- Success View -->
       <div id="success-view" class="success-view">
         <div class="success-icon">
