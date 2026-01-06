@@ -51,7 +51,7 @@ function getRequiredRoles(pathname: string): string[] | null {
   return null
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { nextUrl } = request
 
   // Allow API auth routes
