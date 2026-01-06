@@ -73,23 +73,25 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
     console.log(`Starting onboarding completion for partner: ${partner.businessName} (${partnerId})`)
 
     // 2. FireCrawl: Scrape partner website for branding (if website URL provided)
-    let branding: { logoUrl?: string; images: string[] } = { images: [] }
+    let branding: { logoUrl?: string; images: string[]; primaryColor?: string } = { images: [] }
     if (partner.websiteUrl) {
         console.log(`Fetching branding from: ${partner.websiteUrl}`)
         try {
             const fetchedBranding = await fetchPartnerBranding(partner.websiteUrl)
             branding = {
                 logoUrl: fetchedBranding.logoUrl,
-                images: fetchedBranding.images
+                images: fetchedBranding.images,
+                primaryColor: fetchedBranding.colors?.[0]
             }
-            console.log(`Branding fetched: logo=${branding.logoUrl ? 'found' : 'not found'}, images=${branding.images.length}`)
+            console.log(`Branding fetched: logo=${branding.logoUrl ? 'found' : 'not found'}, images=${branding.images.length}, color=${branding.primaryColor || 'none'}`)
         } catch (error) {
             console.error('Error fetching branding (continuing without):', error)
         }
     }
 
-    // Use fetched logo or existing partner logo
+    // Use fetched data or existing partner data
     const logoUrl = branding.logoUrl || partner.logoUrl || undefined
+    const primaryColor = branding.primaryColor || partner.primaryColor || '#14B8A6'
 
     // 3. Generate microsite with branding
     const micrositeConfig = {
@@ -97,7 +99,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         partnerName: partner.businessName,
         websiteUrl: partner.websiteUrl || undefined,
         logoUrl,
-        primaryColor: partner.primaryColor || '#14B8A6',
+        primaryColor,
         type: (partner.integrationType === 'widget' ? 'integrated' : 'standalone') as 'integrated' | 'standalone',
         subdomain: partner.businessName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')
     }
@@ -115,7 +117,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
     const qrCodeDataUrl = await generateQRCode(generatedMicrosite.url, {
         width: 300,
         color: {
-            dark: partner.primaryColor || '#14B8A6',
+            dark: primaryColor,
             light: '#FFFFFF'
         }
     })
@@ -143,7 +145,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
                 subdomain: micrositeConfig.subdomain,
                 domain: `${micrositeConfig.subdomain}.dailyeventinsurance.com`,
                 logoUrl: logoUrl || null,
-                primaryColor: partner.primaryColor || '#14B8A6',
+                primaryColor: primaryColor,
                 qrCodeUrl: qrCodeDataUrl,
                 status: 'live',
                 launchedAt: now,
@@ -163,7 +165,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
                 subdomain: micrositeConfig.subdomain,
                 domain: `${micrositeConfig.subdomain}.dailyeventinsurance.com`,
                 logoUrl: logoUrl || null,
-                primaryColor: partner.primaryColor || '#14B8A6',
+                primaryColor: primaryColor,
                 qrCodeUrl: qrCodeDataUrl,
                 status: 'live',
                 launchedAt: now,
@@ -182,6 +184,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         .set({
             status: 'active',
             logoUrl: logoUrl || partner.logoUrl,
+            primaryColor: primaryColor,
             brandingImages: branding.images,
             approvedAt: now,
             updatedAt: now

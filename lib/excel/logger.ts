@@ -4,6 +4,15 @@
  */
 
 import * as XLSX from 'xlsx'
+import * as fs from 'fs'
+import * as path from 'path'
+
+function ensureDirectoryExists(filePath: string) {
+  const dirname = path.dirname(filePath)
+  if (!fs.existsSync(dirname)) {
+    fs.mkdirSync(dirname, { recursive: true })
+  }
+}
 
 export interface PartnerLogEntry {
   partnerId: string
@@ -93,6 +102,9 @@ export function logPartnerToExcel(
   // Add worksheet to workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Partners')
 
+  // Ensure directory exists
+  ensureDirectoryExists(filePath)
+
   // Write file
   XLSX.writeFile(workbook, filePath)
 }
@@ -141,6 +153,9 @@ export function logMicrositeToExcel(
   // Add worksheet to workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Microsites')
 
+  // Ensure directory exists
+  ensureDirectoryExists(filePath)
+
   // Write file
   XLSX.writeFile(workbook, filePath)
 }
@@ -186,6 +201,7 @@ export function appendPartnerToExcel(
     XLSX.writeFile(workbook, filePath)
   } catch (error) {
     // File doesn't exist, create new one
+    ensureDirectoryExists(filePath)
     logPartnerToExcel([entry], filePath)
   }
 }

@@ -216,6 +216,7 @@ export function generateStandaloneHTML(config: {
   branding: FireCrawlResult
   qrCodeDataUrl: string
   micrositeUrl: string
+  businessType?: string
 }): string {
   const { partnerId, partnerName, logoUrl, primaryColor, branding, micrositeUrl } = config
   const colors = extractColorsFromBranding(primaryColor)

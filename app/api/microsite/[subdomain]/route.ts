@@ -54,7 +54,8 @@ export async function GET(
             logoUrl: microsite.partner.logoUrl || undefined
         },
         qrCodeDataUrl: microsite.microsite.qrCodeUrl || "",
-        micrositeUrl: `https://${microsite.microsite.domain}`
+        micrositeUrl: `https://${microsite.microsite.domain}`,
+        businessType: microsite.partner.businessType
     })
 
     return new NextResponse(html, {

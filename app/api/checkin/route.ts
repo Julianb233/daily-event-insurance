@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     // Try to resolve microsite ID from partner ID
     let micrositeId: string | null = null;
-    const [microsite] = await db
+    const [microsite] = await db!
         .select({ id: microsites.id })
         .from(microsites)
         .where(eq(microsites.partnerId, partnerId))
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     // Insert into leads table
-    const [lead] = await db.insert(leads).values({
+    const [lead] = await db!.insert(leads).values({
       partnerId,
       micrositeId,
       contactName: name,

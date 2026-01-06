@@ -103,6 +103,20 @@ function extractLogo(data: any): string | undefined {
     }
   }
 
+  // Fallback: Check metadata images (og:image, twitter:image)
+  if (data.metadata?.ogImage) {
+    return normalizeUrl(data.metadata.ogImage, data.url)
+  }
+
+  // Fallback: Check all images for "logo" or "brand" in the URL
+  const images = extractImages(data)
+  for (const img of images) {
+     const lower = img.toLowerCase()
+     if (lower.includes('logo') || lower.includes('brand')) {
+         return img
+     }
+  }
+
   // Fallback: first image in header/nav
   const headerMatch = html.match(/<header[^>]*>([\s\S]*?)<\/header>/i)
   if (headerMatch) {

@@ -15,66 +15,41 @@ const supabase = createClient(
 );
 
 async function checkMicrosite() {
-    const email = 'manual.test.1767666614089@gmail.com';
-    console.log(`Checking microsite for ${email}...`);
-
-    // 1. Get User ID
-    const { data: { users }, error: userError } = await supabase.auth.admin.listUsers();
-
-    // Manual filtering because listUsers doesn't support eq on email easily in all versions or purely client side
-    const user = users?.find(u => u.email === email);
-
-    if (!user) {
-        console.log('User not found!');
-        return;
-    }
-    console.log('User ID:', user.id);
-
-    // 2. Get Partners (without .single())
+    // 2. Get Partners (All)
     const { data: partners, error: partnerError } = await supabase
         .from('partners')
         .select('*')
-        .eq('user_id', user.id);
+        .limit(10);
 
     if (partnerError) {
         console.log('Error fetching partners:', partnerError.message);
         return;
     }
 
-    console.log(`Found ${partners.length} partner records.`);
+    console.log(`Found ${partners.length} partner records.\n`);
 
-    if (partners.length === 0) {
-        console.log('No partner record found. Onboarding submission likely failed.');
-        return;
-    }
+    for (const partner of partners) {
+        console.log(`Partner: ${partner.business_name} (${partner.id})`);
+        
+        // 3. Get Microsite
+        const { data: microsites, error: micrositeError } = await supabase
+            .from('microsites')
+            .select('*')
+            .eq('partner_id', partner.id);
 
-    const partner = partners[0];
-    console.log('Partner ID:', partner.id);
-    console.log('Business Name:', partner.business_name);
+        if (micrositeError) {
+            console.log(`  Error fetching microsite: ${micrositeError.message}`);
+            continue;
+        }
 
-    // 3. Get Microsite
-    const { data: microsites, error: micrositeError } = await supabase
-        .from('microsites')
-        .select('*')
-        .eq('partner_id', partner.id);
-
-    if (micrositeError) {
-        console.log('Error fetching microsites:', micrositeError.message);
-        return;
-    }
-
-    console.log(`Found ${microsites.length} microsite records.`);
-
-    if (microsites.length > 0) {
-        const microsite = microsites[0];
-        console.log('\n--- MICROSITE FOUND ---');
-        console.log('ID:', microsite.id);
-        console.log('Subdomain:', microsite.subdomain);
-        console.log('Status:', microsite.status);
-        console.log('QR Code URL:', microsite.qr_code_url ? '(Present)' : '(Missing)');
-        console.log('-----------------------');
-    } else {
-        console.log('No microsite found.');
+        if (microsites && microsites.length > 0) {
+            const microsite = microsites[0];
+            console.log(`  - Microsite: ${microsite.subdomain} (Status: ${microsite.status})`);
+            console.log(`  - URL: https://${microsite.subdomain}.dailyeventinsurance.com`);
+        } else {
+            console.log('  - No microsite found.');
+        }
+        console.log('');
     }
 }
 
