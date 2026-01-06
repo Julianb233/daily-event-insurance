@@ -938,6 +938,9 @@ function generateCheckinHTML(config: {
         </div>
 
         <form id="checkin-form" class="form-section">
+          <input type="hidden" name="partnerId" value="${partnerId}" />
+          <input type="hidden" name="vertical" value="${businessType}" />
+          <input type="hidden" name="source" value="microsite-form" />
           <div class="form-group">
             <label for="name">Your Name</label>
             <input type="text" id="name" name="name" placeholder="Enter your full name" required />
@@ -968,7 +971,28 @@ function generateCheckinHTML(config: {
           <button type="submit" class="submit-btn">Activate Coverage →</button>
         </form>
 
-        <div class="divider">or scan QR code</div>
+        <div class="referral-form">
+  <h3>Sign Up for More Benefits</h3>
+  <form id="referral-form" class="form-section">
+    <div class="form-group">
+      <label for="refName">Full Name</label>
+      <input type="text" id="refName" name="contactName" placeholder="Enter your full name" required />
+    </div>
+    <div class="form-group">
+      <label for="refEmail">Email</label>
+      <input type="email" id="refEmail" name="email" placeholder="you@example.com" required />
+    </div>
+    <div class="form-group">
+      <label for="refPhone">Phone (optional)</label>
+      <input type="tel" id="refPhone" name="phone" placeholder="(555) 123-4567" />
+    </div>
+    <input type="hidden" name="partnerId" value="${partnerId}" />
+    <input type="hidden" name="vertical" value="${businessType}" />
+    <input type="hidden" name="source" value="microsite-referral" />
+    <button type="submit" class="cta-button">Join &amp; Earn</button>
+  </form>
+</div>
+<div class="divider">or scan QR code</div>
 
         <div class="qr-section">
           <div class="qr-wrapper">
@@ -1033,6 +1057,37 @@ function generateCheckinHTML(config: {
       }
     });
   </script>
+<script>
+  document.getElementById('referral-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = {
+      partnerId: form.partnerId.value,
+      vertical: form.vertical.value,
+      source: form.source.value,
+      email: form.email.value,
+      contactName: form.contactName.value,
+      phone: form.phone.value || null,
+    };
+    try {
+      const resp = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await resp.json();
+      if (result.success) {
+        alert('Thank you! Your referral has been recorded.');
+        form.reset();
+      } else {
+        alert('Submission failed: ' + (result.message || 'unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while submitting the referral.');
+    }
+  });
+</script>
 </body>
 </html>`
 }

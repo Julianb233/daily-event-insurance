@@ -182,6 +182,7 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         .set({
             status: 'active',
             logoUrl: logoUrl || partner.logoUrl,
+            brandingImages: branding.images,
             approvedAt: now,
             updatedAt: now
         })

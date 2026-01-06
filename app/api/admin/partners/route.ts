@@ -238,6 +238,7 @@ export async function GET(request: NextRequest) {
         websiteUrl: partners.websiteUrl,
         primaryColor: partners.primaryColor,
         logoUrl: partners.logoUrl,
+        brandingImages: partners.brandingImages,
         status: partners.status,
         integrationType: partners.integrationType,
         createdAt: partners.createdAt,

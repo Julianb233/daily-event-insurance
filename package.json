@@ -15,7 +15,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "update-kb": "npx tsx scripts/update-knowledge-base.ts"
   },
   "dependencies": {
     "@1password/sdk": "^0.3.1",
@@ -74,6 +75,7 @@
     "expo-file-system": "latest",
     "expo-gl": "latest",
     "framer-motion": "^11.18.0",
+    "glob": "^13.0.0",
     "googleapis": "^169.0.0",
     "input-otp": "1.4.1",
     "lenis": "latest",
@@ -81,6 +83,7 @@
     "next": "16.1.0",
     "next-auth": "5.0.0-beta.30",
     "next-themes": "^0.4.6",
+    "openai": "^6.15.0",
     "pdf-lib": "^1.17.1",
     "postgres": "^3.4.7",
     "qrcode": "^1.5.4",

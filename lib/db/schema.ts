@@ -73,6 +73,7 @@ export const partners = pgTable("partners", {
   integrationType: text("integration_type").default("widget"), // widget, api, manual
   primaryColor: text("primary_color").default("#14B8A6"),
   logoUrl: text("logo_url"),
+  brandingImages: jsonb("branding_images").$default(() => []).notNull(),
   // Multi-location tracking
   locationCount: integer("location_count").default(1), // Total number of locations
   hasMultipleLocations: boolean("has_multiple_locations").default(false),

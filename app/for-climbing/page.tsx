@@ -105,7 +105,7 @@ function ClimbingHeroSection() {
               onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-teal-700 bg-white rounded-full shadow-2xl hover:bg-cyan-50 transition-all duration-300"
             >
-              <span>Request a Demo</span>
+              <span>Start Today!</span>
               <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
             </motion.button>
           </motion.div>
@@ -458,7 +458,7 @@ function TestimonialSection() {
           className="relative"
         >
           {/* Quote Mark */}
-{/* Decorative quote mark */}
+          {/* Decorative quote mark */}
           <div className="absolute -top-8 -left-4 text-9xl text-teal-200 font-serif leading-none">
             &quot;
           </div>

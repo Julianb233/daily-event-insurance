@@ -81,18 +81,19 @@ export default function AdminPage() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const response = await fetch("/api/admin/partners?limit=1")
+        const response = await fetch("/api/admin/dashboard")
         const data = await response.json()
-        if (data.success && data.summary) {
+        if (data.success && data.data) {
+          const { overview, revenue } = data.data
           setStats({
-            totalPartners: data.summary.totalPartners,
-            activePartners: data.summary.activePartners,
-            totalPolicies: data.summary.totalPolicies,
-            totalRevenue: data.summary.totalRevenue
+            totalPartners: overview.totalPartners,
+            activePartners: overview.activePartners,
+            totalPolicies: overview.totalPolicies,
+            totalRevenue: revenue.totalPremium
           })
         }
       } catch (error) {
-        console.error("Failed to fetch stats:", error)
+        console.error("Failed to fetch dashboard stats:", error)
       } finally {
         setLoading(false)
       }
@@ -159,11 +160,10 @@ export default function AdminPage() {
             const IconComponent = section.icon
             const card = (
               <div
-                className={`bg-white rounded-xl p-6 shadow-sm border-2 transition-all ${
-                  section.disabled
-                    ? "border-gray-100 opacity-60 cursor-not-allowed"
-                    : `${section.borderColor} cursor-pointer hover:shadow-md`
-                }`}
+                className={`bg-white rounded-xl p-6 shadow-sm border-2 transition-all ${section.disabled
+                  ? "border-gray-100 opacity-60 cursor-not-allowed"
+                  : `${section.borderColor} cursor-pointer hover:shadow-md`
+                  }`}
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-12 h-12 rounded-xl ${section.color} flex items-center justify-center flex-shrink-0`}>

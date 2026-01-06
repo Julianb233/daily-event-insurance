@@ -37,6 +37,7 @@ interface Partner {
   websiteUrl: string | null
   primaryColor: string | null
   logoUrl: string | null
+  brandingImages: string[]
   status: string
   integrationType: string | null
   createdAt: string

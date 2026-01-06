@@ -269,8 +269,8 @@ describe('Documents Onboarding Page', () => {
       render(<DocumentsPage />)
 
       await waitFor(() => {
-        // Should show "0 of 3" signed initially
-        expect(screen.getByText(/0 of 3/)).toBeInTheDocument()
+        // Should show "0 of 1" signed initially (only 1 is required)
+        expect(screen.getByText(/0 of 1/)).toBeInTheDocument()
       })
     })
 
@@ -302,9 +302,13 @@ describe('Documents Onboarding Page', () => {
       render(<DocumentsPage />)
 
       await waitFor(() => {
-        // All documents should show "Pending signature" status
+        // Partner agreement is required -> "Pending signature" (1)
+        // W9/Direct Deposit are optional -> "Not signed (can be skipped)" (2)
         const pendingElements = screen.getAllByText(/Pending signature/i)
-        expect(pendingElements.length).toBe(3)
+        expect(pendingElements.length).toBe(1)
+
+        const optionalElements = screen.getAllByText(/Not signed/i)
+        expect(optionalElements.length).toBe(2)
       })
     })
 
@@ -328,8 +332,12 @@ describe('Documents Onboarding Page', () => {
       expect(screen.getByText(/Signed on/i)).toBeInTheDocument()
 
       // Check pending documents count
-      const pendingElements = screen.getAllByText(/Pending signature/i)
-      expect(pendingElements.length).toBe(2)
+      // Partner agreement is signed, so 0 pending signature
+      // The other 2 are optional -> "Not signed (can be skipped)"
+      expect(screen.queryByText(/Pending signature/i)).not.toBeInTheDocument()
+
+      const optionalElements = screen.getAllByText(/Not signed/i)
+      expect(optionalElements.length).toBe(2)
     })
 
     it('shows Sign button for unsigned documents', async () => {
@@ -372,46 +380,13 @@ describe('Documents Onboarding Page', () => {
       render(<DocumentsPage />)
 
       await waitFor(() => {
-        expect(screen.getByText(/2 of 3/)).toBeInTheDocument()
+        // With 1 required doc signed, it should show 1 of 1
+        expect(screen.getByText(/1 of 1/)).toBeInTheDocument()
       })
     })
   })
 
-  describe('Remaining documents message', () => {
-    it('shows remaining documents count when not all signed', async () => {
-      const signedStatuses = {
-        partner_agreement: { signed: true, signedAt: '2024-01-15T10:00:00Z' },
-        w9: { signed: false },
-        direct_deposit: { signed: false },
-      }
 
-      setupFetchMock({ statuses: signedStatuses })
-
-      render(<DocumentsPage />)
-
-      await waitFor(() => {
-        // The page shows "X documents remaining" (without parentheses)
-        expect(screen.getByText(/2 documents? remaining/i)).toBeInTheDocument()
-      })
-    })
-
-    it('shows correct singular form for one remaining', async () => {
-      const signedStatuses = {
-        partner_agreement: { signed: true, signedAt: '2024-01-15T10:00:00Z' },
-        w9: { signed: true, signedAt: '2024-01-15T10:00:00Z' },
-        direct_deposit: { signed: false },
-      }
-
-      setupFetchMock({ statuses: signedStatuses })
-
-      render(<DocumentsPage />)
-
-      await waitFor(() => {
-        // The page shows "1 document remaining" (singular)
-        expect(screen.getByText(/1 documents? remaining/i)).toBeInTheDocument()
-      })
-    })
-  })
 
   describe('All documents signed state', () => {
     it('shows success message when all documents signed', async () => {
@@ -426,7 +401,7 @@ describe('Documents Onboarding Page', () => {
       render(<DocumentsPage />)
 
       await waitFor(() => {
-        expect(screen.getByText(/all documents signed/i)).toBeInTheDocument()
+        expect(screen.getByText(/You're Ready to Go!/i)).toBeInTheDocument()
       })
     })
 
@@ -442,7 +417,8 @@ describe('Documents Onboarding Page', () => {
       render(<DocumentsPage />)
 
       await waitFor(() => {
-        expect(screen.getByText(/3 of 3/)).toBeInTheDocument()
+        // Only 1 required document
+        expect(screen.getByText(/1 of 1/)).toBeInTheDocument()
       })
     })
 
@@ -459,14 +435,14 @@ describe('Documents Onboarding Page', () => {
 
       render(<DocumentsPage />)
 
-      // Wait for loading to complete and verify "All Documents Signed" message is shown
+      // Wait for loading to complete and verify success message is shown
       await waitFor(() => {
-        expect(screen.getByText(/All Documents Signed/i)).toBeInTheDocument()
+        expect(screen.getByText(/You're Ready to Go!/i)).toBeInTheDocument()
       })
 
       // The redirect only happens when you sign the last document via handleSign,
       // not automatically on initial load
-      expect(screen.getByText(/3 of 3/)).toBeInTheDocument()
+      expect(screen.getByText(/1 of 1/)).toBeInTheDocument()
     })
   })
 

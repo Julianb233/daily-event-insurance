@@ -82,7 +82,7 @@ function RentalHeroSection() {
               whileTap={{ scale: 0.95 }}
               className="bg-white text-teal-600 font-black uppercase px-10 py-5 rounded-full text-lg tracking-wider hover:bg-teal-50 transition-colors shadow-xl inline-flex items-center justify-center gap-2"
             >
-              Request a Demo
+              Start Today!
               <ArrowRight className="w-5 h-5" />
             </motion.a>
             <motion.a

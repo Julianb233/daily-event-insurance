@@ -166,7 +166,7 @@ export default function ForAdventurePage() {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-3 px-8 py-4 bg-teal-500 text-white font-bold text-lg rounded-xl hover:bg-teal-400 transition-all duration-300 shadow-lg hover:shadow-teal-500/30"
             >
-              Request a Demo
+              Start Today!
               <ArrowRight className="w-5 h-5" />
             </motion.a>
           </motion.div>

@@ -93,7 +93,7 @@ function GymHeroSection() {
               whileTap={{ scale: 0.98 }}
               className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-teal-700 bg-white rounded-full shadow-2xl hover:bg-teal-50 transition-all duration-300"
             >
-              <span>Request a Demo</span>
+              <span>Start Today!</span>
               <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </motion.a>
 
