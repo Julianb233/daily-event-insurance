@@ -49,6 +49,7 @@ interface MicrositeData {
   id: string
   domain?: string | null
   subdomain?: string | null
+  customDomain?: string | null
   siteName: string
   status: string
   qrCodeUrl?: string | null
@@ -108,11 +109,11 @@ export default function PartnerDashboardPage() {
   }
 
   const getMicrositeUrl = () => {
-    if (micrositeData?.domain) {
-      return `https://${micrositeData.domain}`
+    if (micrositeData?.customDomain) {
+      return `https://${micrositeData.customDomain}`
     }
     if (micrositeData?.subdomain) {
-      return `https://${micrositeData.subdomain}.dailyeventinsurance.com`
+      return `https://dailyeventinsurance.com/${micrositeData.subdomain}`
     }
     return null
   }

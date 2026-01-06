@@ -3,6 +3,7 @@ import { updateSession } from "@/lib/supabase/middleware"
 
 // Route role requirements - more specific routes should come first
 const ROUTE_ROLES: Record<string, string[]> = {
+  "/admin": ["admin"], // Protect admin UI
   "/api/admin": ["admin"],
   "/api/partner": ["user", "partner", "admin"],
   "/partner": ["partner", "admin"],
@@ -79,13 +80,8 @@ export async function middleware(request: NextRequest) {
   // Get required roles for this path
   const requiredRoles = getRequiredRoles(nextUrl.pathname)
 
-  // If no role requirements, allow access if authenticated
+  // If no role requirements, allow access (treat as public/microsite)
   if (!requiredRoles) {
-    if (!isLoggedIn) {
-      const signInUrl = new URL("/sign-in", nextUrl.origin)
-      signInUrl.searchParams.set("callbackUrl", nextUrl.pathname)
-      return NextResponse.redirect(signInUrl)
-    }
     return supabaseResponse
   }
 
