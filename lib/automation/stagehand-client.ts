@@ -37,7 +37,7 @@ export async function createStagehandClient(options: StagehandClientOptions = {}
 
   // Access page via context after init - Stagehand V3 uses context.pages() method
   // Get the first page from the pages array - cast to Playwright Page type for proper typing
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line
   const page = stagehand.context.pages()[0] as any
 
   return {
