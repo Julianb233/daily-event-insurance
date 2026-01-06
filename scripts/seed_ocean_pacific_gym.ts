@@ -30,7 +30,6 @@ async function seed() {
   if (existingPartner.length) {
     partnerId = existingPartner[0].id;
     await db.update(partners).set({
-      userId: admin.id,
       status: 'active',
       businessType: 'gym',
       logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Ocean_Pacific_Gym_logo.png/320px-Ocean_Pacific_Gym_logo.png',
