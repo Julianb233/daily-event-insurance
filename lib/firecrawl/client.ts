@@ -6,6 +6,8 @@
 export interface FireCrawlResult {
   logoUrl?: string
   images: string[]
+  colors?: string[]
+  fonts?: string[]
   metadata?: {
     title?: string
     description?: string
@@ -47,13 +49,21 @@ export async function fetchPartnerBranding(websiteUrl: string): Promise<FireCraw
 
     // Extract logo (usually in header/nav or first image)
     const logoUrl = extractLogo(data)
-    
+
     // Extract all images
     const images = extractImages(data)
+
+    // Extract colors (theme-color)
+    const colors = extractColors(data)
+
+    // Extract fonts (basic heuristic)
+    const fonts = extractFonts(data)
 
     return {
       logoUrl,
       images: images.slice(0, 10), // Limit to 10 images
+      colors,
+      fonts,
       metadata: {
         title: data.metadata?.title,
         description: data.metadata?.description
@@ -72,7 +82,7 @@ export async function fetchPartnerBranding(websiteUrl: string): Promise<FireCraw
 function extractLogo(data: any): string | undefined {
   // Try to find logo in common locations
   const html = data.html || ''
-  
+
   // Look for logo in common class/id names
   const logoPatterns = [
     /<img[^>]*(?:class|id)=["'][^"']*logo[^"']*["'][^>]*src=["']([^"']+)["']/i,
@@ -106,7 +116,7 @@ function extractImages(data: any): string[] {
   const html = data.html || ''
   const images: string[] = []
   const imgRegex = /<img[^>]*src=["']([^"']+)["']/gi
-  
+
   let match
   while ((match = imgRegex.exec(html)) !== null) {
     const url = normalizeUrl(match[1], data.url)
@@ -123,7 +133,7 @@ function extractImages(data: any): string[] {
  */
 function normalizeUrl(url: string, baseUrl: string): string {
   if (!url) return ''
-  
+
   // Already absolute
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
@@ -141,5 +151,52 @@ function normalizeUrl(url: string, baseUrl: string): string {
   } catch {
     return url
   }
+}
+
+/**
+ * Extract theme colors from metadata
+ */
+function extractColors(data: any): string[] {
+  const html = data.html || ''
+  const colors: string[] = []
+
+  // Meta theme-color
+  const themeColorMatch = html.match(/<meta[^>]*name=["']theme-color["'][^>]*content=["']([^"']+)["']/i)
+  if (themeColorMatch && themeColorMatch[1]) {
+    colors.push(themeColorMatch[1])
+  }
+
+  // Common hex codes in style tags (very basic heuristic)
+  const styleMatch = html.match(/color:\s*(#[0-9a-f]{6})/gi)
+  if (styleMatch) {
+    styleMatch.slice(0, 3).forEach((match: string) => {
+      const color = match.split(':')[1].trim()
+      if (!colors.includes(color)) colors.push(color)
+    })
+  }
+
+  return colors
+}
+
+/**
+ * Extract font constants from style tags
+ */
+function extractFonts(data: any): string[] {
+  const html = data.html || ''
+  const fonts: string[] = []
+
+  // Look for font-family definitions
+  const fontMatches = html.match(/font-family:\s*([^;\}]+)/gi)
+  if (fontMatches) {
+    fontMatches.slice(0, 3).forEach((match: string) => {
+      // Clean up the font string
+      const font = match.split(':')[1].trim().replace(/['"]/g, '')
+      if (!fonts.includes(font) && font.length < 50) { // Sanity check length
+        fonts.push(font)
+      }
+    })
+  }
+
+  return fonts
 }
 
