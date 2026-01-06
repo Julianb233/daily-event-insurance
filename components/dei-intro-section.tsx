@@ -120,7 +120,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="text-lg md:text-2xl lg:text-3xl text-slate-600 text-center max-w-4xl font-medium px-4"
         >
-          Coverage turns on when your event starts. Turns off when it ends. Earn revenue while protecting participants.
+          Mandatory coverage included for every customer. We cover the cost—your business earns a commission split on every covered participant without raising prices.
         </motion.p>
 
         {/* Social proof */}
@@ -168,7 +168,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 1.3 }}
           className="text-sm md:text-base text-slate-500 text-center max-w-3xl mt-6 md:mt-8 px-4"
         >
-          We power the infrastructure that connects live experiences, digital health signals, and insurance economics into a single, scalable system.
+          We handle the insurance infrastructure so you can keep running your business—while every booking or check-in becomes protection and partner revenue.
         </motion.p>
       </motion.div>
 

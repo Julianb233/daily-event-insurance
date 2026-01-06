@@ -4,6 +4,8 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { ToggleLeft, CheckSquare, Sparkles, TrendingUp, Users, DollarSign, Shield, Zap } from "lucide-react"
 import { useState } from "react"
 
+type InsuranceModesVariant = "full" | "requiredOnly"
+
 interface Mode {
   id: string
   title: string
@@ -49,7 +51,8 @@ const modes: Mode[] = [
     title: "Required/Bundled",
     subtitle: "Everyone Protected",
     icon: CheckSquare,
-    description: "Coverage included automatically with every booking. Simple checkbox confirmation. Everyone's covered.",
+    description:
+      "Coverage included automatically with every booking or membership. We cover the cost, you keep your price. Simple checkbox acknowledgment—everyone's covered.",
     benefits: [
       "100% coverage rate guaranteed",
       "Maximum revenue per booking",
@@ -60,7 +63,7 @@ const modes: Mode[] = [
     badge: "Most Popular",
     badgeColor: "from-teal-500 to-teal-600",
     customerExperience: "Simple checkbox to acknowledge coverage",
-    paymentModel: "Bundled into total price",
+    paymentModel: "Bundled into total price (carrier-funded — no cost to you)",
     bestFor: [
       "Facilities prioritizing complete protection",
       "Streamlined operations",
@@ -346,7 +349,13 @@ function ModeCard({ mode, index }: { mode: Mode; index: number }) {
   )
 }
 
-export default function InsuranceModes() {
+export default function InsuranceModes(props: { variant?: InsuranceModesVariant }) {
+  return <InsuranceModesSection {...props} />
+}
+
+export function InsuranceModesSection({ variant = "full" }: { variant?: InsuranceModesVariant }) {
+  const visibleModes = variant === "requiredOnly" ? modes.filter((m) => m.id === "required") : modes
+
   return (
     <section
       id="insurance-modes"
@@ -408,17 +417,32 @@ export default function InsuranceModes() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full border border-teal-200 mb-6"
           >
             <TrendingUp className="w-4 h-4 text-teal-600" />
-            <span className="text-sm font-medium text-teal-700">Choose Your Approach</span>
+            <span className="text-sm font-medium text-teal-700">
+              {variant === "requiredOnly" ? "Mandatory Implementation" : "Choose Your Approach"}
+            </span>
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 md:mb-6">
-            Your Choice: How to{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-sky-500">
-              Offer Coverage
-            </span>
+            {variant === "requiredOnly" ? (
+              <>
+                Mandatory Coverage.{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-sky-500">
+                  Zero Cost to You.
+                </span>
+              </>
+            ) : (
+              <>
+                Your Choice: How to{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-sky-500">
+                  Offer Coverage
+                </span>
+              </>
+            )}
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto">
-            Pick the approach that works for your business
+            {variant === "requiredOnly"
+              ? "Coverage must be included automatically for every customer. We pay for it, you earn a commission split on every activation, and you don’t need to raise prices."
+              : "Pick the approach that works for your business"}
           </p>
         </motion.div>
 
@@ -430,7 +454,7 @@ export default function InsuranceModes() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto"
         >
-          {modes.map((mode, index) => (
+          {visibleModes.map((mode, index) => (
             <ModeCard key={mode.id} mode={mode} index={index} />
           ))}
         </motion.div>
@@ -450,11 +474,23 @@ export default function InsuranceModes() {
               </div>
             </div>
             <div className="text-left">
-              <h4 className="text-lg font-bold text-slate-900 mb-2">Not sure which to choose?</h4>
+              <h4 className="text-lg font-bold text-slate-900 mb-2">
+                {variant === "requiredOnly" ? "What this means for your business" : "Not sure which to choose?"}
+              </h4>
               <p className="text-base text-slate-600 leading-relaxed">
-                Our partner success team will help you analyze your customer base, booking patterns, and business goals
-                to recommend the optimal approach. You can also switch between modes at any time.
+                {variant === "requiredOnly"
+                  ? "Implementation is straightforward: coverage is mandatory for customers, carrier-funded, and integrated into your checkout or membership flow. Your team keeps operating normally—while you earn on every covered participant."
+                  : "Our partner success team will help you analyze your customer base, booking patterns, and business goals to recommend the optimal approach. You can also switch between modes at any time."}
               </p>
+              {variant === "requiredOnly" && (
+                <p className="text-sm text-slate-500 mt-3">
+                  Want to see the full comparison?{" "}
+                  <a href="/coverage-models" className="text-teal-700 font-semibold hover:underline">
+                    View coverage models
+                  </a>
+                  .
+                </p>
+              )}
             </div>
           </div>
         </motion.div>
@@ -479,7 +515,9 @@ export default function InsuranceModes() {
             </svg>
           </motion.a>
           <p className="mt-4 text-slate-500 text-sm">
-            We&apos;ll help you choose the best mode for your facility
+            {variant === "requiredOnly"
+              ? "We’ll help you go live with mandatory, carrier-funded coverage"
+              : "We&apos;ll help you choose the best mode for your facility"}
           </p>
         </motion.div>
       </div>

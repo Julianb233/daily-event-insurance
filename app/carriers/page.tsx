@@ -31,6 +31,12 @@ import {
   Mountain
 } from "lucide-react"
 import { carrierCategories, carrierCategoryIconMap } from "@/lib/carrier-category-data"
+import { WhoWeAreSection } from "@/components/who-we-are-section"
+import { ProblemWeSolveSection } from "@/components/problem-we-solve-section"
+import { HowTheModelWorksSection } from "@/components/how-the-model-works-section"
+import { DataAdvantageSection } from "@/components/data-advantage-section"
+import { WhyThisMattersSection } from "@/components/why-this-matters-section"
+import { MissionVisionSection } from "@/components/mission-vision-section"
 
 const heroStats = [
   { value: "68%", label: "Average Opt-In Rate" },
@@ -391,6 +397,14 @@ export default function CarriersPage() {
         {/* Bottom gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent" />
       </section>
+
+      {/* HIQOR Platform & Model (moved from homepage) */}
+      <WhoWeAreSection />
+      <ProblemWeSolveSection />
+      <HowTheModelWorksSection />
+      <DataAdvantageSection />
+      <WhyThisMattersSection />
+      <MissionVisionSection />
 
       {/* Why Partner Section with 3D Cards */}
       <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">

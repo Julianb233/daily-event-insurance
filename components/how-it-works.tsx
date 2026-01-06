@@ -29,23 +29,23 @@ const steps: Step[] = [
   },
   {
     number: 2,
-    title: 'Add to Your Checkout',
-    description: 'Seamlessly embed insurance into your existing flow.',
+    title: 'Embed into Checkout (Mandatory)',
+    description: 'Coverage is included automatically for every customer—required to implement.',
     details: [
       'Simple API or no-code widget',
       'Works with any booking system',
       'Branded to match your site',
-      'Mobile-optimized experience'
+      'We cover the cost — no price increase needed'
     ],
     icon: <Puzzle className="w-8 h-8" />,
     highlight: '48 hours to go live'
   },
   {
     number: 3,
-    title: 'Earn on Every Sale',
-    description: 'Get paid commission for each policy your customers purchase.',
+    title: 'Earn on Every Member',
+    description: 'Get paid a commission split for every covered participant.',
     details: [
-      'Earn $2-5 per policy sold',
+      'Commission split on each activation',
       'Automatic monthly payouts',
       'Real-time dashboard tracking',
       'No caps on earnings'
@@ -283,7 +283,7 @@ export function HowItWorks() {
             How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Works</span>
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Join hundreds of partners earning passive income by offering instant insurance coverage at checkout
+            Join hundreds of partners earning passive income by including coverage with every booking or membership
           </p>
         </motion.div>
 
@@ -309,8 +309,8 @@ export function HowItWorks() {
                   Your Revenue, <span className="text-teal-600">Your Way</span>
                 </h3>
                 <p className="text-slate-600 mb-6">
-                  Every time a customer adds insurance at checkout, you earn commission.
-                  No inventory, no overhead, no customer service—just passive income that grows with your business.
+                  Coverage is mandatory for customers, carrier-funded, and built into your flow. Every time someone books
+                  or checks in, they’re covered and you earn a commission split—no overhead and no need to raise prices.
                 </p>
                 <ul className="space-y-3">
                   {[
@@ -339,8 +339,8 @@ export function HowItWorks() {
 
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { value: '$2-5', label: 'Per Policy Sold' },
-                  { value: '68%', label: 'Avg. Opt-in Rate' },
+                  { value: '$0', label: 'Cost to You' },
+                  { value: '100%', label: 'Customers Covered' },
                   { value: '$2,400', label: 'Avg. Monthly Revenue' },
                   { value: '24hrs', label: 'To Go Live' },
                 ].map((stat, i) => (
