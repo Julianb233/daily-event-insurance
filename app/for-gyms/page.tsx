@@ -25,7 +25,7 @@ function GymHeroSection() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500">
       {/* Sparkle Effects */}
-      
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -68,7 +68,7 @@ function GymHeroSection() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-xl sm:text-2xl lg:text-3xl font-semibold text-white/90 mb-4 max-w-3xl mx-auto"
           >
-            Earn commission on every policy while protecting your members
+            We pay you for your business to be protected!
           </motion.p>
 
           <motion.p
@@ -212,7 +212,7 @@ function ProblemSolutionSection() {
             viewport={{ once: true }}
             className="relative bg-gradient-to-br from-teal-600 to-teal-500 rounded-2xl p-8 overflow-hidden"
           >
-                        <div className="relative z-10">
+            <div className="relative z-10">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mb-6">
                 <Zap className="w-6 h-6 text-white" />
               </div>
@@ -298,7 +298,7 @@ function HowItWorksSection() {
               className="relative"
             >
               <div className={`relative bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full overflow-hidden group hover:scale-105 transition-transform duration-300`}>
-                
+
                 {/* Number Badge */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl font-black text-teal-600">{step.number}</span>
@@ -428,7 +428,7 @@ function RevenueCalculatorSection() {
 
   return (
     <section className="relative bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 py-20 md:py-32 overflow-hidden">
-      
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -598,7 +598,7 @@ function TestimonialSection() {
           viewport={{ once: true }}
           className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 overflow-hidden"
         >
-          
+
           {/* Quote Icon */}
           <div className="relative z-10">
             <div className="w-16 h-16 bg-teal-600/20 rounded-full flex items-center justify-center mb-6">

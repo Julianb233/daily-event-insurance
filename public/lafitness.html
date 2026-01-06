@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Insurance - LA Fitness</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1d234520 0%, #1d234505 50%, #ffffff 100%);
+      background-attachment: fixed;
+      color: #1a1a2e;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated background orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 { width: 600px; height: 600px; background: #1d234540; top: -200px; right: -200px; animation-delay: 0s; }
+    .bg-orb-2 { width: 400px; height: 400px; background: #61657d60; bottom: -100px; left: -100px; animation-delay: -7s; }
+    .bg-orb-3 { width: 300px; height: 300px; background: #171c3730; top: 50%; left: 50%; animation-delay: -14s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Glass card styling */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    header {
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .logo-container {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 1.5rem;
+      background: white;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .logo {
+      max-width: 100px;
+      max-height: 100px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1d2345 0%, #171c37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .hero {
+      padding: 4rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #1d234510 0%, transparent 100%);
+      border-radius: 24px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: #475569;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+    }
+
+    .price-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #1d2345 0%, #171c37 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px #1d234540;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, #1d2345 0%, #171c37 100%);
+      color: white;
+      padding: 1.25rem 2.5rem;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow:
+        0 8px 30px #1d234540,
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 12px 40px #1d234550,
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .cta-button svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.25rem;
+      background: linear-gradient(135deg, #1d234520 0%, #61657d30 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-icon svg {
+      width: 32px;
+      height: 32px;
+      color: #1d2345;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    .qr-section {
+      padding: 3rem;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+    }
+
+    .qr-code-wrapper {
+      width: 220px;
+      height: 220px;
+      margin: 1.5rem auto;
+      padding: 16px;
+      background: white;
+      border-radius: 20px;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    }
+
+    .qr-code {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .qr-section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .qr-section p {
+      color: #64748b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+
+    footer a {
+      color: #1d2345;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <div class="container">
+    <header class="glass-card">
+      <div class="logo-container">
+        <img src="/placeholder-logo.png" alt="LA Fitness Logo" class="logo" />
+      </div>
+      <h1>LA Fitness</h1>
+      <p class="subtitle">Partnered with Daily Event Insurance</p>
+    </header>
+
+    <div class="hero glass-card">
+      <div class="hero-content">
+        <h2>Protect Your Activity Today</h2>
+        <p>Get instant event liability coverage for your next adventure</p>
+        <div class="price-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          Starting at just $4.99
+        </div>
+        <br/>
+        <a href="https://lafitness.dailyeventinsurance.com/quote" class="cta-button">
+          Get Covered Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card glass-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v6l4 2"></path>
+          </svg>
+        </div>
+        <h3>Instant Coverage</h3>
+        <p>Get your policy in under 2 minutes. Coverage starts immediately.</p>
+      </div>
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h3>Full Protection</h3>
+        <p>Comprehensive liability coverage for accidents and injuries.</p>
+      </div>
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+            <path d="M8 21h8M12 17v4"></path>
+          </svg>
+        </div>
+        <h3>Easy Claims</h3>
+        <p>Simple online claims process if you ever need it.</p>
+      </div>
+    </div>
+
+    <div class="qr-section glass-card">
+      <h3>Scan to Get Started</h3>
+      <div class="qr-code-wrapper">
+        <img src="data:image/png;base64,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" alt="QR Code" class="qr-code" />
+      </div>
+      <p>Scan this QR code with your phone to get instant coverage</p>
+    </div>
+
+    <footer>
+      <p>Powered by <a href="https://dailyeventinsurance.com">Daily Event Insurance</a></p>
+    </footer>
+  </div>
+</body>
+</html>

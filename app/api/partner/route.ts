@@ -171,8 +171,6 @@ export async function POST(request: NextRequest) {
       }))
       : [
         { partnerId: partner.id, productType: "liability", isEnabled: true, customerPrice: "4.99" },
-        { partnerId: partner.id, productType: "equipment", isEnabled: false, customerPrice: "9.99" },
-        { partnerId: partner.id, productType: "cancellation", isEnabled: false, customerPrice: "14.99" },
       ]
 
     try {

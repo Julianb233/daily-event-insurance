@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db, isDbConfigured } from "@/lib/db"
 import { partners, microsites, policies, leads } from "@/lib/db/schema"
-import { eq, desc, ilike, or, sql, and, count } from "drizzle-orm"
+import { eq, desc, ilike, or, sql, and, count, inArray } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 
 /**
@@ -274,7 +274,7 @@ export async function GET(request: NextRequest) {
         totalCommission: sql<number>`COALESCE(SUM(${policies.commission}::numeric), 0)`
       })
       .from(policies)
-      .where(sql`${policies.partnerId} = ANY(${partnerIds})`)
+      .where(inArray(policies.partnerId, partnerIds))
       .groupBy(policies.partnerId) : []
 
     // Get lead counts per partner
@@ -284,7 +284,7 @@ export async function GET(request: NextRequest) {
         totalLeads: count()
       })
       .from(leads)
-      .where(sql`${leads.partnerId} = ANY(${partnerIds})`)
+      .where(inArray(leads.partnerId, partnerIds))
       .groupBy(leads.partnerId) : []
 
     // Combine data

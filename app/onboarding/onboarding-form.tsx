@@ -67,10 +67,10 @@ const businessDefaults: Record<string, {
   estimatedParticipants: number,
   optInRate: number
 }> = {
-  gym: { products: ["liability", "equipment"], estimatedParticipants: 500, optInRate: 65 },
-  climbing: { products: ["liability", "equipment", "cancellation"], estimatedParticipants: 300, optInRate: 70 },
+  gym: { products: ["liability"], estimatedParticipants: 500, optInRate: 65 },
+  climbing: { products: ["liability"], estimatedParticipants: 300, optInRate: 70 },
   yoga: { products: ["liability"], estimatedParticipants: 200, optInRate: 60 },
-  rental: { products: ["liability", "equipment"], estimatedParticipants: 400, optInRate: 75 },
+  rental: { products: ["liability"], estimatedParticipants: 400, optInRate: 75 },
   other: { products: ["liability"], estimatedParticipants: 300, optInRate: 65 },
 }
 
@@ -96,8 +96,6 @@ interface OnboardingFormData {
   selectedProducts: string[]
   pricing: {
     liability: number
-    equipment: number
-    cancellation: number
   }
   primaryColor: string
 }
@@ -964,24 +962,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack, isFirstStep }: 
   const products = [
     {
       id: "liability",
-      name: "Liability Coverage",
+      name: "Accident and Medical Coverage",
       description: "Protection against accidents and injuries",
       basePrice: 25,
       commission: 40,
-    },
-    {
-      id: "equipment",
-      name: "Equipment Protection",
-      description: "Coverage for damaged or lost rental equipment",
-      basePrice: 15,
-      commission: 35,
-    },
-    {
-      id: "cancellation",
-      name: "Event Cancellation",
-      description: "Refund protection for cancelled events",
-      basePrice: 20,
-      commission: 30,
     },
   ]
 
@@ -1063,36 +1047,14 @@ function Step3Customize({ formData, setFormData, onNext, onBack, isFirstStep }: 
                     className="pl-9 space-y-4"
                   >
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label
-                          htmlFor={`price-${product.id}`}
-                          className="block text-xs font-semibold text-gray-700 mb-2"
-                        >
-                          Customer Price
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" aria-hidden="true">$</span>
-                          <input
-                            id={`price-${product.id}`}
-                            type="number"
-                            value={pricing[product.id as keyof typeof pricing]}
-                            onChange={(e) => setPricing({ ...pricing, [product.id]: Number(e.target.value) })}
-                            aria-label={`Customer price for ${product.name} in dollars`}
-                            min="0"
-                            step="1"
-                            className="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14B8A6] focus:border-transparent focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
+                      <div className="col-span-2">
                         <span className="block text-xs font-semibold text-gray-700 mb-2">
-                          Your Commission ({product.commission}%)
+                          Your Revenue per Member ({product.commission}%)
                         </span>
                         <div
                           className="px-4 py-2 bg-green-50 border border-green-200 rounded-lg text-green-700 font-bold"
                           role="status"
-                          aria-label={`Your commission for ${product.name}: ${commission} dollars`}
+                          aria-label={`Your revenue for ${product.name}: ${commission} dollars`}
                         >
                           ${commission}
                         </div>
@@ -1499,8 +1461,6 @@ export default function OnboardingForm() {
     selectedProducts: ["liability"],
     pricing: {
       liability: 25,
-      equipment: 15,
-      cancellation: 20,
     },
     primaryColor: "#14B8A6",
   })

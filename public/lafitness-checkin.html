@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-In - LA Fitness</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1d234515 0%, #61657d10 50%, #f8fafc 100%);
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* Animated orbs */
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.3; animation: pulse 8s ease-in-out infinite; pointer-events: none; }
+    .orb-1 { width: 500px; height: 500px; background: #1d2345; top: -150px; right: -150px; }
+    .orb-2 { width: 400px; height: 400px; background: #61657d; bottom: -100px; left: -100px; animation-delay: -4s; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.4; }
+    }
+
+    .container {
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 32px;
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      overflow: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 2.5rem 2rem 2rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+    }
+
+    .logo-wrapper {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.5rem;
+      background: white;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .logo { max-width: 70px; max-height: 70px; object-fit: contain; }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1d2345, #171c37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle { color: #64748b; font-size: 1rem; }
+
+    .price-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #1d2345, #171c37);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .form-section {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      background: rgba(255,255,255,0.8);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1d2345;
+      box-shadow: 0 0 0 4px #1d234520;
+    }
+
+    input::placeholder { color: #94a3b8; }
+
+    .row { display: flex; gap: 1rem; }
+    .row > * { flex: 1; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1.25rem;
+      background: linear-gradient(135deg, #1d2345, #171c37);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px #1d234540;
+      margin-top: 0.5rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px #1d234550;
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .qr-section {
+      text-align: center;
+      padding: 0 2rem 2rem;
+    }
+
+    .qr-wrapper {
+      display: inline-block;
+      background: white;
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .qr-code { width: 120px; height: 120px; }
+
+    .qr-text { color: #64748b; font-size: 0.875rem; margin-top: 0.75rem; }
+
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.02);
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .footer p { color: #94a3b8; font-size: 0.75rem; }
+    .footer a { color: #1d2345; text-decoration: none; }
+
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-icon svg { width: 40px; height: 40px; color: white; }
+    .success-message h2 { color: #10b981; margin-bottom: 0.5rem; }
+    .success-message p { color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="container">
+    <div class="glass-card">
+      <div id="form-view">
+        <div class="header">
+          <div class="logo-wrapper">
+            <img src="/placeholder-logo.png" alt="LA Fitness" class="logo" />
+          </div>
+          <h1>Protect Your Workout</h1>
+          <p class="subtitle">Get liability coverage for your gym session today</p>
+          <div class="price-tag">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Starting at $4.99
+          </div>
+        </div>
+
+        <form id="checkin-form" class="form-section">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@email.com" required />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="activity">Activity Type</label>
+            <select id="activity" name="activity">
+              <option value="day-pass">Day Pass / Single Visit</option>
+              <option value="class">Class or Session</option>
+              <option value="rental">Equipment Rental</option>
+              <option value="event">Private Event</option>
+              <option value="other">Other Activity</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn">Get My Coverage →</button>
+        </form>
+
+        <div class="divider">or scan QR code</div>
+
+        <div class="qr-section">
+          <div class="qr-wrapper">
+            <img src="data:image/png;base64,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" alt="QR Code" class="qr-code" />
+          </div>
+          <p class="qr-text">Scan with your phone to continue on mobile</p>
+        </div>
+
+        <div class="footer">
+          <p>Powered by <a href="https://dailyeventinsurance.com">Daily Event Insurance</a></p>
+        </div>
+      </div>
+
+      <div id="success-view" class="success-message">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+        <h2>You're All Set!</h2>
+        <p>Check your email for your coverage details.</p>
+        <p style="margin-top: 1rem; font-size: 0.875rem;">Enjoy your workout!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('checkin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const formData = {
+        partnerId: 'la-fitness-demo',
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        activity: document.getElementById('activity').value,
+        source: 'checkin-kiosk',
+        micrositeUrl: 'https://lafitness.dailyeventinsurance.com'
+      };
+
+      try {
+        const response = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          document.getElementById('form-view').style.display = 'none';
+          document.getElementById('success-view').style.display = 'block';
+
+          // Redirect to quote page after 2 seconds
+          setTimeout(() => {
+            window.location.href = 'https://lafitness.dailyeventinsurance.com/quote?email=' + encodeURIComponent(formData.email);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        // Still redirect on error
+        window.location.href = 'https://lafitness.dailyeventinsurance.com/quote?email=' + encodeURIComponent(formData.email);
+      }
+    });
+  </script>
+</body>
+</html>

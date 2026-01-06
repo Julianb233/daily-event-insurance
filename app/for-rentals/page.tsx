@@ -68,7 +68,7 @@ function RentalHeroSection() {
           </h1>
 
           <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-4 leading-relaxed">
-            Protect your inventory and customers with seamless rental coverage
+            We pay you for your business to be protected!
           </p>
 
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">

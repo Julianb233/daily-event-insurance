@@ -75,7 +75,7 @@ export async function generateStandaloneMicrosite(
   const logoUrl = branding.logoUrl || config.logoUrl || '/placeholder-logo.png'
 
   // Generate microsite URL
-  const micrositeUrl = config.customDomain 
+  const micrositeUrl = config.customDomain
     ? `https://${config.customDomain}`
     : `https://${config.subdomain || config.partnerId}.dailyeventinsurance.com`
 
@@ -551,7 +551,7 @@ function generateStandaloneHTML(config: {
           </svg>
         </div>
         <h3>Full Protection</h3>
-        <p>Comprehensive liability coverage for accidents and injuries.</p>
+        <p>Comprehensive accident and medical coverage for accidents and injuries.</p>
       </div>
 
       <div class="feature-card glass-card">
@@ -685,12 +685,12 @@ function generateCheckinHTML(config: {
 
   // Business-specific copy
   const businessCopy: Record<string, { headline: string; subtitle: string; activity: string }> = {
-    gym: { headline: 'Protect Your Workout', subtitle: 'Get liability coverage for your gym session today', activity: 'workout' },
-    climbing: { headline: 'Climb With Confidence', subtitle: 'Instant liability coverage for your climbing session', activity: 'climb' },
-    yoga: { headline: 'Practice Peace of Mind', subtitle: 'Liability protection for your yoga session', activity: 'practice' },
+    gym: { headline: 'Protect Your Workout', subtitle: 'Get accident and medical coverage for your gym session today', activity: 'workout' },
+    climbing: { headline: 'Climb With Confidence', subtitle: 'Instant accident and medical coverage for your climbing session', activity: 'climb' },
+    yoga: { headline: 'Practice Peace of Mind', subtitle: 'Accident and medical protection for your yoga session', activity: 'practice' },
     rental: { headline: 'Rent With Protection', subtitle: 'Coverage for your equipment rental today', activity: 'rental' },
-    fitness: { headline: 'Train With Confidence', subtitle: 'Same-day liability coverage for your activity', activity: 'session' },
-    other: { headline: 'Get Protected Today', subtitle: 'Instant event liability coverage', activity: 'activity' }
+    fitness: { headline: 'Train With Confidence', subtitle: 'Same-day accident and medical coverage for your activity', activity: 'session' },
+    other: { headline: 'Get Protected Today', subtitle: 'Instant event accident and medical coverage', activity: 'activity' }
   }
 
   const copy = businessCopy[businessType] || businessCopy.other
