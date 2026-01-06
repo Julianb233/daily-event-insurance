@@ -1,4 +1,8 @@
+import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
+
+
 /** @type {import('next').NextConfig} */
+// Trigger deployment
 const nextConfig = {
   images: {
     // Enable Next.js automatic image optimization
