@@ -1,8 +1,9 @@
 
 import { notFound } from "next/navigation"
-import { db, microsites, partners } from "@/lib/db"
+import { db, microsites, partners, partnerProducts } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { Metadata } from "next"
+import MicroSiteForm from "./_components/MicroSiteForm"
 
 // Force dynamic rendering since we depend on params
 export const dynamic = "force-dynamic"
@@ -15,7 +16,6 @@ interface PageProps {
 
 // Helper to generate color palette from primary color
 function generatePalette(primaryColor: string) {
-    // Simple hex processing helper
     const hex = primaryColor.replace('#', '')
     const r = parseInt(hex.substring(0, 2), 16)
     const g = parseInt(hex.substring(2, 4), 16)
@@ -36,7 +36,7 @@ function generatePalette(primaryColor: string) {
         primary: primaryColor,
         secondary: `#${lightR.toString(16).padStart(2, '0')}${lightG.toString(16).padStart(2, '0')}${lightB.toString(16).padStart(2, '0')}`,
         accent: `#${darkR.toString(16).padStart(2, '0')}${darkG.toString(16).padStart(2, '0')}${darkB.toString(16).padStart(2, '0')}`,
-        gradient: `linear-gradient(135deg, ${primaryColor}20 0%, ${primaryColor}05 50%, #ffffff 100%)`
+        gradient: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}05 50%, #f8fafc 100%)`
     }
 }
 
@@ -54,8 +54,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     return {
-        title: `${microsite[0].siteName} | Event Insurance`,
-        description: "Get instant accident and medical coverage for your activity.",
+        title: `${microsite[0].siteName} | Member Check-In`,
+        description: "Activate your included accident and medical coverage.",
     }
 }
 
@@ -80,8 +80,21 @@ export default async function MicrositePage({ params }: PageProps) {
     const qrCodeUrl = microsite.qrCodeUrl || "/placeholder-qr.png"
     const logoUrl = microsite.logoUrl || partner.logoUrl || "/placeholder-logo.png"
 
+    // Business specific copy
+    const businessCopy: Record<string, { headline: string; subtitle: string }> = {
+        gym: { headline: 'Protect Your Workout', subtitle: 'Get accident and medical coverage for your gym session today' },
+        climbing: { headline: 'Climb With Confidence', subtitle: 'Instant accident and medical coverage for your climbing session' },
+        yoga: { headline: 'Practice Peace of Mind', subtitle: 'Accident and medical protection for your yoga session' },
+        rental: { headline: 'Rent With Protection', subtitle: 'Coverage for your equipment rental today' },
+        fitness: { headline: 'Train With Confidence', subtitle: 'Same-day accident and medical coverage for your activity' },
+        other: { headline: 'Get Protected Today', subtitle: 'Instant event accident and medical coverage' }
+    }
+
+    const copy = businessCopy[partner.businessType] || businessCopy.other
+
     return (
-        <div className="min-h-screen relative overflow-hidden text-slate-900 font-sans" style={{ background: colors.gradient }}>
+        <div className="min-h-screen relative overflow-hidden text-slate-900 font-sans flex items-center justify-center p-4"
+            style={{ background: colors.gradient }}>
 
             {/* Background Orbs */}
             <div
@@ -92,94 +105,59 @@ export default async function MicrositePage({ params }: PageProps) {
                 className="fixed rounded-full blur-[80px] opacity-40 animate-float pointer-events-none"
                 style={{ width: 400, height: 400, background: `${colors.secondary}60`, bottom: -100, left: -100, animationDelay: '-7s' }}
             />
-            <div
-                className="fixed rounded-full blur-[80px] opacity-30 animate-float pointer-events-none"
-                style={{ width: 300, height: 300, background: `${colors.accent}30`, top: '50%', left: '50%', animationDelay: '-14s', transform: 'translate(-50%, -50%)' }}
-            />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="w-full max-w-[480px] relative z-10">
+                <div className="glass-card rounded-[32px] overflow-hidden shadow-2xl border border-white/50 backdrop-blur-xl bg-white/80">
 
-                {/* Header */}
-                <header className="text-center mb-12">
-                    <div className="glass-card inline-block p-8 rounded-3xl mb-8">
-                        <div className="w-32 h-32 mx-auto bg-white rounded-2xl flex items-center justify-center shadow-lg mb-6 overflow-hidden">
+                    <div className="text-center pt-10 pb-8 px-8 bg-gradient-to-b from-white/50 to-transparent">
+                        <div className="w-[100px] h-[100px] mx-auto bg-white rounded-3xl flex items-center justify-center shadow-md mb-6 p-4">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={logoUrl} alt={microsite.siteName} className="max-w-[80%] max-h-[80%] object-contain" />
+                            <img src={logoUrl} alt={microsite.siteName} className="w-full h-full object-contain" />
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 mb-2"
+                        <h1 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-slate-700"
                             style={{ backgroundImage: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%)` }}>
-                            {microsite.siteName}
+                            {copy.headline}
                         </h1>
-                        <p className="text-lg text-slate-500 font-medium">Partnered with Daily Event Insurance</p>
-                    </div>
-                </header>
+                        <p className="text-slate-500">{copy.subtitle}</p>
 
-                {/* Hero */}
-                <div className="glass-card rounded-[32px] p-8 md:p-16 text-center mb-12 relative overflow-hidden backdrop-blur-xl bg-white/70 border border-white/50 shadow-xl">
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Protect Your Activity Today</h2>
-                        <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10">
-                            Get instant accident and medical coverage for your next adventure.
-                        </p>
-
-                        <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold text-lg mb-10 shadow-lg"
+                        <div className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full text-white font-semibold text-sm shadow-sm"
                             style={{ background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%)` }}>
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                            Starting at just $4.99
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Included with Membership
+                        </div>
+                    </div>
+
+                    <div className="p-8 pt-0">
+                        <MicroSiteForm
+                            partnerId={partner.id}
+                            micrositeUrl={`https://dailyeventinsurance.com/${params.slug}`}
+                            colors={colors}
+                        />
+                    </div>
+
+                    <div className="text-center pb-8 px-8">
+                        <div className="relative flex items-center py-4">
+                            <div className="flex-grow border-t border-slate-200"></div>
+                            <span className="flex-shrink-0 mx-4 text-slate-400 text-sm">or scan QR code</span>
+                            <div className="flex-grow border-t border-slate-200"></div>
                         </div>
 
-                        <br />
-
-                        <a href={`/${params.slug}/quote`}
-                            className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-white font-bold text-xl shadow-xl hover:-translate-y-1 transition-transform duration-300"
-                            style={{ background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.accent} 100%)` }}>
-                            Get Covered Now
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
-                        </a>
-                    </div>
-                </div>
-
-                {/* Features */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                    {[
-                        { title: "Instant Coverage", desc: "Get your policy in under 2 minutes. Coverage starts immediately.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path> },
-                        { title: "Full Protection", desc: "Comprehensive accident and medical coverage for accidents and injuries.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> },
-                        { title: "Easy Claims", desc: "Simple online claims process if you ever need it.", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path> }
-                    ].map((feature, i) => (
-                        <div key={i} className="glass-card rounded-[24px] p-8 text-center backdrop-blur-xl bg-white/70 border border-white/50 shadow-lg hover:-translate-y-1 transition-transform duration-300">
-                            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center"
-                                style={{ background: `linear-gradient(135deg, ${colors.primary}20 0%, ${colors.secondary}30 100%)`, color: colors.primary }}>
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">{feature.icon}</svg>
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                            <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
+                        <div className="bg-white p-3 rounded-2xl shadow-sm inline-block border border-slate-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={qrCodeUrl} alt="QR Code" className="w-24 h-24 object-contain" />
                         </div>
-                    ))}
-                </div>
-
-                {/* QR Code */}
-                <div className="glass-card max-w-2xl mx-auto rounded-[32px] p-12 text-center backdrop-blur-xl bg-white/80 border border-white/50 shadow-xl">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-6">Scan to Get Started</h3>
-                    <div className="w-[240px] h-[240px] mx-auto mb-6 p-4 bg-white rounded-3xl shadow-inner border border-slate-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={qrCodeUrl} alt="QR Code" className="w-full h-full object-contain" />
                     </div>
-                    <p className="text-slate-500">Scan using your mobile phone camera</p>
+
+                    <div className="py-4 text-center bg-slate-50 border-t border-slate-100">
+                        <p className="text-xs text-slate-400">Powered by <a href="https://dailyeventinsurance.com" className="hover:text-teal-600 transition-colors">Daily Event Insurance</a></p>
+                    </div>
+
                 </div>
-
-                <footer className="text-center mt-16 text-slate-400 text-sm">
-                    <p>Powered by <a href="https://dailyeventinsurance.com" className="hover:text-teal-500 transition-colors">Daily Event Insurance</a></p>
-                </footer>
-
             </div>
 
             <style>{`
         .glass-card {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
         @keyframes float {
           0%, 100% { transform: translate(0, 0) scale(1); }

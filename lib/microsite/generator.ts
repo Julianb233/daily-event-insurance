@@ -933,7 +933,7 @@ function generateCheckinHTML(config: {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
-            Starting at $4.99
+            Included with Membership
           </div>
         </div>
 
@@ -965,7 +965,7 @@ function generateCheckinHTML(config: {
             </select>
           </div>
 
-          <button type="submit" class="submit-btn">Get My Coverage →</button>
+          <button type="submit" class="submit-btn">Activate Coverage →</button>
         </form>
 
         <div class="divider">or scan QR code</div>
@@ -1223,7 +1223,7 @@ export function generateQRCodeFlyer(config: {
     </div>
   </div>
 
-  <div class="price-banner">Starting at just $4.99</div>
+  <div class="price-banner">Included with Membership</div>
 
   <p class="url">${micrositeUrl}</p>
 

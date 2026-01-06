@@ -107,9 +107,9 @@ export function DEIIntroSection() {
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
           }}
         >
-          Insurance That Activates{" "}
+          Get Paid to{" "}
           <span className="text-teal-500">
-            Only When Events Happen
+            Protect Your Business
           </span>
         </motion.h1>
 
