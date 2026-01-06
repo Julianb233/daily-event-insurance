@@ -367,3 +367,56 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+/**
+ * PATCH /api/admin/partners
+ * Update partner branding details
+ */
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, businessName, primaryColor, logoUrl } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Partner ID required" },
+        { status: 400 }
+      )
+    }
+
+    if (!isDbConfigured()) {
+      return NextResponse.json({ success: true, message: "Mock update success" })
+    }
+
+    // 1. Update Partner Record
+    await db!
+      .update(partners)
+      .set({
+        businessName,
+        primaryColor,
+        logoUrl,
+        updatedAt: new Date()
+      })
+      .where(eq(partners.id, id))
+
+    // 2. Update Microsite Record (if exists) so it reflects immediately
+    // Note: The microsite generator reads from both tables, but primarily the Microsite table for these fields
+    await db!
+      .update(microsites)
+      .set({
+        primaryColor,
+        logoUrl,
+        updatedAt: new Date()
+      })
+      .where(eq(microsites.partnerId, id))
+
+    return NextResponse.json({ success: true })
+
+  } catch (error) {
+    console.error("[Admin Partners Update] Error:", error)
+    return NextResponse.json(
+      { success: false, error: "Failed to update partner" },
+      { status: 500 }
+    )
+  }
+}

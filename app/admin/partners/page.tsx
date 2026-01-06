@@ -24,7 +24,8 @@ import {
   ArrowUpDown,
   CheckCircle,
   Clock,
-  XCircle
+  XCircle,
+  Edit2
 } from "lucide-react"
 
 interface Partner {
@@ -108,6 +109,41 @@ export default function AdminPartnersPage() {
   const [partnerDocuments, setPartnerDocuments] = useState<any[]>([])
   const [viewDocument, setViewDocument] = useState<any | null>(null)
   const [loadingDocs, setLoadingDocs] = useState(false)
+
+  // Edit State
+  const [editingPartner, setEditingPartner] = useState<Partner | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleSavePartner = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingPartner) return
+
+    setIsSaving(true)
+    try {
+      const res = await fetch('/api/admin/partners', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingPartner.id,
+          businessName: editingPartner.businessName,
+          primaryColor: editingPartner.primaryColor,
+          logoUrl: editingPartner.logoUrl
+        })
+      })
+
+      if (res.ok) {
+        setEditingPartner(null)
+        fetchPartners() // Refresh list
+      } else {
+        alert('Failed to save changes')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Error saving changes')
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   // Fetch documents for a partner
   const fetchPartnerDocuments = async (partner: Partner) => {
@@ -495,6 +531,20 @@ export default function AdminPartnersPage() {
                             >
                               <QrCode className="w-4 h-4" />
                             </button>
+                            <button
+                              onClick={() => fetchPartnerDocuments(partner)}
+                              className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
+                              title="View Documents"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setEditingPartner(partner)}
+                              className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
+                              title="Edit Branding"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
                             {partner.websiteUrl && (
                               <a
                                 href={partner.websiteUrl}
@@ -514,10 +564,11 @@ export default function AdminPartnersPage() {
                               <FileText className="w-4 h-4" />
                             </button>
                             <button
-                              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                              title="More Actions"
+                              onClick={() => setEditingPartner(partner)}
+                              className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
+                              title="Edit Branding"
                             >
-                              <MoreVertical className="w-4 h-4" />
+                              <Edit2 className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -712,6 +763,97 @@ export default function AdminPartnersPage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Partner Modal */}
+        {editingPartner && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">Edit Branding</h3>
+                <button
+                  onClick={() => setEditingPartner(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <XCircle className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSavePartner} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
+                  <input
+                    type="text"
+                    value={editingPartner.businessName}
+                    onChange={e => setEditingPartner({ ...editingPartner, businessName: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Primary Color (Hex)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={editingPartner.primaryColor || '#000000'}
+                      onChange={e => setEditingPartner({ ...editingPartner, primaryColor: e.target.value })}
+                      className="h-10 w-10 rounded overflow-hidden border border-gray-300 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={editingPartner.primaryColor || ''}
+                      onChange={e => setEditingPartner({ ...editingPartner, primaryColor: e.target.value })}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 uppercase"
+                      pattern="^#[0-9A-Fa-f]{6}$"
+                      placeholder="#000000"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                  <input
+                    type="url"
+                    value={editingPartner.logoUrl || ''}
+                    onChange={e => setEditingPartner({ ...editingPartner, logoUrl: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                    placeholder="https://..."
+                  />
+                  {editingPartner.logoUrl && (
+                    <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200 flex justify-center">
+                      <img src={editingPartner.logoUrl} alt="Preview" className="h-12 object-contain" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditingPartner(null)}
+                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="flex-1 px-4 py-2 text-white bg-teal-600 hover:bg-teal-700 rounded-lg font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isSaving ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save Changes'
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
