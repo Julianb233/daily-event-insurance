@@ -607,7 +607,7 @@ function generateCheckinHTML(config: {
   qrCodeDataUrl: string
   micrositeUrl: string
 }): string {
-  const { partnerId, partnerName, logoUrl, primaryColor, businessType, qrCodeDataUrl, micrositeUrl } = config
+  const { partnerId, partnerName, logoUrl, primaryColor, businessType, branding, micrositeUrl } = config
   const colors = extractColorsFromBranding(primaryColor)
 
   // Business-specific copy
@@ -675,8 +675,16 @@ function generateCheckinHTML(config: {
 
     .header {
       text-align: center;
-      padding: 2.5rem 2rem 2rem;
-      background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+      padding: 3rem 2rem 2rem;
+      position: relative;
+      /* If a hero image exists, we can use it as a background with overlay */
+      ${config.branding?.images?.[0] ? `
+        background-image: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8)), url('${config.branding.images[0]}');
+        background-size: cover;
+        background-position: center;
+      ` : `
+        background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+      `}
     }
 
     .logo-wrapper {
@@ -689,6 +697,8 @@ function generateCheckinHTML(config: {
       align-items: center;
       justify-content: center;
       box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 10;
     }
 
     .logo { max-width: 70px; max-height: 70px; object-fit: contain; }
@@ -696,27 +706,13 @@ function generateCheckinHTML(config: {
     h1 {
       font-size: 1.75rem;
       font-weight: 700;
-      background: linear-gradient(135deg, ${primaryColor}, ${colors.accent});
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #1e293b;
       margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 10;
     }
 
-    .subtitle { color: #64748b; font-size: 1rem; }
-
-    .price-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, ${primaryColor}, ${colors.accent});
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 100px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-    }
+    .subtitle { color: #64748b; font-size: 1rem; position: relative; z-index: 10; }
 
     .form-section {
       padding: 2rem;
@@ -778,27 +774,6 @@ function generateCheckinHTML(config: {
 
     .submit-btn:active { transform: translateY(0); }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1.5rem 0;
-      color: #94a3b8;
-      font-size: 0.875rem;
-    }
-
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #e2e8f0;
-    }
-
-    .qr-section {
-      text-align: center;
-      padding: 0 2rem 2rem;
-    }
-
     .qr-wrapper {
       display: inline-block;
       background: white;
@@ -856,12 +831,6 @@ function generateCheckinHTML(config: {
           </div>
           <h1>${copy.headline}</h1>
           <p class="subtitle">${copy.subtitle}</p>
-          <div class="price-tag">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-            Included with Membership
-          </div>
         </div>
 
         <form id="checkin-form" class="form-section">
@@ -895,38 +864,8 @@ function generateCheckinHTML(config: {
             </select>
           </div>
 
-          <button type="submit" class="submit-btn">Activate Coverage →</button>
+          <button type="submit" class="submit-btn" id="submit-btn">Activate Coverage →</button>
         </form>
-
-        <div class="referral-form">
-  <h3>Sign Up for More Benefits</h3>
-  <form id="referral-form" class="form-section">
-    <div class="form-group">
-      <label for="refName">Full Name</label>
-      <input type="text" id="refName" name="contactName" placeholder="Enter your full name" required />
-    </div>
-    <div class="form-group">
-      <label for="refEmail">Email</label>
-      <input type="email" id="refEmail" name="email" placeholder="you@example.com" required />
-    </div>
-    <div class="form-group">
-      <label for="refPhone">Phone (optional)</label>
-      <input type="tel" id="refPhone" name="phone" placeholder="(555) 123-4567" />
-    </div>
-    <input type="hidden" name="partnerId" value="${partnerId}" />
-    <input type="hidden" name="vertical" value="${businessType}" />
-    <input type="hidden" name="source" value="microsite-referral" />
-    <button type="submit" class="cta-button">Join &amp; Earn</button>
-  </form>
-</div>
-<div class="divider">or scan QR code</div>
-
-        <div class="qr-section">
-          <div class="qr-wrapper">
-            <img src="${qrCodeDataUrl}" alt="QR Code" class="qr-code" />
-          </div>
-          <p class="qr-text">Scan with your phone to continue on mobile</p>
-        </div>
 
         <div class="footer">
           <p>Powered by <a href="https://dailyeventinsurance.com">Daily Event Insurance</a></p>
