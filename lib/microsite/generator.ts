@@ -229,7 +229,7 @@ export function generateStandaloneHTML(config: {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>${partnerName} - Check In</title>
   
   <!-- Open Graph -->
@@ -238,170 +238,301 @@ export function generateStandaloneHTML(config: {
   <meta property="og:image" content="${ogImage}" />
   <meta property="og:type" content="website" />
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    /* Premium Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: ${primaryColor};
+      --primary-rgb: ${parseInt(primaryColor.slice(1,3), 16)}, ${parseInt(primaryColor.slice(3,5), 16)}, ${parseInt(primaryColor.slice(5,7), 16)};
+    }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
-      background: linear-gradient(135deg, ${primaryColor}15 0%, ${colors.secondary}10 50%, #f8fafc 100%);
-      color: #1e293b;
+      color: #0f172a;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
-    }
-
-    /* Ambient Background */
-    .orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.3; pointer-events: none; z-index: 0; }
-    .orb-1 { width: 500px; height: 500px; background: ${primaryColor}; top: -150px; right: -150px; }
-    .orb-2 { width: 400px; height: 400px; background: ${colors.secondary}; bottom: -100px; left: -100px; }
-
-    .container {
-      max-width: 480px;
-      width: 100%;
+      padding: 1.5rem;
       position: relative;
-      z-index: 1;
+      /* Background Image Logic */
+      ${config.branding?.images?.[0] ? `
+        background-image: url('${config.branding.images[0]}');
+      ` : `
+        background-color: #f8fafc;
+      `}
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
 
+    /* Cinematic Overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.4));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 0;
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 10;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Card */
     .glass-card {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 24px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 32px;
+      box-shadow: 
+        0 20px 40px -12px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
       overflow: hidden;
-      padding: 2rem;
+      display: flex;
+      flex-direction: column;
     }
 
+    /* Header Section */
     .header {
+      padding: 2.5rem 2rem 1.5rem;
       text-align: center;
-      margin-bottom: 2rem;
     }
 
-    .logo-container {
-      width: 100px;
-      height: 100px;
+    .logo-wrapper {
+      width: 88px;
+      height: 88px;
       margin: 0 auto 1.5rem;
       background: white;
-      border-radius: 20px;
+      border-radius: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+      position: relative;
     }
     
-    .logo { 
-      max-width: 80%; 
-      max-height: 80%; 
-      object-fit: contain; 
+    .logo-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      border: 1px solid rgba(0,0,0,0.04);
     }
 
-    .partner-initial {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: ${primaryColor};
+    .logo { 
+      max-width: 65%; 
+      max-height: 65%; 
+      object-fit: contain; 
     }
 
     h1 {
       font-size: 1.5rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
       color: #1e293b;
       margin-bottom: 0.5rem;
+      line-height: 1.2;
     }
 
     .subtitle {
       color: #64748b;
-      font-size: 0.95rem;
+      font-size: 0.9375rem;
       line-height: 1.5;
+      font-weight: 500;
+    }
+
+    /* Form Section */
+    .form-section {
+      padding: 1rem 2rem 2.5rem;
     }
 
     .form-group {
       margin-bottom: 1.25rem;
+      position: relative;
     }
 
     label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: #475569;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
       margin-bottom: 0.5rem;
+      display: block;
+      margin-left: 0.25rem;
     }
 
     input, select {
       width: 100%;
-      padding: 0.875rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-family: inherit;
-      transition: all 0.2s;
+      padding: 1rem 1.25rem;
       background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #0f172a;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      appearance: none;
+      -webkit-appearance: none;
     }
 
     input:focus, select:focus {
       outline: none;
-      border-color: ${primaryColor};
-      box-shadow: 0 0 0 3px ${primaryColor}20;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+      background: white;
+      transform: translateY(-1px);
+    }
+    
+    /* Custom Select Arrow */
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '';
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 6px;
+      background: #64748b;
+      clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+      pointer-events: none;
     }
 
+    .row { display: flex; gap: 1rem; }
+    .row > * { flex: 1; }
+
+    /* Button */
     .submit-btn {
       width: 100%;
-      padding: 1rem;
-      background: ${primaryColor};
-      color: white;
+      padding: 1.25rem;
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
+      border-radius: 18px;
+      font-size: 1.0625rem;
       font-weight: 600;
+      color: white;
+      background: linear-gradient(145deg, var(--primary), ${colors.accent});
       cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 1rem;
-      box-shadow: 0 4px 12px ${primaryColor}40;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 20px -5px rgba(var(--primary-rgb), 0.4);
+      margin-top: 0.5rem;
+      position: relative;
+      overflow: hidden;
     }
 
     .submit-btn:hover {
-      filter: brightness(110%);
-      transform: translateY(-1px);
-    }
-
-    .waiver-text {
-      font-size: 0.75rem;
-      color: #94a3b8;
-      margin-top: 1.5rem;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .success-view {
-      display: none;
-      text-align: center;
-      padding: 2rem 0;
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 15px 30px -8px rgba(var(--primary-rgb), 0.5);
     }
     
-    .success-icon {
-      width: 64px;
-      height: 64px;
-      background: #10b981;
-      color: white;
-      border-radius: 50%;
+    .submit-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      transform: none;
+    }
+
+    /* HoneyPot */
+    .website-url-group { display: none; visibility: hidden; }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 1.5rem 2rem 2.5rem;
+      background: rgba(255,255,255,0.5);
+      border-top: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .feature-item { text-align: center; }
+
+    .feature-icon-box {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 0.75rem;
+      border-radius: 12px;
+      background: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 1.5rem;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .feature-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.25rem;
+    }
+
+    .feature-desc {
+      font-size: 0.6875rem;
+      color: #94a3b8;
+      line-height: 1.3;
+    }
+
+    /* Success View */
+    .success-view {
+      display: none;
+      padding: 4rem 2rem;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .success-icon-lg {
+      width: 80px;
+      height: 80px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      margin: 0 auto 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.4);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+      opacity: 0.8;
     }
     
-    .success-icon svg { width: 32px; height: 32px; }
+    .footer a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
 
   </style>
 </head>
 <body>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+  
+  <div class="bg-overlay"></div>
 
   <div class="container">
     <div class="glass-card">
@@ -410,105 +541,137 @@ export function generateStandaloneHTML(config: {
       <div id="form-view">
         <div class="header">
           ${logoUrl && logoUrl !== '/placeholder-logo.png' 
-            ? `<div class="logo-container"><img src="${logoUrl}" alt="${partnerName}" class="logo"></div>`
-            : `<div class="logo-container"><img src="/images/logo-color.png" alt="Daily Event Insurance" class="logo"></div>`
+            ? `<div class="logo-wrapper"><img src="${logoUrl}" alt="${partnerName}" class="logo"></div>`
+            : `<div class="logo-wrapper"><img src="/images/logo-color.png" alt="Daily Event Insurance" class="logo"></div>`
           }
           <h1>${headline}</h1>
           <p class="subtitle">${subtitle}</p>
         </div>
 
-        <form id="checkin-form">
+        <form id="checkin-form" class="form-section">
+          <!-- Honeypot for bots -->
+          <div class="website-url-group">
+            <label for="website-url">Website</label>
+            <input type="text" id="website-url" name="website_url" tabindex="-1" autocomplete="off">
+          </div>
+          
+          <input type="hidden" name="partnerId" value="${partnerId}" />
+          <input type="hidden" name="vertical" value="${config.businessType || 'fitness'}" />
+          <input type="hidden" name="source" value="microsite-kiosk" />
+
           <div class="form-group">
             <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" placeholder="First and Last Name" required />
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required autocomplete="name" />
           </div>
 
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+            <input type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email" />
           </div>
 
           <div class="form-group">
-            <label for="activity">Activity</label>
-            <select id="activity" name="activity">
-              <option value="standard">Standard Check-In</option>
-              <option value="class">Class / Session</option>
-              <option value="event">Private Event</option>
-              <option value="other">Other</option>
-            </select>
+            <label for="activity">Activity Type</label>
+            <div class="select-wrapper">
+              <select id="activity" name="activity">
+                <option value="day-pass">Day Pass / Single Visit</option>
+                <option value="class">Class / Group Session</option>
+                <option value="rental">Equipment Rental</option>
+                <option value="event">Private Event Guest</option>
+                <option value="other">Other Activity</option>
+              </select>
+            </div>
           </div>
 
-          <button type="submit" class="submit-btn" id="submit-btn">Check In</button>
-          
-          <p class="waiver-text">
-            By checking in, you acknowledge that insurance coverage for this activity is provided by Daily Event Insurance under the terms of the master policy.
-          </p>
+          <button type="submit" class="submit-btn" id="submit-btn">
+            Activate Coverage
+          </button>
         </form>
-      </div>
 
-      </div>
+        <!-- Features Grid -->
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <div class="feature-title">Instant</div>
+            <div class="feature-desc">Active immediately</div>
+          </div>
+          
+          <div class="feature-item">
+            <div class="feature-icon-box">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div class="feature-title">Protected</div>
+            <div class="feature-desc">Med Included</div>
+          </div>
 
-      <!-- Features Section -->
-      <div class="features-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding: 0 2rem 2rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 1rem; padding-top: 2rem;">
-        <div style="text-align: center;">
-          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
-            <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 6v6l4 2"></path>
-            </svg>
+          <div class="feature-item">
+            <div class="feature-icon-box">
+               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                <path d="M8 21h8M12 17v4"></path>
+              </svg>
+            </div>
+            <div class="feature-title">Simple</div>
+            <div class="feature-desc">No paperwork</div>
           </div>
-          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Instant</h3>
-          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">Active now</p>
-        </div>
-        
-        <div style="text-align: center;">
-          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
-             <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
-          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Protected</h3>
-          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">Med Included</p>
-        </div>
-
-        <div style="text-align: center;">
-          <div style="width: 44px; height: 44px; background: ${primaryColor}10; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; color: ${primaryColor};">
-             <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-              <path d="M8 21h8M12 17v4"></path>
-            </svg>
-          </div>
-          <h3 style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.2rem; color: #334155;">Easy</h3>
-          <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.3;">No paperwork</p>
         </div>
       </div>
 
       <!-- Success View -->
       <div id="success-view" class="success-view">
-        <div class="success-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <div class="success-icon-lg">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
             <path d="M20 6L9 17l-5-5"></path>
           </svg>
         </div>
-        <h2>You're Signed In!</h2>
-        <p style="color: #64748b; margin-top: 0.5rem;">Your coverage is now active.</p>
-        <p style="font-size: 0.875rem; color: #94a3b8; margin-top: 2rem;">Redirecting...</p>
+        <h2 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.5rem;">You're Checked In!</h2>
+        <p style="color: #64748b;">Your insurance coverage is now active.</p>
+        <div style="margin-top: 2rem; padding: 1rem; background: #f1f5f9; border-radius: 12px; font-size: 0.875rem; color: #475569;">
+          Have a great session! This screen will refresh automatically.
+        </div>
       </div>
 
+    </div>
+    
+    <div class="footer">
+      Secured by Daily Event Insurance • <a href="https://dailyeventinsurance.com/privacy" target="_blank">Privacy</a>
     </div>
   </div>
 
   <script>
     document.getElementById('checkin-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      // Honeypot check
+      const honey = document.getElementById('website-url').value;
+      if (honey) {
+        console.warn('Bot detected');
+        return; // Silent fail for bots
+      }
+
       const btn = document.getElementById('submit-btn');
       const originalText = btn.textContent;
-      btn.textContent = 'Checking in...';
+      
+      // Loading State
+      btn.innerHTML = '<span style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle;"></span> Processing...';
       btn.disabled = true;
 
+      // Add rotation animation style if not present
+      if (!document.getElementById('spin-anim')) {
+        const style = document.createElement('style');
+        style.id = 'spin-anim';
+        style.innerHTML = '@keyframes spin { to { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+      }
+
       const formData = {
-      const formData = {
-        partnerId: '${partnerId}', // We need to inject this from config
+        partnerId: '${partnerId}',
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
         activity: document.getElementById('activity').value,
@@ -524,13 +687,22 @@ export function generateStandaloneHTML(config: {
         });
 
         if (response.ok) {
-          document.getElementById('form-view').style.display = 'none';
-          document.getElementById('success-view').style.display = 'block';
+          // Success Transition
+          const formView = document.getElementById('form-view');
+          formView.style.opacity = '0';
+          formView.style.transform = 'translateY(-10px)';
+          formView.style.transition = 'all 0.3s ease';
+          
+          setTimeout(() => {
+            formView.style.display = 'none';
+            const successView = document.getElementById('success-view');
+            successView.style.display = 'block';
+          }, 300);
           
           // Reset after delay
           setTimeout(() => {
              window.location.reload();
-          }, 3000);
+          }, 4000); // 4 seconds to read success message
         } else {
           throw new Error('Check-in failed');
         }

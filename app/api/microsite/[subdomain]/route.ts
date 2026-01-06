@@ -60,8 +60,8 @@ export async function GET(
     return new NextResponse(html, {
         headers: {
             "Content-Type": "text/html",
-            // Cache for 1 minute to reduce DB load but allow reasonably fast updates
-            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300"
+            // Cache for 1 hour to reduce DB load
+            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300"
         },
     })
 }
