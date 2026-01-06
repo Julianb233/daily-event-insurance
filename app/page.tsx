@@ -7,7 +7,6 @@ import { HowItWorks } from "@/components/how-it-works"
 import Benefits from "@/components/benefits"
 import { DEIIntroSection } from "@/components/dei-intro-section"
 import { DEITrustBadges } from "@/components/dei-trust-badges"
-import { HiqorValueProp } from "@/components/hiqor-value-prop"
 import { FounderStory } from "@/components/founder-story"
 import { TestimonialsSection } from "@/components/dei-testimonials-section"
 import { MidPageCTA } from "@/components/dei-mid-page-cta"
@@ -17,14 +16,6 @@ import { RevenueCalculator } from "@/components/revenue-calculator"
 import InsuranceModes from "@/components/insurance-modes"
 import { CategoryShowcase } from "@/components/category-showcase"
 import { ActiveGuardSection } from "@/components/activeguard-section"
-
-// New HIQOR positioning sections
-import { WhoWeAreSection } from "@/components/who-we-are-section"
-import { ProblemWeSolveSection } from "@/components/problem-we-solve-section"
-import { DataAdvantageSection } from "@/components/data-advantage-section"
-import { HowTheModelWorksSection } from "@/components/how-the-model-works-section"
-import { WhyThisMattersSection } from "@/components/why-this-matters-section"
-import { MissionVisionSection } from "@/components/mission-vision-section"
 
 export default function Home() {
   return (
@@ -38,64 +29,43 @@ export default function Home() {
       {/* 3. DEI Trust Badges - Stats and partner types */}
       <DEITrustBadges />
 
-      {/* 4. Who We Are - Infrastructure positioning */}
-      <WhoWeAreSection />
-
-      {/* 5. Problem We Solve - Static vs dynamic risk */}
-      <ProblemWeSolveSection />
-
-      {/* 6. HIQOR Value Proposition - Event-activated insurance */}
-      <HiqorValueProp />
-
-      {/* 7. Data Advantage - Experience intelligence & digital health */}
-      <DataAdvantageSection />
-
-      {/* 8. How The Model Works - Carrier-funded acquisition engine (PROMINENT) */}
-      <HowTheModelWorksSection />
-
-      {/* 9. Why This Matters - Three-audience value props */}
-      <WhyThisMattersSection />
-
-      {/* 10. How It Works - 3-step partner process */}
+      {/* 4. How It Works - 3-step partner process */}
       <HowItWorks />
 
-      {/* 11. Category Showcase - Industries served */}
+      {/* 5. Category Showcase - Industries served */}
       <CategoryShowcase />
 
-      {/* 12. ActiveGuard Section - Monthly subscription product */}
+      {/* 6. ActiveGuard Section - Monthly subscription product */}
       <ActiveGuardSection />
 
-      {/* 13. Founder Story - Origin story */}
+      {/* 7. Founder Story - Origin story */}
       <FounderStory />
 
-      {/* 14. Revenue Calculator - Earnings calculator */}
+      {/* 8. Revenue Calculator - Earnings calculator */}
       <RevenueCalculator />
 
-      {/* 15. Testimonials Section - Social proof */}
+      {/* 9. Testimonials Section - Social proof */}
       <TestimonialsSection />
 
-      {/* 16. Timeline Section - Implementation timeline */}
+      {/* 10. Timeline Section - Implementation timeline */}
       <TimelineSection />
 
-      {/* 17. Benefits - Partner benefits */}
+      {/* 11. Benefits - Partner benefits */}
       <Benefits />
 
-      {/* 18. Insurance Modes - Coverage options */}
-      <InsuranceModes />
+      {/* 12. Insurance (Mandatory Only) */}
+      <InsuranceModes variant="requiredOnly" />
 
-      {/* 19. Mission & Vision - Our purpose */}
-      <MissionVisionSection />
-
-      {/* 20. Mid Page CTA - Floating sticky CTA */}
+      {/* 13. Mid Page CTA - Floating sticky CTA */}
       <MidPageCTA />
 
-      {/* 21. FAQ Section - Frequently asked questions */}
+      {/* 14. FAQ Section - Frequently asked questions */}
       <FAQSection />
 
-      {/* 22. Apply Section - Partner application form */}
+      {/* 15. Apply Section - Partner application form */}
       <ApplySection />
 
-      {/* 23. Footer */}
+      {/* 16. Footer */}
       <Footer />
     </main>
   )

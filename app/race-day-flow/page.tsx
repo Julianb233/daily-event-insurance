@@ -106,7 +106,7 @@ export default function RaceDayFlowPage() {
             </h1>
 
             <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Visualize the seamless journey from a racer's ticket purchase to the activation of their comprehensive race day insurance coverage.
+              Visualize the seamless journey from a racer&apos;s ticket purchase to the activation of their comprehensive race day insurance coverage.
             </p>
           </motion.div>
         </div>
