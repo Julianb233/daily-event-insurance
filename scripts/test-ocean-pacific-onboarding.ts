@@ -49,6 +49,7 @@ async function run() {
             logoUrl: null, // Clear logo to force Fetch
             brandingImages: [], // Clear images
             agreementSigned: true, // Ensure agreement is marked signed
+            integrationType: "manual" // Force standalone microsite
         }).where(eq(partners.id, partner.id)).returning()
         partner = updated
     } else {
@@ -61,7 +62,8 @@ async function run() {
             contactEmail: "test@oceanpacificgym.com",
             websiteUrl,
             status: "pending_onboarding",
-            agreementSigned: true
+            agreementSigned: true,
+            integrationType: "manual" // Force standalone microsite
         }).returning()
         partner = newPartner
     }

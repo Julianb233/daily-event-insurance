@@ -7,9 +7,19 @@ import { notFound } from "next/navigation"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { subdomain: string } }
+    { params }: { params: Promise<{ subdomain: string }> }
 ) {
-    const subdomain = params.subdomain
+    // In Next.js 15, params is a Promise
+    const resolvedParams = await params
+    let subdomain = resolvedParams?.subdomain
+
+    // Fallback: Extract from URL if params is missing (rewrite edge case)
+    if (!subdomain) {
+        const parts = request.nextUrl.pathname.split('/')
+        subdomain = parts[parts.length - 1]
+    }
+
+    console.log(`[Microsite API] Fetching for subdomain: ${subdomain}`)
 
     if (!subdomain) {
         return new NextResponse("Subdomain required", { status: 400 })

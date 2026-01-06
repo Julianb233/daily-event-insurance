@@ -32,6 +32,7 @@ const publicRoutes = [
   "/sign-up",
   "/api/auth",
   "/api/webhook", // Webhooks need to be public
+  "/api/microsite", // Microsite public endpoint
 ]
 
 // Helper to check if user has required role
