@@ -178,25 +178,25 @@ function ProblemSolutionSection() {
             className="relative bg-teal-900 rounded-2xl p-8 overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl" />
-            <div className="relative z-10">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6">
+            <div className="relative z-10 text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-6 mx-auto">
                 <Activity className="w-6 h-6 text-red-600" />
               </div>
               <h3 className="text-2xl font-black uppercase text-white mb-4">The Problem</h3>
               <ul className="space-y-3 text-slate-300">
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <span className="text-red-400 mt-1">✗</span>
                   <span>Your members need liability coverage but don&apos;t know where to get it</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <span className="text-red-400 mt-1">✗</span>
                   <span>You&apos;re exposed to potential claims without member insurance</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <span className="text-red-400 mt-1">✗</span>
                   <span>Day passes and drop-ins leave money on the table</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <span className="text-red-400 mt-1">✗</span>
                   <span>Traditional insurance is complicated and slow to set up</span>
                 </li>
@@ -212,25 +212,25 @@ function ProblemSolutionSection() {
             viewport={{ once: true }}
             className="relative bg-gradient-to-br from-teal-600 to-teal-500 rounded-2xl p-8 overflow-hidden"
           >
-                        <div className="relative z-10">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mb-6">
+            <div className="relative z-10 text-center">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mb-6 mx-auto">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-2xl font-black uppercase text-white mb-4">The Solution</h3>
               <ul className="space-y-3 text-white/90">
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
                   <span>Embedded insurance at checkout - members get coverage instantly</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
                   <span>Reduce your liability exposure with every covered member</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
                   <span>Earn up to 35% commission on every $40 policy sold</span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start justify-center gap-3 text-center">
                   <CheckCircle2 className="w-5 h-5 text-teal-100 mt-1 flex-shrink-0" />
                   <span>5-minute integration with your POS or check-in system</span>
                 </li>
@@ -297,15 +297,15 @@ function HowItWorksSection() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className={`relative bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full overflow-hidden group hover:scale-105 transition-transform duration-300`}>
+              <div className={`relative bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full overflow-hidden group hover:scale-105 transition-transform duration-300 text-center`}>
                 
                 {/* Number Badge */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl font-black text-teal-600">{step.number}</span>
                 </div>
 
                 <div className="relative z-10">
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-6 mx-auto">
                     <step.icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-2xl font-black uppercase text-white mb-4">
@@ -391,13 +391,13 @@ function GymBenefitsSection() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="relative bg-teal-800/50 backdrop-blur-sm rounded-2xl p-8 border border-teal-500/20 overflow-hidden group"
+              className="relative bg-teal-800/50 backdrop-blur-sm rounded-2xl p-8 border border-teal-500/20 overflow-hidden group text-center"
             >
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-teal-600/0 to-teal-500/0 group-hover:from-teal-600/10 group-hover:to-teal-500/10 transition-all duration-300" />
 
               <div className="relative z-10">
-                <div className={`w-12 h-12 ${benefit.color} rounded-lg flex items-center justify-center mb-6`}>
+                <div className={`w-12 h-12 ${benefit.color} rounded-lg flex items-center justify-center mb-6 mx-auto`}>
                   <benefit.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-black uppercase text-white mb-4">
@@ -543,7 +543,7 @@ function RevenueCalculatorSection() {
               </div>
 
               <div className="bg-white rounded-2xl p-6">
-                <div className="flex items-center gap-3 text-teal-700">
+                <div className="flex items-center justify-center gap-3 text-teal-700 text-center">
                   <TrendingUp className="w-6 h-6" />
                   <div>
                     <div className="font-black text-lg">100% Passive Income</div>
@@ -610,7 +610,7 @@ function TestimonialSection() {
               Our members love the convenience, and we love the passive revenue. It&apos;s a complete win-win.&quot;
             </blockquote>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-4 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-full flex items-center justify-center">
                 <span className="text-2xl font-black text-white">SM</span>
               </div>

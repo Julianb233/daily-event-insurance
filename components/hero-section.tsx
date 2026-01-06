@@ -25,7 +25,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-center lg:text-left space-y-8"
+            className="text-center space-y-8"
           >
             {/* Headline */}
             <motion.h1
@@ -61,7 +61,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-              className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
+              className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed"
             >
               Your members need protection. You deserve a new revenue stream. We make both happen—instantly.
               <span className="block mt-2 font-medium text-slate-700">
@@ -74,7 +74,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               {/* Primary CTA */}
               <motion.button
@@ -106,7 +106,7 @@ export default function HeroSection() {
               className="space-y-4 pt-4"
             >
               {/* Primary Trust Indicators */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -128,7 +128,7 @@ export default function HeroSection() {
               </div>
 
               {/* Urgency Banner - Compact */}
-              <div className="max-w-xl mx-auto lg:mx-0">
+              <div className="max-w-xl mx-auto">
                 <UrgencyBanner variant="social-proof" compact />
               </div>
             </motion.div>

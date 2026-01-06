@@ -235,9 +235,9 @@ export default function ForAdventurePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-slate-50 rounded-2xl p-8 border border-slate-200"
+                className="bg-slate-50 rounded-2xl p-8 border border-slate-200 text-center"
               >
-                <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4">
+                <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4 mx-auto">
                   <item.icon className="w-7 h-7 text-teal-500" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
@@ -320,11 +320,11 @@ export default function ForAdventurePage() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                <div className="bg-white rounded-2xl p-8 border border-teal-200 hover:border-teal-400 transition-all">
-                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
+                <div className="bg-white rounded-2xl p-8 border border-teal-200 hover:border-teal-400 transition-all text-center">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
                     <span className="text-white font-black text-lg">{item.step}</span>
                   </div>
-                  <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4 mt-4">
+                  <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4 mt-4 mx-auto">
                     <item.icon className="w-7 h-7 text-teal-500" />
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-3">{item.title}</h3>
@@ -370,7 +370,7 @@ export default function ForAdventurePage() {
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05 }}
-                className={`bg-gradient-to-br ${activity.color} rounded-xl p-6 text-white cursor-pointer`}
+                className={`bg-gradient-to-br ${activity.color} rounded-xl p-6 text-white cursor-pointer text-center flex flex-col items-center`}
               >
                 <activity.icon className="w-8 h-8 mb-3" />
                 <h3 className="text-xl font-bold">{activity.title}</h3>
@@ -445,9 +445,9 @@ export default function ForAdventurePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white/5 border border-teal-500/20 rounded-2xl p-8 hover:bg-white/10 transition-all"
+                className="bg-white/5 border border-teal-500/20 rounded-2xl p-8 hover:bg-white/10 transition-all text-center"
               >
-                <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4">
+                <div className="w-14 h-14 rounded-xl bg-teal-500/20 flex items-center justify-center mb-4 mx-auto">
                   <benefit.icon className="w-7 h-7 text-teal-400" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">{benefit.title}</h3>
@@ -487,11 +487,11 @@ export default function ForAdventurePage() {
             <blockquote className="text-2xl md:text-3xl font-bold mb-8 leading-relaxed">
               &quot;Daily Event Insurance transformed how we handle liability. Our guests love the instant coverage, and we earn commission on every sale. It&apos;s a win-win.&quot;
             </blockquote>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4">
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
                 <Mountain className="w-8 h-8" />
               </div>
-              <div className="text-left">
+              <div className="text-center">
                 <p className="font-bold text-lg">Sarah Mitchell</p>
                 <p className="text-teal-100">Operations Director, Summit Zip Adventures</p>
               </div>

@@ -168,7 +168,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
               {/* Icon badge */}
-              <div className="absolute bottom-3 left-4">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
                 <motion.div
                   className={`flex items-center justify-center w-11 h-11 bg-gradient-to-br ${industry.gradient} rounded-xl shadow-lg shadow-teal-500/25`}
                   animate={{ scale: isHovered ? 1.1 : 1 }}
@@ -180,7 +180,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
             </div>
 
             {/* Content */}
-            <div className="p-5">
+            <div className="p-5 text-center">
               {/* Shimmer effect */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full"
@@ -198,7 +198,7 @@ function IndustryCard({ industry, index }: { industry: Industry; index: number }
 
               {/* Learn More CTA */}
               <motion.div
-                className="flex items-center gap-2 text-teal-600 font-semibold text-sm"
+                className="flex items-center justify-center gap-2 text-teal-600 font-semibold text-sm"
                 initial={{ x: 0 }}
                 animate={{ x: isHovered ? 5 : 0 }}
                 transition={{ duration: 0.3 }}

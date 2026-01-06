@@ -153,13 +153,13 @@ function RentalDilemmaSection() {
               viewport={{ once: true }}
               className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200"
             >
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
+              <div className="flex flex-col items-center text-center gap-4">
                 <div className="text-4xl flex-shrink-0">{item.icon}</div>
                 <div className="flex-1">
                   <h3 className="text-xl font-black text-slate-900 mb-2 uppercase">
                     {item.problem}
                   </h3>
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start justify-center gap-2">
                     <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                     <p className="text-slate-600 leading-relaxed">
                       {item.solution}
@@ -229,13 +229,13 @@ function HowItWorksSection() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className={`bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full`}>
-                <div className="absolute -top-6 left-8">
+              <div className={`bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full text-center`}>
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2">
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-teal-600 font-black text-xl shadow-lg">
                     {step.number}
                   </div>
                 </div>
-                <div className="mt-8 mb-6">
+                <div className="mt-8 mb-6 flex justify-center">
                   <step.icon className="w-12 h-12 text-white" />
                 </div>
                 <h3 className="text-2xl font-black uppercase text-white mb-4">
@@ -329,9 +329,9 @@ function CoverageTypesSection() {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-teal-800/50 backdrop-blur-sm rounded-2xl p-6 border border-teal-500/20 hover:border-teal-500/40 transition-all"
+              className="bg-teal-800/50 backdrop-blur-sm rounded-2xl p-6 border border-teal-500/20 hover:border-teal-500/40 transition-all text-center"
             >
-              <type.icon className="w-10 h-10 text-teal-400 mb-4" />
+              <type.icon className="w-10 h-10 text-teal-400 mb-4 mx-auto" />
               <h3 className="text-xl font-black uppercase text-white mb-2">
                 {type.title}
               </h3>
@@ -340,7 +340,7 @@ function CoverageTypesSection() {
               </p>
               <div className="space-y-2">
                 {type.examples.map((example, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm">
+                  <div key={i} className="flex items-center justify-center gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" />
                     <span className="text-slate-400">{example}</span>
                   </div>
@@ -411,7 +411,7 @@ function BusinessBenefitsSection() {
               viewport={{ once: true }}
               className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
             >
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-6">
+              <div className="flex flex-col items-center text-center gap-6">
                 <div className="bg-white/20 rounded-xl p-4 flex-shrink-0">
                   <benefit.icon className="w-8 h-8 text-white" />
                 </div>
@@ -473,7 +473,7 @@ function TestimonialSection() {
               <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-cyan-500 rounded-full flex items-center justify-center">
                 <span className="text-2xl font-black text-white">MR</span>
               </div>
-              <div className="text-left">
+              <div className="text-center">
                 <div className="font-black text-slate-900 text-lg">Mike Rodriguez</div>
                 <div className="text-slate-600">Owner, Pacific Coast Bike Rentals</div>
                 <div className="text-sm text-teal-600 font-bold">Santa Monica, CA</div>

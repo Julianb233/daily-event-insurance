@@ -69,10 +69,10 @@ function WhyCarrierCard({ item, index }: { item: typeof whyCarriersPay[0]; index
         />
 
         {/* Card */}
-        <div className="relative h-full bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-slate-700/50 hover:border-teal-500/50 transition-all duration-500 overflow-hidden">
+        <div className="relative h-full bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-slate-700/50 hover:border-teal-500/50 transition-all duration-500 overflow-hidden text-center">
           {/* Icon */}
           <motion.div
-            className="w-14 h-14 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-4"
+            className="w-14 h-14 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-4 mx-auto"
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.3 }}
           >
@@ -181,8 +181,8 @@ export function HowTheModelWorksSection() {
               {/* Decorative glow */}
               <div className="absolute top-0 right-0 w-40 h-40 bg-teal-500/10 rounded-full blur-3xl" />
 
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
+              <div className="relative z-10 text-center">
+                <div className="flex flex-col items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
                     <Calendar className="w-6 h-6 text-white" />
                   </div>
@@ -210,7 +210,7 @@ export function HowTheModelWorksSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-300"
+                      className="flex items-center justify-center gap-3 text-slate-300 text-center"
                     >
                       <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-3 h-3 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -236,8 +236,8 @@ export function HowTheModelWorksSection() {
               {/* Decorative glow */}
               <div className="absolute top-0 left-0 w-40 h-40 bg-teal-500/20 rounded-full blur-3xl" />
 
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
+              <div className="relative z-10 text-center">
+                <div className="flex flex-col items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-400 rounded-xl flex items-center justify-center">
                     <RefreshCw className="w-6 h-6 text-white" />
                   </div>
@@ -265,7 +265,7 @@ export function HowTheModelWorksSection() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-300"
+                      className="flex items-center justify-center gap-3 text-slate-300 text-center"
                     >
                       <div className="w-5 h-5 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-3 h-3 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

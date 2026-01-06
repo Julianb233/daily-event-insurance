@@ -156,12 +156,12 @@ export default function RiderTechSection() {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="mb-12 md:mb-16">
+        <div className="mb-12 md:mb-16 text-center">
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight leading-tight">
             <span className="block leading-[0.85] text-[#FDF8E8]">SOLUTIONS</span>
             <span className="block text-[#D4A84B] text-6xl md:text-8xl">Catalog</span>
           </h2>
-          <p className="text-lg mt-6 max-w-2xl text-[#F0D98C] md:text-xl font-medium">
+          <p className="text-lg mt-6 max-w-2xl mx-auto text-[#F0D98C] md:text-xl font-medium">
             Ready-to-deploy AI systems that start working for your business from day one. No technical expertise
             required.
           </p>
@@ -227,7 +227,7 @@ export default function RiderTechSection() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="space-y-6"
+                className="space-y-6 text-center"
               >
                 <h3 className="text-3xl md:text-4xl font-bold text-[#D4A84B]">{activeSolution.title}</h3>
 
@@ -235,14 +235,14 @@ export default function RiderTechSection() {
 
                 <div className="space-y-3">
                   {activeSolution.benefits.map((benefit, idx) => (
-                    <div key={idx} className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3">
+                    <div key={idx} className="flex items-center justify-center gap-3 text-center">
                       <div className="w-2 h-2 rounded-full bg-[#D4A84B]" />
                       <span className="text-[#F0D98C] font-medium">{benefit}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex gap-6 pt-4">
+                <div className="flex flex-wrap justify-center gap-6 pt-4">
                   {activeSolution.stats.map((stat, idx) => (
                     <div key={idx} className="bg-[#0D6B4F]/50 rounded-xl px-6 py-4 border border-[#D4A84B]/20">
                       <div className="text-xs uppercase tracking-wider text-[#FDF8E8]/50 mb-1">{stat.label}</div>

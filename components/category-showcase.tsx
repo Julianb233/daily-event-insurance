@@ -116,7 +116,7 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
             {/* Icon badge */}
-            <div className="absolute bottom-4 left-4">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
               <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center border ${colors.border} shadow-lg`}>
                 <Icon className={`w-6 h-6 ${colors.text}`} />
               </div>
@@ -124,9 +124,9 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-6 text-center">
             {/* Product Type Badge */}
-            <div className="mb-4">
+            <div className="mb-4 flex justify-center">
               <ProductTypeBadge productType={category.productType} />
             </div>
 
@@ -138,7 +138,7 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
             </p>
 
             {/* Sectors Preview */}
-            <div className="flex flex-wrap gap-1.5 mb-4">
+            <div className="flex flex-wrap justify-center gap-1.5 mb-4">
               {category.sectors.slice(0, 3).map((sector) => (
                 <span
                   key={sector}
@@ -157,7 +157,7 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
             {/* Stats */}
             <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100">
               {category.stats.slice(0, 2).map((stat) => (
-                <div key={stat.label}>
+                <div key={stat.label} className="text-center">
                   <div className={`text-lg font-bold ${colors.text}`}>{stat.value}</div>
                   <div className="text-xs text-slate-500">{stat.label}</div>
                 </div>
@@ -165,7 +165,7 @@ function CategoryCard({ category, index }: { category: IndustryCategory; index: 
             </div>
 
             {/* CTA */}
-            <div className="mt-4 flex items-center text-sm font-medium text-slate-900 group-hover:text-teal-600 transition-colors">
+            <div className="mt-4 flex items-center justify-center text-sm font-medium text-slate-900 group-hover:text-teal-600 transition-colors">
               Explore {category.shortTitle}
               <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -282,11 +282,11 @@ export function CategoryShowcase() {
           className="text-center mt-14"
         >
           <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-6 bg-white rounded-2xl border border-slate-200 shadow-lg">
-            <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3">
+            <div className="flex flex-col items-center text-center gap-3">
               <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                 <Check className="w-6 h-6 text-teal-600" />
               </div>
-              <div className="text-left">
+              <div className="text-center">
                 <div className="font-semibold text-slate-900">Don&apos;t see your industry?</div>
                 <div className="text-sm text-slate-600">We&apos;re expanding to new verticals</div>
               </div>

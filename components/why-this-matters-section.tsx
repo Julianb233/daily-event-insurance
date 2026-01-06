@@ -119,14 +119,14 @@ function StakeholderCard({ stakeholder, index }: { stakeholder: typeof stakehold
         />
 
         {/* Card */}
-        <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} ${colors.borderHover} transition-all duration-500 overflow-hidden`}>
+        <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} ${colors.borderHover} transition-all duration-500 overflow-hidden text-center`}>
           {/* Gradient top accent */}
           <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`} />
 
           {/* Header */}
           <div className="mb-6">
             <motion.div
-              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg mx-auto`}
               animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, -5, 5, 0] : 0 }}
               transition={{ duration: 0.4 }}
             >
@@ -149,7 +149,7 @@ function StakeholderCard({ stakeholder, index }: { stakeholder: typeof stakehold
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 + i * 0.1 }}
-                className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-3 text-slate-700"
+                className="flex items-center justify-center gap-3 text-slate-700"
               >
                 <div className={`w-8 h-8 ${colors.bgLight} rounded-lg flex items-center justify-center flex-shrink-0`}>
                   <benefit.icon className={`w-4 h-4 ${colors.text}`} />
