@@ -1,29 +1,20 @@
 import { NextResponse } from "next/server"
+import { db } from "@/lib/db"
+import { rateLimits } from "@/lib/db/schema"
+import { eq, sql } from "drizzle-orm"
 
 /**
- * In-memory rate limiter using sliding window algorithm
- * For production with multiple instances, consider @upstash/ratelimit with Redis
- *
- * Usage:
- *   const limiter = createRateLimiter({ windowMs: 60000, max: 5 })
- *
- *   export async function POST(request: Request) {
- *     const ip = getClientIP(request)
- *     const { success, remaining } = limiter.check(ip)
- *     if (!success) {
- *       return rateLimitResponse(remaining)
- *     }
- *     // ... handle request
- *   }
+ * Rate Limiting System (Postgres-backed)
+ * 
+ * Replaces in-memory storage with persistent Postgres storage.
+ * This ensures rate limits work across multiple server instances (serverless/clusters).
+ * 
+ * Strategy: Fixed Window with automated expiry via reset_at
  */
 
 interface RateLimitConfig {
-  windowMs: number  // Time window in milliseconds
-  max: number       // Max requests per window
-}
-
-interface SlidingWindowEntry {
-  timestamps: number[]  // Timestamps of requests within the window
+  windowMs: number
+  max: number
 }
 
 interface RateLimitResult {
@@ -32,120 +23,100 @@ interface RateLimitResult {
   resetTime: number
 }
 
-// In-memory store using sliding window (cleared on server restart)
-// For production, use Redis or Upstash
-const slidingStores = new Map<string, Map<string, SlidingWindowEntry>>()
-
-/**
- * Creates a rate limiter using sliding window algorithm
- * This provides smoother rate limiting than fixed windows by considering
- * requests across a rolling time period
- */
 export function createRateLimiter(config: RateLimitConfig) {
-  const storeId = `sliding-${config.windowMs}-${config.max}`
-
-  if (!slidingStores.has(storeId)) {
-    slidingStores.set(storeId, new Map())
-  }
-
-  const store = slidingStores.get(storeId)!
-
-  // Cleanup old entries periodically (every window period)
-  const cleanupInterval = setInterval(() => {
-    const now = Date.now()
-    const windowStart = now - config.windowMs
-    for (const [key, entry] of store.entries()) {
-      // Remove timestamps outside the window
-      entry.timestamps = entry.timestamps.filter(ts => ts > windowStart)
-      // Remove entry if no timestamps remain
-      if (entry.timestamps.length === 0) {
-        store.delete(key)
-      }
-    }
-  }, config.windowMs)
-
-  // Prevent interval from keeping process alive
-  if (cleanupInterval.unref) {
-    cleanupInterval.unref()
-  }
-
   return {
-    check(identifier: string): RateLimitResult {
-      const now = Date.now()
-      const windowStart = now - config.windowMs
+    async check(identifier: string): Promise<RateLimitResult> {
+      const now = new Date()
+      const windowEnd = new Date(now.getTime() + config.windowMs)
+      const resetTimeEpoch = windowEnd.getTime()
 
-      let entry = store.get(identifier)
-
-      if (!entry) {
-        entry = { timestamps: [] }
-        store.set(identifier, entry)
+      if (!db) {
+        // Fallback for when DB isn't configured (e.g. build time or minimal dev env)
+        console.warn("[RateLimit] DB not configured, allowing request")
+        return { success: true, remaining: config.max, resetTime: resetTimeEpoch }
       }
 
-      // Remove timestamps outside the sliding window
-      entry.timestamps = entry.timestamps.filter(ts => ts > windowStart)
+      try {
+        // Atomic Upsert (Insert or Update)
+        // If entry exists and hasn't expired, increment count
+        // If entry exists but expired, reset count to 1 and update reset time
+        // If entry doesn't exist, insert new
+        
+        // Note: Drizzle's onConflictDoUpdate is perfect here
+        const [record] = await db
+          .insert(rateLimits)
+          .values({
+            key: identifier,
+            count: 1,
+            resetAt: windowEnd
+          })
+          .onConflictDoUpdate({
+            target: rateLimits.key,
+            set: {
+              count: sql`
+                CASE 
+                  WHEN ${rateLimits.resetAt} > ${now} THEN ${rateLimits.count} + 1
+                  ELSE 1
+                END
+              `,
+              resetAt: sql`
+                CASE 
+                  WHEN ${rateLimits.resetAt} > ${now} THEN ${rateLimits.resetAt}
+                  ELSE ${windowEnd}
+                END
+              `
+            }
+          })
+          .returning()
 
-      // Check if over limit
-      if (entry.timestamps.length >= config.max) {
-        // Find the oldest timestamp in window to calculate reset time
-        const oldestTimestamp = Math.min(...entry.timestamps)
-        const resetTime = oldestTimestamp + config.windowMs
-        return { success: false, remaining: 0, resetTime }
+        const remaining = Math.max(0, config.max - record.count)
+        const success = record.count <= config.max
+
+        return {
+          success,
+          remaining,
+          resetTime: record.resetAt.getTime()
+        }
+
+      } catch (error) {
+        console.error("[RateLimit] DB Error:", error)
+        // Fail open to avoid blocking legitimate traffic on system errors
+        return { success: true, remaining: 1, resetTime: resetTimeEpoch }
       }
-
-      // Add current request timestamp
-      entry.timestamps.push(now)
-
-      const remaining = config.max - entry.timestamps.length
-      const resetTime = now + config.windowMs
-
-      return { success: true, remaining, resetTime }
     },
 
-    reset(identifier: string): void {
-      store.delete(identifier)
+    async reset(identifier: string): Promise<void> {
+      if (!db) return
+      await db.delete(rateLimits).where(eq(rateLimits.key, identifier))
     },
 
-    getStats(identifier: string): { count: number; windowStart: number } {
-      const now = Date.now()
-      const windowStart = now - config.windowMs
-      const entry = store.get(identifier)
+    // Get stats (mostly for debugging/admin)
+    async getStats(identifier: string): Promise<{ count: number; resetAt: number }> {
+      if (!db) return { count: 0, resetAt: Date.now() }
+      
+      const record = await db.query.rateLimits.findFirst({
+        where: eq(rateLimits.key, identifier)
+      })
 
-      if (!entry) {
-        return { count: 0, windowStart }
+      if (!record) return { count: 0, resetAt: Date.now() }
+
+      return {
+        count: record.count,
+        resetAt: record.resetAt.getTime()
       }
-
-      const activeTimestamps = entry.timestamps.filter(ts => ts > windowStart)
-      return { count: activeTimestamps.length, windowStart }
     }
   }
 }
 
 /**
  * Get client IP from request headers
- * Works with Vercel, Cloudflare, and standard proxies
  */
 export function getClientIP(request: Request): string {
   const headers = request.headers
-
-  // Vercel
   const forwardedFor = headers.get("x-forwarded-for")
-  if (forwardedFor) {
-    return forwardedFor.split(",")[0].trim()
-  }
-
-  // Cloudflare
-  const cfConnectingIP = headers.get("cf-connecting-ip")
-  if (cfConnectingIP) {
-    return cfConnectingIP
-  }
-
-  // Real IP header
+  if (forwardedFor) return forwardedFor.split(",")[0].trim()
   const realIP = headers.get("x-real-ip")
-  if (realIP) {
-    return realIP
-  }
-
-  // Fallback
+  if (realIP) return realIP
   return "unknown"
 }
 
@@ -171,52 +142,12 @@ export function rateLimitResponse(retryAfterMs: number = 60000): NextResponse {
   )
 }
 
-// Pre-configured rate limiters for common use cases
-
-/** Auth limiter: 5 attempts per 15 minutes (login, password reset) */
-export const authRateLimiter = createRateLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5 // 5 attempts per 15 minutes
-})
-
-/** Registration limiter: 3 registrations per hour per IP */
-export const registrationRateLimiter = createRateLimiter({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3 // 3 registrations per hour per IP
-})
-
-/** API limiter: 60 requests per minute (general API usage) */
-export const apiRateLimiter = createRateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  max: 60 // 60 requests per minute
-})
-
-/** Strict limiter: 3 requests per minute (sensitive operations like quote creation) */
-export const strictRateLimiter = createRateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  max: 3 // 3 requests per minute
-})
-
-/** Lead submission limiter: 5 lead submissions per 5 minutes per IP */
-export const leadRateLimiter = createRateLimiter({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 5 // 5 submissions per 5 minutes
-})
-
-/** Quote creation limiter: 10 quotes per minute per user */
-export const quoteRateLimiter = createRateLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10 // 10 quotes per minute
-})
-
-/** Webhook limiter: 10 webhooks per hour per partner (creation/updates) */
-export const webhookRateLimiter = createRateLimiter({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10 // 10 webhook operations per hour
-})
-
-/** Scrape limiter: 10 scrapes per 5 minutes per user */
-export const scrapeRateLimiter = createRateLimiter({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 10 // 10 scrapes per 5 minutes
-})
+// Pre-configured limiters
+export const authRateLimiter = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 })
+export const registrationRateLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 3 })
+export const apiRateLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 60 })
+export const strictRateLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 3 })
+export const leadRateLimiter = createRateLimiter({ windowMs: 5 * 60 * 1000, max: 5 })
+export const quoteRateLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 10 })
+export const webhookRateLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 })
+export const scrapeRateLimiter = createRateLimiter({ windowMs: 5 * 60 * 1000, max: 10 })

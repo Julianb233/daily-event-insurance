@@ -68,14 +68,26 @@ export function DEIIntroSection() {
           </div>
         </motion.div>
 
+        {/* High Core Events Badge - Moved to top */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full mb-4 md:mb-6 shadow-sm"
+        >
+          <span className="text-teal-700 font-bold text-base md:text-lg tracking-wide">
+            High Core Events InsureTech Platform
+          </span>
+        </motion.div>
+
         {/* Primary Tagline - Insurance for Moments */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-4 md:mb-6"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-8 md:mb-10"
         >
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-r from-teal-500/15 to-teal-400/10 border border-teal-500/40 rounded-full backdrop-blur-sm">
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-r from-teal-500/15 to-teal-400/10 border border-teal-500/40 rounded-full">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
@@ -84,17 +96,6 @@ export function DEIIntroSection() {
               Insurance for Moments, Not Time
             </span>
           </div>
-        </motion.div>
-
-        {/* HIQOR Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="inline-flex items-center gap-3 px-6 py-3 bg-slate-100/80 border border-slate-200 rounded-full mb-6 md:mb-8"
-        >
-          <span className="text-teal-600 font-bold text-base md:text-lg lg:text-xl tracking-wide">HIQOR</span>
-          <span className="text-slate-500 text-sm md:text-base lg:text-lg">Events-Based InsurTech Platform</span>
         </motion.div>
 
         {/* Headline */}

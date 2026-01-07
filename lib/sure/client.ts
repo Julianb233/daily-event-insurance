@@ -14,6 +14,8 @@ export interface SurePolicyResponse {
   policyNumber?: string;
   premium?: number;
   status?: string;
+  effectiveDate?: Date;
+  expirationDate?: Date;
   error?: string;
 }
 
@@ -36,6 +38,8 @@ export async function submitToSure(data: SureSubmissionData): Promise<SurePolicy
     policyId: `sure_${Math.random().toString(36).substring(7)}`,
     policyNumber: `POL-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(Math.random() * 10000)}`,
     premium: 4.99,
-    status: 'active'
+    status: 'active',
+    effectiveDate: new Date(),
+    expirationDate: new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day later
   };
 }

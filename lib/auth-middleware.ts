@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from './auth';
+import { logAudit } from '@/lib/audit';
 
 // SECURITY: Dev mode auth bypass requires explicit opt-in
 // Bypass ONLY if ALL conditions are met:
@@ -44,7 +45,6 @@ export async function withAuth<T>(
   request: NextRequest,
   handler: AuthHandler<T>
 ): Promise<T | NextResponse> {
-  // SECURITY: Bypass requires explicit DEV_AUTH_BYPASS=true
   if (shouldBypassAuth) {
     console.warn('[DEV MODE] Auth bypassed - set AUTH_SECRET to disable');
     return handler(request, MOCK_ADMIN);
@@ -53,7 +53,27 @@ export async function withAuth<T>(
   try {
     const session = await auth();
 
+    // Security Audit: Log authentication attempt
+    // Note: We intentionally don't await this to avoid latency, 
+    // unless strict auditing is required. Here we await for safety.
+    await logAudit({
+      action: 'login_attempt',
+      resource: 'auth_session',
+      actorType: 'system',
+      metadata: {
+        path: request.nextUrl.pathname,
+      },
+      ipAddress: request.headers.get('x-forwarded-for') || 'unknown'
+    });
+
     if (!session?.user?.id) {
+      await logAudit({
+        action: 'login_failed',
+        resource: 'auth_session',
+        actorType: 'system',
+        metadata: { reason: 'no_session' }
+      });
+      
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
@@ -70,6 +90,13 @@ export async function withAuth<T>(
     return handler(request, user);
   } catch (error) {
     console.error('Auth error:', error);
+    await logAudit({
+      action: 'system_error',
+      resource: 'auth_middleware',
+      actorType: 'system', 
+      metadata: { error: String(error) }
+    });
+    
     return NextResponse.json(
       { success: false, error: 'Authentication failed' },
       { status: 401 }

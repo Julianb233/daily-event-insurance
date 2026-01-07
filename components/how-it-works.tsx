@@ -42,16 +42,16 @@ const steps: Step[] = [
   },
   {
     number: 3,
-    title: 'Earn on Every Sale',
-    description: 'Get paid commission for each policy your customers purchase.',
+    title: 'Earn on Every Entry',
+    description: 'Make protection mandatory. Earn commission for every person who enters.',
     details: [
-      'Earn $2-5 per policy sold',
-      'Automatic monthly payouts',
-      'Real-time dashboard tracking',
-      'No caps on earnings'
+      'Earn on every check-in',
+      '100% compliance rate',
+      'Zero cost implementation',
+      'Maximum liability protection'
     ],
     icon: <DollarSign className="w-8 h-8" />,
-    highlight: 'Avg. $2,400/mo'
+    highlight: 'Maximum Revenue'
   },
 ];
 
@@ -306,18 +306,17 @@ export function HowItWorks() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-                  Your Revenue, <span className="text-teal-600">Your Way</span>
+                  Mandatory Protection, <span className="text-teal-600">Maximum Revenue</span>
                 </h3>
                 <p className="text-slate-600 mb-6">
-                  Every time a customer adds insurance at checkout, you earn commission.
-                  No inventory, no overhead, no customer service—just passive income that grows with your business.
+                  Make coverage mandatory for every visitor. You earn revenue on every person who signs into your business, while simultaneously securing your facility with comprehensive protection. Zero cost to you—fully paid by the participant.
                 </p>
                 <ul className="space-y-3">
                   {[
-                    'Monthly payouts via ACH or check',
-                    'Real-time earnings dashboard',
-                    'Dedicated partner success manager',
-                    'Marketing materials included'
+                    'Earn on 100% of visitors',
+                    'Complete liability coverage',
+                    'Zero cost to your business',
+                    'Automated check-in verification'
                   ].map((item, i) => (
                     <motion.li
                       key={i}

@@ -78,6 +78,9 @@ export const partners = pgTable("partners", {
   locationCount: integer("location_count").default(1), // Total number of locations
   hasMultipleLocations: boolean("has_multiple_locations").default(false),
   status: text("status").default("pending"), // pending, documents_sent, documents_pending, under_review, active, suspended
+  // Referral tracking
+  referredBy: uuid("referred_by").references(() => users.id), // The sales agent who referred this partner
+  referralCode: text("referral_code"), // The code used to refer
   // GHL Integration fields
   ghlContactId: text("ghl_contact_id"), // GHL Contact ID
   ghlOpportunityId: text("ghl_opportunity_id"), // GHL Pipeline Opportunity ID
@@ -96,6 +99,35 @@ export const partners = pgTable("partners", {
   statusIdx: index("idx_partners_status").on(table.status),
   businessTypeIdx: index("idx_partners_business_type").on(table.businessType),
   websiteUrlIdx: index("idx_partners_website_url").on(table.websiteUrl),
+  referredByIdx: index("idx_partners_referred_by").on(table.referredBy),
+}))
+
+// Sales Agent Profiles - extended profile for sales agents
+export const salesAgentProfiles = pgTable("sales_agent_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").unique().references(() => users.id, { onDelete: "cascade" }).notNull(),
+  
+  // Profile
+  agencyName: text("agency_name"), // Optional business name
+  phoneNumber: text("phone_number"),
+  websiteUrl: text("website_url"),
+  
+  // Referral Config
+  referralCode: text("referral_code").unique().notNull(), // Custom code e.g. "ELITESALES"
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 4 }).default("0.10"), // 10% default
+  
+  // Status
+  status: text("status").default("active"), // active, suspended
+  
+  // Metrics (denormalized for speed)
+  totalReferrals: integer("total_referrals").default(0),
+  totalActivePolicies: integer("total_active_policies").default(0),
+  lifetimeEarnings: decimal("lifetime_earnings", { precision: 12, scale: 2 }).default("0"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  codeIdx: index("idx_sales_agent_code").on(table.referralCode),
 }))
 
 // Partner products - product configurations per partner
@@ -798,6 +830,44 @@ export const webhookDeliveryLogs = pgTable("webhook_delivery_logs", {
   deliveredAtIdx: index("idx_webhook_delivery_logs_delivered_at").on(table.deliveredAt),
   subscriptionEventIdx: index("idx_webhook_delivery_logs_subscription_event").on(table.subscriptionId, table.eventType),
 }))
+
+// ================= Security & Audit =================
+
+// Audit logs - immutable record of system actions
+export const auditLogs = pgTable("audit_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Who performed the action
+  actorId: uuid("actor_id"), // Nullable for system actions or unauthenticated
+  actorType: text("actor_type").default("user"), // user, system, partner, admin
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  
+  // What happened
+  action: text("action").notNull(), // e.g., 'login', 'create_policy', 'view_report'
+  resource: text("resource").notNull(), // e.g., 'policy:123', 'partner:456'
+  
+  // Details
+  metadata: jsonb("metadata"), // Context, filters used, etc.
+  changes: jsonb("changes"), // For updates: { before: {}, after: {} }
+  
+  // When
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  actorIdx: index("idx_audit_logs_actor").on(table.actorId),
+  actionIdx: index("idx_audit_logs_action").on(table.action),
+  resourceIdx: index("idx_audit_logs_resource").on(table.resource),
+  createdAtIdx: index("idx_audit_logs_created_at").on(table.createdAt),
+}))
+
+// Rate limits - persistent storage for rate limiting
+export const rateLimits = pgTable("rate_limits", {
+  key: text("key").primaryKey(),
+  count: integer("count").notNull().default(0),
+  resetAt: timestamp("reset_at", { mode: "date" }).notNull()
+})
+
+
 
 // Type exports for use in application
 export type User = typeof users.$inferSelect

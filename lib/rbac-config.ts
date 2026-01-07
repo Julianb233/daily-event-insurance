@@ -17,6 +17,7 @@ export const ROLES = {
   PARTNER: 'partner',
   USER: 'user',
   VIEWER: 'viewer',
+  SALES_AGENT: 'sales_agent',
 } as const;
 
 export type SystemRole = (typeof ROLES)[keyof typeof ROLES];
@@ -171,6 +172,13 @@ export const ROLE_PERMISSIONS: Record<SystemRole, SystemPermission[]> = {
     PERMISSIONS.API_READ,
     PERMISSIONS.API_WRITE,
     PERMISSIONS.API_DELETE,
+  ],
+
+  [ROLES.SALES_AGENT]: [
+    PERMISSIONS.CONTENT_VIEW,
+    PERMISSIONS.PARTNER_DASHBOARD, // Reuse dashboard permissions but will be sales-specific view
+    PERMISSIONS.PARTNER_EARNINGS,
+    PERMISSIONS.PARTNER_REPORT,
   ],
 };
 

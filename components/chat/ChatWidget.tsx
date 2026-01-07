@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { X, Send, Minimize2, Maximize2, Loader2 } from 'lucide-react'
+import { X, Send, Minimize2, Maximize2, Loader2, Mic, Square, Volume2, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ChatWidgetProps, Message } from './types'
+import { VoiceAssistant } from './VoiceAssistant'
 
 export function ChatWidget({
   config,
@@ -13,6 +14,9 @@ export function ChatWidget({
   position = 'bottom-right',
   className
 }: ChatWidgetProps) {
+  // Mode State: 'chat' | 'voice-call'
+  const [mode, setMode] = useState<'chat' | 'voice-call'>('chat')
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -24,6 +28,15 @@ export function ChatWidget({
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
+
+  // Voice Note State (Legacy)
+  const [isRecording, setIsRecording] = useState(false)
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  // const audioContextRef = useRef<AudioContext | null>(null) // Removed as per diff
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -36,10 +49,103 @@ export function ChatWidget({
   }, [messages, scrollToBottom])
 
   useEffect(() => {
-    if (isOpen && !isMinimized) {
+    if (isOpen && !isMinimized && mode === 'chat') {
       inputRef.current?.focus()
     }
-  }, [isOpen, isMinimized])
+  }, [isOpen, isMinimized, mode])
+
+  // --- Voice Logic Start (Legacy "Push to Talk") ---
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      chunksRef.current = []
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data)
+        }
+      }
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
+        await handleAudioUpload(audioBlob)
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop())
+      }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch (error) {
+      console.error('Error accessing microphone:', error)
+      alert('Could not access microphone. Please allow permissions.')
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+    }
+  }
+
+  const handleAudioUpload = async (audioBlob: Blob) => {
+    setIsProcessingAudio(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', audioBlob)
+
+      const response = await fetch('/api/voice/transcribe', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) throw new Error('Transcription failed')
+
+      const data = await response.json()
+      if (data.text) {
+        setInput(data.text)
+        // Optional: Auto-send after voice? 
+        // For now, let user review text
+      }
+    } catch (error) {
+      console.error('Transcription error:', error)
+    } finally {
+      setIsProcessingAudio(false)
+      inputRef.current?.focus()
+    }
+  }
+
+  const playResponseAudio = async (text: string) => {
+    try {
+      setIsPlayingAudio(true)
+      const response = await fetch('/api/voice/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      })
+
+      if (!response.ok) throw new Error('TTS failed')
+
+      const audioBlob = await response.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
+      const audio = new Audio(audioUrl)
+
+      audio.onended = () => {
+        setIsPlayingAudio(false)
+        URL.revokeObjectURL(audioUrl)
+      }
+
+      await audio.play()
+    } catch (error) {
+      console.error('Audio playback error:', error)
+      setIsPlayingAudio(false)
+    }
+  }
+
+  // --- Voice Logic End ---
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
@@ -56,16 +162,11 @@ export function ChatWidget({
     setIsLoading(true)
 
     try {
+      let responseText = ""
+
       // If custom handler provided, use it
       if (onSendMessage) {
-        const response = await onSendMessage(input.trim())
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: response,
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, assistantMessage])
+        responseText = await onSendMessage(input.trim())
       } else {
         // Default: call internal API
         const response = await fetch('/api/chatbot/chat', {
@@ -85,14 +186,21 @@ export function ChatWidget({
         if (!response.ok) throw new Error('Failed to get response')
 
         const data = await response.json()
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: data.response || "I'm sorry, I couldn't process that. Please try again.",
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, assistantMessage])
+        responseText = data.response || "I'm sorry, I couldn't process that. Please try again."
       }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: responseText,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, assistantMessage])
+
+      // Auto-play audio response
+      // We start this asynchronously so text appears first
+      playResponseAudio(responseText)
+
     } catch (error) {
       console.error('Chat error:', error)
       const errorMessage: Message = {
@@ -158,6 +266,21 @@ export function ChatWidget({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {isPlayingAudio ? (
+            <Volume2 className="w-4 h-4 animate-pulse text-white/80" />
+          ) : null}
+
+          {/* Start Call Button (Only in Chat Mode) */}
+          {mode === 'chat' && (
+            <button
+              onClick={() => setMode('voice-call')}
+              className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
+              title="Start Live Call"
+            >
+              <Phone className="w-4 h-4" />
+            </button>
+          )}
+
           <button
             onClick={() => setIsMinimized(!isMinimized)}
             className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
@@ -177,7 +300,14 @@ export function ChatWidget({
         </div>
       </div>
 
-      {!isMinimized && (
+      {!isMinimized && mode === 'voice-call' && (
+        <VoiceAssistant
+          onDisconnect={() => setMode('chat')}
+          agentName={config.agentName}
+        />
+      )}
+
+      {!isMinimized && mode === 'chat' && (
         <>
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
@@ -219,6 +349,14 @@ export function ChatWidget({
               </div>
             )}
 
+            {isProcessingAudio && (
+              <div className="flex justify-end">
+                <div className="bg-gray-100 rounded-2xl rounded-br-md px-4 py-2 text-xs text-gray-500 flex items-center gap-2">
+                  <Loader2 className="w-3 h-3 animate-spin" /> Processing voice...
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
@@ -243,14 +381,28 @@ export function ChatWidget({
           {/* Input */}
           <div className="p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center gap-2">
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                className={cn(
+                  "p-2.5 rounded-full transition-all flex-shrink-0",
+                  isRecording
+                    ? "bg-red-100 text-red-600 animate-pulse hover:bg-red-200"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
+                )}
+                aria-label={isRecording ? "Stop recording" : "Start recording"}
+                disabled={isLoading || isProcessingAudio}
+              >
+                {isRecording ? <Square className="w-4 h-4" fill="currentColor" /> : <Mic className="w-4 h-4" />}
+              </button>
+
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={config.placeholderText}
-                disabled={isLoading}
+                placeholder={isRecording ? "Listening..." : config.placeholderText}
+                disabled={isLoading || isRecording || isProcessingAudio}
                 className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-100 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button

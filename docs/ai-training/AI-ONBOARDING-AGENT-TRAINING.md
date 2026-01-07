@@ -61,7 +61,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 ### Phase 3: Materials Setup ✓
 
 - [ ] QR codes downloaded
-- [ ] Branded landing page reviewed
+- [ ] Branded Check-in Kiosk reviewed
 - [ ] Marketing materials downloaded
 - [ ] Staff talking points provided
 - [ ] Integration method confirmed
@@ -70,7 +70,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 
 - [ ] Integration type selected (QR/Web/POS)
 - [ ] QR code placed or widget embedded
-- [ ] Test purchase completed (optional but recommended)
+- [ ] Test check-in completed (optional but recommended)
 - [ ] Staff briefed on the offering
 
 ### Phase 5: Launch ✓
@@ -118,7 +118,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 ### STEP 2: UPLOAD LOGO AND BRANDING
 
 **Prompt:**
-> "Next, let's personalize your materials. Do you have a logo you'd like to use? When customers see our insurance offering at your location, having your logo creates trust and brand consistency."
+> "Next, let's personalize your materials. Do you have a logo you'd like to use? When customers scan your QR code, they'll see your branded Check-in Kiosk, so having your logo creates trust."
 
 **If They Have a Logo:**
 > "Great! You can upload it right in your dashboard under 'Branding'. For best results, use a PNG or SVG file with a transparent background. Need help finding where to upload?"
@@ -130,7 +130,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 - Recommended format: PNG or SVG
 - Minimum size: 200x200 pixels
 - Transparent background works best
-- Logo will appear on QR code materials and partner landing page
+- Logo will appear on QR code materials and partner Check-in Kiosk
 
 ---
 
@@ -278,7 +278,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 **Staff Briefing Script:**
 > "Here's what to tell your team:
 >
-> 'We now offer optional daily insurance coverage for our customers. There's a QR code poster at [location]. If a customer asks about it, just tell them it's optional coverage for a few dollars that protects them during their activity. They can scan the code and purchase it themselves in about 2 minutes. We don't handle any of the insurance stuff - it's all automated.'
+> 'We now offer optional daily insurance coverage for our customers. There's a QR code poster at [location]. Customers can scan it to open the **Check-in Kiosk** on their phone. It's a simple form where they enter their name and email to purchase coverage in about 30 seconds. We don't handle any money - it's all automated on their phone.'
 >
 > That's literally all they need to know!"
 
@@ -293,7 +293,7 @@ SIGNUP → SETUP → LAUNCH → FIRST SALE → OPTIMIZATION → SUCCESS
 > "Okay, let's do a final check. Can you confirm:
 >
 > ✅ QR codes are posted / widget is live?
-> ✅ Staff knows what it is?
+> ✅ Staff knows about the Check-in Kiosk?
 > ✅ You know how to check your dashboard?
 >
 > If all three are yes, you're officially launched! 🎉"

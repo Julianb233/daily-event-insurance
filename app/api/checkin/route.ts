@@ -45,6 +45,27 @@ export async function POST(request: Request) {
             micrositeUrl: micrositeUrl || '',
             partnerId
         });
+
+        // Use ! operator to assert db is not null since we're in a route handler
+        if (sureResult && sureResult.success && db) {
+           await db.insert(policies).values({
+               partnerId,
+               policyNumber: sureResult.policyNumber!,
+               eventType: activity || 'gym-visit',
+               eventDate: new Date(),
+               participants: 1, // Individual check-in
+               coverageType: 'liability', // Default for check-ins
+               premium: sureResult.premium?.toString() || '0',
+               commission: (sureResult.premium || 0 * 0.1).toString(), // 10% commission
+               status: 'active',
+               effectiveDate: sureResult.effectiveDate || new Date(),
+               expirationDate: sureResult.expirationDate || new Date(Date.now() + 24*60*60*1000),
+               customerEmail: email,
+               customerName: name,
+               customerPhone: phone,
+               certificateIssued: true
+           });
+        }
     } catch (e) {
         console.error('Sure API Failed:', e);
         // Continue to save lead even if Sure fails, but log it
@@ -64,7 +85,7 @@ export async function POST(request: Request) {
           micrositeUrl,
           surePolicy: sureResult 
       }),
-      status: sureResult?.success ? 'qualified' : 'new'
+      status: sureResult?.success ? 'won' : 'new' // Mark as 'won' if policy purchased
     }).returning();
 
     return NextResponse.json({ success: true, leadId: lead.id, policy: sureResult });

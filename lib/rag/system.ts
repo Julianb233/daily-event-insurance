@@ -118,6 +118,11 @@ export async function generateRAGResponse(
 /**
  * Generate response with context using OpenAI
  */
+import { tools, executeTool } from './tools'
+
+/**
+ * Generate response with context using OpenAI
+ */
 async function generateResponseWithContext(
   userMessage: string,
   context: string,
@@ -142,13 +147,48 @@ async function generateResponseWithContext(
       { role: 'user', content: userMessage }
     ]
 
+    // First call: Agent decides if it needs tools
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o',
+      messages: messages,
+      tools: tools,
+      tool_choice: 'auto', 
+      temperature: 0.7,
+    })
+
+    const responseMessage = completion.choices[0].message
+
+    // If no tool calls, return content
+    if (!responseMessage.tool_calls) {
+      return responseMessage.content || "I apologize, I couldn't generate a response."
+    }
+
+    // Process tool calls
+    messages.push(responseMessage) // Add the assistant's request to history
+
+    for (const toolCall of responseMessage.tool_calls) {
+      const functionName = toolCall.function.name
+      const functionArgs = JSON.parse(toolCall.function.arguments)
+      
+      const functionResponse = await executeTool(functionName, functionArgs)
+
+      messages.push({
+        tool_call_id: toolCall.id,
+        role: 'tool',
+        name: functionName,
+        content: functionResponse,
+      })
+    }
+
+    // Second call: Agent generates final response with tool outputs
+    const finalResponse = await openai.chat.completions.create({
+      model: 'gpt-4o',
       messages: messages,
       temperature: 0.7,
     })
 
-    return completion.choices[0]?.message?.content || "I apologize, I couldn't generate a response."
+    return finalResponse.choices[0].message.content || "I verified the information but couldn't generate a final response."
+
   } catch (error) {
     console.error('Error generating AI response:', error)
     return generateAgentResponse(userMessage, systemPrompt) || "I'm having trouble connecting to my brain right now. Please try again later."
