@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Rate limiting
     const clientIP = getClientIP(request)
-    const { success: withinLimit } = apiRateLimiter.check(clientIP)
+    const { success: withinLimit } = await apiRateLimiter.check(clientIP)
     if (!withinLimit) {
       return rateLimitResponse(60 * 1000) // 1 minute
     }

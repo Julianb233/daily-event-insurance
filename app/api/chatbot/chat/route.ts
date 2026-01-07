@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     if (!dbConversationId) {
         // Create new
-        const [newConv] = await db.insert(chatConversations).values({
+        const [newConv] = await db!.insert(chatConversations).values({
             agentType: agentType as string,
             status: 'active'
         }).returning()
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Log User Message
-    await db.insert(chatMessages).values({
+    await db!.insert(chatMessages).values({
         conversationId: dbConversationId,
         role: 'user',
         content: message
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Build Context (Fetch recent messages)
     // We limit to last 10 messages for context window efficiency
-    const recentMessages = await db.select()
+    const recentMessages = await db!.select()
         .from(chatMessages)
         .where(eq(chatMessages.conversationId, dbConversationId))
         .orderBy(desc(chatMessages.createdAt))
@@ -112,13 +112,13 @@ export async function POST(request: NextRequest) {
 
     // 4. Generate RAG-enhanced response
     const responseText = await generateRAGResponse(
-      message,
-      conversationHistory,
-      effectiveSystemPrompt
+        message,
+        conversationHistory,
+        effectiveSystemPrompt
     )
 
     // 5. Log Assistant Message
-    await db.insert(chatMessages).values({
+    await db!.insert(chatMessages).values({
         conversationId: dbConversationId,
         role: 'assistant',
         content: responseText

@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
 
     // Rate limiting
     const clientIP = getClientIP(request)
-    const { success: withinLimit } = webhookRateLimiter.check(`webhook-${userId}`)
+    const { success: withinLimit } = await webhookRateLimiter.check(`webhook-${userId}`)
     if (!withinLimit) {
       return rateLimitResponse(60 * 60 * 1000) // 1 hour
     }

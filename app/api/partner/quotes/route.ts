@@ -115,7 +115,7 @@ async function calculateQuotePricing(
 export async function POST(request: NextRequest) {
   // Rate limiting - 10 quotes per minute per IP
   const clientIP = getClientIP(request)
-  const { success: withinLimit, remaining, resetTime } = quoteRateLimiter.check(clientIP)
+  const { success: withinLimit, remaining, resetTime } = await quoteRateLimiter.check(clientIP)
 
   if (!withinLimit) {
     return rateLimitResponse(resetTime - Date.now())

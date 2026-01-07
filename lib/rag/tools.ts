@@ -94,12 +94,16 @@ async function lookupPartnerStatus(partnerId: string): Promise<string> {
     return `Could not find partner with ID ${partnerId}. Error: ${error.message}`
   }
 
+  if (!data) return "Partner not found."
+  
+  const partner = data as any
+
   return JSON.stringify({
-    id: data.id,
-    business_name: data.business_name,
-    status: data.status,
-    contact: data.contact_name,
-    integration: data.integration_type
+    id: partner.id,
+    business_name: partner.business_name,
+    status: partner.status,
+    contact: partner.contact_name,
+    integration: partner.integration_type
   })
 }
 

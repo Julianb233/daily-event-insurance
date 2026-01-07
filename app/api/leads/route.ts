@@ -99,7 +99,7 @@ function calculateEstimatedRevenue(data: z.infer<typeof createLeadSchema>): numb
 export async function POST(request: NextRequest) {
   // Rate limiting - 5 lead submissions per 5 minutes per IP
   const clientIP = getClientIP(request)
-  const { success: withinLimit, remaining, resetTime } = leadRateLimiter.check(clientIP)
+  const { success: withinLimit, remaining, resetTime } = await leadRateLimiter.check(clientIP)
 
   if (!withinLimit) {
     return rateLimitResponse(resetTime - Date.now())

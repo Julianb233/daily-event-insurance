@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { leads, microsites } from '@/lib/db/schema';
+import { leads, microsites, policies } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 import { submitToSure } from '@/lib/sure/client';

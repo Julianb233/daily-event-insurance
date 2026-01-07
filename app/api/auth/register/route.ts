@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   try {
     // Rate limiting - 3 registrations per hour per IP
     const clientIP = getClientIP(request)
-    const { success: withinLimit, remaining } = registrationRateLimiter.check(clientIP)
+    const { success: withinLimit, remaining } = await registrationRateLimiter.check(clientIP)
 
     if (!withinLimit) {
       return rateLimitResponse(60 * 60 * 1000) // 1 hour

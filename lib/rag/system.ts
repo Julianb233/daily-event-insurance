@@ -26,7 +26,7 @@ export interface KnowledgeBaseEntry {
 }
 
 export interface ChatMessage {
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'system'
   content: string
   timestamp?: Date
 }
@@ -167,6 +167,7 @@ async function generateResponseWithContext(
     messages.push(responseMessage) // Add the assistant's request to history
 
     for (const toolCall of responseMessage.tool_calls) {
+      if (toolCall.type === 'function') {
       const functionName = toolCall.function.name
       const functionArgs = JSON.parse(toolCall.function.arguments)
       
@@ -178,6 +179,7 @@ async function generateResponseWithContext(
         name: functionName,
         content: functionResponse,
       })
+      } // End if function
     }
 
     // Second call: Agent generates final response with tool outputs

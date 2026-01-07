@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Shield, MoreHorizontal, Search, UserPure, UserCog, Briefcase } from "lucide-react"
+import { Shield, MoreHorizontal, Search, User, UserCog, Briefcase } from "lucide-react"
 import { ROLES, type SystemRole } from "@/lib/rbac-config"
 
 interface User {

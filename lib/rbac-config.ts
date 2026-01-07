@@ -33,6 +33,7 @@ export const ROLE_LEVELS: Record<SystemRole, number> = {
   [ROLES.VIEWER]: 0,
   [ROLES.USER]: 1,
   [ROLES.PARTNER]: 2,
+  [ROLES.SALES_AGENT]: 2,
   [ROLES.MODERATOR]: 3,
   [ROLES.ADMIN]: 4,
 };
@@ -47,6 +48,7 @@ export const ROLE_DESCRIPTIONS: Record<SystemRole, string> = {
   [ROLES.ADMIN]: 'Full system access with all administrative privileges',
   [ROLES.MODERATOR]: 'Content moderation and user management capabilities',
   [ROLES.PARTNER]: 'Partner access with dashboard, earnings, and materials privileges',
+  [ROLES.SALES_AGENT]: 'Sales Agent access with referral tracking and commission insights',
   [ROLES.USER]: 'Standard user access with content creation privileges',
   [ROLES.VIEWER]: 'Read-only access to public content',
 };
