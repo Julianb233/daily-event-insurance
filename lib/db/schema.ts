@@ -869,6 +869,33 @@ export const rateLimits = pgTable("rate_limits", {
 
 
 
+// ================= Chat & AI Logs =================
+
+export const chatConversations = pgTable("chat_conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id), // Optional: link to logged-in user
+  visitorId: text("visitor_id"), // Optional: for anonymous tracking
+  agentType: text("agent_type").default('support'), // support, sales, onboarding
+  status: text("status").default('active'), // active, closed, archived
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("idx_chat_conversations_user_id").on(table.userId),
+  visitorIdIdx: index("idx_chat_conversations_visitor_id").on(table.visitorId),
+}))
+
+export const chatMessages = pgTable("chat_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id").references(() => chatConversations.id, { onDelete: 'cascade' }).notNull(),
+  role: text("role").notNull(), // user, assistant, system
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"), // e.g. { mode: 'voice', latencyMs: 123 }
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  conversationIdIdx: index("idx_chat_messages_conversation_id").on(table.conversationId),
+  createdAtIdx: index("idx_chat_messages_created_at").on(table.createdAt),
+}))
+
 // Type exports for use in application
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert

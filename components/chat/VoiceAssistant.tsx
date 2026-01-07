@@ -68,8 +68,14 @@ function InnerVoiceAssistant({ onDisconnect, agentName }: VoiceAssistantProps) {
 
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null)
     const [chunks, setChunks] = useState<Blob[]>([])
+    // Persistence ID
+    const [conversationId, setConversationId] = useState<string | null>(null)
 
     useEffect(() => {
+        // Load ID from localStorage on mount
+        const storedId = localStorage.getItem('dei_ai_conversation_id')
+        if (storedId) setConversationId(storedId)
+
         if (!mediaStreamRef.current) return
 
         const rec = new MediaRecorder(mediaStreamRef.current)
@@ -119,10 +125,21 @@ function InnerVoiceAssistant({ onDisconnect, agentName }: VoiceAssistantProps) {
             // 2. Chat Response
             const cRes = await fetch('/api/chatbot/chat', {
                 method: 'POST',
-                body: JSON.stringify({ message: tData.text, agentType: 'support' }) // simplified prop
+                // Pass conversationId to maintain context
+                body: JSON.stringify({
+                    message: tData.text,
+                    agentType: 'support',
+                    conversationId: conversationId
+                })
             })
             const cData = await cRes.json()
             const reply = cData.response
+
+            // Save new conversation ID if created
+            if (cData.conversationId && cData.conversationId !== conversationId) {
+                setConversationId(cData.conversationId)
+                localStorage.setItem('dei_ai_conversation_id', cData.conversationId)
+            }
 
             // 3. Synthesize
             setAgentState('speaking')
@@ -149,11 +166,11 @@ function InnerVoiceAssistant({ onDisconnect, agentName }: VoiceAssistantProps) {
             {/* Visualizer */}
             <div className="relative mb-8">
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 ${agentState === 'listening' ? 'bg-blue-100' :
-                        agentState === 'thinking' ? 'bg-purple-100 animate-pulse' :
-                            'bg-green-100 shadow-[0_0_40px_rgba(34,197,94,0.4)]'
+                    agentState === 'thinking' ? 'bg-purple-100 animate-pulse' :
+                        'bg-green-100 shadow-[0_0_40px_rgba(34,197,94,0.4)]'
                     }`}>
                     <div className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-colors duration-300 ${agentState === 'listening' ? 'bg-blue-500' :
-                            agentState === 'thinking' ? 'bg-purple-500' : 'bg-green-500'
+                        agentState === 'thinking' ? 'bg-purple-500' : 'bg-green-500'
                         }`}>
                         {agentState === 'thinking' ? (
                             <Loader2 className="w-8 h-8 text-white animate-spin" />

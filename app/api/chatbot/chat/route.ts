@@ -1,11 +1,14 @@
 /**
  * API Route: Chatbot Chat
  * Handles chatbot conversations with RAG-enhanced responses
- * Supports multiple agent types: support, sales, onboarding
+ * Supports persistent chat history via `chat_conversations` and `chat_messages`
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { generateRAGResponse, type ChatMessage } from '@/lib/rag/system'
+import { generateRAGResponse } from '@/lib/rag/system'
+import { db } from '@/lib/db'
+import { chatConversations, chatMessages } from '@/lib/db/schema'
+import { eq, desc } from 'drizzle-orm'
 
 type AgentType = 'support' | 'sales' | 'onboarding'
 
@@ -57,9 +60,9 @@ Key contacts:
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const {
+    let {
       message,
-      conversationHistory = [],
+      conversationId, // Now accepted from client
       agentType = 'support',
       systemPrompt
     } = body
@@ -71,19 +74,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 1. Resolve or Create Conversation
+    let dbConversationId = conversationId
+
+    if (!dbConversationId) {
+        // Create new
+        const [newConv] = await db.insert(chatConversations).values({
+            agentType: agentType as string,
+            status: 'active'
+        }).returning()
+        dbConversationId = newConv.id
+    }
+
+    // 2. Log User Message
+    await db.insert(chatMessages).values({
+        conversationId: dbConversationId,
+        role: 'user',
+        content: message
+    })
+
+    // 3. Build Context (Fetch recent messages)
+    // We limit to last 10 messages for context window efficiency
+    const recentMessages = await db.select()
+        .from(chatMessages)
+        .where(eq(chatMessages.conversationId, dbConversationId))
+        .orderBy(desc(chatMessages.createdAt))
+        .limit(10)
+    
+    // Reverse because we fetched desc
+    const conversationHistory = recentMessages.reverse().map(msg => ({
+        role: msg.role as 'user' | 'assistant' | 'system',
+        content: msg.content
+    }))
+
     // Use custom system prompt if provided, otherwise use agent-specific prompt
     const effectiveSystemPrompt = systemPrompt || AGENT_PROMPTS[agentType as AgentType] || AGENT_PROMPTS.support
 
-    // Generate RAG-enhanced response with agent context
-    const response = await generateRAGResponse(
+    // 4. Generate RAG-enhanced response
+    const responseText = await generateRAGResponse(
       message,
       conversationHistory,
       effectiveSystemPrompt
     )
 
+    // 5. Log Assistant Message
+    await db.insert(chatMessages).values({
+        conversationId: dbConversationId,
+        role: 'assistant',
+        content: responseText
+    })
+
     return NextResponse.json({
       success: true,
-      response,
+      response: responseText,
+      conversationId: dbConversationId, // Return ID so client can persist it
       agentType,
       timestamp: new Date().toISOString()
     })
@@ -94,5 +138,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
-
+} // End POST

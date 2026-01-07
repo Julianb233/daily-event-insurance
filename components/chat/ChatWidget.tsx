@@ -148,45 +148,55 @@ export function ChatWidget({
   // --- Voice Logic End ---
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: input.trim(),
       timestamp: new Date()
-    }
+    };
 
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
-    setIsLoading(true)
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    // Access persisted ID
+    const storedId = localStorage.getItem('dei_ai_conversation_id')
 
     try {
       let responseText = ""
 
-      // If custom handler provided, use it
       if (onSendMessage) {
-        responseText = await onSendMessage(input.trim())
+        responseText = await onSendMessage(input.trim());
+        // ... legacy logic ...
       } else {
-        // Default: call internal API
         const response = await fetch('/api/chatbot/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: input.trim(),
+            message: userMessage.content, // use the captured content 
             agentType: config.agentType,
             systemPrompt: config.systemPrompt,
+            conversationId: storedId, // Send ID
+            // conversationHistory is now optional as backend rebuilds it
             conversationHistory: messages.map(m => ({
               role: m.role,
               content: m.content
             }))
           })
-        })
+        });
 
-        if (!response.ok) throw new Error('Failed to get response')
+        if (!response.ok) throw new Error('Failed to get response');
 
-        const data = await response.json()
-        responseText = data.response || "I'm sorry, I couldn't process that. Please try again."
+        const data = await response.json();
+
+        // Save new ID if created
+        if (data.conversationId) {
+          localStorage.setItem('dei_ai_conversation_id', data.conversationId)
+        }
+
+        responseText = data.response || "I'm sorry, I couldn't process your request."
       }
 
       const assistantMessage: Message = {
@@ -194,15 +204,15 @@ export function ChatWidget({
         role: 'assistant',
         content: responseText,
         timestamp: new Date()
-      }
-      setMessages(prev => [...prev, assistantMessage])
+      };
+      setMessages(prev => [...prev, assistantMessage]);
 
       // Auto-play audio response
       // We start this asynchronously so text appears first
       playResponseAudio(responseText)
 
     } catch (error) {
-      console.error('Chat error:', error)
+      console.error('Chat error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
