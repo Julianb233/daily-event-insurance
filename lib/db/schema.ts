@@ -867,6 +867,106 @@ export const rateLimits = pgTable("rate_limits", {
   resetAt: timestamp("reset_at", { mode: "date" }).notNull()
 })
 
+// ================= Articles & Content Management =================
+
+// Article categories - for organizing articles
+export const articleCategories = pgTable("article_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull().unique(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  color: text("color").default("#14B8A6"), // For UI display
+  sortOrder: integer("sort_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  slugIdx: index("idx_article_categories_slug").on(table.slug),
+  activeIdx: index("idx_article_categories_active").on(table.isActive),
+  sortOrderIdx: index("idx_article_categories_sort_order").on(table.sortOrder),
+}))
+
+// Articles - main content table
+export const articles = pgTable("articles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Content
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  excerpt: text("excerpt"), // Short summary for listings
+  content: text("content").notNull(), // Markdown/HTML content
+
+  // Media
+  featuredImageUrl: text("featured_image_url"),
+  featuredImageAlt: text("featured_image_alt"),
+
+  // Categorization
+  categoryId: uuid("category_id").references(() => articleCategories.id),
+  tags: jsonb("tags").$default(() => []), // Array of tag strings
+
+  // Author
+  authorId: uuid("author_id").references(() => users.id),
+  authorName: text("author_name"), // Denormalized for display
+
+  // Publishing
+  status: text("status").default("draft"), // draft, published, archived, scheduled
+  publishedAt: timestamp("published_at"),
+  scheduledFor: timestamp("scheduled_for"), // For scheduled publishing
+
+  // SEO
+  seoTitle: text("seo_title"),
+  seoDescription: text("seo_description"),
+  seoKeywords: text("seo_keywords"),
+  canonicalUrl: text("canonical_url"),
+
+  // Engagement
+  views: integer("views").default(0),
+  readTimeMinutes: integer("read_time_minutes"), // Calculated on save
+
+  // Portal targeting - which portal(s) this article appears in
+  portals: jsonb("portals").$default(() => ["all"]), // ["all", "partner", "customer", "sales"]
+
+  // Featured/pinned
+  isFeatured: boolean("is_featured").default(false),
+  isPinned: boolean("is_pinned").default(false),
+  sortOrder: integer("sort_order").default(0),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  slugIdx: index("idx_articles_slug").on(table.slug),
+  statusIdx: index("idx_articles_status").on(table.status),
+  categoryIdx: index("idx_articles_category").on(table.categoryId),
+  authorIdx: index("idx_articles_author").on(table.authorId),
+  publishedAtIdx: index("idx_articles_published_at").on(table.publishedAt),
+  featuredIdx: index("idx_articles_featured").on(table.isFeatured),
+  statusPublishedIdx: index("idx_articles_status_published").on(table.status, table.publishedAt),
+}))
+
+// Article revisions - version history for articles
+export const articleRevisions = pgTable("article_revisions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  articleId: uuid("article_id").references(() => articles.id, { onDelete: "cascade" }).notNull(),
+
+  // Content snapshot
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+
+  // Metadata
+  revisionNumber: integer("revision_number").notNull(),
+  editorId: uuid("editor_id").references(() => users.id),
+  editorName: text("editor_name"),
+  changeNote: text("change_note"), // What was changed
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  articleIdx: index("idx_article_revisions_article").on(table.articleId),
+  revisionIdx: index("idx_article_revisions_number").on(table.articleId, table.revisionNumber),
+}))
+
 
 
 // ================= Chat & AI Logs =================
@@ -949,3 +1049,9 @@ export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect
 export type NewWebhookSubscription = typeof webhookSubscriptions.$inferInsert
 export type WebhookDeliveryLog = typeof webhookDeliveryLogs.$inferSelect
 export type NewWebhookDeliveryLog = typeof webhookDeliveryLogs.$inferInsert
+export type ArticleCategory = typeof articleCategories.$inferSelect
+export type NewArticleCategory = typeof articleCategories.$inferInsert
+export type Article = typeof articles.$inferSelect
+export type NewArticle = typeof articles.$inferInsert
+export type ArticleRevision = typeof articleRevisions.$inferSelect
+export type NewArticleRevision = typeof articleRevisions.$inferInsert

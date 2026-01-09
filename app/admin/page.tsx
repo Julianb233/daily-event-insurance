@@ -12,9 +12,29 @@ import {
   Shield,
   Layers,
   RefreshCw,
+  Newspaper,
+  TrendingUp,
+  Clock,
+  CheckCircle,
 } from "lucide-react"
 
 const adminSections = [
+  {
+    title: "Partner Management",
+    description: "View and manage partner accounts, QR codes, revenue, and performance metrics",
+    href: "/admin/partners",
+    icon: Users,
+    color: "bg-green-100 text-green-600",
+    borderColor: "border-green-200 hover:border-green-400",
+  },
+  {
+    title: "Articles",
+    description: "Create and manage articles for all portals - partner guides, announcements, and more",
+    href: "/admin/articles",
+    icon: Newspaper,
+    color: "bg-indigo-100 text-indigo-600",
+    borderColor: "border-indigo-200 hover:border-indigo-400",
+  },
   {
     title: "Partner Resources",
     description: "Manage marketing materials, training videos, and documentation for partners",
@@ -49,20 +69,12 @@ const adminSections = [
     disabled: true,
   },
   {
-    title: "Partner Management",
-    description: "View and manage partner accounts, QR codes, revenue, and performance metrics",
-    href: "/admin/partners",
-    icon: Users,
-    color: "bg-green-100 text-green-600",
-    borderColor: "border-green-200 hover:border-green-400",
-  },
-  {
     title: "Analytics Dashboard",
     description: "View platform-wide analytics, revenue, and performance metrics",
     href: "/admin/analytics",
     icon: BarChart3,
-    color: "bg-indigo-100 text-indigo-600",
-    borderColor: "border-indigo-200 hover:border-indigo-400",
+    color: "bg-rose-100 text-rose-600",
+    borderColor: "border-rose-200 hover:border-rose-400",
     disabled: true,
   },
 ]
@@ -111,16 +123,11 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
           <p className="text-gray-600">
             Manage platform content, partner resources, and system configuration.
           </p>
