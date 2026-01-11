@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
-import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
+import { Roboto, Libre_Baskerville, Alex_Brush, Oswald, Dancing_Script } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
 import { SessionProvider } from "@/components/providers/session-provider"
 import { Chatbot } from "@/app/components/chatbot/Chatbot"
@@ -33,6 +33,13 @@ const oswald = Oswald({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-oswald",
+  display: "swap",
+})
+
+const dancingScript = Dancing_Script({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-dancing-script",
   display: "swap",
 })
 
@@ -159,7 +166,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable}`}
+        className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable} ${dancingScript.variable}`}
       >
         <SessionProvider>
           <SmoothScroll>{children}</SmoothScroll>
