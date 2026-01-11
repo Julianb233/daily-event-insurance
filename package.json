@@ -114,6 +114,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
     "@google/generative-ai": "^0.24.1",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.9",

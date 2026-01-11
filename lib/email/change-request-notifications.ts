@@ -4,8 +4,67 @@ import { ChangeRequestSubmittedEmail } from "./templates/change-request-submitte
 import { ChangeRequestApprovedEmail } from "./templates/change-request-approved"
 import { ChangeRequestRejectedEmail } from "./templates/change-request-rejected"
 import { ChangeRequestCompletedEmail } from "./templates/change-request-completed"
+import { db } from "@/lib/db"
+import { partners } from "@/lib/db/schema"
+import { eq } from "drizzle-orm"
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://dailyeventinsurance.com"
+
+/**
+ * Notification preference types
+ */
+interface NotificationPreferences {
+  changeRequests: {
+    submitted: boolean
+    approved: boolean
+    rejected: boolean
+    completed: boolean
+  }
+  marketing: boolean
+  reports: boolean
+}
+
+const DEFAULT_PREFERENCES: NotificationPreferences = {
+  changeRequests: { submitted: true, approved: true, rejected: true, completed: true },
+  marketing: true,
+  reports: true,
+}
+
+/**
+ * Get partner notification preferences
+ */
+async function getPartnerPreferences(partnerId: string): Promise<NotificationPreferences> {
+  try {
+    if (!db) return DEFAULT_PREFERENCES
+
+    const [partner] = await db
+      .select({ notificationPreferences: partners.notificationPreferences })
+      .from(partners)
+      .where(eq(partners.id, partnerId))
+      .limit(1)
+
+    if (!partner?.notificationPreferences) return DEFAULT_PREFERENCES
+
+    return {
+      ...DEFAULT_PREFERENCES,
+      ...(partner.notificationPreferences as Partial<NotificationPreferences>),
+    }
+  } catch (error) {
+    console.error("[Email] Error fetching notification preferences:", error)
+    return DEFAULT_PREFERENCES
+  }
+}
+
+/**
+ * Check if a specific notification type is enabled
+ */
+async function isNotificationEnabled(
+  partnerId: string,
+  type: "submitted" | "approved" | "rejected" | "completed"
+): Promise<boolean> {
+  const prefs = await getPartnerPreferences(partnerId)
+  return prefs.changeRequests[type] ?? true
+}
 
 /**
  * Change request data for notifications

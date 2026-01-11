@@ -3,6 +3,10 @@ import { db } from "@/lib/db"
 import { partners, microsites, micrositeChangeRequests } from "@/lib/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { requirePartner, withAuth } from "@/lib/api-auth"
+import {
+  sendChangeRequestSubmittedEmail,
+  sendAdminNewRequestNotification,
+} from "@/lib/email/change-request-notifications"
 
 // Helper to generate request number
 function generateRequestNumber(): string {
@@ -179,6 +183,33 @@ export async function POST(request: Request) {
           updatedAt: now,
         })
         .returning()
+
+      // Send email notifications (non-blocking)
+      const notificationData = {
+        partnerId: partner.id,
+        partnerName: partner.businessName || partner.contactName || "Partner",
+        partnerEmail: partner.contactEmail,
+        requestId: newRequest.id,
+        requestNumber: newRequest.requestNumber,
+        requestType: newRequest.requestType as "branding" | "content" | "both",
+        requestedBranding: requestedBranding || null,
+        requestedContent: requestedContent || null,
+        partnerNotes: partnerNotes || null,
+        micrositeSubdomain: microsite?.subdomain || null,
+      }
+
+      // Send confirmation to partner
+      sendChangeRequestSubmittedEmail(notificationData).catch((err) => {
+        console.error("[Email] Failed to send submitted notification:", err)
+      })
+
+      // Notify admin(s) of new request
+      const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL
+      if (adminEmail) {
+        sendAdminNewRequestNotification(notificationData, adminEmail).catch((err) => {
+          console.error("[Email] Failed to send admin notification:", err)
+        })
+      }
 
       return NextResponse.json({
         success: true,

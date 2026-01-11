@@ -269,3 +269,19 @@ export function formatCurrency(amount: number): string {
 export function formatPercentage(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
+
+// Change request email templates
+export { BaseEmailTemplate, emailStyles, renderEmailToHtml, htmlToPlainText } from './base'
+export type { BaseEmailProps } from './base'
+
+export { ChangeRequestSubmittedEmail } from './change-request-submitted'
+export type { ChangeRequestSubmittedEmailProps } from './change-request-submitted'
+
+export { ChangeRequestApprovedEmail } from './change-request-approved'
+export type { ChangeRequestApprovedEmailProps } from './change-request-approved'
+
+export { ChangeRequestRejectedEmail } from './change-request-rejected'
+export type { ChangeRequestRejectedEmailProps } from './change-request-rejected'
+
+export { ChangeRequestCompletedEmail } from './change-request-completed'
+export type { ChangeRequestCompletedEmailProps } from './change-request-completed'

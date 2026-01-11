@@ -84,6 +84,12 @@ export const partners = pgTable("partners", {
   // GHL Integration fields
   ghlContactId: text("ghl_contact_id"), // GHL Contact ID
   ghlOpportunityId: text("ghl_opportunity_id"), // GHL Pipeline Opportunity ID
+  // Notification preferences
+  notificationPreferences: jsonb("notification_preferences").$default(() => ({
+    changeRequests: { submitted: true, approved: true, rejected: true, completed: true },
+    marketing: true,
+    reports: true,
+  })),
   // Document tracking
   documentsStatus: text("documents_status").default("not_sent"), // not_sent, sent, pending, completed
   agreementSigned: boolean("agreement_signed").default(false),

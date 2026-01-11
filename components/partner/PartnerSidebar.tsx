@@ -17,6 +17,7 @@ import {
   ChevronRight,
   MapPin,
   FileText,
+  Settings,
 } from "lucide-react"
 
 const navItems = [
@@ -49,6 +50,11 @@ const navItems = [
     label: "Profile",
     href: "/partner/profile",
     icon: User,
+  },
+  {
+    label: "Settings",
+    href: "/partner/settings",
+    icon: Settings,
   },
 ]
 

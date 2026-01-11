@@ -142,6 +142,92 @@ describe('/api/documents/sign', () => {
       expect(data.error).toContain('Invalid documentType')
     })
 
+    it('returns 400 for invalid signature type', async () => {
+      const request = new Request('http://localhost/api/documents/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: 'partner-123',
+          documentType: DOCUMENT_TYPES.PARTNER_AGREEMENT,
+          signature: 'signature-data',
+          signatureType: 'invalid_type',
+        }),
+      })
+
+      const response = await POST(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(400)
+      expect(data.success).toBe(false)
+      expect(data.error).toContain('Invalid signature type')
+    })
+
+    it('accepts text signature type', async () => {
+      vi.mocked(dbModule).db = null as any
+
+      const request = new Request('http://localhost/api/documents/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: 'partner-123',
+          documentType: DOCUMENT_TYPES.PARTNER_AGREEMENT,
+          signature: 'John Doe',
+          signatureType: 'text',
+        }),
+      })
+
+      const response = await POST(request)
+      const data = await response.json()
+
+      // Should fail with "Database not configured" not "Invalid signature type"
+      expect(response.status).toBe(500)
+      expect(data.error).toContain('Database not configured')
+    })
+
+    it('accepts drawn signature type with image', async () => {
+      vi.mocked(dbModule).db = null as any
+
+      const request = new Request('http://localhost/api/documents/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: 'partner-123',
+          documentType: DOCUMENT_TYPES.PARTNER_AGREEMENT,
+          signature: 'John Doe',
+          signatureType: 'drawn',
+          signatureImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...',
+        }),
+      })
+
+      const response = await POST(request)
+      const data = await response.json()
+
+      // Should fail with "Database not configured" not "Invalid signature type"
+      expect(response.status).toBe(500)
+      expect(data.error).toContain('Database not configured')
+    })
+
+    it('returns 400 for drawn signature without image', async () => {
+      const request = new Request('http://localhost/api/documents/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: 'partner-123',
+          documentType: DOCUMENT_TYPES.PARTNER_AGREEMENT,
+          signature: 'John Doe',
+          signatureType: 'drawn',
+          // signatureImage intentionally omitted
+        }),
+      })
+
+      const response = await POST(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(400)
+      expect(data.success).toBe(false)
+      expect(data.error).toContain('Signature image required for drawn signatures')
+    })
+
     it('returns 500 when database is not configured', async () => {
       // db is null by default from mock
       vi.mocked(dbModule).db = null as any

@@ -3,13 +3,12 @@ import { db } from "@/lib/db"
 import { partners, microsites, micrositeChangeRequests } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { sendEmail } from "@/lib/email/resend"
 import {
-  getChangeRequestStatusEmail,
-  getChangeRequestStatusText,
-  getChangeRequestSubject,
-  type ChangeRequestEmailData,
-} from "@/lib/email/templates/change-request-notification"
+  sendChangeRequestApprovedEmail,
+  sendChangeRequestRejectedEmail,
+  sendChangeRequestCompletedEmail,
+  type ChangeRequestNotificationData,
+} from "@/lib/email/change-request-notifications"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -189,10 +188,10 @@ export async function PATCH(request: Request, context: RouteContext) {
         .where(eq(micrositeChangeRequests.id, id))
         .returning()
 
-      // Send email notification for approve/reject actions
-      if (action === "approve" || action === "reject") {
+      // Send email notification for approve/reject/complete actions
+      if (action === "approve" || action === "reject" || action === "complete") {
         try {
-          // Get partner details for the email
+          // Get partner and microsite details for the email
           const [partner] = await db
             .select({
               businessName: partners.businessName,
@@ -203,33 +202,46 @@ export async function PATCH(request: Request, context: RouteContext) {
             .where(eq(partners.id, changeRequest.partnerId))
             .limit(1)
 
+          // Get microsite subdomain if available
+          let micrositeSubdomain: string | null = null
+          if (changeRequest.micrositeId) {
+            const [microsite] = await db
+              .select({ subdomain: microsites.subdomain })
+              .from(microsites)
+              .where(eq(microsites.id, changeRequest.micrositeId))
+              .limit(1)
+            micrositeSubdomain = microsite?.subdomain || null
+          }
+
           if (partner?.contactEmail) {
-            const emailData: ChangeRequestEmailData = {
-              partnerName: partner.businessName || "Partner",
-              contactName: partner.contactName || "Partner",
+            const notificationData: ChangeRequestNotificationData = {
+              partnerId: changeRequest.partnerId,
+              partnerName: partner.businessName || partner.contactName || "Partner",
+              partnerEmail: partner.contactEmail,
+              requestId: id,
               requestNumber: changeRequest.requestNumber || id.slice(0, 8).toUpperCase(),
               requestType: (changeRequest.requestType as "branding" | "content" | "both") || "both",
-              status: action === "approve" ? "approved" : "rejected",
-              reviewNotes: reviewNotes,
-              rejectionReason: rejectionReason,
+              requestedBranding: changeRequest.requestedBranding as Record<string, string> | null,
+              requestedContent: changeRequest.requestedContent as Record<string, string> | null,
+              reviewNotes: reviewNotes || null,
+              rejectionReason: rejectionReason || null,
+              micrositeSubdomain,
             }
 
-            const emailResult = await sendEmail({
-              to: partner.contactEmail,
-              subject: getChangeRequestSubject(emailData),
-              html: getChangeRequestStatusEmail(emailData),
-              text: getChangeRequestStatusText(emailData),
-              tags: [
-                { name: "type", value: "change-request-notification" },
-                { name: "request_id", value: id },
-                { name: "action", value: action },
-              ],
-            })
+            // Send appropriate email based on action
+            let emailResult
+            if (action === "approve") {
+              emailResult = await sendChangeRequestApprovedEmail(notificationData)
+            } else if (action === "reject") {
+              emailResult = await sendChangeRequestRejectedEmail(notificationData)
+            } else if (action === "complete") {
+              emailResult = await sendChangeRequestCompletedEmail(notificationData)
+            }
 
-            if (!emailResult.success) {
+            if (emailResult && !emailResult.success) {
               console.error("Failed to send change request notification email:", emailResult.error)
-            } else {
-              console.log("Change request notification email sent:", emailResult.id)
+            } else if (emailResult) {
+              console.log("Change request notification email sent:", emailResult.messageId)
             }
           }
         } catch (emailError) {

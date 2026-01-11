@@ -53,3 +53,23 @@ export {
   fitnessEmails,
   type EmailTemplateData,
 } from './templates/outbound'
+
+// Change request notifications
+export {
+  sendChangeRequestSubmittedEmail,
+  sendChangeRequestApprovedEmail,
+  sendChangeRequestRejectedEmail,
+  sendChangeRequestCompletedEmail,
+  sendChangeRequestStatusNotification,
+  sendAdminNewRequestNotification,
+  type ChangeRequestNotificationData,
+} from './change-request-notifications'
+
+// New Resend client (alongside existing)
+export {
+  getResendClient as getResendClientNew,
+  sendEmail as sendEmailNew,
+  sendBatchEmails,
+  emailConfig,
+  isValidEmail,
+} from './client'

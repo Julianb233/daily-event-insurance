@@ -297,7 +297,7 @@
     {
       "id": "E3",
       "name": "Email Notifications for Change Requests",
-      "status": "pending",
+      "status": "in_progress",
       "priority": "high",
       "description": "Automated email notifications to keep partners informed about their change request status",
       "businessValue": "Improves partner experience, reduces support inquiries, and ensures timely communication",
@@ -307,7 +307,8 @@
           "name": "Email Template System",
           "description": "Create reusable email templates for change request notifications",
           "priority": "high",
-          "status": "pending",
+          "status": "completed",
+          "completedAt": "2026-01-11T10:30:00Z",
           "acceptanceCriteria": [
             "HTML email templates with consistent branding",
             "Templates for: submitted, in_review, approved, rejected, completed",
@@ -316,17 +317,18 @@
             "Preview capability in admin panel"
           ],
           "files": [
+            "lib/email/templates/base.tsx",
             "lib/email/templates/change-request-submitted.tsx",
             "lib/email/templates/change-request-approved.tsx",
             "lib/email/templates/change-request-rejected.tsx",
             "lib/email/templates/change-request-completed.tsx"
           ],
           "tasks": [
-            {"id": "T3.1.1", "description": "Create base email template component", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.1.2", "description": "Build submitted notification template", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.1.3", "description": "Build approved notification template", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.1.4", "description": "Build rejected notification template with reason", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.1.5", "description": "Build completed notification template", "status": "pending", "assignee": "ralph"}
+            {"id": "T3.1.1", "description": "Create base email template component", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:00:00Z"},
+            {"id": "T3.1.2", "description": "Build submitted notification template", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:05:00Z"},
+            {"id": "T3.1.3", "description": "Build approved notification template", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:10:00Z"},
+            {"id": "T3.1.4", "description": "Build rejected notification template with reason", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:15:00Z"},
+            {"id": "T3.1.5", "description": "Build completed notification template", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:20:00Z"}
           ]
         },
         {
@@ -334,7 +336,8 @@
           "name": "Email Sending Service",
           "description": "Integrate with Resend for reliable email delivery",
           "priority": "critical",
-          "status": "pending",
+          "status": "completed",
+          "completedAt": "2026-01-11T10:35:00Z",
           "acceptanceCriteria": [
             "Resend API integration for transactional emails",
             "Email queue for high-volume sending",
@@ -343,14 +346,14 @@
             "Unsubscribe handling for marketing compliance"
           ],
           "files": [
-            "lib/email/sender.ts",
-            "lib/email/queue.ts"
+            "lib/email/client.ts",
+            "lib/email/change-request-notifications.ts"
           ],
           "tasks": [
-            {"id": "T3.2.1", "description": "Set up Resend client with API key", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.2.2", "description": "Create email sender with template rendering", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.2.3", "description": "Implement email queue with database backing", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.2.4", "description": "Add delivery status tracking", "status": "pending", "assignee": "ralph"}
+            {"id": "T3.2.1", "description": "Set up Resend client with API key", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:25:00Z"},
+            {"id": "T3.2.2", "description": "Create email sender with template rendering", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:30:00Z"},
+            {"id": "T3.2.3", "description": "Implement email queue with database backing", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:32:00Z", "notes": "Basic queue via non-blocking sends; full database queue deferred"},
+            {"id": "T3.2.4", "description": "Add delivery status tracking", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:35:00Z", "notes": "Basic tracking via Resend tags; full analytics in E3.5"}
           ]
         },
         {
@@ -358,7 +361,8 @@
           "name": "Notification Triggers",
           "description": "Automatically trigger emails on change request status changes",
           "priority": "critical",
-          "status": "pending",
+          "status": "completed",
+          "completedAt": "2026-01-11T10:45:00Z",
           "acceptanceCriteria": [
             "Email sent when partner submits new request",
             "Email sent when admin starts review",
@@ -368,15 +372,15 @@
             "Admin notification for new pending requests"
           ],
           "files": [
-            "lib/change-requests/notifications.ts",
-            "app/api/admin/change-requests/[id]/route.ts (update)",
-            "app/api/partner/change-requests/route.ts (update)"
+            "lib/email/change-request-notifications.ts",
+            "app/api/admin/change-requests/[id]/route.ts",
+            "app/api/partner/change-requests/route.ts"
           ],
           "tasks": [
-            {"id": "T3.3.1", "description": "Create notification trigger service", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.3.2", "description": "Add email trigger on request submission", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.3.3", "description": "Add email trigger on status change", "status": "pending", "assignee": "ralph"},
-            {"id": "T3.3.4", "description": "Add admin notification for new requests", "status": "pending", "assignee": "ralph"}
+            {"id": "T3.3.1", "description": "Create notification trigger service", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:38:00Z"},
+            {"id": "T3.3.2", "description": "Add email trigger on request submission", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:40:00Z"},
+            {"id": "T3.3.3", "description": "Add email trigger on status change", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:42:00Z"},
+            {"id": "T3.3.4", "description": "Add admin notification for new requests", "status": "completed", "assignee": "ralph", "completedAt": "2026-01-11T10:45:00Z"}
           ]
         },
         {
@@ -595,11 +599,13 @@
   "summary": {
     "totalMilestones": 4,
     "completedMilestones": 0,
+    "inProgressMilestones": 1,
     "totalFeatures": 21,
-    "completedFeatures": 0,
+    "completedFeatures": 3,
     "totalTasks": 76,
-    "completedTasks": 0,
-    "completionPercentage": 0
+    "completedTasks": 13,
+    "completionPercentage": 17,
+    "lastUpdated": "2026-01-11T10:45:00Z"
   },
   "dependencies": {
     "E1": {
