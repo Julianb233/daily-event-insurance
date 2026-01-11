@@ -6,14 +6,26 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+// Lazy-initialize OpenAI client to avoid build-time errors
+let openaiClient: OpenAI | null = null
+
+function getOpenAIClient(): OpenAI | null {
+  if (!process.env.OPENAI_API_KEY) {
+    return null
+  }
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    })
+  }
+  return openaiClient
+}
 
 export async function POST(req: Request) {
-  if (!process.env.OPENAI_API_KEY) {
+  const openai = getOpenAIClient()
+  if (!openai) {
     return NextResponse.json(
-      { error: 'OpenAI API key not configured' }, 
+      { error: 'OpenAI API key not configured' },
       { status: 500 }
     )
   }
