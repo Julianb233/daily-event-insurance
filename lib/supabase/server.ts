@@ -2,10 +2,10 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import type { Database } from "./types"
 
-// Environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+// Environment variables with fallbacks for build time
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
 /**
  * Creates a Supabase client for Server Components, Server Actions, and Route Handlers.
@@ -25,7 +25,11 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 export async function createClient() {
   const cookieStore = await cookies()
 
-  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+  // Use placeholder values during build if env vars not set
+  const url = supabaseUrl || 'https://placeholder.supabase.co'
+  const key = supabaseAnonKey || 'placeholder-key'
+
+  return createServerClient<Database>(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -62,7 +66,11 @@ export async function createClient() {
  * ```
  */
 export function createAdminClient() {
-  return createServerClient<Database>(supabaseUrl, supabaseServiceKey, {
+  // Use placeholder values during build if env vars not set
+  const url = supabaseUrl || 'https://placeholder.supabase.co'
+  const key = supabaseServiceKey || 'placeholder-service-key'
+
+  return createServerClient<Database>(url, key, {
     cookies: {
       getAll() {
         return []
