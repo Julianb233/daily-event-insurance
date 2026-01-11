@@ -16,7 +16,7 @@ import type { CommissionTier } from "@/lib/commission-tiers"
 
 export interface PricingInput {
   eventType: string
-  coverageType: "liability" | "equipment" | "cancellation"
+  coverageType: "liability"
   participants: number
   eventDate: Date
   duration?: number // hours
@@ -64,8 +64,6 @@ export interface PricingResult {
  */
 const BASE_PRICES: Record<string, number> = {
   liability: 4.99, // General liability coverage
-  equipment: 9.99, // Equipment damage/loss
-  cancellation: 14.99, // Event cancellation/postponement
 }
 
 /**
@@ -117,8 +115,6 @@ const EVENT_TYPE_RISK_MAP: Record<string, number> = {
  */
 const COVERAGE_RISK_MAP: Record<string, number> = {
   liability: 1.0, // Base risk
-  equipment: 1.15, // Equipment has higher loss frequency
-  cancellation: 1.3, // Cancellation is most complex
 }
 
 // ============= Risk Assessment Functions =============
@@ -334,8 +330,6 @@ export function calculateMultiCoveragePricing(
 ): Record<string, PricingResult> {
   return {
     liability: calculatePricing({ ...input, coverageType: "liability" }),
-    equipment: calculatePricing({ ...input, coverageType: "equipment" }),
-    cancellation: calculatePricing({ ...input, coverageType: "cancellation" }),
   }
 }
 
@@ -352,8 +346,8 @@ export function validatePricingInput(input: PricingInput): {
     errors.push("Event type must be at least 2 characters")
   }
 
-  if (!["liability", "equipment", "cancellation"].includes(input.coverageType)) {
-    errors.push("Coverage type must be liability, equipment, or cancellation")
+  if (!["liability"].includes(input.coverageType)) {
+    errors.push("Coverage type must be liability")
   }
 
   if (input.participants < 1 || input.participants > 10000) {
@@ -388,10 +382,8 @@ export function getPricingEstimates(
 }[] {
   const baseDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
 
-  const coverageTypes: Array<"liability" | "equipment" | "cancellation"> = [
+  const coverageTypes: Array<"liability"> = [
     "liability",
-    "equipment",
-    "cancellation",
   ]
 
   return coverageTypes.map(coverageType => {

@@ -339,8 +339,8 @@ export default function RaceDayFlowPage() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full icon-teal">
-              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full icon-teal flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
                 <Activity className="w-6 h-6 text-teal-600" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Seamless Integration</h3>
@@ -349,8 +349,8 @@ export default function RaceDayFlowPage() {
               </p>
             </ProcessCard>
 
-            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full">
-              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
+            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
                 <Shield className="w-6 h-6 text-indigo-600" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Instant Fulfillment</h3>
@@ -359,8 +359,8 @@ export default function RaceDayFlowPage() {
               </p>
             </ProcessCard>
 
-            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full">
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+            <ProcessCard className="hover:shadow-xl hover:-translate-y-1 transition-all h-full flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
                 <Building2 className="w-6 h-6 text-emerald-600" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Automated RevShare</h3>

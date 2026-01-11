@@ -51,7 +51,7 @@ export const updateProfileSchema = z.object({
 
 // ============= Product Schemas =============
 
-export const productTypeSchema = z.enum(["liability", "equipment", "cancellation"])
+export const productTypeSchema = z.enum(["liability"])
 
 export const updateProductSchema = z.object({
   productType: productTypeSchema,

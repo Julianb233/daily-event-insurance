@@ -17,9 +17,11 @@ import {
   Copy,
   Check,
   FileText,
+  Settings,
 } from "lucide-react"
 import Link from "next/link"
 import { EarningsChart } from "@/components/partner/EarningsChart"
+import { ChangeRequestModal } from "@/components/partner/ChangeRequestModal"
 import {
   formatCurrency,
   getNextTier,
@@ -54,6 +56,9 @@ interface MicrositeData {
   status: string
   qrCodeUrl?: string | null
   launchedAt?: string | null
+  primaryColor?: string | null
+  logoUrl?: string | null
+  heroImageUrl?: string | null
 }
 
 export default function PartnerDashboardPage() {
@@ -62,6 +67,7 @@ export default function PartnerDashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [showChangeRequest, setShowChangeRequest] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -116,6 +122,23 @@ export default function PartnerDashboardPage() {
       return `https://dailyeventinsurance.com/${micrositeData.subdomain}`
     }
     return null
+  }
+
+  const handleChangeRequestSubmit = async (request: {
+    requestType: "branding" | "content" | "both"
+    requestedBranding?: Record<string, string>
+    requestedContent?: Record<string, string>
+    partnerNotes?: string
+  }) => {
+    const response = await fetch("/api/partner/change-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    })
+    if (!response.ok) {
+      const data = await response.json()
+      throw new Error(data.error || "Failed to submit request")
+    }
   }
 
   // Generate demo data for display
@@ -404,6 +427,15 @@ export default function PartnerDashboardPage() {
                   </div>
                 </div>
               )}
+
+              {/* Request Changes Button */}
+              <button
+                onClick={() => setShowChangeRequest(true)}
+                className="mt-4 flex items-center gap-2 px-4 py-2.5 bg-white border border-teal-200 text-teal-700 rounded-lg hover:bg-teal-50 transition-colors text-sm font-medium"
+              >
+                <Settings className="w-4 h-4" />
+                Request Branding Changes
+              </button>
             </div>
 
             {/* QR Code */}
@@ -500,6 +532,19 @@ export default function PartnerDashboardPage() {
           </div>
         </Link>
       </motion.div>
+
+      {/* Change Request Modal */}
+      <ChangeRequestModal
+        isOpen={showChangeRequest}
+        onClose={() => setShowChangeRequest(false)}
+        currentBranding={micrositeData ? {
+          siteName: micrositeData.siteName,
+          primaryColor: micrositeData.primaryColor || undefined,
+          logoUrl: micrositeData.logoUrl || undefined,
+          heroImageUrl: micrositeData.heroImageUrl || undefined,
+        } : undefined}
+        onSubmit={handleChangeRequestSubmit}
+      />
     </div>
   )
 }

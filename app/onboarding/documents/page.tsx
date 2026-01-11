@@ -7,6 +7,8 @@ import { useSession } from "@/components/providers/session-provider"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { DocumentViewer } from "@/components/document-viewer"
+import { SigningProgress } from "@/components/signing/signing-progress"
+import { SigningConfirmation } from "@/components/signing/signing-confirmation"
 import { DOCUMENT_TYPES } from "@/lib/demo-documents"
 import {
   FileText,
@@ -51,9 +53,13 @@ export default function OnboardingDocumentsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [partnerId, setPartnerId] = useState<string | null>(null)
+  const [partnerEmail, setPartnerEmail] = useState<string>("")
   const [documentStatuses, setDocumentStatuses] = useState<Record<string, DocumentStatus>>({})
   const [selectedDocument, setSelectedDocument] = useState<DocumentTemplate | null>(null)
   const [isViewerOpen, setIsViewerOpen] = useState(false)
+  const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [justSignedDocs, setJustSignedDocs] = useState<Array<{ type: string; title: string; signedAt: string }>>([])
 
   // Fetch templates and partner info on mount
   useEffect(() => {
@@ -68,6 +74,7 @@ export default function OnboardingDocumentsPage() {
           if (partnerData.partner) {
             currentPartnerId = partnerData.partner.id
             setPartnerId(currentPartnerId)
+            setPartnerEmail(partnerData.partner.contactEmail || session?.user?.email || "")
 
             // Fetch document signing status
             const statusRes = await fetch(`/api/documents/sign?partnerId=${currentPartnerId}`)
@@ -102,7 +109,12 @@ export default function OnboardingDocumentsPage() {
     fetchData()
   }, [])
 
-  const handleSign = async (documentType: string, signature: string) => {
+  const handleSign = async (
+    documentType: string,
+    signature: string,
+    signatureType?: "text" | "drawn",
+    signatureImage?: string
+  ) => {
     if (!partnerId) {
       throw new Error("Partner ID not found. Please complete registration first.")
     }
@@ -114,6 +126,8 @@ export default function OnboardingDocumentsPage() {
         partnerId,
         documentType,
         signature,
+        signatureType: signatureType || "text",
+        signatureImage,
       }),
     })
 
@@ -123,14 +137,48 @@ export default function OnboardingDocumentsPage() {
       throw new Error(data.error || "Failed to sign document")
     }
 
+    const now = new Date().toISOString()
+    const signedDoc = templates.find(t => t.type === documentType)
+
     // Update local state
     setDocumentStatuses((prev) => ({
       ...prev,
-      [documentType]: { signed: true, signedAt: new Date().toISOString() },
+      [documentType]: { signed: true, signedAt: now },
     }))
 
-    // We no longer auto-redirect here to allow optional docs signing
-    // The "Go to Dashboard" button will become available
+    // Track signed document for confirmation modal
+    if (signedDoc) {
+      setJustSignedDocs((prev) => [
+        ...prev,
+        { type: documentType, title: signedDoc.title, signedAt: now }
+      ])
+    }
+
+    // Move to next document or show confirmation
+    const currentIndex = templates.findIndex(t => t.type === documentType)
+    if (currentIndex < templates.length - 1) {
+      // Auto-advance to next unsigned document
+      const nextUnsignedIndex = templates.findIndex((t, i) =>
+        i > currentIndex && !documentStatuses[t.type]?.signed && t.type !== documentType
+      )
+      if (nextUnsignedIndex !== -1) {
+        setCurrentDocumentIndex(nextUnsignedIndex)
+      }
+    }
+
+    // Check if all required documents are now signed
+    const updatedStatuses = {
+      ...documentStatuses,
+      [documentType]: { signed: true, signedAt: now }
+    }
+    const allRequiredSigned = requiredDocuments.every(t =>
+      updatedStatuses[t.type]?.signed || t.type === documentType
+    )
+
+    if (allRequiredSigned && data.allDocumentsSigned) {
+      // Show confirmation modal when all required docs are signed
+      setShowConfirmation(true)
+    }
   }
 
   const isOptional = (type: string) => {
@@ -205,19 +253,21 @@ export default function OnboardingDocumentsPage() {
         </motion.div>
 
         {/* Progress indicator */}
-        <div className="max-w-3xl mx-auto mb-8">
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-            <span>Required documents signed</span>
-            <span className="font-medium">{requiredSignedCount} of {requiredDocuments.length}</span>
-          </div>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-teal-500 to-teal-600"
-              initial={{ width: 0 }}
-              animate={{ width: `${(requiredSignedCount / requiredDocuments.length) * 100}%` }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
+        <div className="max-w-3xl mx-auto mb-8 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+          <SigningProgress
+            documents={templates.map(t => ({
+              type: t.type,
+              title: t.title,
+              signed: documentStatuses[t.type]?.signed || false,
+              required: !isOptional(t.type),
+            }))}
+            currentIndex={currentDocumentIndex}
+            onStepClick={(index) => {
+              setCurrentDocumentIndex(index)
+              setSelectedDocument(templates[index])
+              setIsViewerOpen(true)
+            }}
+          />
         </div>
 
         {/* Documents list */}
@@ -277,6 +327,7 @@ export default function OnboardingDocumentsPage() {
 
                   <button
                     onClick={() => {
+                      setCurrentDocumentIndex(index)
                       setSelectedDocument(template)
                       setIsViewerOpen(true)
                     }}
@@ -338,11 +389,24 @@ export default function OnboardingDocumentsPage() {
                 (documentStatuses[selectedDocument.type]?.signed &&
                   (documentStatuses[selectedDocument.type] as any).contentSnapshot) ||
                 selectedDocument.content,
+              signedAt: documentStatuses[selectedDocument.type]?.signedAt,
             }
             : null
         }
         onSign={handleSign}
         isSigned={selectedDocument ? documentStatuses[selectedDocument.type]?.signed : false}
+        currentStep={currentDocumentIndex}
+        totalSteps={templates.length}
+      />
+
+      {/* Signing Confirmation Modal */}
+      <SigningConfirmation
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        signedDocuments={justSignedDocs}
+        partnerEmail={partnerEmail}
+        partnerId={partnerId || ""}
+        onContinue={() => router.push("/partner/dashboard")}
       />
 
       <Footer />

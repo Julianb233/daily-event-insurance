@@ -34,15 +34,13 @@ function ValueCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className={`p-6 rounded-2xl ${
-        highlight
+      className={`p-6 rounded-2xl flex flex-col items-center text-center ${highlight
           ? "bg-teal-500 text-white"
           : "bg-white border border-slate-200"
-      }`}
+        }`}
     >
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-        highlight ? "bg-white/20" : "bg-teal-50"
-      }`}>
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 mx-auto ${highlight ? "bg-white/20" : "bg-teal-50"
+        }`}>
         <Icon className={`w-6 h-6 ${highlight ? "text-white" : "text-teal-600"}`} />
       </div>
       <h3 className={`text-lg font-bold mb-2 ${highlight ? "text-white" : "text-slate-900"}`}>

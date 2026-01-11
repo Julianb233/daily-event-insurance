@@ -184,6 +184,8 @@ export const partnerDocuments = pgTable("partner_documents", {
   ghlDocumentId: text("ghl_document_id"), // GHL Document ID
   status: text("status").default("pending"), // pending, sent, viewed, signed, declined, expired
   contentSnapshot: text("content_snapshot"), // Stores the enacted content at time of signing
+  signatureType: text("signature_type").default("text"), // "text" or "drawn"
+  signatureImage: text("signature_image"), // Base64 PNG for drawn signatures
   sentAt: timestamp("sent_at"),
   viewedAt: timestamp("viewed_at"),
   signedAt: timestamp("signed_at"),
@@ -622,6 +624,51 @@ export const micrositeBilling = pgTable("microsite_billing", {
   micrositeMonthIdx: index("idx_microsite_billing_microsite_month").on(table.micrositeId, table.yearMonth),
 }))
 
+// Microsite change requests - partner requests for branding/content changes
+export const micrositeChangeRequests = pgTable("microsite_change_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+  micrositeId: uuid("microsite_id").references(() => microsites.id, { onDelete: "cascade" }),
+
+  // Request identification
+  requestNumber: text("request_number").unique().notNull(), // CR-YYYYMMDD-XXXXX
+
+  // Request type
+  requestType: text("request_type").notNull(), // branding, content, both
+
+  // Current values (snapshot at time of request)
+  currentBranding: jsonb("current_branding"), // { primaryColor, logoUrl, siteName, heroImageUrl }
+  currentContent: jsonb("current_content"), // { tagline, description, etc. }
+
+  // Requested changes
+  requestedBranding: jsonb("requested_branding"), // { primaryColor?, logoUrl?, siteName?, heroImageUrl? }
+  requestedContent: jsonb("requested_content"), // { tagline?, description?, etc. }
+
+  // Partner notes
+  partnerNotes: text("partner_notes"),
+  source: text("source").default("dashboard"), // dashboard, profile, support_ticket
+
+  // Status workflow
+  status: text("status").default("pending"), // pending, in_review, approved, rejected, completed
+
+  // Admin review
+  reviewedBy: uuid("reviewed_by"),
+  reviewNotes: text("review_notes"),
+  rejectionReason: text("rejection_reason"),
+
+  // Timestamps
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_microsite_change_requests_partner_id").on(table.partnerId),
+  micrositeIdIdx: index("idx_microsite_change_requests_microsite_id").on(table.micrositeId),
+  statusIdx: index("idx_microsite_change_requests_status").on(table.status),
+  requestTypeIdx: index("idx_microsite_change_requests_type").on(table.requestType),
+}))
+
 // Carrier licenses - insurance carrier licensing fees per site
 export const carrierLicenses = pgTable("carrier_licenses", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -935,6 +982,8 @@ export type Microsite = typeof microsites.$inferSelect
 export type NewMicrosite = typeof microsites.$inferInsert
 export type MicrositeBilling = typeof micrositeBilling.$inferSelect
 export type NewMicrositeBilling = typeof micrositeBilling.$inferInsert
+export type MicrositeChangeRequest = typeof micrositeChangeRequests.$inferSelect
+export type NewMicrositeChangeRequest = typeof micrositeChangeRequests.$inferInsert
 export type CarrierLicense = typeof carrierLicenses.$inferSelect
 export type NewCarrierLicense = typeof carrierLicenses.$inferInsert
 export type Lead = typeof leads.$inferSelect

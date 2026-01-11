@@ -130,7 +130,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
         />
 
         {/* Card content */}
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden">
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden flex flex-col items-center text-center">
           {/* Animated gradient border */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500/0 via-teal-500/10 to-teal-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -187,7 +187,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
             {step.details.map((detail, i) => (
               <motion.li
                 key={i}
-                className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-2 text-sm text-slate-600"
+                className="flex flex-col items-center text-center gap-2 text-sm text-slate-600"
                 initial={{ opacity: 0, x: -10 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ delay: 0.4 + index * 0.2 + i * 0.1 }}

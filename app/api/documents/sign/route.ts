@@ -20,11 +20,35 @@ export async function POST(request: Request) {
 
     try {
       const body = await request.json()
-      const { partnerId, documentType, signature, signedByName, signedByEmail } = body
+      const {
+        partnerId,
+        documentType,
+        signature,
+        signatureType = "text",  // "text" or "drawn"
+        signatureImage,  // Base64 PNG for drawn signatures
+        signedByName,
+        signedByEmail
+      } = body
 
       if (!partnerId || !documentType || !signature) {
         return NextResponse.json(
           { success: false, error: "Missing required fields: partnerId, documentType, signature" },
+          { status: 400 }
+        )
+      }
+
+      // Validate signature type
+      if (!["text", "drawn"].includes(signatureType)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid signature type. Must be 'text' or 'drawn'" },
+          { status: 400 }
+        )
+      }
+
+      // If drawn signature, require signatureImage
+      if (signatureType === "drawn" && !signatureImage) {
+        return NextResponse.json(
+          { success: false, error: "Signature image required for drawn signatures" },
           { status: 400 }
         )
       }
@@ -114,6 +138,8 @@ export async function POST(request: Request) {
         documentType,
         status: "signed",
         contentSnapshot, // Save the snapshot
+        signatureType, // "text" or "drawn"
+        signatureImage: signatureType === "drawn" ? signatureImage : null,
         signedAt: now,
         createdAt: now,
         updatedAt: now,

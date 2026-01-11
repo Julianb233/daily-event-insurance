@@ -555,30 +555,6 @@ function assessCoverageType(coverageType: string): {
   factor: RiskFactor
   scoreImpact: number
 } {
-  if (coverageType === "cancellation") {
-    return {
-      factor: {
-        category: "Coverage Type",
-        impact: "neutral",
-        severity: 6,
-        description: "Cancellation coverage has complex claim scenarios",
-      },
-      scoreImpact: 8,
-    }
-  }
-
-  if (coverageType === "equipment") {
-    return {
-      factor: {
-        category: "Coverage Type",
-        impact: "neutral",
-        severity: 4,
-        description: "Equipment coverage - moderate complexity",
-      },
-      scoreImpact: 3,
-    }
-  }
-
   return {
     factor: {
       category: "Coverage Type",

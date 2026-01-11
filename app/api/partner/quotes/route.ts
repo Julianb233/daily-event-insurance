@@ -43,7 +43,7 @@ function generateQuoteNumber(): string {
 async function calculateQuotePricing(
   input: {
     eventType: string
-    coverageType: "liability" | "equipment" | "cancellation"
+    coverageType: "liability"
     participants: number
     eventDate: Date
     duration?: number
@@ -106,7 +106,7 @@ async function calculateQuotePricing(
  * - eventType: string (required)
  * - eventDate: Date (required)
  * - participants: number (required)
- * - coverageType: "liability" | "equipment" | "cancellation" (required)
+ * - coverageType: "liability" (required)
  * - eventDetails: object (optional)
  * - customerEmail: string (optional)
  * - customerName: string (optional)
@@ -311,7 +311,7 @@ export async function POST(request: NextRequest) {
  * - page: number (default: 1)
  * - pageSize: number (default: 20, max: 100)
  * - status: "pending" | "accepted" | "declined" | "expired" (optional)
- * - coverageType: "liability" | "equipment" | "cancellation" (optional)
+ * - coverageType: "liability" (optional)
  * - startDate: Date (optional)
  * - endDate: Date (optional)
  */
@@ -332,7 +332,7 @@ export async function GET(request: NextRequest) {
           event_type: ["Gym Session", "Rock Climbing", "Equipment Rental"][i % 3],
           event_date: new Date(Date.now() + i * 24 * 60 * 60 * 1000),
           participants: 10 + i * 5,
-          coverage_type: ["liability", "equipment", "cancellation"][i % 3],
+          coverage_type: "liability",
           premium: (4.99 + i * 5) * (10 + i * 5),
           commission: (4.99 + i * 5) * (10 + i * 5) * 0.5,
           status: ["pending", "accepted", "declined"][i % 3],

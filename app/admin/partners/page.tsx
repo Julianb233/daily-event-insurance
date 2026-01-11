@@ -109,6 +109,18 @@ export default function AdminPartnersPage() {
   const [partnerDocuments, setPartnerDocuments] = useState<any[]>([])
   const [viewDocument, setViewDocument] = useState<any | null>(null)
   const [loadingDocs, setLoadingDocs] = useState(false)
+  const [signingDoc, setSigningDoc] = useState<string | null>(null)
+  const [signatureInput, setSignatureInput] = useState("")
+
+  // All document types for display
+  const ALL_DOCUMENT_TYPES = [
+    { type: "partner_agreement", label: "Partner Agreement" },
+    { type: "joint_marketing_agreement", label: "Joint Marketing Agreement" },
+    { type: "mutual_nda", label: "Mutual NDA" },
+    { type: "sponsorship_agreement", label: "Sponsorship Agreement" },
+    { type: "w9", label: "W-9 Form" },
+    { type: "direct_deposit", label: "Direct Deposit" },
+  ]
 
   // Edit State
   const [editingPartner, setEditingPartner] = useState<Partner | null>(null)
@@ -162,6 +174,42 @@ export default function AdminPartnersPage() {
     } finally {
       setLoadingDocs(false)
     }
+  }
+
+  // Admin sign document on behalf of partner
+  const handleAdminSign = async (documentType: string) => {
+    if (!viewingDocumentsFor || !signatureInput.trim()) return
+
+    setSigningDoc(documentType)
+    try {
+      const res = await fetch('/api/admin/documents/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          partnerId: viewingDocumentsFor.id,
+          documentType,
+          signature: signatureInput.trim()
+        })
+      })
+      const data = await res.json()
+      if (data.success) {
+        // Refresh documents
+        fetchPartnerDocuments(viewingDocumentsFor)
+        setSignatureInput("")
+      } else {
+        alert(data.error || 'Failed to sign document')
+      }
+    } catch (err) {
+      console.error("Error signing document:", err)
+      alert('Error signing document')
+    } finally {
+      setSigningDoc(null)
+    }
+  }
+
+  // Get signed document info by type
+  const getSignedDoc = (docType: string) => {
+    return partnerDocuments.find(d => d.documentType === docType && d.status === 'signed')
   }
 
   const fetchPartners = useCallback(async () => {
@@ -712,11 +760,25 @@ export default function AdminPartnersPage() {
                   Documents - {viewingDocumentsFor.businessName}
                 </h3>
                 <button
-                  onClick={() => setViewingDocumentsFor(null)}
+                  onClick={() => { setViewingDocumentsFor(null); setSignatureInput(""); }}
                   className="p-2 hover:bg-gray-100 rounded-lg transition"
                 >
                   <XCircle className="w-5 h-5 text-gray-400" />
                 </button>
+              </div>
+
+              {/* Signature input for signing */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Admin Signature (for signing pending documents)
+                </label>
+                <input
+                  type="text"
+                  value={signatureInput}
+                  onChange={(e) => setSignatureInput(e.target.value)}
+                  placeholder="Type your full name to sign documents"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm"
+                />
               </div>
 
               <div className="flex-1 overflow-y-auto">
@@ -724,42 +786,72 @@ export default function AdminPartnersPage() {
                   <div className="flex items-center justify-center py-12">
                     <RefreshCw className="w-6 h-6 animate-spin text-teal-600" />
                   </div>
-                ) : partnerDocuments.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    No documents signed yet.
-                  </div>
                 ) : (
                   <div className="space-y-3">
-                    {partnerDocuments.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${doc.status === 'signed' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
-                            }`}>
-                            <FileText className="w-5 h-5" />
+                    {ALL_DOCUMENT_TYPES.map((docType) => {
+                      const signedDoc = getSignedDoc(docType.type)
+                      const isSigned = !!signedDoc
+
+                      return (
+                        <div key={docType.type} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSigned ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}>
+                              <FileText className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">
+                                {docType.label}
+                              </p>
+                              {isSigned ? (
+                                <p className="text-sm text-green-600">
+                                  Signed: {new Date(signedDoc.signedAt).toLocaleString()}
+                                </p>
+                              ) : (
+                                <p className="text-sm text-yellow-600">
+                                  Pending signature
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-semibold text-gray-900 capitalize">
-                              {doc.documentType.replace(/_/g, " ")}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Signed: {new Date(doc.signedAt).toLocaleDateString()}
-                            </p>
+                          <div className="flex gap-2">
+                            {isSigned ? (
+                              <button
+                                onClick={() => setViewDocument({
+                                  id: signedDoc.id,
+                                  title: docType.label.toUpperCase(),
+                                  type: docType.type,
+                                  version: "1.0",
+                                  content: signedDoc.contentSnapshot || "No content snapshot available.",
+                                  signedAt: signedDoc.signedAt
+                                })}
+                                className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition text-sm font-medium flex items-center gap-2"
+                              >
+                                <Eye className="w-4 h-4" />
+                                View Signed
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleAdminSign(docType.type)}
+                                disabled={!signatureInput.trim() || signingDoc === docType.type}
+                                className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                              >
+                                {signingDoc === docType.type ? (
+                                  <>
+                                    <RefreshCw className="w-4 h-4 animate-spin" />
+                                    Signing...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CheckCircle className="w-4 h-4" />
+                                    Sign
+                                  </>
+                                )}
+                              </button>
+                            )}
                           </div>
                         </div>
-                        <button
-                          onClick={() => setViewDocument({
-                            id: doc.id,
-                            title: doc.documentType.replace(/_/g, " ").toUpperCase(),
-                            type: doc.documentType,
-                            version: "1.0",
-                            content: doc.contentSnapshot || "No content snapshot available."
-                          })}
-                          className="px-4 py-2 bg-white border border-gray-200 shadow-sm text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
-                        >
-                          View Content
-                        </button>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 )}
               </div>
@@ -865,7 +957,15 @@ export default function AdminPartnersPage() {
             <div className="relative pointer-events-none flex items-center justify-center h-full">
               <div className="pointer-events-auto bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] m-4 flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b">
-                  <h2 className="font-semibold text-gray-900">{viewDocument.title}</h2>
+                  <div>
+                    <h2 className="font-semibold text-gray-900">{viewDocument.title}</h2>
+                    {viewDocument.signedAt && (
+                      <p className="text-sm text-green-600 flex items-center gap-1 mt-1">
+                        <CheckCircle className="w-4 h-4" />
+                        Signed on {new Date(viewDocument.signedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
                   <button onClick={() => setViewDocument(null)} className="p-2 hover:bg-gray-100 rounded-lg"><XCircle className="w-5 h-5" /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-6">
