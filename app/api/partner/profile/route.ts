@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requirePartner, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, partners, partnerProducts, microsites } from "@/lib/db"
 import { eq } from "drizzle-orm"
-import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
+import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS, MOCK_MICROSITE } from "@/lib/mock-data"
 
 /**
  * GET /api/partner/profile
@@ -14,10 +14,11 @@ export async function GET(request: NextRequest) {
 
     // Dev mode - return mock data
     if (isDevMode || !isDbConfigured()) {
-      console.log("[DEV MODE] Returning mock profile data")
+      console.log("[DEV MODE] Returning mock profile data with microsite")
       return NextResponse.json({
         partner: MOCK_PARTNER,
         products: MOCK_PRODUCTS,
+        microsite: MOCK_MICROSITE,
       })
     }
 

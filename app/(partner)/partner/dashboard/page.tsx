@@ -17,6 +17,11 @@ import {
   Copy,
   Check,
   FileText,
+  Rocket,
+  BookOpen,
+  Download,
+  CheckCircle2,
+  X,
 } from "lucide-react"
 import Link from "next/link"
 import { EarningsChart } from "@/components/partner/EarningsChart"
@@ -62,6 +67,26 @@ export default function PartnerDashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [showGettingStarted, setShowGettingStarted] = useState(true)
+  const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>(() => {
+    // Check localStorage for completed steps on mount
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('partner_onboarding_steps')
+      return saved ? JSON.parse(saved) : {}
+    }
+    return {}
+  })
+
+  // Save completed steps to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && Object.keys(completedSteps).length > 0) {
+      localStorage.setItem('partner_onboarding_steps', JSON.stringify(completedSteps))
+    }
+  }, [completedSteps])
+
+  const toggleStepComplete = (stepId: string) => {
+    setCompletedSteps(prev => ({ ...prev, [stepId]: !prev[stepId] }))
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -188,6 +213,194 @@ export default function PartnerDashboardPage() {
         <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Dashboard</h1>
         <p className="text-slate-600 mt-1">Welcome back! Here&apos;s your earnings overview.</p>
       </motion.div>
+
+      {/* Getting Started Section - Show for new partners */}
+      {showGettingStarted && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="mb-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 shadow-lg border border-blue-100 relative"
+        >
+          <button
+            onClick={() => setShowGettingStarted(false)}
+            className="absolute top-4 right-4 p-1.5 hover:bg-white/50 rounded-lg transition-colors"
+            title="Dismiss getting started guide"
+          >
+            <X className="w-5 h-5 text-slate-400" />
+          </button>
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
+              <Rocket className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Getting Started</h2>
+              <p className="text-sm text-slate-600">Complete these steps to start earning with your partnership</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Step 1: View Your Microsite */}
+            <div
+              className={`bg-white rounded-xl p-4 border transition-all cursor-pointer ${
+                completedSteps.viewMicrosite
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-slate-200 hover:border-blue-300'
+              }`}
+              onClick={() => toggleStepComplete('viewMicrosite')}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  completedSteps.viewMicrosite
+                    ? 'bg-green-500'
+                    : 'bg-blue-100'
+                }`}>
+                  {completedSteps.viewMicrosite ? (
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  ) : (
+                    <Globe className="w-4 h-4 text-blue-600" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-sm">View Your Microsite</h3>
+                  <p className="text-xs text-slate-500 mt-1">See your branded insurance portal</p>
+                </div>
+              </div>
+              {micrositeData && getMicrositeUrl() && (
+                <a
+                  href={getMicrositeUrl()!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setCompletedSteps(prev => ({ ...prev, viewMicrosite: true }))
+                  }}
+                  className="mt-3 flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
+                >
+                  Open Microsite <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+            </div>
+
+            {/* Step 2: Download Marketing Materials */}
+            <Link
+              href="/partner/materials"
+              className={`bg-white rounded-xl p-4 border transition-all ${
+                completedSteps.downloadMaterials
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-slate-200 hover:border-blue-300'
+              }`}
+              onClick={() => setCompletedSteps(prev => ({ ...prev, downloadMaterials: true }))}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  completedSteps.downloadMaterials
+                    ? 'bg-green-500'
+                    : 'bg-pink-100'
+                }`}>
+                  {completedSteps.downloadMaterials ? (
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  ) : (
+                    <Download className="w-4 h-4 text-pink-600" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-sm">Download Materials</h3>
+                  <p className="text-xs text-slate-500 mt-1">Get logos, flyers & social templates</p>
+                </div>
+              </div>
+              <span className="mt-3 flex items-center gap-1.5 text-xs font-medium text-blue-600">
+                View Library <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+
+            {/* Step 3: Review Training */}
+            <Link
+              href="/partner/materials?category=training"
+              className={`bg-white rounded-xl p-4 border transition-all ${
+                completedSteps.reviewTraining
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-slate-200 hover:border-blue-300'
+              }`}
+              onClick={() => setCompletedSteps(prev => ({ ...prev, reviewTraining: true }))}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  completedSteps.reviewTraining
+                    ? 'bg-green-500'
+                    : 'bg-amber-100'
+                }`}>
+                  {completedSteps.reviewTraining ? (
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  ) : (
+                    <BookOpen className="w-4 h-4 text-amber-600" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-sm">Review Training</h3>
+                  <p className="text-xs text-slate-500 mt-1">Learn best practices & guides</p>
+                </div>
+              </div>
+              <span className="mt-3 flex items-center gap-1.5 text-xs font-medium text-blue-600">
+                Start Training <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+
+            {/* Step 4: Check Documents */}
+            <Link
+              href="/partner/documents"
+              className={`bg-white rounded-xl p-4 border transition-all ${
+                completedSteps.checkDocuments
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-slate-200 hover:border-blue-300'
+              }`}
+              onClick={() => setCompletedSteps(prev => ({ ...prev, checkDocuments: true }))}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  completedSteps.checkDocuments
+                    ? 'bg-green-500'
+                    : 'bg-purple-100'
+                }`}>
+                  {completedSteps.checkDocuments ? (
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  ) : (
+                    <FileText className="w-4 h-4 text-purple-600" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-sm">Check Documents</h3>
+                  <p className="text-xs text-slate-500 mt-1">Review agreements & contracts</p>
+                </div>
+              </div>
+              <span className="mt-3 flex items-center gap-1.5 text-xs font-medium text-blue-600">
+                View Documents <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+          </div>
+
+          {/* Progress indicator */}
+          <div className="mt-6 pt-4 border-t border-blue-100">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-600">
+                {Object.values(completedSteps).filter(Boolean).length} of 4 steps completed
+              </span>
+              <span className="text-blue-600 font-medium">
+                {Math.round((Object.values(completedSteps).filter(Boolean).length / 4) * 100)}% complete
+              </span>
+            </div>
+            <div className="mt-2 h-2 bg-blue-100 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
+                initial={{ width: "0%" }}
+                animate={{ width: `${(Object.values(completedSteps).filter(Boolean).length / 4) * 100}%` }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

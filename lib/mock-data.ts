@@ -32,6 +32,28 @@ export const MOCK_PARTNER: Partner = {
   created_at: new Date().toISOString(),
 }
 
+// Mock Microsite Data - for displaying the microsite section on partner dashboard
+export const MOCK_MICROSITE = {
+  id: "mock-microsite-001",
+  partnerId: "mock-partner-001",
+  domain: "demo.dailyeventinsurance.com",
+  subdomain: "demo",
+  customDomain: null,
+  siteName: "Demo Fitness Center Insurance",
+  primaryColor: "#14B8A6",
+  logoUrl: null,
+  heroImageUrl: null,
+  monthlyCharge: "650.00",
+  setupFee: "10000.00",
+  billingStatus: "active",
+  stripeSubscriptionId: null,
+  status: "live", // live status means it will be displayed on dashboard
+  qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://demo.dailyeventinsurance.com",
+  launchedAt: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+}
+
 // Mock Products
 export const MOCK_PRODUCTS: PartnerProduct[] = [
   {
