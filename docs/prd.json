@@ -1,0 +1,525 @@
+{
+  "project": "Daily Event Insurance - Onboarding System",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-11T09:30:00Z",
+  "description": "Comprehensive onboarding system for partner registration, document signing, change request workflows, and admin approval processes",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Partner Registration Flow",
+      "status": "completed",
+      "description": "Complete partner registration with business details, AI-assisted onboarding, and website scraping",
+      "features": [
+        {
+          "id": "F1.1",
+          "name": "Registration Form",
+          "description": "Multi-step partner registration form with business details collection",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Form collects business name, type, contact info",
+            "Form validates required fields before submission",
+            "Form supports multiple business types (gym, climbing, rental, etc.)",
+            "Integration type selection (widget, api, manual)",
+            "Estimated participant volume collection"
+          ],
+          "files": [
+            "app/onboarding/onboarding-form.tsx",
+            "app/onboarding/page.tsx",
+            "app/onboarding/layout.tsx"
+          ],
+          "tasks": [
+            {"id": "T1.1.1", "description": "Registration form UI", "status": "completed", "assignee": "ralph"},
+            {"id": "T1.1.2", "description": "Form validation", "status": "completed", "assignee": "ralph"},
+            {"id": "T1.1.3", "description": "API integration", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F1.2",
+          "name": "AI Integration Assistant",
+          "description": "AI-powered assistant for helping partners during onboarding",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "AI assistant provides contextual help during onboarding",
+            "Chat interface integrated into onboarding flow",
+            "Answers common partner questions"
+          ],
+          "files": [
+            "components/onboarding/IntegrationAssistant.tsx",
+            "app/api/onboarding/ai-assistant/route.ts"
+          ],
+          "tasks": [
+            {"id": "T1.2.1", "description": "AI chat component", "status": "completed", "assignee": "ralph"},
+            {"id": "T1.2.2", "description": "AI API endpoint", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F1.3",
+          "name": "Website Scraping for Auto-Fill",
+          "description": "Scrape partner website to auto-populate business details",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Scrapes business name, logo, colors from partner website",
+            "Auto-populates form fields with scraped data",
+            "Handles errors gracefully when website is inaccessible"
+          ],
+          "files": [
+            "app/api/onboarding/scrape-website/route.ts"
+          ],
+          "tasks": [
+            {"id": "T1.3.1", "description": "Website scraper API", "status": "completed", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M2",
+      "name": "Document Signing Flow",
+      "status": "completed",
+      "description": "Digital document signing with signature pad, multi-document workflow, and PDF generation",
+      "features": [
+        {
+          "id": "F2.1",
+          "name": "Document Templates System",
+          "description": "Admin-editable document templates with version control",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Support for Partner Agreement, Joint Marketing, NDA, W9, Direct Deposit",
+            "Templates stored in database with versioning",
+            "Auto-population of partner data into templates",
+            "Required vs optional document distinction"
+          ],
+          "files": [
+            "lib/db/schema.ts (documentTemplates table)",
+            "lib/demo-documents.ts",
+            "app/api/documents/templates/route.ts"
+          ],
+          "tasks": [
+            {"id": "T2.1.1", "description": "Document template schema", "status": "completed", "assignee": "ralph"},
+            {"id": "T2.1.2", "description": "Template API endpoints", "status": "completed", "assignee": "ralph"},
+            {"id": "T2.1.3", "description": "Document types configuration", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.2",
+          "name": "Signature Pad Component",
+          "description": "Canvas-based signature capture with draw and clear functionality",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Canvas-based signature drawing",
+            "Touch and mouse support",
+            "Signature clear functionality",
+            "Export to PNG data URL",
+            "Responsive sizing"
+          ],
+          "files": [
+            "components/signing/signature-pad.tsx"
+          ],
+          "tasks": [
+            {"id": "T2.2.1", "description": "Signature canvas component", "status": "completed", "assignee": "ralph"},
+            {"id": "T2.2.2", "description": "Touch/mouse support", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.3",
+          "name": "Document Viewer with Signing",
+          "description": "Full document viewer modal with inline signing capability",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Modal-based document viewer",
+            "Renders HTML document content",
+            "Integrates signature pad at bottom",
+            "Support for typed and drawn signatures",
+            "Shows signing progress across documents"
+          ],
+          "files": [
+            "components/document-viewer.tsx",
+            "app/onboarding/documents/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T2.3.1", "description": "Document viewer modal", "status": "completed", "assignee": "ralph"},
+            {"id": "T2.3.2", "description": "Signing integration", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.4",
+          "name": "Signing Progress Tracker",
+          "description": "Visual progress indicator for multi-document signing workflow",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Shows all documents in sequence",
+            "Indicates signed vs unsigned status",
+            "Highlights current document",
+            "Click to navigate between documents",
+            "Shows required vs optional badges"
+          ],
+          "files": [
+            "components/signing/signing-progress.tsx"
+          ],
+          "tasks": [
+            {"id": "T2.4.1", "description": "Progress component", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.5",
+          "name": "Signing Confirmation",
+          "description": "Confirmation modal after all documents signed",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Shows summary of signed documents",
+            "Provides next steps guidance",
+            "Button to proceed to partner dashboard",
+            "Option to download signed documents"
+          ],
+          "files": [
+            "components/signing/signing-confirmation.tsx"
+          ],
+          "tasks": [
+            {"id": "T2.5.1", "description": "Confirmation modal", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.6",
+          "name": "Document Signing API",
+          "description": "Backend API for document signing and status tracking",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "POST endpoint to sign documents",
+            "GET endpoint to check signing status",
+            "Stores signature type and image",
+            "Snapshots document content at signing",
+            "Tracks timestamps"
+          ],
+          "files": [
+            "app/api/documents/sign/route.ts",
+            "lib/db/schema.ts (partnerDocuments table)"
+          ],
+          "tasks": [
+            {"id": "T2.6.1", "description": "Sign API endpoint", "status": "completed", "assignee": "ralph"},
+            {"id": "T2.6.2", "description": "Status API endpoint", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.7",
+          "name": "PDF Generation",
+          "description": "Generate signed PDF documents for download",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Generate PDF from signed document content",
+            "Include signature image in PDF",
+            "Add timestamp and partner details",
+            "API endpoint for PDF download"
+          ],
+          "files": [
+            "app/api/documents/pdf/route.ts"
+          ],
+          "tasks": [
+            {"id": "T2.7.1", "description": "PDF generation API", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F2.8",
+          "name": "Confirmation Email",
+          "description": "Send confirmation email after document signing",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Send email when all required docs signed",
+            "Include list of signed documents",
+            "Link to partner dashboard",
+            "Welcome message"
+          ],
+          "files": [
+            "app/api/documents/confirmation-email/route.ts"
+          ],
+          "tasks": [
+            {"id": "T2.8.1", "description": "Confirmation email API", "status": "completed", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M3",
+      "name": "Change Request Workflow",
+      "status": "completed",
+      "description": "Partner-initiated change requests for branding/content with admin approval",
+      "features": [
+        {
+          "id": "F3.1",
+          "name": "Partner Change Request Modal",
+          "description": "Modal for partners to submit branding/content change requests",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Form to request branding changes (logo, colors)",
+            "Form to request content changes (taglines, descriptions)",
+            "Shows current values for reference",
+            "Validates required fields",
+            "Confirmation of submission"
+          ],
+          "files": [
+            "components/partner/ChangeRequestModal.tsx"
+          ],
+          "tasks": [
+            {"id": "T3.1.1", "description": "Change request modal", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F3.2",
+          "name": "Partner Change Request API",
+          "description": "API endpoints for partners to submit and view change requests",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "POST endpoint to create change request",
+            "GET endpoint to list partner's requests",
+            "GET endpoint for single request details",
+            "PUT endpoint to update/cancel request"
+          ],
+          "files": [
+            "app/api/partner/change-requests/route.ts",
+            "app/api/partner/change-requests/[id]/route.ts"
+          ],
+          "tasks": [
+            {"id": "T3.2.1", "description": "Create request API", "status": "completed", "assignee": "ralph"},
+            {"id": "T3.2.2", "description": "List requests API", "status": "completed", "assignee": "ralph"},
+            {"id": "T3.2.3", "description": "Update request API", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F3.3",
+          "name": "Partner Dashboard Integration",
+          "description": "Show change request status in partner dashboard",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Button to open change request modal",
+            "List of pending/recent change requests",
+            "Status indicators for each request"
+          ],
+          "files": [
+            "app/(partner)/partner/dashboard/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T3.3.1", "description": "Dashboard integration", "status": "completed", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M4",
+      "name": "Admin Approval System",
+      "status": "completed",
+      "description": "Admin interface for reviewing and acting on change requests",
+      "features": [
+        {
+          "id": "F4.1",
+          "name": "Admin Change Requests Page",
+          "description": "Admin dashboard page for managing all change requests",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "List all change requests with filtering",
+            "Status-based tabs (pending, in_review, approved, rejected, completed)",
+            "Request counts per status",
+            "Partner details visible for each request",
+            "Pagination for large lists"
+          ],
+          "files": [
+            "app/admin/change-requests/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T4.1.1", "description": "Admin change requests page", "status": "completed", "assignee": "ralph"},
+            {"id": "T4.1.2", "description": "Filtering and tabs", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F4.2",
+          "name": "Admin Change Request API",
+          "description": "API endpoints for admin to review and approve/reject requests",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "GET endpoint to list all requests with filters",
+            "GET endpoint for single request details",
+            "PUT endpoint to update status (approve/reject)",
+            "POST endpoint to apply approved changes"
+          ],
+          "files": [
+            "app/api/admin/change-requests/route.ts",
+            "app/api/admin/change-requests/[id]/route.ts",
+            "app/api/admin/change-requests/[id]/apply/route.ts"
+          ],
+          "tasks": [
+            {"id": "T4.2.1", "description": "Admin list API", "status": "completed", "assignee": "ralph"},
+            {"id": "T4.2.2", "description": "Approve/reject API", "status": "completed", "assignee": "ralph"},
+            {"id": "T4.2.3", "description": "Apply changes API", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F4.3",
+          "name": "Request Detail Modal",
+          "description": "Modal showing full change request details with before/after comparison",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Shows current vs requested values side-by-side",
+            "Displays partner notes",
+            "Approve/reject buttons with notes input",
+            "Shows request history"
+          ],
+          "files": [
+            "app/admin/change-requests/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T4.3.1", "description": "Detail modal", "status": "completed", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "F4.4",
+          "name": "Admin Document Signing",
+          "description": "Admin endpoint for managing document signing on behalf of partners",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Admin can trigger document resend",
+            "Admin can view document status for all partners",
+            "Admin can manually mark documents as signed"
+          ],
+          "files": [
+            "app/api/admin/documents/sign/route.ts"
+          ],
+          "tasks": [
+            {"id": "T4.4.1", "description": "Admin document API", "status": "completed", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M5",
+      "name": "Database & Schema",
+      "status": "completed",
+      "description": "Database schema for onboarding data models",
+      "features": [
+        {
+          "id": "F5.1",
+          "name": "Partners Table",
+          "description": "Core partner data with onboarding status tracking",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Business details (name, type, contact)",
+            "Document status fields (agreementSigned, w9Signed, directDepositSigned)",
+            "Timestamps (documentsSentAt, documentsCompletedAt, approvedAt)",
+            "Status workflow (pending, documents_sent, documents_pending, under_review, active)"
+          ],
+          "files": ["lib/db/schema.ts"],
+          "tasks": [{"id": "T5.1.1", "description": "Partners table", "status": "completed", "assignee": "ralph"}]
+        },
+        {
+          "id": "F5.2",
+          "name": "Partner Documents Table",
+          "description": "Individual document tracking for each partner",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Document type, status, signature data",
+            "Content snapshot at signing time",
+            "Signature type (text/drawn) and image",
+            "Timestamps for sent, viewed, signed"
+          ],
+          "files": ["lib/db/schema.ts"],
+          "tasks": [{"id": "T5.2.1", "description": "Partner documents table", "status": "completed", "assignee": "ralph"}]
+        },
+        {
+          "id": "F5.3",
+          "name": "Document Templates Table",
+          "description": "Admin-editable document templates",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Type, title, content fields",
+            "Version tracking",
+            "isActive flag for soft delete"
+          ],
+          "files": ["lib/db/schema.ts"],
+          "tasks": [{"id": "T5.3.1", "description": "Document templates table", "status": "completed", "assignee": "ralph"}]
+        },
+        {
+          "id": "F5.4",
+          "name": "Microsite Change Requests Table",
+          "description": "Change request tracking with snapshot and approval workflow",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Request number, type, status",
+            "Current and requested branding/content JSONB",
+            "Partner and admin notes",
+            "Timestamps for submitted, reviewed, completed"
+          ],
+          "files": ["lib/db/schema.ts"],
+          "tasks": [{"id": "T5.4.1", "description": "Change requests table", "status": "completed", "assignee": "ralph"}]
+        },
+        {
+          "id": "F5.5",
+          "name": "Audit Logs Table",
+          "description": "Immutable audit trail for all actions",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Actor ID and type",
+            "Action and resource tracking",
+            "Metadata and changes JSONB",
+            "IP and user agent"
+          ],
+          "files": ["lib/db/schema.ts"],
+          "tasks": [{"id": "T5.5.1", "description": "Audit logs table", "status": "completed", "assignee": "ralph"}]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalMilestones": 5,
+    "completedMilestones": 5,
+    "totalFeatures": 21,
+    "completedFeatures": 21,
+    "totalTasks": 32,
+    "completedTasks": 32,
+    "completionPercentage": 100
+  },
+  "futureEnhancements": [
+    {
+      "id": "E1",
+      "name": "DocuSign Integration",
+      "description": "Replace custom signing with DocuSign for enterprise compliance",
+      "priority": "medium"
+    },
+    {
+      "id": "E2",
+      "name": "Bulk Partner Onboarding",
+      "description": "CSV import for onboarding multiple partners at once",
+      "priority": "low"
+    },
+    {
+      "id": "E3",
+      "name": "Email Notifications for Change Requests",
+      "description": "Notify partners when change requests are approved/rejected",
+      "priority": "high"
+    },
+    {
+      "id": "E4",
+      "name": "Document Template Editor",
+      "description": "Rich text editor for admins to edit document templates",
+      "priority": "medium"
+    }
+  ]
+}
