@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No file provided' }, 
+        { error: 'No file provided' },
         { status: 400 }
       )
     }
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('Transcription error:', error)
     return NextResponse.json(
-      { error: error.message || 'Error processing audio' }, 
+      { error: error.message || 'Error processing audio' },
       { status: 500 }
     )
   }

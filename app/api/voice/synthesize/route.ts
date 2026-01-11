@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     if (!text) {
       return NextResponse.json(
-        { error: 'No text provided' }, 
+        { error: 'No text provided' },
         { status: 400 }
       )
     }
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('TTS error:', error)
     return NextResponse.json(
-      { error: error.message || 'Error synthesizing speech' }, 
+      { error: error.message || 'Error synthesizing speech' },
       { status: 500 }
     )
   }

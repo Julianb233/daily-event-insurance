@@ -1,9 +1,9 @@
 import { createBrowserClient } from "@supabase/ssr"
 import type { Database } from "./types"
 
-// Environment variables
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Environment variables with fallbacks for build time
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 /**
  * Creates a Supabase client for browser/client-side usage.
@@ -21,6 +21,14 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
  * ```
  */
 export function createClient() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // Return a mock client during build or when not configured
+    // This prevents build failures when env vars aren't set
+    return createBrowserClient<Database>(
+      'https://placeholder.supabase.co',
+      'placeholder-key'
+    )
+  }
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey)
 }
 
