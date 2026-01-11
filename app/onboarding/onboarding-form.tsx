@@ -35,31 +35,7 @@ import {
 } from "lucide-react"
 import { RevenueCalculator } from "@/components/revenue-calculator"
 import { IntegrationAssistant } from "@/components/onboarding/IntegrationAssistant"
-
-// Validation helpers
-const validateEmail = (email: string): string | null => {
-  if (!email) return "Email is required"
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) return "Please enter a valid email address"
-  return null
-}
-
-const validatePhone = (phone: string): string | null => {
-  if (!phone) return "Phone number is required"
-  const digitsOnly = phone.replace(/\D/g, "")
-  if (digitsOnly.length < 10) return "Please enter a valid phone number"
-  return null
-}
-
-const validateUrl = (url: string): string | null => {
-  if (!url) return null // Optional field
-  try {
-    new URL(url.startsWith("http") ? url : `https://${url}`)
-    return null
-  } catch {
-    return "Please enter a valid website URL"
-  }
-}
+import { validateEmail, validatePhone, validateUrl } from "@/lib/validation/onboarding"
 
 // Smart defaults based on business type
 const businessDefaults: Record<string, {

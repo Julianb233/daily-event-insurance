@@ -3,6 +3,13 @@ import { db } from "@/lib/db"
 import { partners, microsites, micrositeChangeRequests } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
+import { sendEmail } from "@/lib/email/resend"
+import {
+  getChangeRequestStatusEmail,
+  getChangeRequestStatusText,
+  getChangeRequestSubject,
+  type ChangeRequestEmailData,
+} from "@/lib/email/templates/change-request-notification"
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -182,10 +189,60 @@ export async function PATCH(request: Request, context: RouteContext) {
         .where(eq(micrositeChangeRequests.id, id))
         .returning()
 
+      // Send email notification for approve/reject actions
+      if (action === "approve" || action === "reject") {
+        try {
+          // Get partner details for the email
+          const [partner] = await db
+            .select({
+              businessName: partners.businessName,
+              contactName: partners.contactName,
+              contactEmail: partners.contactEmail,
+            })
+            .from(partners)
+            .where(eq(partners.id, changeRequest.partnerId))
+            .limit(1)
+
+          if (partner?.contactEmail) {
+            const emailData: ChangeRequestEmailData = {
+              partnerName: partner.businessName || "Partner",
+              contactName: partner.contactName || "Partner",
+              requestNumber: changeRequest.requestNumber || id.slice(0, 8).toUpperCase(),
+              requestType: (changeRequest.requestType as "branding" | "content" | "both") || "both",
+              status: action === "approve" ? "approved" : "rejected",
+              reviewNotes: reviewNotes,
+              rejectionReason: rejectionReason,
+            }
+
+            const emailResult = await sendEmail({
+              to: partner.contactEmail,
+              subject: getChangeRequestSubject(emailData),
+              html: getChangeRequestStatusEmail(emailData),
+              text: getChangeRequestStatusText(emailData),
+              tags: [
+                { name: "type", value: "change-request-notification" },
+                { name: "request_id", value: id },
+                { name: "action", value: action },
+              ],
+            })
+
+            if (!emailResult.success) {
+              console.error("Failed to send change request notification email:", emailResult.error)
+            } else {
+              console.log("Change request notification email sent:", emailResult.id)
+            }
+          }
+        } catch (emailError) {
+          // Log but don't fail the request if email fails
+          console.error("Error sending change request notification:", emailError)
+        }
+      }
+
       return NextResponse.json({
         success: true,
         request: updated,
         message: `Change request ${action === "start_review" ? "marked for review" : action + "d"} successfully`,
+        emailSent: action === "approve" || action === "reject",
       })
     } catch (error) {
       console.error("Error updating change request:", error)

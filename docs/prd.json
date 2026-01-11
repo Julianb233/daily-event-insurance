@@ -501,25 +501,43 @@
       "id": "E1",
       "name": "DocuSign Integration",
       "description": "Replace custom signing with DocuSign for enterprise compliance",
-      "priority": "medium"
+      "priority": "medium",
+      "status": "pending"
     },
     {
       "id": "E2",
       "name": "Bulk Partner Onboarding",
       "description": "CSV import for onboarding multiple partners at once",
-      "priority": "low"
+      "priority": "low",
+      "status": "pending"
     },
     {
       "id": "E3",
       "name": "Email Notifications for Change Requests",
       "description": "Notify partners when change requests are approved/rejected",
-      "priority": "high"
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-01-11",
+      "implementation": {
+        "files": [
+          "lib/email/templates/change-request-notification.ts",
+          "app/api/admin/change-requests/[id]/route.ts"
+        ],
+        "features": [
+          "HTML and plain text email templates",
+          "Automatic email on approve/reject actions",
+          "Partner-specific personalization",
+          "Status badge with visual indicators",
+          "Dashboard link in email"
+        ]
+      }
     },
     {
       "id": "E4",
       "name": "Document Template Editor",
       "description": "Rich text editor for admins to edit document templates",
-      "priority": "medium"
+      "priority": "medium",
+      "status": "pending"
     }
   ]
 }

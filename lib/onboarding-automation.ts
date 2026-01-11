@@ -247,6 +247,25 @@ export async function completePartnerOnboarding(partnerId: string): Promise<Onbo
         console.error('Excel logging failed (non-blocking):', error)
     }
 
+    // 7. Send welcome email with microsite details
+    try {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://dailyeventinsurance.com'
+        const welcomeEmailResponse = await fetch(`${appUrl}/api/partner/welcome-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ partnerId: partner.id })
+        })
+
+        if (welcomeEmailResponse.ok) {
+            console.log('Welcome email sent successfully')
+        } else {
+            const errorData = await welcomeEmailResponse.json().catch(() => ({}))
+            console.error('Welcome email failed (non-blocking):', errorData)
+        }
+    } catch (error) {
+        console.error('Welcome email failed (non-blocking):', error)
+    }
+
     return {
         partnerId: partner.id,
         businessName: partner.businessName,

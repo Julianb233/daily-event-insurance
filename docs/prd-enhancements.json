@@ -1,0 +1,629 @@
+{
+  "project": "Daily Event Insurance - Onboarding Enhancements",
+  "version": "2.0.0",
+  "lastUpdated": "2026-01-11T09:45:00Z",
+  "description": "Enhancement features for the partner onboarding system including DocuSign integration, bulk onboarding, email notifications, and document template editor",
+  "milestones": [
+    {
+      "id": "E1",
+      "name": "DocuSign Integration",
+      "status": "pending",
+      "priority": "high",
+      "description": "Replace custom document signing with DocuSign for enterprise-grade compliance, legal validity, and audit trails",
+      "businessValue": "Provides legally binding signatures accepted in all jurisdictions, reduces liability, and meets enterprise compliance requirements",
+      "features": [
+        {
+          "id": "E1.1",
+          "name": "DocuSign API Integration",
+          "description": "Connect to DocuSign eSignature API for document sending and signing",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "DocuSign developer account configured with API credentials",
+            "OAuth 2.0 authentication flow implemented",
+            "API wrapper service created for DocuSign operations",
+            "Environment variables for API keys securely stored",
+            "Sandbox and production environment support"
+          ],
+          "technicalNotes": "Use @docusign/esign-client npm package",
+          "files": [
+            "lib/docusign/client.ts",
+            "lib/docusign/auth.ts",
+            "lib/docusign/types.ts"
+          ],
+          "tasks": [
+            {"id": "T1.1.1", "description": "Set up DocuSign developer account and API keys", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.1.2", "description": "Create DocuSign client wrapper with OAuth flow", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.1.3", "description": "Implement token refresh and error handling", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.1.4", "description": "Add environment configuration for sandbox/production", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E1.2",
+          "name": "Envelope Creation & Sending",
+          "description": "Create and send document envelopes to partners for signing",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Create envelopes with multiple documents (Agreement, NDA, W9, etc.)",
+            "Set signing order for multiple signers if needed",
+            "Add signature, date, and initial tabs at correct positions",
+            "Support for custom email subject and body",
+            "Track envelope ID in database for status updates"
+          ],
+          "files": [
+            "lib/docusign/envelope.ts",
+            "app/api/docusign/send/route.ts"
+          ],
+          "tasks": [
+            {"id": "T1.2.1", "description": "Create envelope builder with document templates", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.2.2", "description": "Implement signature tab positioning for each document type", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.2.3", "description": "Build send envelope API endpoint", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.2.4", "description": "Store envelope ID and status in partnerDocuments table", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E1.3",
+          "name": "DocuSign Webhook Handler",
+          "description": "Receive and process DocuSign Connect webhook events for real-time status updates",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Webhook endpoint to receive DocuSign Connect events",
+            "Verify webhook signatures using HMAC",
+            "Handle envelope status changes (sent, delivered, signed, completed, declined)",
+            "Update partner document status in database",
+            "Trigger onboarding automation when all docs signed"
+          ],
+          "files": [
+            "app/api/webhooks/docusign/route.ts",
+            "lib/docusign/webhook-handler.ts"
+          ],
+          "tasks": [
+            {"id": "T1.3.1", "description": "Create webhook endpoint with signature verification", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.3.2", "description": "Implement status change handlers for each event type", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.3.3", "description": "Update database on envelope completion", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.3.4", "description": "Trigger post-signing automation on completion", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E1.4",
+          "name": "Signed Document Retrieval",
+          "description": "Download and store signed documents from DocuSign",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Retrieve signed PDF documents from completed envelopes",
+            "Store documents in secure cloud storage (Supabase/S3)",
+            "Generate secure download URLs for partners",
+            "Include certificate of completion",
+            "Audit trail document retrieval"
+          ],
+          "files": [
+            "lib/docusign/documents.ts",
+            "app/api/documents/download/route.ts"
+          ],
+          "tasks": [
+            {"id": "T1.4.1", "description": "Implement document download from DocuSign API", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.4.2", "description": "Upload signed documents to Supabase storage", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.4.3", "description": "Create secure download endpoint for partners", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.4.4", "description": "Store document URLs in partnerDocuments table", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E1.5",
+          "name": "Embedded Signing Experience",
+          "description": "Allow partners to sign documents within the app without leaving",
+          "priority": "medium",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Generate embedded signing URL for recipients",
+            "Display DocuSign signing ceremony in iframe/modal",
+            "Handle signing completion callback",
+            "Fallback to email signing if embedded fails",
+            "Mobile-responsive signing experience"
+          ],
+          "files": [
+            "components/docusign/EmbeddedSigning.tsx",
+            "app/api/docusign/embedded-url/route.ts"
+          ],
+          "tasks": [
+            {"id": "T1.5.1", "description": "Create embedded signing URL generator", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.5.2", "description": "Build embedded signing React component", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.5.3", "description": "Implement callback handling for completion/cancel", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.5.4", "description": "Add fallback to email-based signing", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E1.6",
+          "name": "Migration from Custom Signing",
+          "description": "Migrate existing partners from custom signing to DocuSign",
+          "priority": "medium",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Feature flag to enable DocuSign vs custom signing",
+            "Existing signed documents remain valid",
+            "New partners use DocuSign by default",
+            "Admin can resend documents via DocuSign for unsigned partners",
+            "Gradual rollout plan documented"
+          ],
+          "files": [
+            "lib/feature-flags.ts",
+            "scripts/migrate-to-docusign.ts"
+          ],
+          "tasks": [
+            {"id": "T1.6.1", "description": "Add docusign_enabled feature flag", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.6.2", "description": "Update signing flow to check feature flag", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.6.3", "description": "Create admin tool to resend via DocuSign", "status": "pending", "assignee": "ralph"},
+            {"id": "T1.6.4", "description": "Document migration and rollout plan", "status": "pending", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E2",
+      "name": "Bulk Partner Onboarding",
+      "status": "pending",
+      "priority": "medium",
+      "description": "Enable onboarding multiple partners at once via CSV import with validation and batch processing",
+      "businessValue": "Accelerates enterprise sales cycles where multiple locations need onboarding, reduces manual data entry",
+      "features": [
+        {
+          "id": "E2.1",
+          "name": "CSV Template Generator",
+          "description": "Generate and download CSV templates for bulk import",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Downloadable CSV template with all required fields",
+            "Template includes field descriptions and examples",
+            "Support for all business types and integration types",
+            "Excel-compatible format with proper encoding"
+          ],
+          "files": [
+            "app/api/admin/bulk-import/template/route.ts",
+            "lib/bulk-import/template.ts"
+          ],
+          "tasks": [
+            {"id": "T2.1.1", "description": "Define CSV schema with all partner fields", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.1.2", "description": "Create template generator with examples", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.1.3", "description": "Add download endpoint for template", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E2.2",
+          "name": "CSV Upload & Validation",
+          "description": "Upload and validate CSV files before processing",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Drag-and-drop file upload interface",
+            "Client-side file size and type validation",
+            "Server-side CSV parsing with papaparse",
+            "Row-by-row validation with detailed error messages",
+            "Preview of parsed data before import",
+            "Highlight rows with validation errors",
+            "Required field validation (business name, email, type)",
+            "Email format and duplicate detection"
+          ],
+          "files": [
+            "components/admin/BulkImportUploader.tsx",
+            "app/api/admin/bulk-import/validate/route.ts",
+            "lib/bulk-import/validator.ts"
+          ],
+          "tasks": [
+            {"id": "T2.2.1", "description": "Build file upload component with drag-drop", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.2.2", "description": "Implement CSV parser with papaparse", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.2.3", "description": "Create row validator with all field rules", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.2.4", "description": "Build validation results preview UI", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.2.5", "description": "Add duplicate email detection", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E2.3",
+          "name": "Batch Processing Engine",
+          "description": "Process validated CSV data and create partners in batch",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Transaction-based batch insert for data integrity",
+            "Progress tracking during import",
+            "Error handling with partial success support",
+            "Generate import report with success/failure counts",
+            "Skip or update existing partners (configurable)",
+            "Rate limiting to prevent database overload"
+          ],
+          "files": [
+            "lib/bulk-import/processor.ts",
+            "app/api/admin/bulk-import/process/route.ts"
+          ],
+          "tasks": [
+            {"id": "T2.3.1", "description": "Create batch insert logic with transactions", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.3.2", "description": "Implement progress tracking with SSE or polling", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.3.3", "description": "Add duplicate handling (skip/update mode)", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.3.4", "description": "Generate detailed import report", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E2.4",
+          "name": "Bulk Document Sending",
+          "description": "Send onboarding documents to all imported partners at once",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Option to send documents immediately after import",
+            "Queue-based sending to prevent API rate limits",
+            "Track document sending status per partner",
+            "Retry failed sends with exponential backoff",
+            "Email notification to admin when batch complete"
+          ],
+          "files": [
+            "lib/bulk-import/document-sender.ts",
+            "app/api/admin/bulk-import/send-documents/route.ts"
+          ],
+          "tasks": [
+            {"id": "T2.4.1", "description": "Create queue for document sending", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.4.2", "description": "Implement rate-limited batch sender", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.4.3", "description": "Add retry logic with exponential backoff", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.4.4", "description": "Build admin notification on completion", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E2.5",
+          "name": "Admin Bulk Import Dashboard",
+          "description": "Admin interface for managing bulk imports",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "List of past bulk imports with status",
+            "View import details and results",
+            "Re-download original CSV and error report",
+            "Cancel in-progress imports",
+            "Import statistics and analytics"
+          ],
+          "files": [
+            "app/admin/bulk-import/page.tsx",
+            "app/admin/bulk-import/[importId]/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T2.5.1", "description": "Create bulk import history list page", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.5.2", "description": "Build import detail view with results", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.5.3", "description": "Add download links for CSVs and reports", "status": "pending", "assignee": "ralph"},
+            {"id": "T2.5.4", "description": "Implement import cancellation", "status": "pending", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "name": "Email Notifications for Change Requests",
+      "status": "pending",
+      "priority": "high",
+      "description": "Automated email notifications to keep partners informed about their change request status",
+      "businessValue": "Improves partner experience, reduces support inquiries, and ensures timely communication",
+      "features": [
+        {
+          "id": "E3.1",
+          "name": "Email Template System",
+          "description": "Create reusable email templates for change request notifications",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "HTML email templates with consistent branding",
+            "Templates for: submitted, in_review, approved, rejected, completed",
+            "Dynamic placeholders for partner name, request details, etc.",
+            "Plain text fallback for all templates",
+            "Preview capability in admin panel"
+          ],
+          "files": [
+            "lib/email/templates/change-request-submitted.tsx",
+            "lib/email/templates/change-request-approved.tsx",
+            "lib/email/templates/change-request-rejected.tsx",
+            "lib/email/templates/change-request-completed.tsx"
+          ],
+          "tasks": [
+            {"id": "T3.1.1", "description": "Create base email template component", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.1.2", "description": "Build submitted notification template", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.1.3", "description": "Build approved notification template", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.1.4", "description": "Build rejected notification template with reason", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.1.5", "description": "Build completed notification template", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E3.2",
+          "name": "Email Sending Service",
+          "description": "Integrate with Resend for reliable email delivery",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Resend API integration for transactional emails",
+            "Email queue for high-volume sending",
+            "Delivery status tracking",
+            "Retry logic for failed sends",
+            "Unsubscribe handling for marketing compliance"
+          ],
+          "files": [
+            "lib/email/sender.ts",
+            "lib/email/queue.ts"
+          ],
+          "tasks": [
+            {"id": "T3.2.1", "description": "Set up Resend client with API key", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.2.2", "description": "Create email sender with template rendering", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.2.3", "description": "Implement email queue with database backing", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.2.4", "description": "Add delivery status tracking", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E3.3",
+          "name": "Notification Triggers",
+          "description": "Automatically trigger emails on change request status changes",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Email sent when partner submits new request",
+            "Email sent when admin starts review",
+            "Email sent when request approved with details",
+            "Email sent when request rejected with reason",
+            "Email sent when changes applied to microsite",
+            "Admin notification for new pending requests"
+          ],
+          "files": [
+            "lib/change-requests/notifications.ts",
+            "app/api/admin/change-requests/[id]/route.ts (update)",
+            "app/api/partner/change-requests/route.ts (update)"
+          ],
+          "tasks": [
+            {"id": "T3.3.1", "description": "Create notification trigger service", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.3.2", "description": "Add email trigger on request submission", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.3.3", "description": "Add email trigger on status change", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.3.4", "description": "Add admin notification for new requests", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E3.4",
+          "name": "Notification Preferences",
+          "description": "Allow partners to manage their email notification preferences",
+          "priority": "medium",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Partner settings page for notification preferences",
+            "Toggle for each notification type",
+            "Respect preferences when sending emails",
+            "One-click unsubscribe from emails",
+            "Admin can override for critical notifications"
+          ],
+          "files": [
+            "app/(partner)/partner/settings/notifications/page.tsx",
+            "app/api/partner/notification-preferences/route.ts",
+            "lib/db/schema.ts (add notificationPreferences to partners)"
+          ],
+          "tasks": [
+            {"id": "T3.4.1", "description": "Add notification_preferences column to partners", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.4.2", "description": "Create notification preferences API", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.4.3", "description": "Build preferences UI in partner settings", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.4.4", "description": "Update email sender to check preferences", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E3.5",
+          "name": "Email Analytics & Logging",
+          "description": "Track email delivery and engagement metrics",
+          "priority": "low",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Log all sent emails with status",
+            "Track open rates via pixel tracking",
+            "Track click rates for links",
+            "Admin dashboard for email analytics",
+            "Webhook handler for Resend events"
+          ],
+          "files": [
+            "app/api/webhooks/resend/route.ts",
+            "lib/db/schema.ts (add emailLogs table)",
+            "app/admin/analytics/emails/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T3.5.1", "description": "Create emailLogs database table", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.5.2", "description": "Implement Resend webhook handler", "status": "pending", "assignee": "ralph"},
+            {"id": "T3.5.3", "description": "Build email analytics dashboard", "status": "pending", "assignee": "ralph"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "E4",
+      "name": "Document Template Editor",
+      "status": "pending",
+      "priority": "medium",
+      "description": "Rich text editor for admins to create and modify document templates without developer involvement",
+      "businessValue": "Enables legal/compliance team to update documents directly, reduces development bottlenecks, faster iteration on document content",
+      "features": [
+        {
+          "id": "E4.1",
+          "name": "Rich Text Editor Component",
+          "description": "WYSIWYG editor for document content with legal document features",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "TipTap or Lexical-based rich text editor",
+            "Standard formatting (bold, italic, underline, lists)",
+            "Heading levels for document structure",
+            "Table support for clauses and terms",
+            "Link insertion for references",
+            "Image embedding for logos/headers",
+            "Clean HTML output for PDF generation"
+          ],
+          "technicalNotes": "Use TipTap with prosemirror for maximum flexibility",
+          "files": [
+            "components/admin/DocumentEditor.tsx",
+            "lib/editor/extensions.ts"
+          ],
+          "tasks": [
+            {"id": "T4.1.1", "description": "Install and configure TipTap editor", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.1.2", "description": "Add formatting toolbar with all options", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.1.3", "description": "Implement table extension for clauses", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.1.4", "description": "Add image upload and embedding", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.1.5", "description": "Ensure clean HTML output", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E4.2",
+          "name": "Variable/Placeholder System",
+          "description": "Insert dynamic placeholders that get replaced with partner data",
+          "priority": "critical",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Placeholder dropdown/autocomplete in editor",
+            "Support placeholders: {{BUSINESS_NAME}}, {{CONTACT_NAME}}, {{DATE}}, etc.",
+            "Visual indication of placeholders in editor",
+            "Preview with sample data",
+            "Validation that all placeholders are valid"
+          ],
+          "files": [
+            "lib/editor/placeholders.ts",
+            "components/admin/PlaceholderPicker.tsx"
+          ],
+          "tasks": [
+            {"id": "T4.2.1", "description": "Define all available placeholders with descriptions", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.2.2", "description": "Create placeholder picker UI component", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.2.3", "description": "Build TipTap extension for placeholder nodes", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.2.4", "description": "Implement placeholder validation", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E4.3",
+          "name": "Template Version Control",
+          "description": "Track changes to templates with version history",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Automatic version increment on save",
+            "View history of all template versions",
+            "Compare versions side-by-side (diff view)",
+            "Restore previous versions",
+            "Track who made each change"
+          ],
+          "files": [
+            "lib/db/schema.ts (add documentTemplateVersions table)",
+            "app/api/admin/templates/[id]/versions/route.ts",
+            "components/admin/VersionHistory.tsx"
+          ],
+          "tasks": [
+            {"id": "T4.3.1", "description": "Create documentTemplateVersions table", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.3.2", "description": "Implement version creation on save", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.3.3", "description": "Build version history list UI", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.3.4", "description": "Add diff view for version comparison", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.3.5", "description": "Implement version restore functionality", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E4.4",
+          "name": "Template Preview & Testing",
+          "description": "Preview templates with sample data before publishing",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Live preview panel alongside editor",
+            "Sample partner data for placeholder replacement",
+            "PDF preview generation",
+            "Test signing flow with preview",
+            "Mobile preview mode"
+          ],
+          "files": [
+            "components/admin/TemplatePreview.tsx",
+            "app/api/admin/templates/preview/route.ts"
+          ],
+          "tasks": [
+            {"id": "T4.4.1", "description": "Create live preview component", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.4.2", "description": "Add sample data generator", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.4.3", "description": "Implement PDF preview generation", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.4.4", "description": "Add mobile responsive preview", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E4.5",
+          "name": "Template Management Dashboard",
+          "description": "Admin interface for managing all document templates",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "List all templates with status (draft, active, archived)",
+            "Create new templates from scratch or duplicate existing",
+            "Edit existing templates with editor",
+            "Archive/restore templates",
+            "Set template as active version"
+          ],
+          "files": [
+            "app/admin/templates/page.tsx",
+            "app/admin/templates/[id]/edit/page.tsx",
+            "app/admin/templates/new/page.tsx"
+          ],
+          "tasks": [
+            {"id": "T4.5.1", "description": "Create template list page with filters", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.5.2", "description": "Build template edit page with editor", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.5.3", "description": "Add new template creation flow", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.5.4", "description": "Implement archive/restore functionality", "status": "pending", "assignee": "ralph"}
+          ]
+        },
+        {
+          "id": "E4.6",
+          "name": "Signature Block Builder",
+          "description": "Visual builder for signature sections in documents",
+          "priority": "medium",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Drag-and-drop signature block positioning",
+            "Multiple signature line support",
+            "Date and printed name fields",
+            "Witness/notary signature blocks",
+            "Custom label support"
+          ],
+          "files": [
+            "components/admin/SignatureBlockBuilder.tsx",
+            "lib/editor/signature-block-extension.ts"
+          ],
+          "tasks": [
+            {"id": "T4.6.1", "description": "Create signature block TipTap extension", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.6.2", "description": "Build drag-and-drop signature block UI", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.6.3", "description": "Add multiple signer support", "status": "pending", "assignee": "ralph"},
+            {"id": "T4.6.4", "description": "Implement witness/notary blocks", "status": "pending", "assignee": "ralph"}
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalMilestones": 4,
+    "completedMilestones": 0,
+    "totalFeatures": 21,
+    "completedFeatures": 0,
+    "totalTasks": 76,
+    "completedTasks": 0,
+    "completionPercentage": 0
+  },
+  "dependencies": {
+    "E1": {
+      "external": ["DocuSign Developer Account", "DocuSign API Credentials"],
+      "internal": []
+    },
+    "E2": {
+      "external": ["papaparse npm package"],
+      "internal": ["E1 (optional - for bulk document sending via DocuSign)"]
+    },
+    "E3": {
+      "external": ["Resend API Key"],
+      "internal": []
+    },
+    "E4": {
+      "external": ["TipTap npm packages"],
+      "internal": []
+    }
+  },
+  "priorityOrder": ["E3", "E1", "E4", "E2"],
+  "estimatedEffort": {
+    "E1": "2-3 weeks",
+    "E2": "1-2 weeks",
+    "E3": "1 week",
+    "E4": "2 weeks"
+  }
+}

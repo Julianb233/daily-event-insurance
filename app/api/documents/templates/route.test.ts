@@ -122,7 +122,7 @@ describe('/api/documents/templates', () => {
 
       expect(data.success).toBe(true)
       // Will be 'demo' or 'demo-fallback' since our mock returns null db
-      expect(['demo', 'demo-fallback', 'database']).toContain(data.source)
+      expect(['demo', 'demo-fallback', 'database', 'database-merged']).toContain(data.source)
       expect(Array.isArray(data.templates)).toBe(true)
     })
 

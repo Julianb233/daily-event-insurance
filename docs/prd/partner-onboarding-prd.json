@@ -1,0 +1,553 @@
+{
+  "project": "Daily Event Insurance - Partner Onboarding System",
+  "version": "2.0.0",
+  "lastUpdated": "2026-01-11T01:30:00Z",
+  "description": "Complete partner onboarding flow including business registration, document signing, verification, microsite generation, and activation workflow",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Partner Registration Flow",
+      "description": "Multi-step registration form capturing business information, coverage preferences, and integration selection",
+      "status": "completed",
+      "features": [
+        {
+          "id": "F1.1",
+          "name": "Coverage Customization (Step 1)",
+          "description": "Allow partners to select insurance products and set pricing",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Partners can select from available insurance products (liability, equipment, cancellation)",
+            "Commission rates are clearly displayed (40%)",
+            "Estimated monthly revenue is calculated in real-time",
+            "Brand color picker is functional",
+            "Logo upload capability is available"
+          ],
+          "tasks": [
+            {
+              "id": "T1.1.1",
+              "description": "Product selection UI with toggle checkboxes",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.1.2",
+              "description": "Revenue calculator component",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.1.3",
+              "description": "Color picker with hex input",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F1.2",
+          "name": "Business Information (Step 2)",
+          "description": "Capture essential business details with validation",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Required fields: Business name, type, contact name, email, phone",
+            "Real-time field validation with error messages",
+            "Optional fields collapsible (address, secondary contact)",
+            "Auto-fill from website URL using FireCrawl",
+            "Smart defaults based on business type"
+          ],
+          "tasks": [
+            {
+              "id": "T1.2.1",
+              "description": "Form validation with inline errors",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.2.2",
+              "description": "Website scraping API integration",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.2.3",
+              "description": "Business type smart defaults",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F1.3",
+          "name": "Integration Selection (Step 3)",
+          "description": "Choose integration method and complete registration",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Three integration options: Widget, API, Manual Portal",
+            "Widget code snippet with copy functionality",
+            "API documentation link",
+            "POS system compatibility display",
+            "AI Integration Assistant available"
+          ],
+          "tasks": [
+            {
+              "id": "T1.3.1",
+              "description": "Integration selection cards with recommendations",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.3.2",
+              "description": "Widget code snippet display with copy button",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T1.3.3",
+              "description": "AI Integration Assistant component",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M2",
+      "name": "Document Signing Flow",
+      "description": "Digital document signing with signature capture, progress tracking, and confirmation",
+      "status": "completed",
+      "features": [
+        {
+          "id": "F2.1",
+          "name": "Document Templates",
+          "description": "Display and manage partner agreement documents",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Partner Agreement document displayed",
+            "Joint Marketing Agreement available",
+            "Mutual NDA document included",
+            "W9 form (optional) available",
+            "Direct Deposit form (optional) available",
+            "Version tracking on all documents"
+          ],
+          "tasks": [
+            {
+              "id": "T2.1.1",
+              "description": "Document templates API endpoint",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.1.2",
+              "description": "Document viewer component with content rendering",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F2.2",
+          "name": "Digital Signature Capture",
+          "description": "Capture signatures via text input or drawn signature",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Text signature input option",
+            "Drawn signature pad with canvas",
+            "Clear signature functionality",
+            "Signature preview before submission",
+            "Signature stored as base64 image"
+          ],
+          "tasks": [
+            {
+              "id": "T2.2.1",
+              "description": "Signature pad component with canvas drawing",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.2.2",
+              "description": "Text signature input with font styling",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.2.3",
+              "description": "Signature storage API endpoint",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F2.3",
+          "name": "Signing Progress Tracker",
+          "description": "Visual progress indicator for document signing workflow",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Progress bar showing completed documents",
+            "Document list with signed/pending status",
+            "Click to navigate between documents",
+            "Required vs optional document indicators",
+            "Auto-advance to next unsigned document"
+          ],
+          "tasks": [
+            {
+              "id": "T2.3.1",
+              "description": "SigningProgress component",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.3.2",
+              "description": "Document status tracking in state",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F2.4",
+          "name": "Signing Confirmation",
+          "description": "Confirmation modal after all required documents signed",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Confirmation modal displays on completion",
+            "List of signed documents with timestamps",
+            "Email confirmation sent to partner",
+            "PDF generation of signed documents",
+            "Redirect to partner dashboard"
+          ],
+          "tasks": [
+            {
+              "id": "T2.4.1",
+              "description": "SigningConfirmation modal component",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.4.2",
+              "description": "Confirmation email API endpoint",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T2.4.3",
+              "description": "PDF generation API endpoint",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M3",
+      "name": "Post-Signing Automation",
+      "description": "Automated pipeline for microsite generation, branding extraction, and partner activation",
+      "status": "completed",
+      "features": [
+        {
+          "id": "F3.1",
+          "name": "Website Branding Extraction",
+          "description": "Scrape partner website for branding elements",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "FireCrawl integration for website scraping",
+            "Extract primary color from website",
+            "Extract logo if available",
+            "Extract business name and description",
+            "Graceful fallback if scraping fails"
+          ],
+          "tasks": [
+            {
+              "id": "T3.1.1",
+              "description": "FireCrawl API integration",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T3.1.2",
+              "description": "Branding extraction logic",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F3.2",
+          "name": "Microsite Generation",
+          "description": "Generate branded microsite for partner",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Microsite created with partner branding",
+            "Unique subdomain assigned",
+            "QR code generated for microsite URL",
+            "Microsite record saved to database",
+            "Partner status updated to active"
+          ],
+          "tasks": [
+            {
+              "id": "T3.2.1",
+              "description": "Microsite generation logic",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T3.2.2",
+              "description": "QR code generation",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T3.2.3",
+              "description": "Subdomain assignment",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F3.3",
+          "name": "Partner Activation",
+          "description": "Complete partner activation and status update",
+          "priority": "critical",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Partner status updated to 'active'",
+            "Welcome email sent with microsite details",
+            "Partner dashboard accessible",
+            "Commission tracking enabled",
+            "Google Sheets sync (if configured)"
+          ],
+          "tasks": [
+            {
+              "id": "T3.3.1",
+              "description": "Partner status update API",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T3.3.2",
+              "description": "Welcome email with microsite details",
+              "status": "pending",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T3.3.3",
+              "description": "Google Sheets sync integration",
+              "status": "pending",
+              "assignee": "ralph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M4",
+      "name": "Admin Oversight & Change Requests",
+      "description": "Admin tools for managing partner onboarding and change requests",
+      "status": "completed",
+      "features": [
+        {
+          "id": "F4.1",
+          "name": "Admin Document Signing",
+          "description": "Allow admins to sign documents on behalf of company",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Admin can view partner documents",
+            "Admin can sign company-side of agreements",
+            "Countersignature recorded with timestamp",
+            "Email notification sent to partner"
+          ],
+          "tasks": [
+            {
+              "id": "T4.1.1",
+              "description": "Admin document signing API",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T4.1.2",
+              "description": "Admin documents page",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F4.2",
+          "name": "Change Request System",
+          "description": "Partners can request branding/content changes for review",
+          "priority": "medium",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Partners can submit change requests from dashboard",
+            "Admin receives notifications of new requests",
+            "Admin can approve/reject with notes",
+            "Approved changes auto-applied to microsite",
+            "Audit trail of all changes"
+          ],
+          "tasks": [
+            {
+              "id": "T4.2.1",
+              "description": "Change request API endpoints",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T4.2.2",
+              "description": "Partner change request modal",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T4.2.3",
+              "description": "Admin change requests page",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T4.2.4",
+              "description": "Change request apply API",
+              "status": "completed",
+              "assignee": "ralph"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M5",
+      "name": "Testing & Quality Assurance",
+      "description": "Comprehensive testing of onboarding flow",
+      "status": "pending",
+      "features": [
+        {
+          "id": "F5.1",
+          "name": "Unit Tests",
+          "description": "Component and function unit tests",
+          "priority": "high",
+          "status": "pending",
+          "acceptanceCriteria": [
+            "Form validation functions tested",
+            "API route handlers tested",
+            "Signature pad component tested",
+            "Document viewer component tested",
+            "90%+ code coverage on onboarding modules"
+          ],
+          "tasks": [
+            {
+              "id": "T5.1.1",
+              "description": "Unit tests for onboarding form validation",
+              "status": "completed",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T5.1.2",
+              "description": "Unit tests for document signing APIs",
+              "status": "pending",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T5.1.3",
+              "description": "Unit tests for signature components",
+              "status": "pending",
+              "assignee": "ralph"
+            }
+          ]
+        },
+        {
+          "id": "F5.2",
+          "name": "E2E Tests",
+          "description": "End-to-end tests for complete onboarding flow",
+          "priority": "high",
+          "status": "completed",
+          "acceptanceCriteria": [
+            "Complete registration flow tested",
+            "Document signing flow tested",
+            "Error handling scenarios tested",
+            "Mobile responsiveness verified",
+            "Accessibility compliance checked"
+          ],
+          "tasks": [
+            {
+              "id": "T5.2.1",
+              "description": "E2E test for registration flow",
+              "status": "in_progress",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T5.2.2",
+              "description": "E2E test for document signing",
+              "status": "pending",
+              "assignee": "ralph"
+            },
+            {
+              "id": "T5.2.3",
+              "description": "Accessibility audit",
+              "status": "pending",
+              "assignee": "ralph"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "techStack": {
+    "frontend": ["Next.js 16", "React 19", "Tailwind CSS", "Framer Motion"],
+    "backend": ["Next.js API Routes", "Drizzle ORM", "Supabase"],
+    "integrations": ["FireCrawl", "Resend Email", "QR Code Generator"],
+    "testing": ["Vitest", "Playwright", "React Testing Library"]
+  },
+  "databaseTables": [
+    "partners",
+    "partnerDocuments",
+    "documentTemplates",
+    "microsites",
+    "micrositeChangeRequests",
+    "auditLogs"
+  ],
+  "apiEndpoints": [
+    "POST /api/partner - Create partner",
+    "GET /api/partner - Get current partner",
+    "POST /api/documents/sign - Sign document",
+    "GET /api/documents/sign - Get document status",
+    "GET /api/documents/templates - Get document templates",
+    "POST /api/documents/pdf - Generate PDF",
+    "POST /api/documents/confirmation-email - Send confirmation",
+    "POST /api/partner/onboarding-complete - Complete onboarding",
+    "GET/POST /api/partner/change-requests - Change requests",
+    "GET/POST /api/admin/change-requests - Admin change requests",
+    "POST /api/admin/change-requests/[id]/apply - Apply changes",
+    "POST /api/admin/documents/sign - Admin sign document",
+    "POST /api/onboarding/scrape-website - Scrape website"
+  ],
+  "uiComponents": [
+    "app/onboarding/page.tsx",
+    "app/onboarding/onboarding-form.tsx",
+    "app/onboarding/documents/page.tsx",
+    "components/signing/signature-pad.tsx",
+    "components/signing/signing-progress.tsx",
+    "components/signing/signing-confirmation.tsx",
+    "components/document-viewer.tsx",
+    "components/partner/ChangeRequestModal.tsx",
+    "components/onboarding/IntegrationAssistant.tsx"
+  ],
+  "metrics": {
+    "totalFeatures": 14,
+    "completedFeatures": 13,
+    "inProgressFeatures": 0,
+    "pendingFeatures": 1,
+    "completionPercentage": 92.9
+  }
+}
