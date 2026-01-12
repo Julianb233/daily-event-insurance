@@ -1,0 +1,78 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: livekit-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - livekit-network
+
+  livekit-server:
+    image: livekit/livekit-server:latest
+    container_name: livekit-server
+    restart: unless-stopped
+    ports:
+      - "7880:7880"       # HTTP API
+      - "7881:7881"       # WebRTC TCP
+      - "50000-60000:50000-60000/udp"  # WebRTC UDP port range
+    environment:
+      - LIVEKIT_KEYS=${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+    command: ["--config", "/etc/livekit.yaml"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - livekit-network
+
+  livekit-sip:
+    image: livekit/sip:latest
+    container_name: livekit-sip
+    restart: unless-stopped
+    ports:
+      - "5060:5060/udp"   # SIP UDP
+      - "5060:5060/tcp"   # SIP TCP
+    environment:
+      - LIVEKIT_URL=ws://livekit-server:7880
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
+      - SIP_PORT=5060
+    depends_on:
+      - livekit-server
+    networks:
+      - livekit-network
+
+  livekit-egress:
+    image: livekit/egress:latest
+    container_name: livekit-egress
+    restart: unless-stopped
+    environment:
+      - EGRESS_CONFIG_FILE=/etc/egress.yaml
+      - LIVEKIT_URL=ws://livekit-server:7880
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
+    volumes:
+      - egress-data:/recordings
+    depends_on:
+      - livekit-server
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      - livekit-network
+
+volumes:
+  redis-data:
+  egress-data:
+
+networks:
+  livekit-network:
+    driver: bridge
