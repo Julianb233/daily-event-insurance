@@ -50,6 +50,7 @@ export function verifyWebhookSignature(
  * Check if webhook event has already been processed (idempotency)
  */
 async function isEventProcessed(eventId: string): Promise<boolean> {
+  if (!db) return false
   try {
     const [existing] = await db
       .select()
@@ -72,6 +73,7 @@ async function recordWebhookEvent(
   processed: boolean = false,
   error?: string
 ): Promise<void> {
+  if (!db) return
   try {
     await db.insert(webhookEvents).values({
       id: event.id,
@@ -122,6 +124,10 @@ async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
   console.log("[Webhook] Processing checkout.session.completed:", session.id)
+
+  if (!db) {
+    throw new Error("Database not configured")
+  }
 
   // Extract metadata
   const quoteId = session.metadata?.quote_id
@@ -275,6 +281,8 @@ async function handleCheckoutSessionCompleted(
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
   console.log("[Webhook] Processing payment_intent.payment_failed:", paymentIntent.id)
 
+  if (!db) return
+
   const quoteId = paymentIntent.metadata?.quote_id
 
   if (!quoteId) {
@@ -309,6 +317,8 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise
  */
 async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
   console.log("[Webhook] Processing charge.refunded:", charge.id)
+
+  if (!db) return
 
   const [payment] = await db
     .select()

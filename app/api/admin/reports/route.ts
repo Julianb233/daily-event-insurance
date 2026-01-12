@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, policies, partners, claims, commissionPayouts } from "@/lib/db"
 import { sql, and, gte, lte, eq } from "drizzle-orm"
@@ -310,7 +310,7 @@ export async function GET(request: NextRequest) {
       // Return CSV if requested
       if (format === "csv") {
         const csv = convertToCSV(reportData)
-        return new Response(csv, {
+        return new NextResponse(csv, {
           headers: {
             "Content-Type": "text/csv",
             "Content-Disposition": `attachment; filename="${type}-report-${startStr}-to-${endStr}.csv"`,

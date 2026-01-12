@@ -7,12 +7,7 @@
 
 import Stripe from "stripe"
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error(
-    "STRIPE_SECRET_KEY is not defined in environment variables. " +
-    "Please add it to your .env.local file."
-  )
-}
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 
 /**
  * Stripe SDK Instance
@@ -22,14 +17,16 @@ if (!process.env.STRIPE_SECRET_KEY) {
  * - TypeScript support enabled
  * - Idempotency key support for safe retries
  */
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18.acacia",
-  typescript: true,
-  appInfo: {
-    name: "Daily Event Insurance",
-    version: "1.0.0",
-  },
-})
+export const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: "2025-02-24.acacia",
+      typescript: true,
+      appInfo: {
+        name: "Daily Event Insurance",
+        version: "1.0.0",
+      },
+    })
+  : (null as unknown as Stripe)
 
 /**
  * Stripe Configuration

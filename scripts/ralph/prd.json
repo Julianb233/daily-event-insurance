@@ -1,0 +1,46 @@
+{
+  "projectName": "Daily Event Insurance - Call Center Implementation",
+  "branchName": "feature/call-center-implementation",
+  "prdFile": "/root/daily-event-insurance/docs/PRD-CALL-CENTER.json",
+  "currentPhase": 1,
+  "status": "in-progress",
+  "milestones": [
+    {
+      "id": 1,
+      "name": "Phase 1: GoHighLevel CRM Setup",
+      "status": "pending",
+      "tasks": 19,
+      "focus": "Create documentation for GHL setup, custom fields, tags, pipelines, workflows"
+    },
+    {
+      "id": 2,
+      "name": "Phase 2: Website Image Assets",
+      "status": "pending",
+      "tasks": 9,
+      "focus": "Create image requirement specifications and prompts"
+    },
+    {
+      "id": 3,
+      "name": "Phase 3: Website Polish",
+      "status": "pending",
+      "tasks": 7,
+      "focus": "Update website copy, add call CTAs, responsiveness"
+    },
+    {
+      "id": 4,
+      "name": "Phase 4: Integration & Launch",
+      "status": "pending",
+      "tasks": 9,
+      "focus": "Testing checklists, QA procedures, phone flow tests"
+    },
+    {
+      "id": 5,
+      "name": "Phase 5: Documentation & Training",
+      "status": "pending",
+      "tasks": 7,
+      "focus": "VA Call Playbook, SLA policy, compliance guidelines, QA process"
+    }
+  ],
+  "totalTasks": 51,
+  "estimatedHours": 35
+}
