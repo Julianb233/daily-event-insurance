@@ -8,6 +8,13 @@
       "when": 1766960418449,
       "tag": "0000_fair_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768243973790,
+      "tag": "0001_shocking_korath",
+      "breakpoints": true
     }
   ]
 }
