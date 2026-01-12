@@ -268,6 +268,15 @@ export default function Header() {
               transition={{ delay: 0.3 }}
               className="flex items-center gap-4"
             >
+              {/* Partner Login Link */}
+              <motion.a
+                href="/sign-in"
+                onClick={(e) => handleNavClick(e, "/sign-in")}
+                className="hidden sm:flex items-center px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              >
+                Partner Login
+              </motion.a>
+
               {/* CTA Button */}
               <motion.a
                 href="#apply"

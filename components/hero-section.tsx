@@ -53,7 +53,7 @@ export default function HeroSection() {
               transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
               className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-700"
             >
-              Turn Every Check-In Into Revenue
+              Get Paid to Protect Your Business
             </motion.h2>
 
             {/* Description */}

@@ -141,8 +141,8 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
             transition={{ duration: 0.3 }}
           />
 
-          {/* Icon Container */}
-          <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
+          {/* Icon Container - Centered */}
+          <div className="mb-6 relative flex justify-center" style={{ transform: "translateZ(20px)" }}>
             <div className="relative inline-flex items-center justify-center">
               {/* Background Glow */}
               <motion.div
@@ -168,8 +168,8 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
             </div>
           </div>
 
-          {/* Content */}
-          <div style={{ transform: "translateZ(10px)" }}>
+          {/* Content - Centered */}
+          <div className="text-center" style={{ transform: "translateZ(10px)" }}>
             <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 group-hover:text-teal-600 transition-colors duration-300">
               {benefit.title}
             </h3>
@@ -262,16 +262,16 @@ export default function Benefits() {
           </p>
         </motion.div>
 
-        {/* Benefits Grid - Flexbox for centered orphan cards */}
+        {/* Benefits Grid - Centered grid layout */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-wrap justify-center gap-6 md:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {benefits.map((benefit, index) => (
-            <div key={benefit.title} className="w-full md:w-[calc(50%-16px)]">
+            <div key={benefit.title} className={`${index === benefits.length - 1 && benefits.length % 3 === 1 ? 'lg:col-start-2' : ''} ${index >= benefits.length - 2 && benefits.length % 3 === 2 ? 'lg:first:col-start-1' : ''}`}>
               <BenefitCard benefit={benefit} index={index} />
             </div>
           ))}
