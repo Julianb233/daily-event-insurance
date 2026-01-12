@@ -31,46 +31,14 @@ const MOCK_USER = {
 }
 
 const navItems = [
-  {
-    label: "Dashboard",
-    href: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Partners",
-    href: "/admin/partners",
-    icon: Users,
-  },
-  {
-    label: "Policies",
-    href: "/admin/policies",
-    icon: FileText,
-  },
-  {
-    label: "Commission Tiers",
-    href: "/admin/commission-tiers",
-    icon: Layers,
-  },
-  {
-    label: "Payouts",
-    href: "/admin/payouts",
-    icon: DollarSign,
-  },
-  {
-    label: "Claims",
-    href: "/admin/claims",
-    icon: AlertTriangle,
-  },
-  {
-    label: "Reports",
-    href: "/admin/reports",
-    icon: TrendingUp,
-  },
-  {
-    label: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
+  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Partners", href: "/admin/partners", icon: Users },
+  { label: "Leads", href: "/admin/leads", icon: Users },
+  { label: "Policies", href: "/admin/policies", icon: FileText },
+  { label: "Commission Tiers", href: "/admin/commission-tiers", icon: Layers },
+  { label: "Payouts", href: "/admin/payouts", icon: DollarSign },
+  { label: "Reports", href: "/admin/reports", icon: TrendingUp },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
 interface UserData {

@@ -1,0 +1,161 @@
+{
+  "prd": {
+    "id": "PRD-DASHBOARD-2026-01-V2",
+    "title": "Admin & Partner Dashboard Enhancements",
+    "version": "2.0",
+    "date": "2026-01-12",
+    "project": "daily-event-insurance",
+    "priority": "high"
+  },
+  "businessModel": {
+    "type": "broker-affiliate",
+    "description": "Daily Event Insurance is a broker/affiliate platform - NOT an insurance provider",
+    "partners": "Businesses (gyms, climbing gyms, adventure sports, rentals) who refer customers",
+    "revenue": "Commission on policies sold through partner referrals",
+    "notManaged": ["claims", "insurance underwriting", "claim payouts"]
+  },
+  "completedFeatures": [
+    {
+      "id": "PTR-ANALYTICS-API",
+      "title": "Partner Analytics API",
+      "file": "app/api/partner/analytics/route.ts",
+      "status": "complete"
+    },
+    {
+      "id": "PTR-ANALYTICS-UI",
+      "title": "Partner Analytics Page",
+      "file": "app/(partner)/partner/analytics/page.tsx",
+      "status": "complete"
+    },
+    {
+      "id": "ADM-PARTNER-API",
+      "title": "Admin Partner Detail API",
+      "file": "app/api/admin/partners/[id]/route.ts",
+      "status": "complete"
+    },
+    {
+      "id": "ADM-LEAD-API",
+      "title": "Admin Lead Detail API",
+      "file": "app/api/admin/leads/[id]/route.ts",
+      "status": "complete"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "ADM-001",
+      "title": "Admin Partner Detail Page",
+      "priority": "P0",
+      "type": "frontend",
+      "description": "Create comprehensive partner detail page for admins showing full profile, stats, policies, quotes, and earnings history",
+      "file": "app/(admin)/admin/partners/[id]/page.tsx",
+      "acceptance_criteria": [
+        "Page loads partner details from /api/admin/partners/[id]",
+        "Shows partner info card with business details and document status",
+        "Shows current tier with commission rate",
+        "Stats grid: Total Policies, Active Policies, Total Revenue, Total Commission",
+        "Tabs for Recent Policies, Recent Quotes, Earnings History",
+        "Action buttons: Edit, Suspend/Activate",
+        "Loading skeleton state",
+        "Responsive design matching admin dashboard style",
+        "Build passes without errors"
+      ],
+      "dependencies": [],
+      "estimated_hours": 4
+    },
+    {
+      "id": "ADM-002",
+      "title": "Admin Lead Detail Page",
+      "priority": "P1",
+      "type": "frontend",
+      "description": "Create lead detail page for admins showing full profile, communications history, and conversion options",
+      "file": "app/(admin)/admin/leads/[id]/page.tsx",
+      "acceptance_criteria": [
+        "Page loads lead details from /api/admin/leads/[id]",
+        "Shows lead info with interest level badge (Hot/Warm/Cold)",
+        "Shows status badge and business info",
+        "Communications timeline (calls, SMS, emails)",
+        "Quick actions: Update Status, Schedule Follow-up, Convert to Partner",
+        "Loading skeleton state",
+        "Responsive design",
+        "Build passes without errors"
+      ],
+      "dependencies": [],
+      "estimated_hours": 4
+    },
+    {
+      "id": "ADM-003",
+      "title": "Functional Reports System",
+      "priority": "P1",
+      "type": "fullstack",
+      "description": "Make reports page functional with real data queries and export capabilities",
+      "files": [
+        "app/(admin)/admin/reports/page.tsx",
+        "app/api/admin/reports/[type]/route.ts"
+      ],
+      "acceptance_criteria": [
+        "Revenue Report queries real database",
+        "Commission Report aggregates by partner",
+        "Policy Report shows by type/coverage",
+        "Date range filtering works",
+        "Export to CSV works",
+        "Loading states during generation",
+        "Build passes without errors"
+      ],
+      "dependencies": [],
+      "estimated_hours": 6
+    },
+    {
+      "id": "PTR-001",
+      "title": "Quote Editing and Extension",
+      "priority": "P2",
+      "type": "fullstack",
+      "description": "Allow partners to edit pending quotes and extend expiration dates",
+      "files": [
+        "app/(partner)/partner/quotes/[quoteId]/edit/page.tsx",
+        "app/api/partner/quotes/[id]/route.ts"
+      ],
+      "acceptance_criteria": [
+        "Edit button appears on pending quotes",
+        "Can modify event details and participants",
+        "Extend expiration by 7/14/30 days",
+        "Resend quote email option",
+        "Form validates all fields",
+        "Build passes without errors"
+      ],
+      "dependencies": [],
+      "estimated_hours": 4
+    },
+    {
+      "id": "NAV-001",
+      "title": "Update Sidebar Navigation",
+      "priority": "P0",
+      "type": "frontend",
+      "description": "Update admin and partner sidebars to reflect correct navigation without claims",
+      "files": [
+        "components/admin/AdminSidebar.tsx",
+        "components/partner/PartnerSidebar.tsx"
+      ],
+      "acceptance_criteria": [
+        "Admin sidebar shows: Dashboard, Partners, Policies, Commission Tiers, Payouts, Leads, Reports, Settings",
+        "Partner sidebar shows: Dashboard, Quotes, Policies, Analytics, Earnings, Materials, Profile, Settings",
+        "No claims-related navigation items",
+        "All links work correctly",
+        "Build passes without errors"
+      ],
+      "dependencies": [],
+      "estimated_hours": 1
+    }
+  ],
+  "deployment": {
+    "repository": "github.com/ai-acrobatics/daily-event-insurance",
+    "branch": "main",
+    "hosting": "Vercel",
+    "productionUrl": "https://dailyeventinsurance.com"
+  },
+  "successMetrics": {
+    "partnerActivationTime": "< 24 hours",
+    "leadConversionRate": "> 20%",
+    "dashboardLoadTime": "< 2 seconds",
+    "buildStatus": "passing"
+  }
+}

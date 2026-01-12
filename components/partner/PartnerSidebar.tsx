@@ -15,6 +15,9 @@ import {
   X,
   Shield,
   ChevronRight,
+  FileText,
+  TrendingUp,
+  Settings,
 } from "lucide-react"
 
 // Check dev mode - no AUTH_SECRET means dev mode
@@ -27,26 +30,14 @@ const MOCK_USER = {
 }
 
 const navItems = [
-  {
-    label: "Dashboard",
-    href: "/partner/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Earnings",
-    href: "/partner/earnings",
-    icon: DollarSign,
-  },
-  {
-    label: "Materials",
-    href: "/partner/materials",
-    icon: FolderOpen,
-  },
-  {
-    label: "Profile",
-    href: "/partner/profile",
-    icon: User,
-  },
+  { label: "Dashboard", href: "/partner/dashboard", icon: LayoutDashboard },
+  { label: "Quotes", href: "/partner/quotes", icon: FileText },
+  { label: "Policies", href: "/partner/policies", icon: Shield },
+  { label: "Analytics", href: "/partner/analytics", icon: TrendingUp },
+  { label: "Earnings", href: "/partner/earnings", icon: DollarSign },
+  { label: "Materials", href: "/partner/materials", icon: FolderOpen },
+  { label: "Profile", href: "/partner/profile", icon: User },
+  { label: "Settings", href: "/partner/settings", icon: Settings },
 ]
 
 interface UserData {

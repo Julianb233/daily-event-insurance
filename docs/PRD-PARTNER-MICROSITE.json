@@ -1,0 +1,410 @@
+{
+  "prd": {
+    "id": "PRD-MICROSITE-2026-01",
+    "title": "Partner Microsite Generation",
+    "version": "1.0",
+    "date": "2026-01-12",
+    "project": "daily-event-insurance",
+    "priority": "critical"
+  },
+  "overview": {
+    "description": "Automatic microsite generation when partner signs the Marketing Agreement. Microsites use partner branding from Brandfetch API and include lead capture forms. W-9 and Direct Deposit are collected separately for payment setup.",
+    "trigger": "Marketing Agreement signed (agreementSigned = true)",
+    "outcome": "Branded partner microsite at /p/{partner-slug} with lead capture form"
+  },
+  "phases": [
+    {
+      "id": "PHASE-1",
+      "name": "Database & API Foundation",
+      "sprint": 1,
+      "tasks": [
+        {
+          "id": "MS-001",
+          "title": "Add Microsite Fields to Partners Table",
+          "priority": "P0",
+          "type": "database",
+          "description": "Add new columns to partners table for microsite data",
+          "files": [
+            "lib/db/schema.ts",
+            "drizzle/migrations/add-microsite-fields.sql"
+          ],
+          "acceptance_criteria": [
+            "Add columns: website_url, microsite_slug (unique), microsite_url, microsite_active, brand_logo_url, brand_primary_color, brand_secondary_color, brand_font_family, microsite_generated_at",
+            "Run migration successfully",
+            "TypeScript types updated",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 2
+        },
+        {
+          "id": "MS-002",
+          "title": "Create Partner Leads Table",
+          "priority": "P0",
+          "type": "database",
+          "description": "Create partner_leads table for tracking leads from microsites",
+          "files": [
+            "lib/db/schema.ts",
+            "drizzle/migrations/add-partner-leads.sql"
+          ],
+          "acceptance_criteria": [
+            "Create partner_leads table with: id, partner_id, first_name, last_name, email, phone, address, source, status, quote_id, policy_id, converted_at, created_at, updated_at",
+            "Add foreign key to partners table",
+            "Add indexes on partner_id and status",
+            "Export types from schema",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "MS-003",
+          "title": "Create Brandfetch Integration Service",
+          "priority": "P0",
+          "type": "backend",
+          "description": "Create service to fetch brand data (logo, colors) from Brandfetch API",
+          "files": [
+            "lib/brandfetch.ts",
+            "app/api/brandfetch/route.ts"
+          ],
+          "acceptance_criteria": [
+            "Function fetchBrandData(domain) that calls Brandfetch API",
+            "Extract logo URL, primary color, secondary color, font family",
+            "Handle API errors gracefully with fallback to null",
+            "Return typed BrandData object",
+            "POST /api/brandfetch endpoint for testing",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "MS-004",
+          "title": "Create Microsite Generation Service",
+          "priority": "P0",
+          "type": "backend",
+          "description": "Create service to generate microsites for partners",
+          "files": [
+            "lib/microsite/generator.ts",
+            "lib/microsite/slug.ts",
+            "app/api/microsite/generate/route.ts"
+          ],
+          "acceptance_criteria": [
+            "Function generateMicrosite(partnerId) that orchestrates generation",
+            "Generate unique slug from business name (handle conflicts)",
+            "Call Brandfetch for brand data",
+            "Update partner record with microsite fields",
+            "Return microsite URL",
+            "POST /api/microsite/generate endpoint",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-001", "MS-003"],
+          "estimated_hours": 4
+        }
+      ]
+    },
+    {
+      "id": "PHASE-2",
+      "name": "Microsite Page & Lead Form",
+      "sprint": "1-2",
+      "tasks": [
+        {
+          "id": "MS-005",
+          "title": "Create Microsite Dynamic Route",
+          "priority": "P0",
+          "type": "frontend",
+          "description": "Create the public partner microsite page at /p/[slug]",
+          "files": [
+            "app/p/[slug]/page.tsx",
+            "app/p/[slug]/layout.tsx"
+          ],
+          "acceptance_criteria": [
+            "Dynamic route at /p/[slug]",
+            "Fetch partner data by slug from database",
+            "Display partner logo, name, colors",
+            "Show insurance product cards",
+            "Include lead capture form",
+            "404 page if slug not found",
+            "Disabled message if partner suspended",
+            "Fully responsive design",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-001"],
+          "estimated_hours": 6
+        },
+        {
+          "id": "MS-006",
+          "title": "Create Lead Capture Form Component",
+          "priority": "P0",
+          "type": "frontend",
+          "description": "Create the lead capture form for microsites",
+          "files": [
+            "components/microsite/LeadCaptureForm.tsx"
+          ],
+          "acceptance_criteria": [
+            "Form fields: First Name, Last Name, Email, Address, Phone (optional)",
+            "Client-side validation with Zod",
+            "Submit to /api/microsite/[slug]/lead",
+            "Loading state on submit button",
+            "Success message after submission",
+            "Error handling with user-friendly messages",
+            "Responsive design",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "MS-007",
+          "title": "Create Lead Submission API",
+          "priority": "P0",
+          "type": "backend",
+          "description": "Create API endpoint to handle lead form submissions",
+          "files": [
+            "app/api/microsite/[slug]/lead/route.ts"
+          ],
+          "acceptance_criteria": [
+            "POST endpoint validates lead data",
+            "Lookup partner by slug",
+            "Create lead record in partner_leads table",
+            "Return success with lead ID",
+            "Trigger email notification if enabled",
+            "400 for validation errors",
+            "404 if partner not found or inactive",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-002"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "MS-008",
+          "title": "Create Microsite Components",
+          "priority": "P1",
+          "type": "frontend",
+          "description": "Create reusable components for microsite pages",
+          "files": [
+            "components/microsite/MicrositeHeader.tsx",
+            "components/microsite/MicrositeHero.tsx",
+            "components/microsite/ProductCards.tsx",
+            "components/microsite/MicrositeFooter.tsx"
+          ],
+          "acceptance_criteria": [
+            "Header with partner logo and name",
+            "Hero section with headline and CTA",
+            "Product cards for insurance options",
+            "Footer with trust badges and links",
+            "All accept partner brand colors as props",
+            "Responsive design",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 4
+        }
+      ]
+    },
+    {
+      "id": "PHASE-3",
+      "name": "Partner Dashboard Integration",
+      "sprint": 2,
+      "tasks": [
+        {
+          "id": "MS-009",
+          "title": "Create Partner Leads Page",
+          "priority": "P0",
+          "type": "frontend",
+          "description": "Create page for partners to view leads from their microsite",
+          "files": [
+            "app/(partner)/partner/leads/page.tsx"
+          ],
+          "acceptance_criteria": [
+            "List all leads for logged-in partner",
+            "Show: name, email, status, date",
+            "Status badges (new, contacted, quoted, converted, lost)",
+            "Filter by status",
+            "Search by name/email",
+            "Click to view lead detail",
+            "Empty state if no leads",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-002"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "MS-010",
+          "title": "Create Partner Leads API",
+          "priority": "P0",
+          "type": "backend",
+          "description": "Create API endpoints for partner lead management",
+          "files": [
+            "app/api/partner/leads/route.ts",
+            "app/api/partner/leads/[id]/route.ts"
+          ],
+          "acceptance_criteria": [
+            "GET /api/partner/leads - list leads for partner",
+            "GET /api/partner/leads/[id] - get lead detail",
+            "PUT /api/partner/leads/[id] - update lead status",
+            "Scoped to authenticated partner only",
+            "Pagination support",
+            "Status filter support",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-002"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "MS-011",
+          "title": "Create Microsite Settings Page",
+          "priority": "P1",
+          "type": "frontend",
+          "description": "Allow partners to customize their microsite",
+          "files": [
+            "app/(partner)/partner/settings/microsite/page.tsx"
+          ],
+          "acceptance_criteria": [
+            "Show current microsite URL with copy button",
+            "QR code download button",
+            "Color picker for primary/secondary colors",
+            "Logo upload option",
+            "Regenerate from Website button",
+            "Preview link",
+            "Save button",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-004"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "MS-012",
+          "title": "Update Partner Sidebar Navigation",
+          "priority": "P0",
+          "type": "frontend",
+          "description": "Add Leads to partner sidebar navigation",
+          "files": [
+            "components/partner/PartnerSidebar.tsx"
+          ],
+          "acceptance_criteria": [
+            "Add 'Leads' nav item with Users icon",
+            "Position after Policies",
+            "Link to /partner/leads",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 0.5
+        }
+      ]
+    },
+    {
+      "id": "PHASE-4",
+      "name": "Automation & Admin",
+      "sprint": "2-3",
+      "tasks": [
+        {
+          "id": "MS-013",
+          "title": "Integrate with Document Signing Webhook",
+          "priority": "P0",
+          "type": "backend",
+          "description": "Trigger microsite generation when Marketing Agreement is signed",
+          "files": [
+            "app/api/webhooks/ghl/route.ts"
+          ],
+          "acceptance_criteria": [
+            "Check if Marketing Agreement is signed (agreementSigned = true)",
+            "If signed, call generateMicrosite(partnerId)",
+            "Update partner status to 'active'",
+            "Send notification email to partner",
+            "Log generation result",
+            "W-9 and Direct Deposit do NOT block generation",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-004"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "MS-014",
+          "title": "Create Admin Microsites Page",
+          "priority": "P1",
+          "type": "frontend",
+          "description": "Admin page to view and manage all partner microsites",
+          "files": [
+            "app/(admin)/admin/microsites/page.tsx"
+          ],
+          "acceptance_criteria": [
+            "List all microsites with status, partner name, URL, lead count",
+            "Filter by status (active, pending, disabled)",
+            "Preview button opens microsite in new tab",
+            "Disable/Enable toggle",
+            "Regenerate button",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-004"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "MS-015",
+          "title": "Add Email Notifications for Leads",
+          "priority": "P1",
+          "type": "backend",
+          "description": "Send email to partner when new lead submits form",
+          "files": [
+            "lib/email/lead-notification.ts",
+            "app/api/microsite/[slug]/lead/route.ts"
+          ],
+          "acceptance_criteria": [
+            "Check partner notification preferences",
+            "Send email with lead details",
+            "Include link to dashboard",
+            "Graceful failure if email fails",
+            "pnpm run build passes"
+          ],
+          "dependencies": ["MS-007"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "MS-016",
+          "title": "Update Admin Sidebar Navigation",
+          "priority": "P0",
+          "type": "frontend",
+          "description": "Add Microsites to admin sidebar navigation",
+          "files": [
+            "components/admin/AdminSidebar.tsx"
+          ],
+          "acceptance_criteria": [
+            "Add 'Microsites' nav item with Globe icon",
+            "Position after Partners",
+            "Link to /admin/microsites",
+            "pnpm run build passes"
+          ],
+          "dependencies": [],
+          "estimated_hours": 0.5
+        }
+      ]
+    }
+  ],
+  "totalEstimatedHours": 48,
+  "userStories": [
+    "Story 1: Complete Onboarding - Partner signs docs, microsite auto-generates with their branding",
+    "Story 2: Customer Lead Capture - Customer fills form on microsite, lead appears in partner dashboard",
+    "Story 3: Partner Views Leads - Partner sees all leads with status and can view details",
+    "Story 4: Fallback Branding - No website? Default branding applied, partner can customize later",
+    "Story 5: URL Conflict Resolution - Duplicate business names get unique slugs",
+    "Story 6: Admin Microsite Overview - Admin can view, preview, and manage all microsites",
+    "Story 7: Lead to Quote Conversion - Lead purchases policy, status updates to converted",
+    "Story 8: Partner Customizes Colors - Partner changes brand colors in settings",
+    "Story 9: QR Code Download - Partner downloads QR code for their microsite",
+    "Story 10: Lead Email Notification - Partner receives email when new lead submits",
+    "Story 11: Mobile Responsive - Microsite works perfectly on mobile devices",
+    "Story 12: Microsite Analytics - Partner sees view count, submissions, conversion rate",
+    "Story 13: Regenerate Microsite - Partner rebrands, regenerates microsite from website",
+    "Story 14: Disabled Partner Microsite - Suspended partner's microsite shows unavailable message",
+    "Story 15: Webhook Triggers Generation - DocuSign webhook auto-triggers microsite creation"
+  ],
+  "environmentVariables": [
+    "BRANDFETCH_API_KEY",
+    "NEXT_PUBLIC_MICROSITE_BASE_URL"
+  ],
+  "successMetrics": {
+    "generationTime": "< 30 seconds",
+    "leadFormCompletionRate": "> 60%",
+    "brandfetchSuccessRate": "> 90%"
+  }
+}

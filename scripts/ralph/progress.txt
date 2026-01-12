@@ -1,15 +1,32 @@
 # Ralph Progress Log
-Project: Daily Event Insurance - Call Center Implementation
-Started: 2025-01-12
+Project: Daily Event Insurance - Admin & Partner Dashboard Enhancements
+Started: 2026-01-12
 
 ## Codebase Patterns
 - Next.js 16, React 19, TypeScript, Tailwind CSS 4
 - GoHighLevel CRM integration
-- Drizzle ORM for database
+- Drizzle ORM for database (Neon PostgreSQL)
 - shadcn/ui component library
 - Vercel deployment
+- Framer Motion for animations
+- Zod for validation
+- NextAuth.js for authentication
 
 ## PRD Reference
-See /root/daily-event-insurance/docs/PRD-CALL-CENTER.json for full task breakdown
+See /root/daily-event-insurance/docs/PRD-DASHBOARD-ENHANCEMENTS.json for full task breakdown
+
+## Phase 1: Critical Missing Features
+Status: IN PROGRESS
+
+### Tasks
+- [ ] PTR-001: Partner Claims Page
+- [ ] PTR-003: Claim Submission Form  
+- [ ] PTR-003-API: Partner Claims API
+- [ ] PTR-002: Partner Analytics Page
+- [ ] PTR-002-API: Partner Analytics API
+- [ ] ADM-001: Admin Partner Detail View
+- [ ] ADM-001-API: Admin Partner Detail API
+- [ ] ADM-004: Admin Lead Detail View
+- [ ] ADM-004-API: Admin Lead Detail API
 
 ---

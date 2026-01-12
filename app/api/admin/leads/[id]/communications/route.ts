@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, leads, leadCommunications } from "@/lib/db"
-import { eq, desc, count } from "drizzle-orm"
+import { eq, desc, count, and } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 import {
   successResponse,
@@ -76,29 +76,21 @@ export async function GET(request: NextRequest, context: RouteContext) {
         return notFoundError("Lead")
       }
 
-      let query = db!
-        .select()
-        .from(leadCommunications)
-        .where(eq(leadCommunications.leadId, id))
-
-      if (channel) {
-        query = db!
-          .select()
-          .from(leadCommunications)
-          .where(eq(leadCommunications.leadId, id))
-          .$dynamic()
-      }
+      // Build the where clause based on filters
+      const whereClause = channel
+        ? and(eq(leadCommunications.leadId, id), eq(leadCommunications.channel, channel as "call" | "sms" | "email"))
+        : eq(leadCommunications.leadId, id)
 
       const [{ total }] = await db!
         .select({ total: count() })
         .from(leadCommunications)
-        .where(eq(leadCommunications.leadId, id))
+        .where(whereClause)
 
       const offset = (page - 1) * pageSize
       const communications = await db!
         .select()
         .from(leadCommunications)
-        .where(eq(leadCommunications.leadId, id))
+        .where(whereClause)
         .orderBy(desc(leadCommunications.createdAt))
         .limit(pageSize)
         .offset(offset)
