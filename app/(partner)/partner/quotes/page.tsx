@@ -164,8 +164,19 @@ export default function QuotesPage() {
     <div className="p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Quotes</h1>
-        <p className="text-slate-600 mt-1">Manage and track your insurance quotes</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Quotes</h1>
+            <p className="text-slate-600 mt-1">Manage and track your insurance quotes</p>
+          </div>
+          <a
+            href="/partner/quotes/new"
+            className="px-6 py-3 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition-colors flex items-center gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            Create Quote
+          </a>
+        </div>
       </div>
 
       {/* Filters */}
@@ -239,7 +250,8 @@ export default function QuotesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-shadow"
+                className="bg-white rounded-xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-shadow cursor-pointer"
+                onClick={() => window.location.href = `/partner/quotes/${quote.id}`}
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   {/* Quote Info */}
@@ -289,7 +301,7 @@ export default function QuotesPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleCopyLink(quote.quote_number)}
                       className="p-2 rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors"

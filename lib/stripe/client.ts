@@ -7,45 +7,26 @@
 
 import Stripe from "stripe"
 
-let _stripe: Stripe | null = null
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
 
 /**
- * Get Stripe SDK Instance (lazy-loaded)
+ * Stripe SDK Instance
  *
  * Configured with:
  * - Latest API version (automatically uses the latest)
  * - TypeScript support enabled
  * - Idempotency key support for safe retries
  */
-export function getStripe(): Stripe {
-  if (!_stripe) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error(
-        "STRIPE_SECRET_KEY is not defined in environment variables. " +
-        "Please add it to your .env.local file."
-      )
-    }
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-12-15.clover",
+export const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: "2025-02-24.acacia",
       typescript: true,
       appInfo: {
         name: "Daily Event Insurance",
         version: "1.0.0",
       },
     })
-  }
-  return _stripe
-}
-
-/**
- * Stripe SDK Instance (deprecated - use getStripe() instead)
- * Kept for backwards compatibility
- */
-export const stripe = new Proxy({} as Stripe, {
-  get(_, prop) {
-    return (getStripe() as any)[prop]
-  }
-})
+  : (null as unknown as Stripe)
 
 /**
  * Stripe Configuration

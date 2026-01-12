@@ -346,10 +346,11 @@ export default function PartnerEarningsPage() {
       </motion.div>
 
       {/* Commission Tier Progress */}
-      {data?.summary?.totalParticipants && data.summary.totalParticipants > 0 && (() => {
-        const tierInfo = getNextTier(data.summary.totalParticipants)
+      {data && (data.summary?.totalParticipants ?? 0) > 0 && (() => {
+        const totalParticipants = data.summary.totalParticipants ?? 0
+        const tierInfo = getNextTier(totalParticipants)
         const progress = tierInfo.nextTier
-          ? ((data.summary.totalParticipants - tierInfo.currentTier.minVolume) /
+          ? ((totalParticipants - tierInfo.currentTier.minVolume) /
               (tierInfo.nextTier.minVolume - tierInfo.currentTier.minVolume)) * 100
           : 100
 
@@ -420,7 +421,7 @@ export default function PartnerEarningsPage() {
             ) : (
               <div className="text-center py-4">
                 <p className="text-lg font-semibold text-teal-600 mb-1">Congratulations!</p>
-                <p className="text-slate-700">You&apos;ve reached the highest commission tier</p>
+                <p className="text-slate-700">You've reached the highest commission tier</p>
               </div>
             )}
           </motion.div>
@@ -437,7 +438,8 @@ export default function PartnerEarningsPage() {
         <h3 className="text-lg font-bold text-slate-900 mb-4">All Commission Tiers</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {commissionTiers.map((tier, idx) => {
-            const isCurrentTier = (data?.summary?.totalParticipants ?? 0) >= tier.minVolume && (data?.summary?.totalParticipants ?? 0) <= tier.maxVolume
+            const participantCount = data?.summary?.totalParticipants ?? 0
+            const isCurrentTier = participantCount >= tier.minVolume && participantCount <= tier.maxVolume
             return (
               <div
                 key={idx}

@@ -1,0 +1,481 @@
+{
+  "prd": {
+    "title": "Daily Event Insurance - Call Center VA Implementation",
+    "version": "2.0",
+    "lastUpdated": "2025-01-12",
+    "overview": {
+      "description": "B2B embedded insurance platform enabling gyms, climbing facilities, and rental businesses to offer same-day coverage to their members",
+      "techStack": ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "GoHighLevel CRM"],
+      "totalEstimatedHours": 35
+    },
+    "phases": [
+      {
+        "id": 1,
+        "name": "GoHighLevel CRM Setup",
+        "priority": "HIGH",
+        "estimatedHours": 12,
+        "tasks": [
+          {
+            "id": "1.1",
+            "title": "Create custom fields in GHL",
+            "description": "Create Contact-level fields: business_type, business_size, partner_id, partner_tier, integration_method, integration_status, lead_source",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/04-setup/custom-fields.md"
+          },
+          {
+            "id": "1.2",
+            "title": "Create call-center specific fields",
+            "description": "Add fields: preferred_contact_time, primary_contact_role, call_status, last_contact_attempt_at, next_follow_up_at, do_not_call_reason",
+            "estimatedMinutes": 20,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/04-setup/custom-fields.md",
+            "isImprovement": true
+          },
+          {
+            "id": "1.3",
+            "title": "Set up lead status tags",
+            "description": "Create tags: Lead - New Inquiry, Lead - Contacted, Lead - Qualified, Lead - Demo Scheduled, Lead - Demo Completed, Lead - Proposal Sent, Lead - Negotiating",
+            "estimatedMinutes": 15,
+            "status": "pending"
+          },
+          {
+            "id": "1.4",
+            "title": "Set up call outcome tags",
+            "description": "Create tags: Call - Left Voicemail, Call - No Answer, Call - Call Back Requested, Call - Not Interested, Call - Bad Fit, Call - Number Invalid, Call - Do Not Call",
+            "estimatedMinutes": 15,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "1.5",
+            "title": "Set up partner and business type tags",
+            "description": "Create Partner Status tags and Business Type tags per documentation",
+            "estimatedMinutes": 15,
+            "status": "pending"
+          },
+          {
+            "id": "1.6",
+            "title": "Create Partner Acquisition pipeline",
+            "description": "Stages: New Lead (10%), Contacted (20%), Demo Scheduled (40%), Qualified (60%), Proposal Sent (75%), Negotiating (85%), Won (100%), Lost (0%)",
+            "estimatedMinutes": 20,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/01-workflows/new-partner-inquiry.md"
+          },
+          {
+            "id": "1.7",
+            "title": "Create Partner Onboarding pipeline",
+            "description": "Stages: Signed Contract, Portal Setup, Integration, Testing, Launch Ready, Active",
+            "estimatedMinutes": 20,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/01-workflows/onboarding-sequence.md"
+          },
+          {
+            "id": "1.8",
+            "title": "Create Welcome Series emails (5)",
+            "description": "Templates: Thank You, Demo Reminder, Value Proposition, Social Proof, Final Check-In",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/02-emails/welcome-series.md"
+          },
+          {
+            "id": "1.9",
+            "title": "Create Onboarding emails (6)",
+            "description": "Templates: Welcome, Portal Access, Integration, Integration Check, Launch Ready, First Week",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/02-emails/onboarding-emails.md"
+          },
+          {
+            "id": "1.10",
+            "title": "Create Initial Outreach emails (5)",
+            "description": "Templates: Introduction, Value Proposition, Social Proof, Problem Solution, Final Touch",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/02-emails/initial-outreach.md"
+          },
+          {
+            "id": "1.11",
+            "title": "Build New Partner Inquiry workflow",
+            "description": "Trigger on form submit, add tags, pipeline stage, send welcome email/SMS, create task, internal notification",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/01-workflows/new-partner-inquiry.md"
+          },
+          {
+            "id": "1.12",
+            "title": "Build New Inquiry Call Task workflow",
+            "description": "Extension of Partner Inquiry workflow - set next_follow_up_at, notify call queue for SLA tracking",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "1.13",
+            "title": "Build Missed SLA Follow-Up workflow",
+            "description": "Trigger when task overdue or next_follow_up_at passed, alert internal team",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "1.14",
+            "title": "Build Onboarding Sequence workflow",
+            "description": "10-day automated sequence triggered by Partner - Signed Contract tag",
+            "estimatedMinutes": 60,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/01-workflows/onboarding-sequence.md"
+          },
+          {
+            "id": "1.15",
+            "title": "Build Initial Outreach workflow",
+            "description": "5-email sequence over 14 days for cold outreach",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/02-emails/initial-outreach.md"
+          },
+          {
+            "id": "1.16",
+            "title": "Create all forms (5)",
+            "description": "Partner Inquiry, Partner Application, Integration Request, Partner Feedback, Support Request",
+            "estimatedMinutes": 60,
+            "status": "pending",
+            "referenceDoc": "gohighlevel/04-setup/forms.md"
+          },
+          {
+            "id": "1.17",
+            "title": "Configure GHL Phone System",
+            "description": "Assign phone numbers, enable call recording, configure voicemail greeting, set VA permissions",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "1.18",
+            "title": "Document Call Disposition mappings",
+            "description": "Create disposition -> tag/pipeline action mapping table for VA reference",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "1.19",
+            "title": "End-to-end workflow testing",
+            "description": "Test all scenarios: new lead journey, partner onboarding, cold outreach, call flows",
+            "estimatedMinutes": 120,
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Website Image Assets",
+        "priority": "HIGH",
+        "estimatedHours": 6,
+        "tasks": [
+          {
+            "id": "2.1",
+            "title": "Generate hero image",
+            "description": "Main hero image for landing page",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "2.2",
+            "title": "Generate partner type icons (4)",
+            "description": "Icons for Gym, Climbing, Rental, Adventure",
+            "estimatedMinutes": 60,
+            "status": "pending"
+          },
+          {
+            "id": "2.3",
+            "title": "Generate process step illustrations (3)",
+            "description": "Step 1, 2, 3 visual illustrations",
+            "estimatedMinutes": 60,
+            "status": "pending"
+          },
+          {
+            "id": "2.4",
+            "title": "Generate call support visuals",
+            "description": "Phone/headset icon, 'Talk to a specialist' badge for CTA areas",
+            "estimatedMinutes": 20,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "2.5",
+            "title": "Generate OG image and favicon",
+            "description": "Social sharing image and app icons",
+            "estimatedMinutes": 40,
+            "status": "pending"
+          },
+          {
+            "id": "2.6",
+            "title": "Generate trust badges (3)",
+            "description": "Trust/credibility badges",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "2.7",
+            "title": "Generate email headers (2)",
+            "description": "Header images for email templates",
+            "estimatedMinutes": 20,
+            "status": "pending"
+          },
+          {
+            "id": "2.8",
+            "title": "Optimize and upload all images",
+            "description": "Compress for web, upload to /public/images/",
+            "estimatedMinutes": 45,
+            "status": "pending"
+          },
+          {
+            "id": "2.9",
+            "title": "Remove old Wizard of AI images",
+            "description": "Clean up legacy assets",
+            "estimatedMinutes": 15,
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Website Polish",
+        "priority": "MEDIUM",
+        "estimatedHours": 5,
+        "tasks": [
+          {
+            "id": "3.1",
+            "title": "Update hero section copy",
+            "description": "Revenue-focused messaging, add 'Talk to an onboarding specialist' CTA",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "3.2",
+            "title": "Add click-to-call and callback CTAs",
+            "description": "Mobile click-to-call link, 'Request a Call' form with preferred_contact_time",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "3.3",
+            "title": "Update footer and GetStarted sections",
+            "description": "Add urgency/social proof, phone contact options",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "3.4",
+            "title": "Update image imports in components",
+            "description": "Reference new images after upload",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "3.5",
+            "title": "Mobile responsiveness testing",
+            "description": "Test all breakpoints",
+            "estimatedMinutes": 60,
+            "status": "pending"
+          },
+          {
+            "id": "3.6",
+            "title": "Cross-browser testing",
+            "description": "Chrome, Firefox, Safari, Edge",
+            "estimatedMinutes": 60,
+            "status": "pending"
+          },
+          {
+            "id": "3.7",
+            "title": "Accessibility check",
+            "description": "Alt text, contrast, keyboard navigation",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Integration & Launch",
+        "priority": "MEDIUM",
+        "estimatedHours": 6,
+        "tasks": [
+          {
+            "id": "4.1",
+            "title": "Set up Vercel project",
+            "description": "Configure deployment, environment variables",
+            "estimatedMinutes": 45,
+            "status": "pending"
+          },
+          {
+            "id": "4.2",
+            "title": "Connect custom domain",
+            "description": "DNS configuration, SSL verification",
+            "estimatedMinutes": 25,
+            "status": "pending"
+          },
+          {
+            "id": "4.3",
+            "title": "Set up Google Analytics 4",
+            "description": "Install GA4, configure events for phone clicks",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "4.4",
+            "title": "Embed GHL forms on website",
+            "description": "Partner Inquiry and Request a Call forms",
+            "estimatedMinutes": 20,
+            "status": "pending"
+          },
+          {
+            "id": "4.5",
+            "title": "Test form → GHL workflow integration",
+            "description": "End-to-end lead capture testing",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "4.6",
+            "title": "Test inbound phone flows",
+            "description": "Test main number during business hours, after hours voicemail, missed call tasks",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "4.7",
+            "title": "Test call-to-lead mapping",
+            "description": "Verify contacts created, tags applied, recordings visible for website and direct calls",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "4.8",
+            "title": "Configure GHL dashboards",
+            "description": "Set up metrics: inquiries/day, time-to-first-call, calls per VA, demo booked rate, pipeline conversion",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "4.9",
+            "title": "Final QA checklist",
+            "description": "Full site and workflow review",
+            "estimatedMinutes": 120,
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Documentation & Training",
+        "priority": "MEDIUM",
+        "estimatedHours": 6,
+        "tasks": [
+          {
+            "id": "5.1",
+            "title": "Create Partner FAQ document",
+            "description": "FAQs aligned with call scripts: how coverage works, liability, integrations, staff training",
+            "estimatedMinutes": 60,
+            "status": "pending"
+          },
+          {
+            "id": "5.2",
+            "title": "Create VA Call Playbook",
+            "description": "Daily workflow, call flows for key scenarios, standard notes template, disposition rules, DNC handling",
+            "estimatedMinutes": 120,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "5.3",
+            "title": "Define SLA policy",
+            "description": "New inquiry: 15-30min, Missed call: 1hr, Warm follow-ups: 2 business days",
+            "estimatedMinutes": 30,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "5.4",
+            "title": "Create compliance guidelines",
+            "description": "Phrases to avoid, escalation to licensed agents, disclaimers, call recording consent",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "5.5",
+            "title": "Document GHL admin procedures",
+            "description": "How to manage users, permissions, workflows",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          },
+          {
+            "id": "5.6",
+            "title": "Create Call QA & Coaching process",
+            "description": "Sample 3-5 calls per VA/week, scorecard template, feedback loop",
+            "estimatedMinutes": 45,
+            "status": "pending",
+            "isImprovement": true
+          },
+          {
+            "id": "5.7",
+            "title": "Record Loom walkthrough",
+            "description": "Optional video training",
+            "estimatedMinutes": 30,
+            "status": "pending"
+          }
+        ]
+      }
+    ],
+    "slaPolicy": {
+      "newWebInquiry": "15-30 minutes (business hours)",
+      "missedCallCallback": "1 business hour",
+      "warmFollowUps": "1 touch per 2 business days until closed"
+    },
+    "callDispositions": [
+      {
+        "disposition": "Reached - Qualified",
+        "actions": ["Set tag: Lead - Qualified", "Move to Qualified stage", "Create task: Schedule demo"]
+      },
+      {
+        "disposition": "Demo Scheduled",
+        "actions": ["Set tag: Lead - Demo Scheduled", "Move to Demo Scheduled stage", "Remove Lead - New Inquiry tag"]
+      },
+      {
+        "disposition": "Not Interested",
+        "actions": ["Set tag: Call - Not Interested", "Move to Lost stage", "Stop all outreach workflows"]
+      },
+      {
+        "disposition": "Left Voicemail",
+        "actions": ["Set tag: Call - Left Voicemail", "Set next_follow_up_at: +1 day"]
+      },
+      {
+        "disposition": "No Answer",
+        "actions": ["Set tag: Call - No Answer", "Increment call attempts", "Set next_follow_up_at: +4 hours"]
+      },
+      {
+        "disposition": "Do Not Call",
+        "actions": ["Set tag: Call - Do Not Call", "Set do_not_call_reason", "Remove from all workflows"]
+      }
+    ],
+    "improvements": {
+      "summary": "Added 15 new tasks focused on call center operations",
+      "categories": [
+        "Call-specific GHL fields and tags",
+        "SLA tracking workflows",
+        "Phone system configuration",
+        "Call disposition documentation",
+        "VA training playbook",
+        "Compliance guidelines",
+        "QA and coaching process",
+        "Reporting dashboards"
+      ]
+    }
+  }
+}

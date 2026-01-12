@@ -88,7 +88,7 @@ function CheckoutSuccessContent() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Details</h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <p className="text-sm text-gray-500 mb-6">
-            Don&apos;t worry - your payment was successful! Check your email for confirmation details.
+            Don't worry - your payment was successful! Check your email for confirmation details.
           </p>
           <Link
             href="/"
@@ -180,7 +180,7 @@ function CheckoutSuccessContent() {
                 <div>
                   <div className="font-medium text-gray-900">Confirmation Email</div>
                   <div className="text-sm text-gray-600">
-                    You&apos;ll receive a confirmation email with your policy details and receipt.
+                    You'll receive a confirmation email with your policy details and receipt.
                   </div>
                 </div>
               </div>
@@ -249,11 +249,8 @@ function CheckoutSuccessContent() {
 export default function CheckoutSuccessPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading payment details...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
       </div>
     }>
       <CheckoutSuccessContent />

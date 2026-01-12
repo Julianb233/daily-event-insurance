@@ -6,10 +6,10 @@
 
 "use client"
 
-import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { XCircle, ArrowLeft, RotateCcw, Home } from "lucide-react"
 import Link from "next/link"
+import { Suspense } from "react"
 
 function CheckoutCancelContent() {
   const router = useRouter()
@@ -45,7 +45,7 @@ function CheckoutCancelContent() {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
             <h2 className="font-semibold text-yellow-900 mb-2">What happened?</h2>
             <p className="text-sm text-yellow-800">
-              You&apos;ve cancelled the checkout process or navigated away from the payment page.
+              You've cancelled the checkout process or navigated away from the payment page.
               No charges were made to your payment method.
             </p>
           </div>
@@ -55,7 +55,7 @@ function CheckoutCancelContent() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
               <h2 className="font-semibold text-blue-900 mb-2">Your Quote is Still Valid</h2>
               <p className="text-sm text-blue-800 mb-3">
-                Your insurance quote is saved and ready whenever you&apos;re ready to proceed.
+                Your insurance quote is saved and ready whenever you're ready to proceed.
                 Quotes are typically valid for 30 days.
               </p>
               <div className="flex items-center gap-2 text-xs text-blue-700">
@@ -91,40 +91,30 @@ function CheckoutCancelContent() {
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3">
-            {quoteId && (
-              <button
-                onClick={handleRetry}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Try Again
-              </button>
-            )}
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <button
-              onClick={() => router.back()}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={handleRetry}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Go Back
+              <RotateCcw className="w-5 h-5" />
+              Try Again
             </button>
+
             <Link
               href="/"
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
             >
-              <Home className="w-4 h-4" />
-              Return Home
+              <Home className="w-5 h-5" />
+              Back to Home
             </Link>
           </div>
 
-          {/* Help Section */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-2">Need Assistance?</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              If you&apos;re experiencing issues with the checkout process or have questions
-              about your quote, our support team is here to help.
+          {/* Need Help */}
+          <div className="text-center border-t border-gray-200 pt-6">
+            <p className="text-sm text-gray-600 mb-2">
+              Having trouble? We're here to help.
             </p>
-            <div className="flex flex-col sm:flex-row gap-2 text-sm">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm">
               <a
                 href="mailto:support@dailyeventinsurance.com"
                 className="text-teal-600 hover:text-teal-700 font-medium"
@@ -161,7 +151,11 @@ function CheckoutCancelContent() {
 
 export default function CheckoutCancelPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      </div>
+    }>
       <CheckoutCancelContent />
     </Suspense>
   )
