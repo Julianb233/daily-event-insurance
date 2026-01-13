@@ -72,9 +72,9 @@ function SignInForm() {
           <Image
             src="/images/logo-color.png"
             alt="Daily Event Insurance"
-            width={200}
-            height={50}
-            className="h-auto w-auto mx-auto"
+            width={270}
+            height={60}
+            className="h-auto w-auto mx-auto max-h-[60px]"
           />
         </motion.div>
         <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
@@ -178,9 +178,9 @@ function SignInFormFallback() {
           <Image
             src="/images/logo-color.png"
             alt="Daily Event Insurance"
-            width={200}
-            height={50}
-            className="h-auto w-auto mx-auto"
+            width={270}
+            height={60}
+            className="h-auto w-auto mx-auto max-h-[60px]"
           />
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>

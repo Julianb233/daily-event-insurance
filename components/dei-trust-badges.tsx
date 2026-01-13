@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion"
-import { Shield, Users, Timer, Dumbbell, Mountain, Waves, Bike, Package, Award, CheckCircle2, Lock } from "lucide-react"
+import { Shield, Users, DollarSign, Dumbbell, Mountain, Waves, Bike, Package, Award, CheckCircle2, Lock } from "lucide-react"
 import { useEffect, useRef } from "react"
 
 interface StatItem {
@@ -15,7 +15,7 @@ interface StatItem {
 const stats: StatItem[] = [
   { value: "247", animatedValue: 247, label: "Partner Facilities", description: "Active partnerships", icon: Users },
   { value: "127K+", animatedValue: 127, label: "Members Protected", description: "And growing daily", icon: Shield },
-  { value: "47s", animatedValue: 47, label: "Average Coverage Time", description: "Lightning fast", icon: Timer },
+  { value: "$400K", animatedValue: 400, label: "Partner Commissions", description: "Paid monthly", icon: DollarSign },
 ]
 
 function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {

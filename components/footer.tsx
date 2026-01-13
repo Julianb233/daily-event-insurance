@@ -22,9 +22,9 @@ export default function Footer() {
               <Image
                 src="/images/logo-color.png"
                 alt="Daily Event Insurance"
-                width={180}
-                height={45}
-                className="h-12 w-auto mb-2"
+                width={234}
+                height={59}
+                className="h-[62px] w-auto mb-2"
               />
               <p className="text-sm text-[#14B8A6] font-medium mb-4">
                 A HiQor Partner
@@ -232,9 +232,9 @@ export default function Footer() {
               <Image
                 src="/images/logo-color.png"
                 alt="Daily Event Insurance"
-                width={168}
-                height={56}
-                className="h-14 w-auto"
+                width={218}
+                height={73}
+                className="h-[73px] w-auto"
               />
               <p className="text-sm text-[#64748B] font-medium">
                 © {new Date().getFullYear()} Daily Event Insurance. All rights reserved.

@@ -820,3 +820,176 @@ export type IntegrationDoc = typeof integrationDocs.$inferSelect
 export type NewIntegrationDoc = typeof integrationDocs.$inferInsert
 export type PartnerIntegration = typeof partnerIntegrations.$inferSelect
 export type NewPartnerIntegration = typeof partnerIntegrations.$inferInsert
+
+// ================= Admin Dashboard Tables =================
+
+// Microsites - Partner-specific landing pages
+export const microsites = pgTable("microsites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+
+  // Microsite configuration
+  slug: text("slug").notNull().unique(), // partner-name-gym
+  customDomain: text("custom_domain"), // Optional custom domain
+  isActive: boolean("is_active").default(true),
+
+  // Branding
+  logoUrl: text("logo_url"),
+  primaryColor: text("primary_color").default("#14B8A6"),
+  businessName: text("business_name"),
+
+  // Admin earnings tracking
+  setupFee: decimal("setup_fee", { precision: 10, scale: 2 }).default("550.00"),
+  feeCollected: boolean("fee_collected").default(false),
+
+  // Tracking
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_microsites_partner_id").on(table.partnerId),
+  slugIdx: index("idx_microsites_slug").on(table.slug),
+  activeIdx: index("idx_microsites_active").on(table.isActive),
+}))
+
+// Admin earnings - Julian's commission tracking (25% of lead fees + $550/microsite)
+export const adminEarnings = pgTable("admin_earnings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Earning type
+  earningType: text("earning_type").notNull(), // 'lead_fee' | 'microsite_setup'
+
+  // References
+  leadId: uuid("lead_id").references(() => leads.id),
+  micrositeId: uuid("microsite_id").references(() => microsites.id),
+  partnerId: uuid("partner_id").references(() => partners.id),
+
+  // Amounts
+  baseAmount: decimal("base_amount", { precision: 10, scale: 2 }).notNull(), // $40 or $100 or $550
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 4 }).default("0.25"), // 25%
+  earnedAmount: decimal("earned_amount", { precision: 10, scale: 2 }).notNull(), // $10, $25, or $550
+
+  // Status
+  status: text("status").default("pending"), // pending, paid
+  paidAt: timestamp("paid_at"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  earningTypeIdx: index("idx_admin_earnings_type").on(table.earningType),
+  statusIdx: index("idx_admin_earnings_status").on(table.status),
+  partnerIdIdx: index("idx_admin_earnings_partner_id").on(table.partnerId),
+  createdAtIdx: index("idx_admin_earnings_created_at").on(table.createdAt),
+}))
+
+// API Integrations - HIQOR and Sures API configuration
+export const apiIntegrations = pgTable("api_integrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Integration identity
+  name: text("name").notNull().unique(), // 'hiqor' | 'sures'
+  displayName: text("display_name").notNull(),
+
+  // Configuration (encrypted in practice)
+  apiKey: text("api_key"),
+  apiSecret: text("api_secret"),
+  baseUrl: text("base_url"),
+  webhookSecret: text("webhook_secret"),
+
+  // Status
+  isActive: boolean("is_active").default(false),
+  lastSyncAt: timestamp("last_sync_at"),
+  lastSyncStatus: text("last_sync_status"), // 'success' | 'error'
+  lastSyncError: text("last_sync_error"),
+
+  // Settings
+  syncInterval: integer("sync_interval").default(60), // minutes
+  autoSync: boolean("auto_sync").default(true),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  nameIdx: index("idx_api_integrations_name").on(table.name),
+  activeIdx: index("idx_api_integrations_active").on(table.isActive),
+}))
+
+// API Sync Logs - Track sync history for HIQOR/Sures
+export const apiSyncLogs = pgTable("api_sync_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  integrationId: uuid("integration_id").references(() => apiIntegrations.id, { onDelete: "cascade" }).notNull(),
+
+  syncType: text("sync_type").notNull(), // 'manual' | 'scheduled'
+  status: text("status").notNull(), // 'started' | 'success' | 'error'
+  recordsProcessed: integer("records_processed").default(0),
+  errorMessage: text("error_message"),
+
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  integrationIdIdx: index("idx_api_sync_logs_integration_id").on(table.integrationId),
+  statusIdx: index("idx_api_sync_logs_status").on(table.status),
+  startedAtIdx: index("idx_api_sync_logs_started_at").on(table.startedAt),
+}))
+
+// Contract Templates - Editable contracts for partner onboarding
+export const contractTemplates = pgTable("contract_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Contract identity
+  name: text("name").notNull(), // 'partnership_agreement' | 'revenue_share' | 'data_processing'
+  displayName: text("display_name").notNull(), // "Partnership Agreement"
+  description: text("description"), // Brief description of what this contract covers
+
+  // Contract content
+  content: text("content").notNull(), // Full contract text (markdown/HTML supported)
+  version: integer("version").default(1).notNull(),
+
+  // Status
+  isActive: boolean("is_active").default(true), // Only active contracts shown to partners
+  isRequired: boolean("is_required").default(true), // Must be signed during onboarding
+
+  // Ordering
+  sortOrder: integer("sort_order").default(0), // Display order in onboarding flow
+
+  // Tracking
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  publishedAt: timestamp("published_at"), // When this version went live
+}, (table) => ({
+  nameIdx: index("idx_contract_templates_name").on(table.name),
+  activeIdx: index("idx_contract_templates_active").on(table.isActive),
+  sortOrderIdx: index("idx_contract_templates_sort_order").on(table.sortOrder),
+}))
+
+// Partner Contract Signatures - Track what contracts partners signed
+export const partnerContractSignatures = pgTable("partner_contract_signatures", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+  contractTemplateId: uuid("contract_template_id").references(() => contractTemplates.id).notNull(),
+
+  // Signature details
+  signedAt: timestamp("signed_at").defaultNow().notNull(),
+  signatureData: text("signature_data"), // Base64 signature image if captured
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+
+  // Version tracking (snapshot of contract at signing)
+  contractVersion: integer("contract_version").notNull(),
+  contractContentSnapshot: text("contract_content_snapshot").notNull(), // Full text at time of signing
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_contract_signatures_partner_id").on(table.partnerId),
+  contractTemplateIdIdx: index("idx_partner_contract_signatures_template_id").on(table.contractTemplateId),
+  signedAtIdx: index("idx_partner_contract_signatures_signed_at").on(table.signedAt),
+}))
+
+// Type exports for admin dashboard tables
+export type Microsite = typeof microsites.$inferSelect
+export type NewMicrosite = typeof microsites.$inferInsert
+export type AdminEarning = typeof adminEarnings.$inferSelect
+export type NewAdminEarning = typeof adminEarnings.$inferInsert
+export type ApiIntegration = typeof apiIntegrations.$inferSelect
+export type NewApiIntegration = typeof apiIntegrations.$inferInsert
+export type ApiSyncLog = typeof apiSyncLogs.$inferSelect
+export type NewApiSyncLog = typeof apiSyncLogs.$inferInsert
+export type ContractTemplate = typeof contractTemplates.$inferSelect
+export type NewContractTemplate = typeof contractTemplates.$inferInsert
+export type PartnerContractSignature = typeof partnerContractSignatures.$inferSelect
+export type NewPartnerContractSignature = typeof partnerContractSignatures.$inferInsert
