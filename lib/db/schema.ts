@@ -642,3 +642,181 @@ export type ScheduledAction = typeof scheduledActions.$inferSelect
 export type NewScheduledAction = typeof scheduledActions.$inferInsert
 export type ConversionEvent = typeof conversionEvents.$inferSelect
 export type NewConversionEvent = typeof conversionEvents.$inferInsert
+
+// ================= Partner Integration Support Agent Tables =================
+
+// Support conversations - for partner integration help
+export const supportConversations = pgTable("support_conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Partner info
+  partnerId: uuid("partner_id").references(() => partners.id),
+  partnerEmail: text("partner_email"),
+  partnerName: text("partner_name"),
+  
+  // Session info
+  sessionId: text("session_id").notNull(),
+  pageUrl: text("page_url"),
+  onboardingStep: integer("onboarding_step"),
+  
+  // Technical context
+  topic: text("topic"), // onboarding, widget_install, api_integration, pos_setup, troubleshooting
+  techStack: text("tech_stack"), // JSON: { framework: "react", pos: "mindbody", etc. }
+  integrationContext: text("integration_context"), // JSON with current integration state
+  
+  // Status
+  status: text("status").default("active"), // active, resolved, escalated, abandoned
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  
+  // Escalation
+  escalatedAt: timestamp("escalated_at"),
+  escalatedTo: uuid("escalated_to").references(() => users.id),
+  escalationReason: text("escalation_reason"),
+  
+  // Resolution
+  resolution: text("resolution"),
+  resolvedAt: timestamp("resolved_at"),
+  
+  // Satisfaction
+  helpfulRating: integer("helpful_rating"),
+  feedback: text("feedback"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_support_conversations_partner_id").on(table.partnerId),
+  statusIdx: index("idx_support_conversations_status").on(table.status),
+  topicIdx: index("idx_support_conversations_topic").on(table.topic),
+  createdAtIdx: index("idx_support_conversations_created_at").on(table.createdAt),
+}))
+
+// Support messages - individual messages in a conversation
+export const supportMessages = pgTable("support_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id, { onDelete: "cascade" }).notNull(),
+  
+  // Sender
+  role: text("role").notNull(), // user, assistant, system
+  
+  // Content
+  content: text("content").notNull(),
+  contentType: text("content_type").default("text"), // text, code, error, action
+  
+  // Code snippets shared
+  codeSnippet: text("code_snippet"),
+  codeLanguage: text("code_language"),
+  
+  // AI metadata
+  toolsUsed: text("tools_used"), // JSON array of tools called
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  conversationIdIdx: index("idx_support_messages_conversation_id").on(table.conversationId),
+  roleIdx: index("idx_support_messages_role").on(table.role),
+  createdAtIdx: index("idx_support_messages_created_at").on(table.createdAt),
+}))
+
+// Screen recordings for onboarding assistance
+export const onboardingRecordings = pgTable("onboarding_recordings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Owner
+  partnerId: uuid("partner_id").references(() => partners.id),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id),
+  
+  // Recording info
+  recordingUrl: text("recording_url").notNull(),
+  duration: integer("duration"),
+  
+  // Context
+  onboardingStep: integer("onboarding_step"),
+  stepName: text("step_name"),
+  
+  // Issues detected
+  issuesDetected: text("issues_detected"), // JSON array of detected problems
+  
+  // Status
+  status: text("status").default("processing"), // processing, ready, analyzed, failed
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_onboarding_recordings_partner_id").on(table.partnerId),
+  conversationIdIdx: index("idx_onboarding_recordings_conversation_id").on(table.conversationId),
+  statusIdx: index("idx_onboarding_recordings_status").on(table.status),
+}))
+
+// Integration documentation - for RAG
+export const integrationDocs = pgTable("integration_docs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Content
+  title: text("title").notNull(),
+  slug: text("slug").unique().notNull(),
+  content: text("content").notNull(),
+  
+  // Categorization
+  category: text("category").notNull(), // widget, api, pos, webhook, troubleshooting
+  posSystem: text("pos_system"),
+  framework: text("framework"),
+  
+  // Search
+  embedding: text("embedding"), // Vector embedding for semantic search
+  
+  // Code examples
+  codeExamples: text("code_examples"), // JSON array of code snippets
+  
+  isPublished: boolean("is_published").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("idx_integration_docs_category").on(table.category),
+  posSystemIdx: index("idx_integration_docs_pos_system").on(table.posSystem),
+  frameworkIdx: index("idx_integration_docs_framework").on(table.framework),
+  publishedIdx: index("idx_integration_docs_published").on(table.isPublished),
+}))
+
+// Partner integration status tracking
+export const partnerIntegrations = pgTable("partner_integrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+  
+  // Integration type
+  integrationType: text("integration_type").notNull(), // widget, api, pos
+  posSystem: text("pos_system"),
+  
+  // Status
+  status: text("status").default("pending"), // pending, configured, testing, live, failed
+  
+  // Configuration
+  configuration: text("configuration"), // JSON with integration settings
+  apiKeyGenerated: boolean("api_key_generated").default(false),
+  webhookConfigured: boolean("webhook_configured").default(false),
+  
+  // Testing
+  lastTestedAt: timestamp("last_tested_at"),
+  testResult: text("test_result"),
+  testErrors: text("test_errors"), // JSON array of errors
+  
+  // Go live
+  wentLiveAt: timestamp("went_live_at"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_integrations_partner_id").on(table.partnerId),
+  integrationTypeIdx: index("idx_partner_integrations_type").on(table.integrationType),
+  statusIdx: index("idx_partner_integrations_status").on(table.status),
+}))
+
+// Type exports for integration support tables
+export type SupportConversation = typeof supportConversations.$inferSelect
+export type NewSupportConversation = typeof supportConversations.$inferInsert
+export type SupportMessage = typeof supportMessages.$inferSelect
+export type NewSupportMessage = typeof supportMessages.$inferInsert
+export type OnboardingRecording = typeof onboardingRecordings.$inferSelect
+export type NewOnboardingRecording = typeof onboardingRecordings.$inferInsert
+export type IntegrationDoc = typeof integrationDocs.$inferSelect
+export type NewIntegrationDoc = typeof integrationDocs.$inferInsert
+export type PartnerIntegration = typeof partnerIntegrations.$inferSelect
+export type NewPartnerIntegration = typeof partnerIntegrations.$inferInsert

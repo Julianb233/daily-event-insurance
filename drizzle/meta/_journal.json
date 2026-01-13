@@ -15,6 +15,13 @@
       "when": 1768243973790,
       "tag": "0001_shocking_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768296109515,
+      "tag": "0002_gray_lady_bullseye",
+      "breakpoints": true
     }
   ]
 }
