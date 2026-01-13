@@ -4,7 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import {
   Clock,
   Shield,
@@ -37,7 +37,20 @@ import {
   BadgeCheck,
   CircleDollarSign,
   Banknote,
-  Percent
+  Percent,
+  Headphones,
+  GraduationCap,
+  Wrench,
+  Handshake,
+  Monitor,
+  Server,
+  Database,
+  LayoutDashboard,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause
 } from "lucide-react"
 
 // Floating orb component for background decoration
@@ -82,63 +95,441 @@ function AnimatedCounter({ value, suffix = "", prefix = "" }: { value: number; s
   )
 }
 
-// Agreement Structure Data
+// Interactive Revenue Chart Component
+function InteractiveRevenueChart() {
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null)
+  const [selectedMetric, setSelectedMetric] = useState<'premium' | 'policies' | 'partners'>('premium')
+
+  const data = {
+    premium: [
+      { period: "6 Mo", value: 50, display: "$50K", color: "from-teal-400 to-emerald-400" },
+      { period: "Year 1", value: 500, display: "$500K", color: "from-teal-500 to-emerald-500" },
+      { period: "Year 2", value: 2000, display: "$2M", color: "from-emerald-500 to-green-500" },
+      { period: "Year 3", value: 8000, display: "$8M", color: "from-green-500 to-teal-500" },
+      { period: "Year 5", value: 25000, display: "$25M", color: "from-teal-600 to-cyan-500" }
+    ],
+    policies: [
+      { period: "6 Mo", value: 500, display: "500", color: "from-purple-400 to-indigo-400" },
+      { period: "Year 1", value: 5000, display: "5,000", color: "from-purple-500 to-indigo-500" },
+      { period: "Year 2", value: 25000, display: "25K", color: "from-indigo-500 to-purple-500" },
+      { period: "Year 3", value: 75000, display: "75K", color: "from-purple-600 to-pink-500" },
+      { period: "Year 5", value: 200000, display: "200K", color: "from-pink-500 to-purple-600" }
+    ],
+    partners: [
+      { period: "6 Mo", value: 50, display: "50", color: "from-orange-400 to-amber-400" },
+      { period: "Year 1", value: 500, display: "500", color: "from-orange-500 to-amber-500" },
+      { period: "Year 2", value: 2000, display: "2K", color: "from-amber-500 to-orange-500" },
+      { period: "Year 3", value: 5000, display: "5K", color: "from-orange-600 to-red-500" },
+      { period: "Year 5", value: 15000, display: "15K", color: "from-red-500 to-orange-600" }
+    ]
+  }
+
+  const currentData = data[selectedMetric]
+  const maxValue = Math.max(...currentData.map(d => d.value))
+
+  const metricLabels = {
+    premium: 'Gross Premium',
+    policies: 'Monthly Policies',
+    partners: 'Partner Network'
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Metric Selector */}
+      <div className="flex justify-center gap-2">
+        {(['premium', 'policies', 'partners'] as const).map((metric) => (
+          <motion.button
+            key={metric}
+            onClick={() => setSelectedMetric(metric)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${
+              selectedMetric === metric
+                ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                : 'bg-white/10 text-slate-300 hover:bg-white/20 border border-white/10'
+            }`}
+          >
+            {metricLabels[metric]}
+          </motion.button>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div className="relative h-72 flex items-end justify-around gap-4 px-4">
+        {currentData.map((item, index) => (
+          <motion.div
+            key={`${selectedMetric}-${item.period}`}
+            className="relative flex-1 max-w-[100px] group cursor-pointer"
+            onMouseEnter={() => setHoveredBar(index)}
+            onMouseLeave={() => setHoveredBar(null)}
+            initial={{ height: 0 }}
+            animate={{ height: `${(item.value / maxValue) * 100}%` }}
+            transition={{ duration: 0.6, delay: index * 0.1, type: "spring" }}
+          >
+            {/* Tooltip */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: hoveredBar === index ? 1 : 0, y: hoveredBar === index ? 0 : 10 }}
+              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-20 shadow-xl border border-white/20"
+            >
+              <div className="font-bold text-teal-400">{item.display}</div>
+              <div className="text-xs text-slate-400">{metricLabels[selectedMetric]}</div>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-slate-800 border-r border-b border-white/20" />
+            </motion.div>
+
+            {/* Bar */}
+            <div className={`absolute inset-0 bg-gradient-to-t ${item.color} rounded-t-xl opacity-80 group-hover:opacity-100 transition-opacity`} />
+            <div className={`absolute inset-0 bg-gradient-to-t ${item.color} rounded-t-xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity`} />
+
+            {/* Value on bar */}
+            <div className="absolute top-2 left-0 right-0 text-center">
+              <span className="text-xs font-bold text-white/90">{item.display}</span>
+            </div>
+
+            {/* Label */}
+            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap">
+              <div className="text-sm font-semibold text-white">{item.period}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Bottom spacing for labels */}
+      <div className="h-8" />
+    </div>
+  )
+}
+
+// Platform Screenshots Carousel
+function PlatformShowcase() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
+
+  const screenshots = [
+    {
+      title: "Partner Dashboard",
+      description: "Real-time analytics, policy tracking, and revenue insights all in one place",
+      icon: LayoutDashboard,
+      features: ["Live conversion metrics", "Revenue tracking", "Policy management", "Customer insights"]
+    },
+    {
+      title: "Insurance Widget Builder",
+      description: "Customizable widgets that integrate seamlessly with any platform",
+      icon: Layers,
+      features: ["Drag-and-drop builder", "Brand customization", "Mobile responsive", "Instant deployment"]
+    },
+    {
+      title: "Claims Management",
+      description: "Streamlined claims processing with automated workflows",
+      icon: FileText,
+      features: ["Automated claim intake", "Status tracking", "Document management", "Fast resolution"]
+    },
+    {
+      title: "API Integration Hub",
+      description: "Powerful APIs for deep platform integration",
+      icon: Server,
+      features: ["RESTful endpoints", "Webhook events", "SDK libraries", "Sandbox testing"]
+    },
+    {
+      title: "Reporting & Analytics",
+      description: "Comprehensive reporting for data-driven decisions",
+      icon: BarChart3,
+      features: ["Custom reports", "Export capabilities", "Trend analysis", "Performance metrics"]
+    },
+    {
+      title: "Partner Portal",
+      description: "Self-service tools for partners to manage their business",
+      icon: Settings,
+      features: ["Account management", "Resource library", "Support tickets", "Training modules"]
+    }
+  ]
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % screenshots.length)
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + screenshots.length) % screenshots.length)
+
+  return (
+    <div className="relative">
+      {/* Main Display */}
+      <motion.div
+        key={currentSlide}
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -50 }}
+        transition={{ duration: 0.5 }}
+        className="relative backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 overflow-hidden"
+      >
+        {/* Mock Screen Header */}
+        <div className="bg-slate-800/80 px-4 py-3 flex items-center gap-2 border-b border-white/10">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="w-3 h-3 rounded-full bg-green-500" />
+          </div>
+          <div className="flex-1 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1 bg-slate-900/50 rounded-lg text-xs text-slate-400">
+              <Lock className="w-3 h-3" />
+              partner.dailyeventinsurance.com
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-8 md:p-12">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Left: Info */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full border border-teal-500/30 mb-4">
+                  {(() => {
+                    const IconComponent = screenshots[currentSlide].icon
+                    return <IconComponent className="w-4 h-4 text-teal-400" />
+                  })()}
+                  <span className="text-sm text-teal-300 font-medium">Platform Feature</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                  {screenshots[currentSlide].title}
+                </h3>
+                <p className="text-slate-300 text-lg mb-6">
+                  {screenshots[currentSlide].description}
+                </p>
+                <ul className="space-y-3">
+                  {screenshots[currentSlide].features.map((feature, idx) => (
+                    <motion.li
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.1 }}
+                      className="flex items-center gap-3 text-slate-300"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-teal-400 flex-shrink-0" />
+                      {feature}
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+
+            {/* Right: Mock UI */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="relative"
+            >
+              <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-2xl blur-2xl" />
+              <div className="relative bg-slate-900/80 rounded-2xl p-6 border border-white/10">
+                {/* Mock Dashboard UI */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="h-3 w-32 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full" />
+                    <div className="flex gap-2">
+                      <div className="h-8 w-8 bg-white/10 rounded-lg" />
+                      <div className="h-8 w-8 bg-white/10 rounded-lg" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <div className="h-2 w-12 bg-slate-600 rounded mb-2" />
+                        <div className="h-6 w-16 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded" />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                    <div className="flex gap-2 mb-4">
+                      {[60, 80, 45, 90, 70, 85, 55].map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 bg-gradient-to-t from-teal-500 to-emerald-500 rounded-t"
+                          style={{ height: `${h}px` }}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex justify-between">
+                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                        <span key={i} className="text-[10px] text-slate-500">{d}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Navigation Controls */}
+      <div className="flex items-center justify-center gap-4 mt-6">
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={prevSlide}
+          className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/10"
+        >
+          <ChevronLeft className="w-5 h-5 text-white" />
+        </motion.button>
+
+        {/* Dots */}
+        <div className="flex gap-2">
+          {screenshots.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all ${
+                currentSlide === idx
+                  ? 'bg-teal-500 w-8'
+                  : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={nextSlide}
+          className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/10"
+        >
+          <ChevronRight className="w-5 h-5 text-white" />
+        </motion.button>
+      </div>
+    </div>
+  )
+}
+
+// What DEI Provides Section
+const deiValueProps = [
+  {
+    icon: Monitor,
+    title: "Microsite Development",
+    description: "Custom-branded insurance microsites built specifically for your business",
+    details: [
+      "Fully managed hosting & maintenance",
+      "Custom domain setup",
+      "Mobile-optimized design",
+      "Continuous updates & improvements"
+    ],
+    pricing: "$600/month per microsite"
+  },
+  {
+    icon: Headphones,
+    title: "Customer Support",
+    description: "Dedicated support team handling all customer inquiries and issues",
+    details: [
+      "Email & chat support",
+      "Claims assistance",
+      "Policy questions",
+      "Escalation management"
+    ],
+    pricing: "Included"
+  },
+  {
+    icon: GraduationCap,
+    title: "Onboarding & Training",
+    description: "Comprehensive onboarding to get your team up and running quickly",
+    details: [
+      "Platform walkthrough sessions",
+      "Staff training materials",
+      "Best practices guides",
+      "Ongoing education"
+    ],
+    pricing: "Included"
+  },
+  {
+    icon: Wrench,
+    title: "Sales Resources & Tools",
+    description: "Everything your team needs to sell and promote insurance effectively",
+    details: [
+      "Marketing collateral",
+      "Sales scripts & talking points",
+      "Promotional materials",
+      "Conversion optimization tips"
+    ],
+    pricing: "Included"
+  },
+  {
+    icon: Handshake,
+    title: "Strategic Partnerships",
+    description: "Introductions to key relationships that accelerate your growth",
+    details: [
+      "Partner network access",
+      "Industry connections",
+      "Co-marketing opportunities",
+      "Deal flow introductions"
+    ],
+    pricing: "Included"
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics & Reporting",
+    description: "Real-time insights into your insurance program performance",
+    details: [
+      "Revenue dashboards",
+      "Conversion tracking",
+      "Customer analytics",
+      "Monthly performance reports"
+    ],
+    pricing: "Included"
+  }
+]
+
+// Agreement Structure Data - Updated
 const agreementTerms = [
   {
-    icon: Scale,
+    icon: CircleDollarSign,
     title: "Revenue Share Model",
-    description: "Tiered commission structure based on policy volume and conversion rates",
+    description: "Transparent commission structure aligned with mutual success",
+    highlight: "30% to Daily Event Insurance",
     details: [
-      "Base commission: 15-25% of gross premium",
-      "Performance bonuses at volume thresholds",
-      "Quarterly reconciliation and payouts",
-      "Transparent real-time reporting dashboard"
+      "30% revenue share to Daily Event Insurance",
+      "70% retained by HIQOR",
+      "Monthly payouts via ACH",
+      "Real-time revenue tracking dashboard"
     ]
   },
   {
-    icon: Lock,
-    title: "Exclusivity Terms",
-    description: "Partnership protection and market positioning",
+    icon: Monitor,
+    title: "Microsite Services",
+    description: "Fully managed insurance microsites for your platform",
+    highlight: "$600/month per site",
     details: [
-      "Territory-based exclusivity options available",
-      "Category exclusivity for specific event types",
-      "Minimum volume commitments for exclusivity",
-      "Annual review and renewal provisions"
+      "$600/month per microsite",
+      "Custom branding & design",
+      "Full hosting & maintenance",
+      "Ongoing support included"
     ]
   },
   {
-    icon: FileText,
-    title: "Compliance Framework",
-    description: "Full regulatory compliance across all jurisdictions",
+    icon: Headphones,
+    title: "Support & Resources",
+    description: "Everything you need to succeed with events-based insurance",
+    highlight: "Full-Service Support",
     details: [
-      "Licensed in all 50 states + DC",
-      "AM Best A-rated carrier partnerships",
-      "SOC 2 Type II certified infrastructure",
-      "GDPR and CCPA compliant data handling"
+      "Dedicated customer support",
+      "Complete onboarding program",
+      "Sales tools & resources",
+      "Strategic partner introductions"
     ]
   },
   {
     icon: Shield,
-    title: "Liability & Insurance",
-    description: "Comprehensive coverage and indemnification",
+    title: "Technology & Security",
+    description: "Enterprise-grade platform with robust security",
+    highlight: "SOC 2 Compliant",
     details: [
-      "E&O insurance coverage maintained",
-      "Cyber liability protection",
-      "Mutual indemnification clauses",
-      "Claims handling SLA guarantees"
+      "SOC 2 Type II certified",
+      "GDPR/CCPA compliant",
+      "99.9% uptime SLA",
+      "Encrypted data handling"
     ]
   }
 ]
 
-// Compliance highlights
-const complianceItems = [
-  { icon: BadgeCheck, label: "50-State Licensed", value: "MGA Authority" },
-  { icon: Award, label: "AM Best Rating", value: "A (Excellent)" },
-  { icon: Lock, label: "Security Standard", value: "SOC 2 Type II" },
-  { icon: Shield, label: "Data Protection", value: "GDPR/CCPA" }
-]
-
-// 6-Month Plan
+// 6-Month Plan - Updated
 const sixMonthPlan = {
   title: "Foundation Phase",
   subtitle: "Building the Infrastructure",
@@ -147,30 +538,30 @@ const sixMonthPlan = {
       icon: Rocket,
       title: "Platform Launch",
       items: [
-        "Complete API integration with HIQOR OS",
+        "Deploy HIQOR-branded microsites",
         "Launch white-label insurance widget",
-        "Deploy real-time policy issuance system",
+        "Integrate with HIQOR OS platform",
         "Establish claims processing workflow"
       ]
     },
     {
       icon: Users,
-      title: "Partner Acquisition",
+      title: "Initial Rollout",
       items: [
-        "Onboard 50+ event generators",
-        "Sign 3 major gym chain partnerships",
-        "Launch 2 race event integrations",
-        "Establish adventure sports vertical"
+        "Onboard first wave of partners",
+        "Train HIQOR staff on platform",
+        "Launch marketing campaigns",
+        "Gather early feedback & iterate"
       ]
     },
     {
       icon: BarChart3,
       title: "Revenue Targets",
       items: [
-        "500+ policies per month run rate",
+        "500+ policies per month",
         "$50K monthly gross premium",
-        "15% conversion rate baseline",
-        "Break-even on operational costs"
+        "15% conversion rate",
+        "Establish baseline metrics"
       ]
     }
   ],
@@ -182,7 +573,7 @@ const sixMonthPlan = {
   ]
 }
 
-// 1-Year Plan
+// 1-Year Plan - Updated
 const oneYearPlan = {
   title: "Growth Phase",
   subtitle: "Scaling the Business",
@@ -191,17 +582,17 @@ const oneYearPlan = {
       icon: Globe,
       title: "Market Expansion",
       items: [
-        "Expand to all 50 states",
-        "Launch Canadian market pilot",
-        "Establish regional sales teams",
-        "Build enterprise sales function"
+        "Expand partner network significantly",
+        "Launch additional verticals",
+        "Build enterprise sales function",
+        "Establish regional presence"
       ]
     },
     {
       icon: Cpu,
       title: "Technology Enhancement",
       items: [
-        "AI-powered risk assessment launch",
+        "AI-powered risk assessment",
         "Mobile SDK for native apps",
         "Advanced analytics dashboard",
         "Automated underwriting engine"
@@ -213,8 +604,8 @@ const oneYearPlan = {
       items: [
         "5,000+ policies per month",
         "$500K monthly gross premium",
-        "Series A funding secured",
-        "Path to profitability defined"
+        "Profitability pathway defined",
+        "Reinvestment in growth"
       ]
     }
   ],
@@ -226,7 +617,7 @@ const oneYearPlan = {
   ]
 }
 
-// 3-Year Plan
+// 3-Year Plan - Updated
 const threeYearPlan = {
   title: "Scale Phase",
   subtitle: "Market Leadership",
@@ -235,9 +626,9 @@ const threeYearPlan = {
       icon: Crown,
       title: "Market Position",
       items: [
-        "Top 3 events-based insurance provider",
+        "Leading events-based insurance provider",
         "Category leader in fitness & adventure",
-        "Strategic carrier partnerships (3+)",
+        "Multiple carrier partnerships",
         "Industry thought leadership"
       ]
     },
@@ -245,53 +636,53 @@ const threeYearPlan = {
       icon: Network,
       title: "Platform Evolution",
       items: [
-        "Full HIQOR OS ecosystem launch",
-        "Multi-carrier integration",
-        "International expansion (EU, UK, AU)",
-        "Embedded insurance API marketplace"
+        "Full ecosystem integration",
+        "Multi-carrier capabilities",
+        "International expansion consideration",
+        "Embedded insurance marketplace"
       ]
     },
     {
       icon: Banknote,
       title: "Financial Scale",
       items: [
-        "$50M+ annual gross premium",
-        "Profitable operations",
-        "Series B/C funding or strategic exit",
-        "100+ employee organization"
+        "$8M+ annual gross premium",
+        "Strong profit margins",
+        "Sustainable growth model",
+        "Expanded service offerings"
       ]
     }
   ],
   metrics: [
     { label: "Partners", target: "5,000+", icon: Building2 },
-    { label: "Annual Premium", target: "$50M+", icon: DollarSign },
-    { label: "Markets", target: "5 Countries", icon: Globe },
-    { label: "Team Size", target: "100+", icon: Users }
+    { label: "Annual Premium", target: "$8M+", icon: DollarSign },
+    { label: "Markets", target: "Multiple", icon: Globe },
+    { label: "Team Size", target: "50+", icon: Users }
   ]
 }
 
-// 5-Year Plan
+// 5-Year Plan - Updated
 const fiveYearPlan = {
-  title: "Dominance Phase",
+  title: "Leadership Phase",
   subtitle: "Industry Transformation",
   goals: [
     {
       icon: Star,
       title: "Vision Realized",
       items: [
-        "#1 events-based insurance platform globally",
-        "IPO or strategic acquisition",
-        "Insurance innovation awards",
-        "Industry standard setter"
+        "Premier events-based insurance platform",
+        "Industry recognition & awards",
+        "Standard setter for the category",
+        "Trusted brand name"
       ]
     },
     {
       icon: Landmark,
       title: "Enterprise Scale",
       items: [
-        "10+ carrier partnerships",
+        "Multiple carrier partnerships",
         "Full-stack insurance capabilities",
-        "B2B2C ecosystem dominance",
+        "B2B2C ecosystem leadership",
         "Adjacent product expansion"
       ]
     },
@@ -299,18 +690,18 @@ const fiveYearPlan = {
       icon: LineChart,
       title: "Financial Vision",
       items: [
-        "$200M+ annual gross premium",
-        "$1B+ valuation milestone",
-        "20%+ profit margins",
-        "Self-sustaining growth engine"
+        "$25M+ annual gross premium",
+        "Strong enterprise value",
+        "Healthy profit margins",
+        "Self-sustaining growth"
       ]
     }
   ],
   metrics: [
-    { label: "Partners", target: "25,000+", icon: Building2 },
-    { label: "Annual Premium", target: "$200M+", icon: DollarSign },
-    { label: "Valuation", target: "$1B+", icon: TrendingUp },
-    { label: "Team Size", target: "300+", icon: Users }
+    { label: "Partners", target: "15,000+", icon: Building2 },
+    { label: "Annual Premium", target: "$25M+", icon: DollarSign },
+    { label: "Growth Rate", target: "40%+ YoY", icon: TrendingUp },
+    { label: "Team Size", target: "100+", icon: Users }
   ]
 }
 
@@ -432,19 +823,19 @@ export default function HiqorPresentationPage() {
     <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
       <Header />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden min-h-[80vh] flex items-center">
-        {/* Animated background orbs */}
+      {/* Hero Section - LIGHTER & UPDATED */}
+      <section className="pt-32 pb-24 bg-gradient-to-br from-white via-teal-50/30 to-emerald-50/40 text-slate-900 relative overflow-hidden min-h-[80vh] flex items-center">
+        {/* Subtle animated background orbs */}
         <FloatingOrb
-          className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-teal-500/40 to-emerald-500/20 rounded-full blur-[100px]"
+          className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-teal-200/50 to-emerald-200/30 rounded-full blur-[100px]"
           delay={0}
         />
         <FloatingOrb
-          className="absolute bottom-20 right-[10%] w-96 h-96 bg-gradient-to-br from-purple-500/30 to-teal-500/20 rounded-full blur-[120px]"
+          className="absolute bottom-20 right-[10%] w-96 h-96 bg-gradient-to-br from-cyan-200/40 to-teal-200/30 rounded-full blur-[120px]"
           delay={2}
         />
         <FloatingOrb
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/10 to-teal-500/10 rounded-full blur-[150px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-emerald-100/30 to-teal-100/20 rounded-full blur-[150px]"
           delay={1}
         />
 
@@ -453,7 +844,7 @@ export default function HiqorPresentationPage() {
           <div
             className="w-full h-full"
             style={{
-              backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(rgba(20,184,166,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.3) 1px, transparent 1px)`,
               backgroundSize: '50px 50px',
             }}
           />
@@ -469,21 +860,25 @@ export default function HiqorPresentationPage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center"
           >
-            {/* Logo */}
+            {/* Logos Side by Side */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex justify-center mb-8"
+              className="flex justify-center items-center gap-6 mb-8"
             >
-              <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20 shadow-2xl">
+              <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-5 border border-slate-200 shadow-xl">
                 <Image
                   src="/images/logo-color.png"
                   alt="Daily Event Insurance"
-                  width={200}
-                  height={50}
+                  width={180}
+                  height={45}
                   className="h-auto w-auto"
                 />
+              </div>
+              <div className="text-3xl font-bold text-teal-500">+</div>
+              <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-5 border border-slate-200 shadow-xl">
+                <span className="text-2xl font-bold text-slate-800">HIQOR</span>
               </div>
             </motion.div>
 
@@ -492,11 +887,11 @@ export default function HiqorPresentationPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-8 shadow-lg"
+              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-teal-50 rounded-full border border-teal-200 mb-8 shadow-sm"
             >
-              <Briefcase className="w-4 h-4 text-teal-400" />
-              <span className="text-teal-300 font-medium text-sm">Strategic Partnership Presentation</span>
-              <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              <Briefcase className="w-4 h-4 text-teal-600" />
+              <span className="text-teal-700 font-medium text-sm">Strategic Partnership Roadmap</span>
+              <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
             </motion.div>
 
             <motion.h1
@@ -505,10 +900,10 @@ export default function HiqorPresentationPage() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight tracking-tight"
             >
-              HIQOR Partnership
+              Daily Event Insurance
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400">
-                Vision & Roadmap
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500">
+                + HIQOR Partnership
               </span>
             </motion.h1>
 
@@ -516,11 +911,11 @@ export default function HiqorPresentationPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-12 leading-relaxed"
+              className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed"
             >
-              Building the future of events-based insurance together.
+              A strategic partnership to bring events-based insurance
               <br />
-              <span className="text-teal-400">From foundation to market dominance.</span>
+              <span className="text-teal-600 font-semibold">to the HIQOR ecosystem.</span>
             </motion.p>
 
             {/* Quick Stats */}
@@ -531,10 +926,10 @@ export default function HiqorPresentationPage() {
               className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
             >
               {[
-                { label: "5-Year Target", value: "$200M+", sublabel: "Annual Premium" },
-                { label: "Partner Network", value: "25,000+", sublabel: "Event Generators" },
-                { label: "Market Position", value: "#1", sublabel: "Global Platform" },
-                { label: "Target Valuation", value: "$1B+", sublabel: "Enterprise Value" }
+                { label: "Revenue Share", value: "70/30", sublabel: "HIQOR / DEI" },
+                { label: "Microsite Cost", value: "$600", sublabel: "Per Month" },
+                { label: "Support", value: "Full", sublabel: "Included" },
+                { label: "Partnership", value: "Win-Win", sublabel: "Aligned Goals" }
               ].map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -542,11 +937,11 @@ export default function HiqorPresentationPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.7 + index * 0.1 }}
                   whileHover={{ scale: 1.05, y: -5 }}
-                  className="backdrop-blur-xl bg-white/5 rounded-2xl p-4 border border-white/10"
+                  className="backdrop-blur-xl bg-white/70 rounded-2xl p-4 border border-slate-200 shadow-lg"
                 >
-                  <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-xs text-teal-400">{stat.label}</div>
-                  <div className="text-xs text-slate-400 mt-1">{stat.sublabel}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-slate-800">{stat.value}</div>
+                  <div className="text-xs text-teal-600 font-medium">{stat.label}</div>
+                  <div className="text-xs text-slate-500 mt-1">{stat.sublabel}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -554,11 +949,11 @@ export default function HiqorPresentationPage() {
         </motion.div>
 
         {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
       </section>
 
-      {/* Agreement Structure Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+      {/* What DEI Provides Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-teal-100/50 to-transparent rounded-full blur-3xl" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -575,48 +970,99 @@ export default function HiqorPresentationPage() {
               viewport={{ once: true }}
               className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-sm bg-teal-50 rounded-full border border-teal-200 mb-6 shadow-sm"
             >
-              <FileText className="w-4 h-4 text-teal-600" />
-              <span className="text-sm font-semibold text-teal-700">Partnership Framework</span>
+              <Sparkles className="w-4 h-4 text-teal-600" />
+              <span className="text-sm font-semibold text-teal-700">What We Provide</span>
             </motion.div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-              Agreement{" "}
+              The Daily Event Insurance{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
-                Structure
+                Advantage
               </span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              A comprehensive partnership built on transparency, compliance, and mutual success.
+              Everything HIQOR needs to launch and scale events-based insurance, fully managed by our team.
             </p>
           </motion.div>
 
-          {/* Compliance Badges */}
+          {/* Value Props Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {deiValueProps.map((prop, index) => (
+              <motion.div
+                key={prop.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="group relative"
+              >
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
+
+                <div className="relative h-full backdrop-blur-sm bg-white rounded-3xl p-6 border border-slate-200 shadow-lg hover:shadow-2xl hover:border-teal-300 transition-all duration-500">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-teal-500 group-hover:to-emerald-500 transition-all">
+                      <prop.icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-slate-900">{prop.title}</h3>
+                      <span className="inline-block mt-1 px-3 py-1 bg-teal-100 text-teal-700 text-xs font-semibold rounded-full">
+                        {prop.pricing}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-slate-600 text-sm mb-4">{prop.description}</p>
+
+                  <ul className="space-y-2">
+                    {prop.details.map((detail, detailIndex) => (
+                      <li key={detailIndex} className="flex items-start gap-2 text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Agreement Structure Section - Updated */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+        <FloatingOrb
+          className="absolute top-20 right-[20%] w-64 h-64 bg-gradient-to-br from-teal-500/30 to-emerald-500/20 rounded-full blur-[80px]"
+          delay={0.5}
+        />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            {complianceItems.map((item, index) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5, scale: 1.03 }}
-                className="group relative"
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all" />
-                <div className="relative backdrop-blur-sm bg-white rounded-2xl p-6 border border-slate-200 hover:border-teal-300 shadow-lg text-center transition-all">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-teal-500 group-hover:to-emerald-500 transition-all">
-                    <item.icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors" />
-                  </div>
-                  <div className="text-lg font-bold text-slate-900">{item.value}</div>
-                  <div className="text-sm text-slate-500">{item.label}</div>
-                </div>
-              </motion.div>
-            ))}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
+            >
+              <FileText className="w-4 h-4 text-teal-400" />
+              <span className="text-sm font-semibold text-teal-300">Partnership Terms</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+              Agreement{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
+                Structure
+              </span>
+            </h2>
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+              Clear, transparent terms designed for a successful long-term partnership.
+            </p>
           </motion.div>
 
           {/* Agreement Terms Grid */}
@@ -628,50 +1074,32 @@ export default function HiqorPresentationPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{
-                  y: -8,
-                  rotateX: 2,
-                  rotateY: -2,
-                  transition: { type: "spring", stiffness: 300, damping: 20 }
-                }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 className="group relative"
-                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
 
-                <div className="relative h-full backdrop-blur-sm bg-white rounded-3xl p-8 border border-slate-200 shadow-xl hover:shadow-2xl hover:border-teal-300 transition-all duration-500">
+                <div className="relative h-full backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10 hover:border-teal-500/50 transition-all duration-500">
                   <div className="flex items-start gap-4 mb-4">
-                    <motion.div
-                      className="w-14 h-14 relative flex-shrink-0"
-                      whileHover={{ rotateY: 180 }}
-                      transition={{ duration: 0.6 }}
-                      style={{ transformStyle: "preserve-3d" }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-2xl" />
-                      <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <term.icon className="w-7 h-7 text-teal-600 group-hover:text-white transition-colors duration-300" />
-                      </div>
-                    </motion.div>
+                    <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                      <term.icon className="w-7 h-7 text-white" />
+                    </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-1">{term.title}</h3>
-                      <p className="text-slate-600 text-sm">{term.description}</p>
+                      <h3 className="text-xl font-bold text-white mb-1">{term.title}</h3>
+                      <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 text-sm font-semibold rounded-full border border-teal-500/30">
+                        {term.highlight}
+                      </span>
                     </div>
                   </div>
 
-                  <ul className="space-y-2 mt-4">
+                  <p className="text-slate-300 mb-4">{term.description}</p>
+
+                  <ul className="space-y-2">
                     {term.details.map((detail, detailIndex) => (
-                      <motion.li
-                        key={detailIndex}
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 + detailIndex * 0.05 }}
-                        className="flex items-start gap-2 text-sm text-slate-600"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
+                      <li key={detailIndex} className="flex items-start gap-2 text-sm text-slate-300">
+                        <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
                         {detail}
-                      </motion.li>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -681,12 +1109,8 @@ export default function HiqorPresentationPage() {
         </div>
       </section>
 
-      {/* 6-Month Plan Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-20 right-[20%] w-64 h-64 bg-gradient-to-br from-teal-500/30 to-emerald-500/20 rounded-full blur-[80px]"
-          delay={0.5}
-        />
+      {/* Platform Showcase Section */}
+      <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-800 text-white relative overflow-hidden">
         <FloatingOrb
           className="absolute bottom-20 left-[15%] w-80 h-80 bg-gradient-to-br from-purple-500/20 to-teal-500/20 rounded-full blur-[100px]"
           delay={1.5}
@@ -697,22 +1121,90 @@ export default function HiqorPresentationPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
+            >
+              <Monitor className="w-4 h-4 text-teal-400" />
+              <span className="text-sm font-semibold text-teal-300">Platform Preview</span>
+            </motion.div>
+
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Strategic{" "}
+              The Platform{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                Roadmap
+                You&apos;ll Get
               </span>
             </h2>
-            <p className="text-xl text-slate-300">Our journey from foundation to market leadership</p>
+            <p className="text-xl text-slate-300">Explore the features we&apos;ve built for partners like HIQOR</p>
           </motion.div>
 
-          <TimelineMilestone plan={sixMonthPlan} index={0} accentColor="teal" />
+          <PlatformShowcase />
         </div>
       </section>
 
-      {/* 1-Year Plan Section */}
+      {/* Interactive Revenue Chart Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 text-white relative overflow-hidden">
+        <FloatingOrb
+          className="absolute top-20 left-[20%] w-64 h-64 bg-gradient-to-br from-emerald-500/30 to-teal-500/20 rounded-full blur-[80px]"
+          delay={0.5}
+        />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
+            >
+              <PieChart className="w-4 h-4 text-teal-400" />
+              <span className="text-sm font-semibold text-teal-300">Growth Projections</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Revenue{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
+                Growth Trajectory
+              </span>
+            </h2>
+            <p className="text-xl text-slate-300">Interactive projections - click to explore different metrics</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10"
+          >
+            <InteractiveRevenueChart />
+
+            <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: "Avg. Policy Value", value: "$15" },
+                { label: "Conversion Rate", value: "15-20%" },
+                { label: "DEI Revenue Share", value: "30%" },
+                { label: "HIQOR Retention", value: "70%" }
+              ].map((metric) => (
+                <div key={metric.label} className="text-center">
+                  <div className="text-2xl font-bold text-teal-400">{metric.value}</div>
+                  <div className="text-xs text-slate-400">{metric.label}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 6-Month Plan Section */}
       <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02]">
           <div
@@ -725,125 +1217,62 @@ export default function HiqorPresentationPage() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-slate-900">
-            <TimelineMilestone plan={oneYearPlan} index={1} accentColor="purple" />
-          </div>
-        </div>
-      </section>
-
-      {/* 3-Year Plan Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-10 left-[10%] w-48 h-48 bg-gradient-to-br from-orange-500/30 to-amber-500/20 rounded-full blur-[60px]"
-          delay={0}
-        />
-        <FloatingOrb
-          className="absolute bottom-10 right-[15%] w-64 h-64 bg-gradient-to-br from-purple-500/20 to-orange-500/20 rounded-full blur-[80px]"
-          delay={1}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <TimelineMilestone plan={threeYearPlan} index={2} accentColor="orange" />
-        </div>
-      </section>
-
-      {/* 5-Year Plan Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-blue-100/50 to-transparent rounded-full blur-3xl" />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-slate-900">
-            <TimelineMilestone plan={fiveYearPlan} index={3} accentColor="blue" />
-          </div>
-        </div>
-      </section>
-
-      {/* Revenue Projections */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-20 left-[20%] w-64 h-64 bg-gradient-to-br from-emerald-500/30 to-teal-500/20 rounded-full blur-[80px]"
-          delay={0.5}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
-            >
-              <PieChart className="w-4 h-4 text-teal-400" />
-              <span className="text-sm font-semibold text-teal-300">Financial Projections</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Revenue{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                Growth Trajectory
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+              Strategic{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
+                Roadmap
               </span>
             </h2>
+            <p className="text-xl text-slate-600">Our journey from foundation to market leadership</p>
           </motion.div>
 
-          {/* Revenue Chart Visualization */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10"
-          >
-            <div className="grid grid-cols-5 gap-4 items-end h-64">
-              {[
-                { year: "6 Mo", value: 0.6, premium: "$600K", label: "Foundation" },
-                { year: "Year 1", value: 6, premium: "$6M", label: "Growth" },
-                { year: "Year 2", value: 20, premium: "$20M", label: "Scale" },
-                { year: "Year 3", value: 50, premium: "$50M", label: "Leadership" },
-                { year: "Year 5", value: 200, premium: "$200M", label: "Dominance" }
-              ].map((item, index) => (
-                <motion.div
-                  key={item.year}
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${(item.value / 200) * 100}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="relative group"
-                >
-                  <div className="absolute -inset-1 bg-gradient-to-t from-teal-500 to-emerald-500 rounded-t-xl blur opacity-50 group-hover:opacity-80 transition-opacity" />
-                  <div className="relative h-full bg-gradient-to-t from-teal-500 to-emerald-400 rounded-t-xl flex items-end justify-center pb-2">
-                    <span className="text-xs font-bold text-white/90 rotate-0">{item.premium}</span>
-                  </div>
-                  <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center">
-                    <div className="text-sm font-bold text-white">{item.year}</div>
-                    <div className="text-xs text-slate-400">{item.label}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <div className="text-slate-900">
+            <TimelineMilestone plan={sixMonthPlan} index={0} accentColor="teal" />
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-20 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: "Avg. Policy Value", value: "$15" },
-                { label: "Conversion Rate", value: "20%+" },
-                { label: "Partner Commission", value: "15-25%" },
-                { label: "Gross Margin", value: "35%+" }
-              ].map((metric) => (
-                <div key={metric.label} className="text-center">
-                  <div className="text-2xl font-bold text-teal-400">{metric.value}</div>
-                  <div className="text-xs text-slate-400">{metric.label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+      {/* 1-Year Plan Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+        <FloatingOrb
+          className="absolute top-20 right-[20%] w-64 h-64 bg-gradient-to-br from-purple-500/30 to-indigo-500/20 rounded-full blur-[80px]"
+          delay={0.5}
+        />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <TimelineMilestone plan={oneYearPlan} index={1} accentColor="purple" />
+        </div>
+      </section>
+
+      {/* 3-Year Plan Section */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-slate-900">
+            <TimelineMilestone plan={threeYearPlan} index={2} accentColor="orange" />
+          </div>
+        </div>
+      </section>
+
+      {/* 5-Year Plan Section */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+        <FloatingOrb
+          className="absolute bottom-10 right-[15%] w-64 h-64 bg-gradient-to-br from-blue-500/30 to-cyan-500/20 rounded-full blur-[80px]"
+          delay={1}
+        />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <TimelineMilestone plan={fiveYearPlan} index={3} accentColor="blue" />
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-28 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+      <section className="py-28 bg-gradient-to-b from-white to-teal-50/50 relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -853,7 +1282,7 @@ export default function HiqorPresentationPage() {
           >
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/10 to-emerald-500/10 rounded-3xl blur-2xl" />
-              <div className="relative backdrop-blur-sm bg-white/80 rounded-3xl p-12 border border-slate-200 shadow-2xl">
+              <div className="relative backdrop-blur-sm bg-white/90 rounded-3xl p-12 border border-slate-200 shadow-2xl">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -865,11 +1294,11 @@ export default function HiqorPresentationPage() {
                 </motion.div>
 
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                  Ready to Transform Events-Based Insurance?
+                  Ready to Partner?
                 </h2>
                 <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-                  Partner with HIQOR to capture the massive opportunity in events-based insurance.
-                  Together, we&apos;ll build the #1 platform in the industry.
+                  Daily Event Insurance is excited to bring events-based insurance to the HIQOR ecosystem.
+                  Together, we&apos;ll create value for your partners and their customers.
                 </p>
 
                 <motion.div
@@ -889,12 +1318,12 @@ export default function HiqorPresentationPage() {
                     <ArrowRight className="w-5 h-5" />
                   </motion.a>
                   <motion.a
-                    href="/about/hiqor"
+                    href="/"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
                     className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-100 text-slate-900 font-bold text-lg rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all"
                   >
-                    Learn More About HIQOR
+                    Learn More About Daily Event Insurance
                   </motion.a>
                 </motion.div>
               </div>
