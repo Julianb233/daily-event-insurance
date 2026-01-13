@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
 import { db, isDbConfigured, policies, partners } from "@/lib/db"
 import { eq } from "drizzle-orm"
-import { isDevMode } from "@/lib/mock-data"
+
 import {
   successResponse,
   serverError,
@@ -46,12 +46,14 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get("x-webhook-signature")
     const payload = await request.text()
 
-    // Verify signature (skip in dev mode)
-    if (!isDevMode && signature) {
-      if (!verifySignature(payload, signature)) {
-        console.error("[Webhook] Invalid signature")
-        return unauthorizedError("Invalid webhook signature")
-      }
+    // Verify signature
+    if (!signature) {
+      return unauthorizedError("Missing webhook signature")
+    }
+
+    if (!verifySignature(payload, signature)) {
+      console.error("[Webhook] Invalid signature")
+      return unauthorizedError("Invalid webhook signature")
     }
 
     const body = JSON.parse(payload)
@@ -73,22 +75,7 @@ export async function POST(request: NextRequest) {
     // Log webhook receipt
     console.log(`[Webhook] Received ${event_type} for policy ${policy_id}`)
 
-    // Dev mode
-    if (isDevMode || !isDbConfigured()) {
-      console.log("[DEV MODE] Would process webhook:", {
-        event_type,
-        policy_id,
-        data,
-        timestamp,
-      })
 
-      return successResponse({
-        received: true,
-        event_type,
-        policy_id,
-        processed_at: new Date().toISOString(),
-      })
-    }
 
     // Handle different event types
     switch (event_type) {

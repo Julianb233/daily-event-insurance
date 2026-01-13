@@ -3,7 +3,7 @@ console.log("--- LOADED API/ADMIN/MICROSITES/ROUTE ---");
 import { requireAdmin, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, microsites, partners, adminEarnings } from "@/lib/db"
 import { eq, sql, count, desc, asc, ilike, or, and } from "drizzle-orm"
-import { isDevMode } from "@/lib/mock-data"
+
 import {
   successResponse,
   paginatedResponse,
@@ -11,73 +11,7 @@ import {
   badRequest,
 } from "@/lib/api-responses"
 
-// Mock data for development
-const mockMicrosites = [
-  {
-    id: "ms1",
-    partnerId: "p1",
-    slug: "adventure-sports-inc",
-    customDomain: null,
-    isActive: true,
-    logoUrl: null,
-    primaryColor: "#14B8A6",
-    businessName: "Adventure Sports Inc",
-    setupFee: "550.00",
-    feeCollected: true,
-    createdAt: "2024-03-20T00:00:00Z",
-    updatedAt: "2024-03-20T00:00:00Z",
-    partnerName: "John Smith",
-    partnerEmail: "john@adventuresports.com",
-  },
-  {
-    id: "ms2",
-    partnerId: "p2",
-    slug: "mountain-climbers-co",
-    customDomain: "insurance.mountainclimbers.co",
-    isActive: true,
-    logoUrl: "/uploads/mountain-logo.png",
-    primaryColor: "#2563EB",
-    businessName: "Mountain Climbers Co",
-    setupFee: "550.00",
-    feeCollected: true,
-    createdAt: "2024-04-05T00:00:00Z",
-    updatedAt: "2024-06-15T00:00:00Z",
-    partnerName: "Sarah Johnson",
-    partnerEmail: "sarah@mountainclimbers.co",
-  },
-  {
-    id: "ms3",
-    partnerId: "p3",
-    slug: "urban-gym-network",
-    customDomain: null,
-    isActive: true,
-    logoUrl: null,
-    primaryColor: "#14B8A6",
-    businessName: "Urban Gym Network",
-    setupFee: "550.00",
-    feeCollected: false,
-    createdAt: "2024-05-15T00:00:00Z",
-    updatedAt: "2024-05-15T00:00:00Z",
-    partnerName: "Mike Davis",
-    partnerEmail: "mike@urbangym.net",
-  },
-  {
-    id: "ms4",
-    partnerId: "p5",
-    slug: "summit-fitness",
-    customDomain: null,
-    isActive: false,
-    logoUrl: null,
-    primaryColor: "#DC2626",
-    businessName: "Summit Fitness",
-    setupFee: "550.00",
-    feeCollected: true,
-    createdAt: "2024-06-20T00:00:00Z",
-    updatedAt: "2024-11-01T00:00:00Z",
-    partnerName: "Chris Wilson",
-    partnerEmail: "chris@summitfit.com",
-  },
-]
+
 
 /**
  * GET /api/admin/microsites
@@ -95,61 +29,7 @@ export async function GET(request: NextRequest) {
       const status = searchParams.get("status") || "" // 'active' | 'inactive' | ''
       const feeStatus = searchParams.get("feeStatus") || "" // 'collected' | 'pending' | ''
 
-      // Dev mode - return mock data
-      if (isDevMode || !isDbConfigured()) {
-        let filtered = [...mockMicrosites]
 
-        // Apply search filter
-        if (search) {
-          const searchLower = search.toLowerCase()
-          filtered = filtered.filter(m =>
-            m.businessName.toLowerCase().includes(searchLower) ||
-            m.slug.toLowerCase().includes(searchLower) ||
-            m.partnerEmail.toLowerCase().includes(searchLower)
-          )
-        }
-
-        // Apply status filter
-        if (status === "active") {
-          filtered = filtered.filter(m => m.isActive)
-        } else if (status === "inactive") {
-          filtered = filtered.filter(m => !m.isActive)
-        }
-
-        // Apply fee status filter
-        if (feeStatus === "collected") {
-          filtered = filtered.filter(m => m.feeCollected)
-        } else if (feeStatus === "pending") {
-          filtered = filtered.filter(m => !m.feeCollected)
-        }
-
-        // Sort by created date desc
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-
-        // Paginate
-        const start = (page - 1) * pageSize
-        const paginatedData = filtered.slice(start, start + pageSize)
-
-        // Calculate stats
-        const stats = {
-          total: mockMicrosites.length,
-          active: mockMicrosites.filter(m => m.isActive).length,
-          totalSetupFees: mockMicrosites.filter(m => m.feeCollected).length * 550,
-          pendingFees: mockMicrosites.filter(m => !m.feeCollected).length * 550,
-        }
-
-        return NextResponse.json({
-          success: true,
-          data: paginatedData,
-          stats,
-          pagination: {
-            page,
-            pageSize,
-            total: filtered.length,
-            totalPages: Math.ceil(filtered.length / pageSize),
-          },
-        })
-      }
 
       // Build where conditions
       const conditions = []
@@ -266,25 +146,7 @@ export async function POST(request: NextRequest) {
         return badRequest("Slug must be lowercase alphanumeric with hyphens only")
       }
 
-      // Dev mode
-      if (isDevMode || !isDbConfigured()) {
-        const newMicrosite = {
-          id: `ms${Date.now()}`,
-          partnerId,
-          slug,
-          customDomain: customDomain || null,
-          isActive: true,
-          logoUrl: logoUrl || null,
-          primaryColor: primaryColor || "#14B8A6",
-          businessName: businessName || "New Partner",
-          setupFee: "550.00",
-          feeCollected: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
 
-        return successResponse(newMicrosite, "Microsite created successfully", 201)
-      }
 
       // Check if partner exists
       const [partner] = await db!
@@ -308,26 +170,7 @@ export async function POST(request: NextRequest) {
         return badRequest("Slug already exists")
       }
 
-      // Create microsite
-      const [newMicrosite] = await db!
-        .insert(microsites)
-        .values({
-          partnerId,
-          slug,
-          customDomain: customDomain || null,
-          isActive: true,
-          logoUrl: logoUrl || null,
-          primaryColor: primaryColor || "#14B8A6",
-          businessName: businessName || partner.businessName,
-          setupFee: "550.00",
-          feeCollected: false,
-        })
-        .returning()
-        .limit(1)
 
-      if (existingSlug) {
-        return badRequest("Slug already exists")
-      }
 
       console.log("[Microsites Debug] Inserting microsite...");
       const [newMicrosite] = await db!

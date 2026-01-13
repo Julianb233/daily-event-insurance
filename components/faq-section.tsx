@@ -26,8 +26,8 @@ const faqs = [
     answer: "Policies are sector-specific but generally cover medical expenses, emergency transport, trip cancellation, and activity-related injuries. We fill the gaps that general liability misses.",
   },
   {
-    question: "Is there a cost to become a partner?",
-    answer: "No. There are no setup fees, monthly subscriptions, or minimum commitments. You only pay (or rather, your participants pay) for the coverage purchased.",
+    question: "Is there a minimum commitment?",
+    answer: "No minimums required. Pay only for the coverage your members purchase.",
   },
 ]
 

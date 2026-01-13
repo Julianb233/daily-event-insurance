@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/node-postgres"
-import { Pool } from "pg"
+import { drizzle } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
 import * as schema from "./schema"
 
 // Check if database is configured
@@ -12,11 +12,8 @@ function createDb() {
     return null
   }
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false } // Required for Supabase (usually)
-  })
-  return drizzle(pool, { schema })
+  const client = postgres(process.env.DATABASE_URL!, { prepare: false })
+  return drizzle(client, { schema })
 }
 
 export const db = createDb()
