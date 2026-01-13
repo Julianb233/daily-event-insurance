@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     "rental insurance",
     "member coverage",
     "business insurance",
-    "High-Core",
+    "HiQor",
     "instant insurance",
     "liability coverage",
     "member benefits",
@@ -123,7 +123,7 @@ export default function RootLayout({
     "provider": {
       "@type": "Organization",
       "name": "Daily Event Insurance",
-      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members (a High-Core partner)"
+      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members (a HiQor partner)"
     },
     "areaServed": {
       "@type": "Country",

@@ -9,7 +9,7 @@ async function fixCascadeDeletes() {
     process.exit(1)
   }
 
-  const sql = postgres(process.env.DATABASE_URL, { prepare: false })
+  const sql = postgres(process.env.DATABASE_URL)
 
   console.log("Fixing cascade delete rules...\n")
 

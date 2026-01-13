@@ -104,7 +104,7 @@ export function HiqorValueProp() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full mb-4">
             <span className="text-teal-600 font-semibold text-sm">Why HIQOR</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 text-center">
             Every Real-World Activity Is an <span className="text-teal-500">Event</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
@@ -247,14 +247,14 @@ export function HiqorValueProp() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="group bg-gradient-to-br from-teal-50 to-white rounded-2xl border border-teal-200 p-6 hover:border-teal-400 hover:shadow-lg transition-all"
+                whileHover={{ y: -4, translateY: -4 }}
+                className="group bg-gradient-to-br from-teal-50 to-white rounded-2xl border border-teal-200 p-6 hover:border-teal-400 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center mb-4 shadow-lg shadow-teal-500/25">
+                <div className="w-12 h-12 rounded-xl bg-teal-500 flex items-center justify-center mb-4 shadow-lg shadow-teal-500/25 mx-auto">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h4>
-                <p className="text-sm text-slate-600">{feature.description}</p>
+                <h4 className="text-lg font-bold text-slate-900 mb-2 text-center">{feature.title}</h4>
+                <p className="text-sm text-slate-600 text-center">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -279,17 +279,17 @@ export function HiqorValueProp() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="group relative bg-white rounded-2xl border border-slate-200 p-6 hover:border-teal-300 hover:shadow-lg transition-all"
+                whileHover={{ y: -4, translateY: -4 }}
+                className="group relative bg-white rounded-2xl border border-slate-200 p-6 hover:border-teal-300 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300"
               >
                 {/* Gradient top bar */}
                 <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-gradient-to-r ${layer.color}`} />
 
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${layer.color} bg-opacity-10 flex items-center justify-center mb-4`}>
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${layer.color} bg-opacity-10 flex items-center justify-center mb-4 mx-auto`}>
                   <layer.icon className="w-6 h-6 text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-900 mb-2">{layer.title}</h4>
-                <p className="text-sm text-slate-600">{layer.description}</p>
+                <h4 className="text-lg font-bold text-slate-900 mb-2 text-center">{layer.title}</h4>
+                <p className="text-sm text-slate-600 text-center">{layer.description}</p>
               </motion.div>
             ))}
           </div>

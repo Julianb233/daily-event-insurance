@@ -100,7 +100,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 text-center tracking-tight mb-4 md:mb-6 max-w-5xl"
           style={{
-            textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.5)",
+            textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.1)",
           }}
         >
           Insurance That Activates{" "}

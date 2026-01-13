@@ -25,7 +25,7 @@ export default function Footer() {
                 className="h-12 w-auto mb-2"
               />
               <p className="text-sm text-[#14B8A6] font-medium mb-4">
-                A High-Core Partner
+                A HiQor Partner
               </p>
               <p className="text-sm text-[#64748B] leading-relaxed mb-6">
                 Empowering fitness businesses with embedded insurance technology.
@@ -194,7 +194,7 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        {/* High-Core Partnership Disclosure */}
+        {/* HiQor Partnership Disclosure */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -207,8 +207,8 @@ export default function Footer() {
           </h4>
           <p className="text-xs text-[#64748B] leading-relaxed">
             <strong>Important:</strong> Daily Event Insurance is an independent company and is not owned by,
-            controlled by, or a subsidiary of High-Core. We operate as a High-Core Partner through a referral
-            partnership arrangement. High-Core does not underwrite, sell, or administer insurance policies
+            controlled by, or a subsidiary of HiQor. We operate as a HiQor Partner through a referral
+            partnership arrangement. HiQor does not underwrite, sell, or administer insurance policies
             offered through Daily Event Insurance. This partnership allows us to provide enhanced services
             to our customers while maintaining our independence as a separate business entity. For questions
             about our partnership, please contact us at{" "}
@@ -230,9 +230,9 @@ export default function Footer() {
               <Image
                 src="/images/logo-color.png"
                 alt="Daily Event Insurance"
-                width={120}
-                height={40}
-                className="h-10 w-auto"
+                width={168}
+                height={56}
+                className="h-14 w-auto"
               />
               <p className="text-sm text-[#64748B] font-medium">
                 © {new Date().getFullYear()} Daily Event Insurance. All rights reserved.
@@ -255,12 +255,12 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-sm text-[#64748B]">
               <span>A</span>
               <Link
-                href="https://high-core.com"
+                href="https://hiqor.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-[#14B8A6] hover:text-[#0D9488] transition-colors"
               >
-                High-Core
+                HiQor
               </Link>
               <span>Partner</span>
             </div>

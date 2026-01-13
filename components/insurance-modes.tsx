@@ -29,7 +29,7 @@ const modes: Mode[] = [
     benefits: [
       "Customer sees transparent pricing",
       "Separate line item on receipt",
-      "Clear opt-in decision point",
+      "Clear coverage selection point",
       "Higher perceived value",
       "Premium positioning",
     ],

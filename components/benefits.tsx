@@ -107,7 +107,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
           rotateY,
           transformStyle: "preserve-3d",
         }}
-        whileHover={{ y: -8 }}
+        whileHover={{ y: -8, translateY: -4 }}
         transition={{ duration: 0.3 }}
         className="relative h-full"
       >
@@ -120,7 +120,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
         />
 
         {/* Card */}
-        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-premium border border-gray-100/80 hover:shadow-premium-hover transition-shadow duration-500 overflow-hidden">
+        <div className="relative h-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 border border-gray-100/80 transition-all duration-300 overflow-hidden">
           {/* Shimmer effect */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
@@ -142,7 +142,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
           />
 
           {/* Icon Container */}
-          <div className="mb-6 relative" style={{ transform: "translateZ(20px)" }}>
+          <div className="mb-6 relative flex justify-center" style={{ transform: "translateZ(20px)" }}>
             <div className="relative inline-flex items-center justify-center">
               {/* Background Glow */}
               <motion.div
@@ -170,10 +170,10 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
 
           {/* Content */}
           <div style={{ transform: "translateZ(10px)" }}>
-            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 group-hover:text-teal-600 transition-colors duration-300">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4 group-hover:text-teal-600 transition-colors duration-300 text-center">
               {benefit.title}
             </h3>
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 leading-relaxed text-center">
               {benefit.description}
             </p>
           </div>
@@ -254,7 +254,7 @@ export default function Benefits() {
             <span className="text-sm font-medium text-teal-700">Partner Benefits</span>
           </motion.div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 text-center">
             Why Partner <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">With Us</span>
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">

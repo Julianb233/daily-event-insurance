@@ -56,7 +56,7 @@ function WhyCarrierCard({ item, index }: { item: typeof whyCarriersPay[0]; index
       onMouseLeave={() => setIsHovered(false)}
     >
       <motion.div
-        whileHover={{ y: -8 }}
+        whileHover={{ y: -8, translateY: -4 }}
         transition={{ duration: 0.3 }}
         className="relative h-full"
       >
@@ -69,20 +69,20 @@ function WhyCarrierCard({ item, index }: { item: typeof whyCarriersPay[0]; index
         />
 
         {/* Card */}
-        <div className="relative h-full bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-slate-700/50 hover:border-teal-500/50 transition-all duration-500 overflow-hidden">
+        <div className="relative h-full bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-slate-700/50 hover:border-teal-500/50 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-500 overflow-hidden">
           {/* Icon */}
           <motion.div
-            className="w-14 h-14 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-4"
+            className="w-14 h-14 bg-teal-500/20 rounded-2xl flex items-center justify-center mb-4 mx-auto"
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.3 }}
           >
             <item.icon className="w-7 h-7 text-teal-400" strokeWidth={2} />
           </motion.div>
 
-          <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+          <h3 className="text-xl md:text-2xl font-bold text-white mb-3 text-center">
             {item.title}
           </h3>
-          <p className="text-slate-400 leading-relaxed">
+          <p className="text-slate-400 leading-relaxed text-center">
             {item.description}
           </p>
         </div>
@@ -153,7 +153,7 @@ export function HowTheModelWorksSection() {
             <span className="text-sm font-medium text-teal-300">The Engine</span>
           </motion.div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 text-center">
             How The Model{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-500">
               Works

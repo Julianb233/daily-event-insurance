@@ -34,21 +34,22 @@ function ValueCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className={`p-6 rounded-2xl ${
+      whileHover={{ y: -4, translateY: -4 }}
+      className={`p-6 rounded-2xl shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300 ${
         highlight
           ? "bg-teal-500 text-white"
           : "bg-white border border-slate-200"
       }`}
     >
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 mx-auto ${
         highlight ? "bg-white/20" : "bg-teal-50"
       }`}>
         <Icon className={`w-6 h-6 ${highlight ? "text-white" : "text-teal-600"}`} />
       </div>
-      <h3 className={`text-lg font-bold mb-2 ${highlight ? "text-white" : "text-slate-900"}`}>
+      <h3 className={`text-lg font-bold mb-2 text-center ${highlight ? "text-white" : "text-slate-900"}`}>
         {title}
       </h3>
-      <p className={highlight ? "text-white/90" : "text-slate-600"}>
+      <p className={`text-center ${highlight ? "text-white/90" : "text-slate-600"}`}>
         {description}
       </p>
     </motion.div>
@@ -75,7 +76,7 @@ export function ActiveGuardSection() {
             <Star className="w-4 h-4 text-teal-600" />
             <span className="text-teal-600 font-semibold text-sm">ActiveGuard Monthly</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 text-center">
             Turn Memberships Into Recurring Revenue
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">

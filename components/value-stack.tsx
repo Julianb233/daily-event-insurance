@@ -65,7 +65,7 @@ export function ValueStack() {
     >
       <div className="relative overflow-hidden">
         {/* Main value stack card */}
-        <div className="relative bg-white rounded-2xl p-8 md:p-10 border-2 border-teal-400/30 shadow-2xl">
+        <div className="relative bg-white rounded-2xl p-8 md:p-10 border-2 border-teal-400/30 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 transition-all duration-300">
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-600/5 rounded-full blur-2xl" />
@@ -87,7 +87,7 @@ export function ValueStack() {
                   </span>
                 </div>
               </div>
-              <h3 className="font-[family-name:var(--font-oswald)] text-2xl md:text-4xl font-bold text-slate-900 mb-2 uppercase tracking-tight">
+              <h3 className="font-[family-name:var(--font-oswald)] text-2xl md:text-4xl font-bold text-slate-900 mb-2 uppercase tracking-tight text-center">
                 The Complete Partner Package
               </h3>
               <p className="text-slate-600 text-sm md:text-base">

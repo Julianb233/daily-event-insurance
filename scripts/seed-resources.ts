@@ -5,8 +5,8 @@ import { config } from "dotenv"
 
 config({ path: ".env.local" })
 
-const client = postgres(process.env.DATABASE_URL!, { prepare: false })
-const db = drizzle(client)
+const sql = postgres(process.env.DATABASE_URL!)
+const db = drizzle(sql)
 
 const resources = [
   // Marketing
@@ -121,8 +121,8 @@ async function seed() {
   }
 }
 
-seed().then(async () => {
+seed().then(() => {
   console.log("Done!")
-  await client.end()
+  sql.end()
   process.exit(0)
 })

@@ -118,7 +118,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
       {/* Main card */}
       <motion.div
         className="relative h-full"
-        whileHover={{ y: -8 }}
+        whileHover={{ y: -8, translateY: -4 }}
         transition={{ duration: 0.3 }}
       >
         {/* Glow effect on hover */}
@@ -130,7 +130,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
         />
 
         {/* Card content */}
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200/50 h-full overflow-hidden">
+        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-lg shadow-teal-500/10 hover:shadow-xl hover:shadow-teal-500/20 border border-slate-200/50 h-full overflow-hidden transition-all duration-300">
           {/* Animated gradient border */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500/0 via-teal-500/10 to-teal-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -165,7 +165,7 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
 
           {/* Icon */}
           <motion.div
-            className="mb-6 mt-4"
+            className="mb-6 mt-4 flex justify-center"
             animate={isHovered ? { rotate: [0, -10, 10, 0] } : {}}
             transition={{ duration: 0.5 }}
           >
@@ -175,10 +175,10 @@ function StepCard({ step, index, isInView }: { step: Step; index: number; isInVi
           </motion.div>
 
           {/* Title & Description */}
-          <h3 className="text-xl font-bold text-slate-900 mb-2">
+          <h3 className="text-xl font-bold text-slate-900 mb-2 text-center">
             {step.title}
           </h3>
-          <p className="text-slate-600 mb-6">
+          <p className="text-slate-600 mb-6 text-center">
             {step.description}
           </p>
 
@@ -278,7 +278,7 @@ export function HowItWorks() {
             <span className="text-sm font-medium text-teal-700">Start earning in 3 simple steps</span>
           </motion.div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 text-center">
             How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Works</span>
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
@@ -352,7 +352,7 @@ export function HowItWorks() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { value: '$2-5', label: 'Per Policy Sold' },
-                  { value: '68%', label: 'Avg. Opt-in Rate' },
+                  { value: '100%', label: 'Coverage Rate' },
                   { value: '$2,400', label: 'Avg. Monthly Revenue' },
                   { value: '24hrs', label: 'To Go Live' },
                 ].map((stat, i) => (

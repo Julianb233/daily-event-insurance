@@ -129,7 +129,7 @@ export default function TermsPage() {
             </p>
             <div className="mt-4 p-6 bg-slate-50 rounded-xl border border-slate-200">
               <p className="text-slate-700 font-medium">Daily Event Insurance</p>
-              <p className="text-slate-600">A High-Core Partner</p>
+              <p className="text-slate-600">A HiQor Partner</p>
               <p className="text-slate-600 mt-2">
                 Email: <a href="mailto:legal@dailyeventinsurance.com" className="text-teal-600 hover:text-teal-700">legal@dailyeventinsurance.com</a>
               </p>

@@ -34,7 +34,7 @@ export const industryCategories: IndustryCategory[] = [
     color: 'teal',
     stats: [
       { label: 'Avg Monthly Revenue', value: '$2,800+' },
-      { label: 'Member Opt-in Rate', value: '65%' },
+      { label: 'Coverage', value: '100%' },
       { label: 'Setup Time', value: '48 hours' }
     ]
   },
@@ -52,7 +52,7 @@ export const industryCategories: IndustryCategory[] = [
     color: 'sky',
     stats: [
       { label: 'Avg Monthly Revenue', value: '$8,500+' },
-      { label: 'Participant Opt-in Rate', value: '72%' },
+      { label: 'Coverage', value: '100%' },
       { label: 'Setup Time', value: '24 hours' }
     ]
   },
@@ -70,7 +70,7 @@ export const industryCategories: IndustryCategory[] = [
     color: 'purple',
     stats: [
       { label: 'Avg Monthly Revenue', value: '$3,200+' },
-      { label: 'Member Opt-in Rate', value: '58%' },
+      { label: 'Coverage', value: '100%' },
       { label: 'Setup Time', value: '48 hours' }
     ]
   },
@@ -96,7 +96,7 @@ export const industryCategories: IndustryCategory[] = [
     color: 'orange',
     stats: [
       { label: 'Avg Revenue Per Event', value: '$1,200+' },
-      { label: 'Participant Opt-in Rate', value: '45%' },
+      { label: 'Coverage', value: '100%' },
       { label: 'Setup Time', value: '5 minutes' }
     ]
   }

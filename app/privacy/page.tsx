@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Introduction</h2>
             <p className="text-slate-600 leading-relaxed">
-              Daily Event Insurance (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), a High-Core partner, is committed to protecting your privacy.
+              Daily Event Insurance (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), a HiQor partner, is committed to protecting your privacy.
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our
               website or use our services.
             </p>
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
             </p>
             <div className="mt-4 p-6 bg-slate-50 rounded-xl border border-slate-200">
               <p className="text-slate-700 font-medium">Daily Event Insurance</p>
-              <p className="text-slate-600">A High-Core Partner</p>
+              <p className="text-slate-600">A HiQor Partner</p>
               <p className="text-slate-600 mt-2">
                 Email: <a href="mailto:privacy@dailyeventinsurance.com" className="text-teal-600 hover:text-teal-700">privacy@dailyeventinsurance.com</a>
               </p>

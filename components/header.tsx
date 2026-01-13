@@ -36,6 +36,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -57,25 +58,27 @@ export default function Header() {
     }
   }, [menuOpen])
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setCategoriesOpen(false)
+      setMoreOpen(false)
     }
 
-    if (categoriesOpen) {
+    if (categoriesOpen || moreOpen) {
       document.addEventListener("click", handleClickOutside)
     }
 
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
-  }, [categoriesOpen])
+  }, [categoriesOpen, moreOpen])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
     setMenuOpen(false)
     setCategoriesOpen(false)
+    setMoreOpen(false)
 
     // If it's a page link (not a hash), navigate to it
     if (!href.startsWith("#")) {
@@ -104,16 +107,24 @@ export default function Header() {
     }
   }
 
-  const navigationLinks = [
-    { label: "About", href: "/about" },
+  // Primary nav links (always visible)
+  const primaryLinks = [
     { label: "How It Works", href: "#how-it-works" },
-    { label: "Who We Serve", href: "#who-we-serve" },
-    { label: "How You Can Earn", href: "#calculator" },
     { label: "Benefits", href: "#benefits" },
     { label: "Pricing", href: "/pricing" },
+  ]
+
+  // Secondary links (in "More" dropdown on desktop, expanded on mobile)
+  const moreLinks = [
+    { label: "About", href: "/about" },
+    { label: "Who We Serve", href: "#who-we-serve" },
+    { label: "Revenue Calculator", href: "#calculator" },
     { label: "For Carriers", href: "/carriers" },
     { label: "Work With Us", href: "/work-with-us" },
   ]
+
+  // All links combined for mobile menu
+  const navigationLinks = [...primaryLinks, ...moreLinks]
 
   return (
     <>
@@ -158,7 +169,8 @@ export default function Header() {
               transition={{ delay: 0.3 }}
               className="hidden lg:flex items-center gap-1"
             >
-              {navigationLinks.map((link, index) => (
+              {/* Primary Links */}
+              {primaryLinks.map((link, index) => (
                 <motion.a
                   key={link.label}
                   href={link.href}
@@ -166,11 +178,59 @@ export default function Header() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
+                  className="px-3 py-2 text-[14px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50 whitespace-nowrap"
                 >
                   {link.label}
                 </motion.a>
               ))}
+
+              {/* More Dropdown */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  onClick={() => setMoreOpen(!moreOpen)}
+                  className="flex items-center gap-1 px-3 py-2 text-[14px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
+                  aria-expanded={moreOpen}
+                  aria-haspopup="true"
+                >
+                  More
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      moreOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </motion.button>
+
+                <AnimatePresence>
+                  {moreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+                    >
+                      <div className="py-2">
+                        {moreLinks.map((link, idx) => (
+                          <motion.a
+                            key={link.href}
+                            href={link.href}
+                            onClick={(e) => handleNavClick(e, link.href)}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                          >
+                            {link.label}
+                          </motion.a>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Categories Dropdown */}
               <div className="relative" onClick={(e) => e.stopPropagation()}>
@@ -179,7 +239,7 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
                   onClick={() => setCategoriesOpen(!categoriesOpen)}
-                  className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
+                  className="flex items-center gap-1 px-3 py-2 text-[14px] font-medium text-slate-600 hover:text-slate-900 transition-colors rounded-md hover:bg-slate-50"
                   aria-expanded={categoriesOpen}
                   aria-haspopup="true"
                 >
