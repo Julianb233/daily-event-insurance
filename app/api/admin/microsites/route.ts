@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, microsites, partners, adminEarnings } from "@/lib/db"
 import { eq, sql, count, desc, asc, ilike, or, and } from "drizzle-orm"
