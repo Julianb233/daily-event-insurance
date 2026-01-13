@@ -1,21 +1,31 @@
 """
-Daily Event Insurance Voice Agent - Realtime API Version
-Uses OpenAI Realtime API for natural voice conversations.
+Daily Event Insurance Voice Agent (Realtime Model Version)
+Uses OpenAI Realtime API for direct speech-to-speech processing.
+
+Benefits over traditional pipeline:
+- Lower latency (no STT → LLM → TTS hops)
+- Better emotional context understanding
+- More natural, expressive speech output
 """
+
+from dotenv import load_dotenv
+load_dotenv()
 
 import logging
 from livekit.agents import (
     Agent,
     AgentSession,
+    AutoSubscribe,
     JobContext,
-    JobProcess,
+    RoomInputOptions,
     WorkerOptions,
     cli,
-    RoomInputOptions,
+    llm,
 )
-from livekit.plugins import openai, silero
+from livekit.plugins import openai
+from openai.types.realtime import realtime_audio_input_turn_detection
 
-logger = logging.getLogger("voice-agent")
+logger = logging.getLogger("voice-agent-realtime")
 
 # System prompt for the insurance assistant
 SYSTEM_PROMPT = """You are a friendly and knowledgeable insurance specialist for Daily Event Insurance.
@@ -48,56 +58,84 @@ Communication style:
 - Keep responses concise (2-3 sentences) since this is a voice conversation
 - Ask clarifying questions when needed
 - Be helpful and solution-oriented
-- Greet the user warmly when they first connect"""
+
+When the conversation starts, greet the user warmly.
+"""
 
 
-def prewarm(proc: JobProcess):
-    """Preload VAD model for faster response time"""
-    proc.userdata["vad"] = silero.VAD.load()
+class InsuranceAgent(Agent):
+    """Daily Event Insurance voice agent using OpenAI Realtime API"""
+
+    def __init__(self):
+        super().__init__(
+            instructions=SYSTEM_PROMPT,
+        )
+
+    async def on_enter(self):
+        """Called when the agent session starts"""
+        # Generate a warm greeting when the session begins
+        self.session.generate_reply(
+            instructions="Greet the user warmly. Say hello and introduce yourself as a Daily Event Insurance specialist ready to help."
+        )
 
 
 async def entrypoint(ctx: JobContext):
-    """Main entry point for the voice agent"""
+    """Main entry point for the realtime voice agent"""
     logger.info(f"Connecting to room: {ctx.room.name}")
 
     # Connect to the room
-    await ctx.connect()
+    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
-    # Wait for a participant to join
+    # Wait for a participant
     participant = await ctx.wait_for_participant()
     logger.info(f"Participant joined: {participant.identity}")
 
-    # Create an agent session with OpenAI Realtime API
-    session = AgentSession(
-        llm=openai.realtime.RealtimeModel(
-            voice="nova",
-            temperature=0.7,
-            instructions=SYSTEM_PROMPT,
+    # Create the realtime model with semantic VAD for lowest latency
+    # Using "ash" voice for natural conversational tone
+    realtime_model = openai.realtime.RealtimeModel(
+        model="gpt-4o-realtime-preview",
+        voice="ash",  # Options: alloy, ash, ballad, coral, echo, sage, shimmer, verse
+        modalities=["audio", "text"],
+        input_audio_transcription=openai.realtime.AudioTranscription(
+            model="gpt-4o-transcribe",
         ),
-        vad=ctx.proc.userdata["vad"],
+        turn_detection=realtime_audio_input_turn_detection.SemanticVad(
+            type="semantic_vad",
+            eagerness="auto",  # Options: auto, low, medium, high
+            create_response=True,
+            interrupt_response=True,
+        ),
     )
 
-    # Start the session with the participant
-    await session.start(
-        room=ctx.room,
-        participant=participant,
+    # Create agent session with the realtime model
+    session = AgentSession(
+        llm=realtime_model,
         room_input_options=RoomInputOptions(
             noise_cancellation=True,
         ),
     )
 
-    # Generate initial greeting
-    await session.generate_reply(
-        instructions="Greet the user warmly and ask how you can help them today with their insurance questions."
+    # Start the agent session
+    await session.start(
+        agent=InsuranceAgent(),
+        room=ctx.room,
+        participant=participant,
     )
 
-    logger.info("Agent session started, waiting for conversation...")
+    logger.info("Realtime voice agent started successfully")
+
+
+async def request_fnc(ctx: JobContext) -> None:
+    """Accept all job requests"""
+    logger.info(f"Received job request for room: {ctx.room.name}")
+    await ctx.accept()
 
 
 if __name__ == "__main__":
     cli.run_app(
         WorkerOptions(
             entrypoint_fnc=entrypoint,
-            prewarm_fnc=prewarm,
+            request_fnc=request_fnc,
+            agent_name="daily-event-insurance",
         ),
     )

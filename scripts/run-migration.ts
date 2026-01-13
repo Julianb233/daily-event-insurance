@@ -1,4 +1,4 @@
-import { neon } from "@neondatabase/serverless"
+import postgres from "postgres"
 import { config } from "dotenv"
 
 config({ path: ".env.local" })
@@ -9,7 +9,7 @@ async function runMigration() {
     process.exit(1)
   }
 
-  const sql = neon(process.env.DATABASE_URL)
+  const sql = postgres(process.env.DATABASE_URL, { prepare: false })
 
   console.log("Adding missing indexes...")
 
@@ -74,6 +74,8 @@ async function runMigration() {
   }
 
   console.log(`\nTotal: ${result.length} indexes`)
+
+  await sql.end()
 }
 
 runMigration().catch(console.error)

@@ -3,9 +3,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles } from 'lucide-react'
-import { ElevenLabsWebSocket, AudioRecorder } from '@/lib/voice/elevenlabs-websocket'
+import { LiveKitVoiceClient } from '@/lib/voice/livekit-client'
 import { useVoiceAgent } from '@/lib/voice/voice-context'
-import { getContextualStarters, getContextualQuickActions } from '@/lib/voice/context-prompts'
+import { getContextualQuickActions } from '@/lib/voice/context-prompts'
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
 
@@ -23,14 +23,9 @@ export function VoiceAgentGlobal() {
   const [transcript, setTranscript] = useState<string[]>([])
   const [inputVolume, setInputVolume] = useState(0)
   const [outputVolume, setOutputVolume] = useState(0)
-  const [conversationId, setConversationId] = useState<string | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [isAgentSpeaking, setIsAgentSpeaking] = useState(false)
 
-  const elevenLabsRef = useRef<ElevenLabsWebSocket | null>(null)
-  const recorderRef = useRef<AudioRecorder | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null)
+  const liveKitClientRef = useRef<LiveKitVoiceClient | null>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 
   // Get context-aware quick actions
@@ -41,138 +36,69 @@ export function VoiceAgentGlobal() {
     transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [transcript])
 
-  // Initialize speech recognition
-  const initSpeechRecognition = useCallback(() => {
-    if (typeof window === 'undefined') return null
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      console.warn('Speech recognition not supported')
-      return null
-    }
-
-    const recognition = new SpeechRecognition()
-    recognition.continuous = true
-    recognition.interimResults = true
-    recognition.lang = 'en-US'
-
-    recognition.onresult = async (event: any) => {
-      const result = event.results[event.results.length - 1]
-      const transcriptText = result[0].transcript
-
-      if (result.isFinal && transcriptText.trim()) {
-        setTranscript(prev => [...prev, `You: ${transcriptText}`])
-        await handleUserMessage(transcriptText)
-      }
-    }
-
-    recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error)
-      if (event.error === 'not-allowed') {
-        setStatus('error')
-      }
-    }
-
-    return recognition
-  }, [])
-
-  // Handle user message and get AI response
-  const handleUserMessage = async (userMessage: string) => {
-    setIsProcessing(true)
-
-    const newMessages: Message[] = [
-      ...messages,
-      { role: 'user', content: userMessage },
-    ]
-    setMessages(newMessages)
-
-    try {
-      const response = await fetch('/api/voice/conversation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: newMessages,
-          context, // Send full context to API
-          conversationId,
-        }),
-      })
-
-      if (!response.ok) throw new Error('Failed to get response')
-
-      const data = await response.json()
-
-      setConversationId(data.conversationId)
-      setMessages([...newMessages, { role: 'assistant', content: data.response }])
-      setTranscript(prev => [...prev, `Specialist: ${data.response}`])
-
-      // Speak the response
-      if (elevenLabsRef.current?.isConnected() && !isSpeakerMuted) {
-        elevenLabsRef.current.sendText(data.response)
-        elevenLabsRef.current.endStream()
-      }
-    } catch (error) {
-      console.error('Error getting response:', error)
-      setTranscript(prev => [...prev, 'System: Sorry, I had trouble processing that. Please try again.'])
-    } finally {
-      setIsProcessing(false)
-    }
-  }
-
-  // Start voice conversation
+  // Start voice conversation with LiveKit
   const startConversation = async () => {
     setStatus('connecting')
 
     try {
-      // Initialize ElevenLabs WebSocket
-      const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY
-      const voiceId = process.env.NEXT_PUBLIC_ELEVENLABS_VOICE_ID || 'EXAVITQu4vr4xnSDxMaL'
+      // Get LiveKit token from API
+      const response = await fetch('/api/voice/realtime', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          context,
+          userId: `user-${Date.now()}`,
+        }),
+      })
 
-      if (apiKey) {
-        elevenLabsRef.current = new ElevenLabsWebSocket(
-          {
-            apiKey,
-            voiceId,
-            modelId: 'eleven_turbo_v2_5',
+      if (!response.ok) {
+        throw new Error('Failed to get voice session token')
+      }
+
+      const { token, url } = await response.json()
+
+      // Initialize LiveKit client
+      liveKitClientRef.current = new LiveKitVoiceClient(
+        { url, token },
+        {
+          onConnected: () => {
+            setStatus('connected')
+            setTranscript(['Connecting to AI Specialist...'])
           },
-          {
-            onAudioChunk: () => {
-              setOutputVolume(Math.random() * 0.5 + 0.5)
-              setTimeout(() => setOutputVolume(0), 100)
-            },
-            onError: (error) => console.error('ElevenLabs error:', error),
-            onClose: () => console.log('ElevenLabs connection closed'),
-            onOpen: () => console.log('ElevenLabs connected'),
-          }
-        )
-        await elevenLabsRef.current.connect()
-      }
-
-      // Initialize speech recognition
-      recognitionRef.current = initSpeechRecognition()
-      if (recognitionRef.current) {
-        recognitionRef.current.start()
-      }
-
-      // Initialize audio recorder for volume visualization
-      recorderRef.current = new AudioRecorder(
-        () => {},
-        (volume) => setInputVolume(volume)
+          onDisconnected: () => {
+            setStatus('disconnected')
+            setInputVolume(0)
+            setOutputVolume(0)
+          },
+          onError: (error) => {
+            console.error('LiveKit error:', error)
+            setStatus('error')
+          },
+          onTranscript: (text, role) => {
+            const prefix = role === 'user' ? 'You' : 'Specialist'
+            setTranscript(prev => [...prev, `${prefix}: ${text}`])
+          },
+          onSpeaking: (speaking) => {
+            setIsAgentSpeaking(speaking)
+            if (speaking) {
+              setOutputVolume(0.7)
+            } else {
+              setOutputVolume(0)
+            }
+          },
+          onAudioLevel: (level) => {
+            setInputVolume(level)
+          },
+        }
       )
-      await recorderRef.current.start()
 
-      setStatus('connected')
+      await liveKitClientRef.current.connect()
 
-      // Send context-aware greeting
-      const starters = getContextualStarters(context)
-      const greeting = starters[Math.floor(Math.random() * starters.length)]
-      setMessages([{ role: 'assistant', content: greeting }])
-      setTranscript([`Specialist: ${greeting}`])
+      // Clear initial connecting message once agent greets
+      setTimeout(() => {
+        setTranscript(prev => prev.filter(t => t !== 'Connecting to AI Specialist...'))
+      }, 2000)
 
-      if (elevenLabsRef.current?.isConnected() && apiKey) {
-        elevenLabsRef.current.sendText(greeting)
-        elevenLabsRef.current.endStream()
-      }
     } catch (error) {
       console.error('Error starting conversation:', error)
       setStatus('error')
@@ -181,39 +107,30 @@ export function VoiceAgentGlobal() {
 
   // End voice conversation
   const endConversation = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop()
-      recognitionRef.current = null
-    }
-    if (recorderRef.current) {
-      recorderRef.current.stop()
-      recorderRef.current = null
-    }
-    if (elevenLabsRef.current) {
-      elevenLabsRef.current.disconnect()
-      elevenLabsRef.current = null
+    if (liveKitClientRef.current) {
+      liveKitClientRef.current.disconnect()
+      liveKitClientRef.current = null
     }
 
     setStatus('disconnected')
     setInputVolume(0)
     setOutputVolume(0)
+    setIsAgentSpeaking(false)
   }
 
   // Toggle mute
   const toggleMute = () => {
-    if (recognitionRef.current) {
+    if (liveKitClientRef.current) {
       if (isMuted) {
-        recognitionRef.current.start()
-        recorderRef.current?.resume()
+        liveKitClientRef.current.unmute()
       } else {
-        recognitionRef.current.stop()
-        recorderRef.current?.pause()
+        liveKitClientRef.current.mute()
       }
     }
     setIsMuted(!isMuted)
   }
 
-  // Handle quick action click
+  // Handle quick action - send as data message to agent
   const handleQuickAction = async (action: string) => {
     const actionMessages: Record<string, string> = {
       explain_current_step: `Can you help me understand what I need to do on this ${context.currentStepName || 'step'}?`,
@@ -233,8 +150,15 @@ export function VoiceAgentGlobal() {
     }
 
     const message = actionMessages[action] || "Can you help me with this?"
-    setTranscript(prev => [...prev, `You: ${message}`])
-    await handleUserMessage(message)
+
+    // Send the message to the agent via data channel
+    if (liveKitClientRef.current?.isConnected()) {
+      await liveKitClientRef.current.sendData({
+        type: 'user_message',
+        text: message,
+      })
+      setTranscript(prev => [...prev, `You: ${message}`])
+    }
   }
 
   // Cleanup on unmount
@@ -391,7 +315,7 @@ export function VoiceAgentGlobal() {
                         {line}
                       </motion.div>
                     ))}
-                    {isProcessing && (
+                    {isAgentSpeaking && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -399,11 +323,11 @@ export function VoiceAgentGlobal() {
                       >
                         <span className="flex items-center gap-2">
                           <span className="flex gap-1">
-                            <span className="h-2 w-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <span className="h-2 w-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <span className="h-2 w-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                            <span className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" />
+                            <span className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                            <span className="h-2 w-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
                           </span>
-                          Thinking...
+                          Speaking...
                         </span>
                       </motion.div>
                     )}
@@ -413,7 +337,7 @@ export function VoiceAgentGlobal() {
               </div>
 
               {/* Quick Actions - shown when connected */}
-              {status === 'connected' && !isProcessing && (
+              {status === 'connected' && !isAgentSpeaking && (
                 <div className="px-4 py-2 bg-white border-t flex flex-wrap gap-2">
                   {quickActions.map((action, idx) => (
                     <button
@@ -489,8 +413,6 @@ export function VoiceAgentGlobal() {
                       onClick={() => {
                         endConversation()
                         setTranscript([])
-                        setMessages([])
-                        setConversationId(null)
                       }}
                       className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full h-14 w-14 transition-colors"
                     >

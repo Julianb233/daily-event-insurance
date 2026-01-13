@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AccessToken } from 'livekit-server-sdk'
+import { AccessToken, RoomServiceClient, AgentDispatchClient } from 'livekit-server-sdk'
 
 /**
  * Generate LiveKit access token for voice agent room
+ * Also creates the room and dispatches an agent to join
  */
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +28,31 @@ export async function POST(request: NextRequest) {
     // Create participant identity
     const participantId = userId || `user-${Date.now()}`
 
-    // Create access token
+    // Create room service client to create the room
+    const httpUrl = wsUrl.replace('wss://', 'https://').replace('ws://', 'http://')
+    const roomService = new RoomServiceClient(httpUrl, apiKey, apiSecret)
+
+    // Create the room first
+    await roomService.createRoom({
+      name: roomName,
+      emptyTimeout: 300, // 5 minutes
+      maxParticipants: 2, // user + agent
+    })
+
+    console.log(`Created room: ${roomName}`)
+
+    // Dispatch the named agent to the room
+    try {
+      const agentDispatch = new AgentDispatchClient(httpUrl, apiKey, apiSecret)
+      await agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
+        metadata: JSON.stringify({ context }),
+      })
+      console.log(`Dispatched agent to room: ${roomName}`)
+    } catch (dispatchError) {
+      console.warn('Agent dispatch error:', dispatchError)
+    }
+
+    // Create access token for the user
     const at = new AccessToken(apiKey, apiSecret, {
       identity: participantId,
       name: 'Website Visitor',

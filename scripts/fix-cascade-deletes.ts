@@ -1,4 +1,4 @@
-import { neon } from "@neondatabase/serverless"
+import postgres from "postgres"
 import { config } from "dotenv"
 
 config({ path: ".env.local" })
@@ -9,7 +9,7 @@ async function fixCascadeDeletes() {
     process.exit(1)
   }
 
-  const sql = neon(process.env.DATABASE_URL)
+  const sql = postgres(process.env.DATABASE_URL, { prepare: false })
 
   console.log("Fixing cascade delete rules...\n")
 
@@ -177,6 +177,8 @@ async function fixCascadeDeletes() {
   }
 
   console.log("\n✓ Cascade delete rules fixed")
+
+  await sql.end()
 }
 
 fixCascadeDeletes().catch(console.error)

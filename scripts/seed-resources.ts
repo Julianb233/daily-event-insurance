@@ -1,12 +1,12 @@
-import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
+import postgres from "postgres"
+import { drizzle } from "drizzle-orm/postgres-js"
 import { partnerResources } from "../lib/db/schema"
 import { config } from "dotenv"
 
 config({ path: ".env.local" })
 
-const sql = neon(process.env.DATABASE_URL!)
-const db = drizzle(sql)
+const client = postgres(process.env.DATABASE_URL!, { prepare: false })
+const db = drizzle(client)
 
 const resources = [
   // Marketing
@@ -121,7 +121,8 @@ async function seed() {
   }
 }
 
-seed().then(() => {
+seed().then(async () => {
   console.log("Done!")
+  await client.end()
   process.exit(0)
 })
