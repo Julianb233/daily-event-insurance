@@ -281,9 +281,22 @@ export function HowItWorks() {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
             How It <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Works</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
             Join hundreds of partners earning passive income by offering instant insurance coverage at checkout
           </p>
+
+          {/* Partnership Requirement Note */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.3 }}
+            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200"
+          >
+            <ShieldCheck className="w-5 h-5 text-amber-600" />
+            <p className="text-amber-800 font-medium text-sm md:text-base">
+              <strong>Key to Success:</strong> Partners who make insurance a required part of their check-in process see 3x higher earnings
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Steps Grid */}

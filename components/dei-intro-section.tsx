@@ -81,23 +81,6 @@ export function DEIIntroSection() {
           </div>
         </motion.div>
 
-        {/* Primary Tagline - Insurance for Moments */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-4 md:mb-6"
-        >
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-gradient-to-r from-teal-500/15 to-teal-400/10 border border-teal-500/40 rounded-full backdrop-blur-sm">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
-            </span>
-            <span className="text-teal-700 font-bold text-sm md:text-base tracking-wide">
-              Insurance for Moments, Not Time
-            </span>
-          </div>
-        </motion.div>
 
         {/* HIQOR Badge */}
         <motion.div

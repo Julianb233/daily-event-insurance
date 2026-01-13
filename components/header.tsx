@@ -266,8 +266,18 @@ export default function Header() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center gap-4"
+              className="flex items-center gap-3"
             >
+              {/* Login Button */}
+              <motion.a
+                href="/sign-in"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="hidden sm:flex items-center px-4 py-2 text-slate-700 font-medium text-[15px] hover:text-slate-900 transition-colors"
+              >
+                Log In
+              </motion.a>
+
               {/* CTA Button */}
               <motion.a
                 href="#apply"
