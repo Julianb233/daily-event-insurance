@@ -30,6 +30,12 @@ export async function requireAuth(): Promise<{ userId: string }> {
     return { userId: MOCK_USER.id }
   }
 
+  // Test mode bypass (Real DB, Mock Auth)
+  if (process.env.TEST_USER_ID) {
+    console.log(`[TEST MODE] Auth bypassed - using test user ${process.env.TEST_USER_ID}`)
+    return { userId: process.env.TEST_USER_ID }
+  }
+
   const session = await auth()
 
   if (!session?.user?.id) {
@@ -42,10 +48,17 @@ export async function requireAuth(): Promise<{ userId: string }> {
   return { userId: session.user.id }
 }
 
+
 /**
  * Requires admin role for API route
  */
 export async function requireAdmin(): Promise<AuthenticatedUser> {
+  // Test mode bypass
+  if (process.env.TEST_USER_ID && process.env.TEST_USER_ROLE === 'admin') {
+    console.log(`[TEST MODE] Admin auth bypassed - using test user ${process.env.TEST_USER_ID}`)
+    return { userId: process.env.TEST_USER_ID, user: { id: process.env.TEST_USER_ID, role: 'admin' } }
+  }
+
   const session = await auth()
 
   if (!session?.user?.id) {
@@ -75,6 +88,7 @@ export async function requireAdmin(): Promise<AuthenticatedUser> {
   return { userId: session.user.id, user: user || session.user }
 }
 
+
 /**
  * Requires partner role for API route
  */
@@ -83,6 +97,12 @@ export async function requirePartner(): Promise<AuthenticatedUser> {
   if (isDevMode) {
     console.log("[DEV MODE] Partner auth bypassed - using mock partner")
     return { userId: MOCK_USER.id, user: MOCK_USER }
+  }
+
+  // Test mode bypass
+  if (process.env.TEST_USER_ID) {
+    console.log(`[TEST MODE] Partner auth bypassed - using test user ${process.env.TEST_USER_ID}`)
+    return { userId: process.env.TEST_USER_ID, user: { id: process.env.TEST_USER_ID, role: process.env.TEST_USER_ROLE || 'partner' } }
   }
 
   const session = await auth()
@@ -116,6 +136,7 @@ export async function requirePartner(): Promise<AuthenticatedUser> {
 
   return { userId: session.user.id, user: user || session.user }
 }
+
 
 /**
  * Gets the authenticated user if available, returns null otherwise

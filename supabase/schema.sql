@@ -1,8 +1,8 @@
 -- ========================================
--- DEPRECATED: This file is no longer used
+-- Schema Management
 -- ========================================
 --
--- Daily Event Insurance now uses Drizzle ORM with Neon PostgreSQL.
+-- Daily Event Insurance uses Drizzle ORM with Supabase PostgreSQL.
 -- The authoritative schema is in: /lib/db/schema.ts
 --
 -- To manage the database:
@@ -10,24 +10,5 @@
 --   npx drizzle-kit push      # Apply schema changes
 --   npx drizzle-kit studio    # Visual database browser
 --
--- This file is kept for historical reference only.
--- Last updated: 2025-12-28
+-- Last updated: 2026-01-13
 -- ========================================
-
--- Original Supabase schema (for reference):
--- See git history for the full legacy schema
-
--- Current tables managed by Drizzle ORM:
--- - users (NextAuth)
--- - accounts (NextAuth OAuth)
--- - sessions (NextAuth)
--- - verification_tokens (NextAuth)
--- - partners
--- - partner_products
--- - monthly_earnings
--- - partner_resources
--- - resource_downloads
--- - partner_documents
--- - webhook_events
--- - quotes
--- - policies

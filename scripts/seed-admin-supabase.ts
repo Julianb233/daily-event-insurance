@@ -8,6 +8,10 @@
  */
 import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcryptjs"
+import { config } from "dotenv"
+
+config({ path: ".env.local" })
+
 
 const ADMIN_USERS = [
   { email: "julianb233@gmail.com", name: "Julian Bradley" },
@@ -45,8 +49,8 @@ async function seedAdmins() {
       // Update to admin role and reset password
       const { error } = await supabase
         .from("users")
-        .update({ 
-          role: "admin", 
+        .update({
+          role: "admin",
           password_hash: passwordHash,
           updated_at: new Date().toISOString()
         })

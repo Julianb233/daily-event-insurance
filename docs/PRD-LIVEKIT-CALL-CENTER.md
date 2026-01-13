@@ -28,7 +28,7 @@ Transform $40 leads into $100+ converted customers using an AI-powered voice age
 | **Telephony** | LiveKit SIP + Twilio/Telnyx trunk |
 | **SMS** | Twilio API |
 | **Frontend** | Next.js 16 + React 19 (existing) |
-| **Database** | Neon PostgreSQL + Drizzle ORM |
+| **Database** | Supabase PostgreSQL + Drizzle ORM |
 | **Backend** | Next.js API Routes |
 | **Cron Jobs** | Vercel Cron or node-cron |
 | **Realtime Updates** | Supabase Realtime or polling |

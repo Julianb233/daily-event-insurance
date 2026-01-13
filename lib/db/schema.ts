@@ -64,6 +64,7 @@ export const partners = pgTable("partners", {
   integrationType: text("integration_type").default("widget"), // widget, api, manual
   primaryColor: text("primary_color").default("#14B8A6"),
   logoUrl: text("logo_url"),
+  brandingImages: text("branding_images").array().default([]),
   status: text("status").default("pending"), // pending, documents_sent, documents_pending, under_review, active, suspended
   // GHL Integration fields
   ghlContactId: text("ghl_contact_id"), // GHL Contact ID

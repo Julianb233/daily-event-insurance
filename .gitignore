@@ -6,3 +6,9 @@ node_modules
 .DS_Store
 livekit-agent/venv/
 livekit-agent/.env
+*.exp
+prod_check_final.env
+list_vms.js
+reset_password.js
+livekit-agent/__pycache__/
+

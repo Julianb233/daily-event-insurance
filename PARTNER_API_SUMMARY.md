@@ -152,7 +152,7 @@ All endpoints use async/await with proper error handling via `withAuth()` wrappe
 - Database query optimization
 - Pagination for large datasets
 - Indexed fields (quote_number, policy_number)
-- Connection pooling via Neon
+- Connection pooling via Supabase
 - Minimal data transfer
 
 ### 6. Type Safety
@@ -346,7 +346,7 @@ Maintain backward compatibility for at least 6 months when introducing breaking 
 
 - **Framework**: Next.js 16 (App Router)
 - **Runtime**: Node.js with async/await
-- **Database**: PostgreSQL (Neon)
+- **Database**: PostgreSQL (Supabase)
 - **ORM**: Drizzle ORM 0.45+
 - **Validation**: Zod 3.25+
 - **Authentication**: NextAuth 5.0 beta

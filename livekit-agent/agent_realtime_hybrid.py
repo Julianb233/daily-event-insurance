@@ -1,15 +1,13 @@
 """
-Daily Event Insurance Voice Agent (Realtime Model Version)
-Uses OpenAI Realtime API for direct speech-to-speech processing.
+Daily Event Insurance Voice Agent (Hybrid Realtime + TTS Version)
+Uses OpenAI Realtime API for speech comprehension with separate TTS for output.
 
-Benefits over traditional pipeline:
-- Lower latency (no STT → LLM → TTS hops)
-- Better emotional context understanding
-- More natural, expressive speech output
+Benefits:
+- Realtime model understands emotional context and verbal cues
+- Separate TTS gives you control over voice output
+- Supports scripted speech via say() method
+- Best of both worlds approach
 """
-
-from dotenv import load_dotenv
-load_dotenv()
 
 import logging
 from livekit.agents import (
@@ -20,11 +18,11 @@ from livekit.agents import (
     RoomInputOptions,
     WorkerOptions,
     cli,
-    llm,
 )
+from livekit.plugins import openai
 from openai.types.realtime import realtime_audio_input_turn_detection
 
-logger = logging.getLogger("voice-agent-realtime")
+logger = logging.getLogger("voice-agent-hybrid")
 
 # System prompt for the insurance assistant
 SYSTEM_PROMPT = """You are a friendly and knowledgeable insurance specialist for Daily Event Insurance.
@@ -57,13 +55,11 @@ Communication style:
 - Keep responses concise (2-3 sentences) since this is a voice conversation
 - Ask clarifying questions when needed
 - Be helpful and solution-oriented
-
-When the conversation starts, greet the user warmly.
 """
 
 
 class InsuranceAgent(Agent):
-    """Daily Event Insurance voice agent using OpenAI Realtime API"""
+    """Daily Event Insurance voice agent with hybrid realtime + TTS"""
 
     def __init__(self):
         super().__init__(
@@ -71,15 +67,16 @@ class InsuranceAgent(Agent):
         )
 
     async def on_enter(self):
-        """Called when the agent session starts"""
-        # Generate a warm greeting when the session begins
-        self.session.generate_reply(
-            instructions="Greet the user warmly. Say hello and introduce yourself as a Daily Event Insurance specialist ready to help."
+        """Called when the agent session starts - use say() for scripted greeting"""
+        await self.session.say(
+            "Hello! Welcome to Daily Event Insurance. "
+            "I'm your insurance specialist. How can I help you today?",
+            allow_interruptions=True,
         )
 
 
 async def entrypoint(ctx: JobContext):
-    """Main entry point for the realtime voice agent"""
+    """Main entry point for the hybrid voice agent"""
     logger.info(f"Connecting to room: {ctx.room.name}")
 
     # Connect to the room
@@ -89,51 +86,46 @@ async def entrypoint(ctx: JobContext):
     participant = await ctx.wait_for_participant()
     logger.info(f"Participant joined: {participant.identity}")
 
-    # Create the realtime model with semantic VAD for lowest latency
-    # Using "ash" voice for natural conversational tone
+    # Create the realtime model with text-only output modality
+    # This lets us use the realtime model for understanding speech
+    # while using a separate TTS for output
     realtime_model = openai.realtime.RealtimeModel(
         model="gpt-4o-realtime-preview",
-        voice="ash",  # Options: alloy, ash, ballad, coral, echo, sage, shimmer, verse
-        modalities=["audio", "text"],
+        modalities=["text"],  # Text output only - TTS handles speech
         input_audio_transcription=openai.realtime.AudioTranscription(
             model="gpt-4o-transcribe",
         ),
         turn_detection=realtime_audio_input_turn_detection.SemanticVad(
             type="semantic_vad",
-            eagerness="auto",  # Options: auto, low, medium, high
+            eagerness="auto",
             create_response=True,
             interrupt_response=True,
         ),
     )
 
-    # Create agent session with the realtime model
+    # Create agent session with realtime model + separate TTS
+    # Using OpenAI TTS for consistent high-quality voice
     session = AgentSession(
         llm=realtime_model,
+        tts=openai.TTS(voice="nova"),
+        room_input_options=RoomInputOptions(
+            noise_cancellation=True,
+        ),
     )
 
     # Start the agent session
     await session.start(
+        agent=InsuranceAgent(),
         room=ctx.room,
         participant=participant,
     )
-    
-    # Send greeting via session
-    await session.response.create()
 
-    logger.info("Realtime voice agent started successfully")
-
-
-async def request_fnc(ctx: JobContext) -> None:
-    """Accept all job requests"""
-    logger.info(f"Received job request for room: {ctx.room.name}")
-    await ctx.accept()
+    logger.info("Hybrid realtime voice agent started successfully")
 
 
 if __name__ == "__main__":
     cli.run_app(
         WorkerOptions(
             entrypoint_fnc=entrypoint,
-            request_fnc=request_fnc,
-            agent_name="daily-event-insurance",
         ),
     )
