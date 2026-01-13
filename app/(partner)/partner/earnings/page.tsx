@@ -420,7 +420,7 @@ export default function PartnerEarningsPage() {
             ) : (
               <div className="text-center py-4">
                 <p className="text-lg font-semibold text-teal-600 mb-1">Congratulations!</p>
-                <p className="text-slate-700">You've reached the highest commission tier</p>
+                <p className="text-slate-700">You&apos;ve reached the highest commission tier</p>
               </div>
             )}
           </motion.div>

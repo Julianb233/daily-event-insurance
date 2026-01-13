@@ -88,7 +88,7 @@ function CheckoutSuccessContent() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Unable to Load Details</h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <p className="text-sm text-gray-500 mb-6">
-            Don't worry - your payment was successful! Check your email for confirmation details.
+            Don&apos;t worry - your payment was successful! Check your email for confirmation details.
           </p>
           <Link
             href="/"
@@ -180,7 +180,7 @@ function CheckoutSuccessContent() {
                 <div>
                   <div className="font-medium text-gray-900">Confirmation Email</div>
                   <div className="text-sm text-gray-600">
-                    You'll receive a confirmation email with your policy details and receipt.
+                    You&apos;ll receive a confirmation email with your policy details and receipt.
                   </div>
                 </div>
               </div>

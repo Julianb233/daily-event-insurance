@@ -351,7 +351,7 @@ export function CategoryPageContent({ category, sectors, hasActiveGuard }: Categ
                       </li>
                       <li className="flex items-center gap-3 text-white/90">
                         <Check className="w-5 h-5 text-white" />
-                        No extra work — it's automatic
+                        No extra work — it&apos;s automatic
                       </li>
                     </ul>
                     <Link

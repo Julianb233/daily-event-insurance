@@ -252,7 +252,7 @@ export default function TemplatesPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold mb-1">Template Usage Stats</h2>
-              <p className="text-indigo-100">This month's performance</p>
+              <p className="text-indigo-100">This month&apos;s performance</p>
             </div>
             <div className="flex items-center gap-8">
               <div className="text-center">

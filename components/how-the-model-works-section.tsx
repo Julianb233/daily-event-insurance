@@ -419,7 +419,7 @@ export function HowTheModelWorksSection() {
                 transition={{ delay: 1 }}
                 className="text-slate-400 mt-6 max-w-2xl mx-auto"
               >
-                You don't sell insurance. You enable participation. HIQOR monetizes the rest.
+                You don&apos;t sell insurance. You enable participation. HIQOR monetizes the rest.
               </motion.p>
             </div>
           </div>

@@ -187,8 +187,8 @@ export function MissionVisionSection() {
             <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 border border-teal-100 shadow-lg">
               <Quote className="w-10 h-10 text-teal-500/30 mx-auto mb-4" />
               <p className="text-lg md:text-xl text-slate-700 italic leading-relaxed mb-6">
-                "We believe the future of insurance isn't about selling policies—it's about enabling moments.
-                When you align coverage to behavior, everyone wins."
+                &quot;We believe the future of insurance isn&apos;t about selling policies—it&apos;s about enabling moments.
+                When you align coverage to behavior, everyone wins.&quot;
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold">

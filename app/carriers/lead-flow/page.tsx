@@ -487,7 +487,7 @@ export default function LeadFlowPage() {
               </span>
             </h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              These aren't cold leads—they're verified, active participants who've already demonstrated
+              These aren&apos;t cold leads—they&apos;re verified, active participants who&apos;ve already demonstrated
               interest in protection.
             </p>
           </motion.div>

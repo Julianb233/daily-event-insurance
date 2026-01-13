@@ -45,7 +45,7 @@ function CheckoutCancelContent() {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
             <h2 className="font-semibold text-yellow-900 mb-2">What happened?</h2>
             <p className="text-sm text-yellow-800">
-              You've cancelled the checkout process or navigated away from the payment page.
+              You&apos;ve cancelled the checkout process or navigated away from the payment page.
               No charges were made to your payment method.
             </p>
           </div>
@@ -55,7 +55,7 @@ function CheckoutCancelContent() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
               <h2 className="font-semibold text-blue-900 mb-2">Your Quote is Still Valid</h2>
               <p className="text-sm text-blue-800 mb-3">
-                Your insurance quote is saved and ready whenever you're ready to proceed.
+                Your insurance quote is saved and ready whenever you&apos;re ready to proceed.
                 Quotes are typically valid for 30 days.
               </p>
               <div className="flex items-center gap-2 text-xs text-blue-700">
@@ -121,7 +121,7 @@ function CheckoutCancelContent() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <h3 className="font-semibold text-gray-900 mb-2">Need Assistance?</h3>
             <p className="text-sm text-gray-600 mb-4">
-              If you're experiencing issues with the checkout process or have questions
+              If you&apos;re experiencing issues with the checkout process or have questions
               about your quote, our support team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row gap-2 text-sm">
