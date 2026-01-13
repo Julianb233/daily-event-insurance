@@ -118,9 +118,9 @@ function PillarCard({ pillar, index }: { pillar: typeof pillars[0]; index: numbe
         {/* Card */}
         <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border ${colors.border} hover:shadow-xl transition-shadow duration-500 overflow-hidden`}>
           {/* Header */}
-          <div className="mb-6">
+          <div className="mb-6 text-center">
             <motion.div
-              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg mx-auto`}
               animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, -5, 5, 0] : 0 }}
               transition={{ duration: 0.4 }}
             >

@@ -6,6 +6,7 @@ import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, 
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 import { industryCategories } from "@/lib/category-data"
+import { useVoiceAgent } from "@/lib/voice/voice-context"
 
 interface CategoryLink {
   id: string
@@ -40,6 +41,7 @@ export default function Header() {
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  const { openVoiceAgent } = useVoiceAgent()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,7 +113,6 @@ export default function Header() {
   const primaryLinks = [
     { label: "How It Works", href: "#how-it-works" },
     { label: "Benefits", href: "#benefits" },
-    { label: "Pricing", href: "/pricing" },
   ]
 
   // Secondary links (in "More" dropdown on desktop, expanded on mobile)
@@ -339,16 +340,15 @@ export default function Header() {
                 Log In
               </motion.a>
 
-              {/* CTA Button */}
-              <motion.a
-                href="#apply"
-                onClick={(e) => handleNavClick(e, "#apply")}
+              {/* CTA Button - Opens Voice Chat */}
+              <motion.button
+                onClick={openVoiceAgent}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="hidden sm:flex items-center px-5 py-2 bg-[#14B8A6] text-white font-medium text-[15px] rounded-md hover:bg-[#0F9F90] transition-all"
               >
-                Apply Now
-              </motion.a>
+                Get Started
+              </motion.button>
 
               {/* Mobile Menu Button */}
               <button
@@ -511,13 +511,15 @@ export default function Header() {
                 }}
                 className="mt-8 space-y-4"
               >
-                <a
-                  href="#apply"
-                  onClick={(e) => handleNavClick(e, "#apply")}
-                  className="block px-6 py-3 bg-[#14B8A6] text-white font-medium text-base rounded-md hover:bg-[#0F9F90] transition-all text-center"
+                <button
+                  onClick={() => {
+                    setMenuOpen(false)
+                    openVoiceAgent()
+                  }}
+                  className="block w-full px-6 py-3 bg-[#14B8A6] text-white font-medium text-base rounded-md hover:bg-[#0F9F90] transition-all text-center"
                 >
-                  Apply Now
-                </a>
+                  Get Started
+                </button>
               </motion.div>
 
               {/* Professional Tagline */}

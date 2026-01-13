@@ -945,12 +945,12 @@ export default function CarriersPage() {
                 <ArrowRight className="w-5 h-5" />
               </motion.a>
               <motion.a
-                href="/about"
+                href="/about/hiqor"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-3 px-8 py-4 backdrop-blur-xl bg-white/10 text-white font-bold text-lg rounded-2xl border border-white/30 hover:bg-white/20 transition-all"
               >
-                Learn About HIQOR
+                Learn About HiQor
               </motion.a>
             </motion.div>
 

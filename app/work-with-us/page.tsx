@@ -645,10 +645,10 @@ export default function WorkWithUsPage() {
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Link
-                  href="/about"
+                  href="/about/hiqor"
                   className="inline-flex items-center justify-center gap-3 px-8 py-4 backdrop-blur-xl bg-white/10 text-white font-bold text-lg rounded-2xl border border-white/30 hover:bg-white/20 transition-all"
                 >
-                  Learn About HIQOR
+                  Learn About HiQor
                 </Link>
               </motion.div>
             </motion.div>

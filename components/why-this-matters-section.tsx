@@ -124,9 +124,9 @@ function StakeholderCard({ stakeholder, index }: { stakeholder: typeof stakehold
           <div className={`absolute top-0 left-0 right-0 h-1 ${colors.bg}`} />
 
           {/* Header */}
-          <div className="mb-6">
+          <div className="mb-6 text-center">
             <motion.div
-              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+              className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-lg mx-auto`}
               animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, -5, 5, 0] : 0 }}
               transition={{ duration: 0.4 }}
             >

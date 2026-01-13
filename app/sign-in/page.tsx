@@ -4,8 +4,9 @@ import { Suspense, useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { motion } from "framer-motion"
-import { Mail, Lock, Loader2, Shield, ArrowRight } from "lucide-react"
+import { Mail, Lock, Loader2, ArrowRight } from "lucide-react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 
@@ -29,17 +30,25 @@ function SignInForm() {
         email,
         password,
         redirect: false,
+        callbackUrl,
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password")
+        } else {
+          setError(result.error)
+        }
         setIsLoading(false)
         return
       }
 
-      router.push(callbackUrl)
-      router.refresh()
+      if (result?.ok) {
+        // Force a hard navigation to ensure session is properly loaded
+        window.location.href = callbackUrl
+      }
     } catch (err) {
+      console.error("Sign-in error:", err)
       setError("An error occurred. Please try again.")
       setIsLoading(false)
     }
@@ -55,12 +64,18 @@ function SignInForm() {
       {/* Header */}
       <div className="text-center mb-8">
         <motion.div
-          className="w-16 h-16 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-2xl flex items-center justify-center mx-auto mb-4"
+          className="mx-auto mb-6"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring" }}
         >
-          <Shield className="w-8 h-8 text-white" />
+          <Image
+            src="/images/logo-color.png"
+            alt="Daily Event Insurance"
+            width={200}
+            height={50}
+            className="h-auto w-auto mx-auto"
+          />
         </motion.div>
         <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
         <p className="mt-2 text-gray-600">Sign in to your partner account</p>
@@ -159,8 +174,14 @@ function SignInFormFallback() {
   return (
     <div className="max-w-md w-full">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Shield className="w-8 h-8 text-white" />
+        <div className="mx-auto mb-6">
+          <Image
+            src="/images/logo-color.png"
+            alt="Daily Event Insurance"
+            width={200}
+            height={50}
+            className="h-auto w-auto mx-auto"
+          />
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
         <p className="mt-2 text-gray-600">Sign in to your partner account</p>
@@ -181,7 +202,7 @@ export default function SignInPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<SignInFormFallback />}>
           <SignInForm />
         </Suspense>

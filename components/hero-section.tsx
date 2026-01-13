@@ -1,10 +1,12 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowRight, PlayCircle, Phone } from "lucide-react"
+import { ArrowRight, PlayCircle, MessageCircle } from "lucide-react"
 import { UrgencyBanner } from "./urgency-banner"
+import { useVoiceAgent } from "@/lib/voice/voice-context"
 
 export default function HeroSection() {
+  const { openVoiceAgent } = useVoiceAgent()
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-white">
       {/* Subtle Background Pattern */}
@@ -76,9 +78,9 @@ export default function HeroSection() {
               transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              {/* Primary CTA */}
-              <motion.a
-                href="#apply"
+              {/* Primary CTA - Opens Voice Chat */}
+              <motion.button
+                onClick={openVoiceAgent}
                 whileHover={{ scale: 1.03, boxShadow: "0 20px 40px -12px rgba(20, 184, 166, 0.4)" }}
                 whileTap={{ scale: 0.98 }}
                 className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-teal-600 rounded-xl shadow-lg hover:bg-teal-700 transition-all duration-300"
@@ -86,34 +88,18 @@ export default function HeroSection() {
                 <span>Get Started Today</span>
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-600 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
-              </motion.a>
+              </motion.button>
 
-              {/* Secondary CTA - Talk to Specialist */}
-              <motion.a
-                href="tel:+15551234567"
+              {/* Secondary CTA - Talk to Specialist Opens Voice Chat */}
+              <motion.button
+                onClick={openVoiceAgent}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className="group inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-teal-700 bg-white border-2 border-teal-600 rounded-xl hover:bg-teal-50 transition-all duration-300"
               >
-                <Phone className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                <MessageCircle className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 <span>Talk to a Specialist</span>
-              </motion.a>
-            </motion.div>
-
-            {/* Click-to-Call for Mobile */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.45, ease: "easeOut" }}
-              className="flex sm:hidden justify-center"
-            >
-              <a
-                href="tel:+15551234567"
-                className="inline-flex items-center text-sm text-teal-600 font-medium hover:text-teal-700"
-              >
-                <Phone className="w-4 h-4 mr-1" />
-                Or call us: (555) 123-4567
-              </a>
+              </motion.button>
             </motion.div>
 
             {/* Trust Indicators with Social Proof */}

@@ -2,8 +2,10 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
+import { useVoiceAgent } from "@/lib/voice/voice-context"
 
 export default function Footer() {
+  const { openVoiceAgent } = useVoiceAgent()
   return (
     <footer className="bg-gradient-to-b from-white to-[#F8FAFC] pt-16 pb-8 px-4 md:px-8 border-t border-gray-200">
       <div className="w-full max-w-7xl mx-auto">
@@ -67,7 +69,7 @@ export default function Footer() {
                 { name: "How It Works", href: "/#how-it-works" },
                 { name: "Who We Serve", href: "/#who-we-serve" },
                 { name: "Benefits", href: "/#benefits" },
-                { name: "Pricing", href: "/pricing" },
+                { name: "About Us", href: "/about" },
                 { name: "For Carriers", href: "/carriers" },
               ].map((link) => (
                 <li key={link.name}>
@@ -128,10 +130,10 @@ export default function Footer() {
               Ready to start earning commission? Sign up today—no contracts, no setup fees.
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Open Voice Chat */}
             <div className="flex flex-col gap-3">
-              <Link
-                href="/#apply"
+              <button
+                onClick={openVoiceAgent}
                 className="inline-flex items-center justify-center gap-2 bg-[#14B8A6] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0D9488] transition-colors text-sm"
               >
                 Get Started Today
@@ -148,11 +150,11 @@ export default function Footer() {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
-              </Link>
+              </button>
 
-              {/* Click-to-Call CTA */}
-              <a
-                href="tel:+15551234567"
+              {/* Talk to Specialist - Opens Voice Chat */}
+              <button
+                onClick={openVoiceAgent}
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#14B8A6] font-semibold px-6 py-3 rounded-lg border-2 border-[#14B8A6] hover:bg-[#F0FDFA] transition-colors text-sm"
               >
                 <svg
@@ -165,11 +167,11 @@ export default function Footer() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
                 Talk to a Specialist
-              </a>
+              </button>
             </div>
 
             {/* Contact Info */}
