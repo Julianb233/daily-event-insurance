@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, X, Sparkles } from 'lucide-react'
-import { LiveKitVoiceClient } from '@/lib/voice/livekit-client'
+import Vapi from '@vapi-ai/web'
 import { useVoiceAgent } from '@/lib/voice/voice-context'
 import { getContextualQuickActions } from '@/lib/voice/context-prompts'
 import Image from 'next/image'
@@ -14,6 +14,78 @@ type ErrorType = 'microphone' | 'connection' | 'network' | 'unknown'
 interface Message {
   role: 'user' | 'assistant' | 'system'
   content: string
+}
+
+// Build assistant config with context-aware system prompt
+function buildAssistantConfig(context?: {
+  screenType?: string
+  screenName?: string
+  currentStepName?: string
+  journeyStage?: string
+}) {
+  let systemPrompt = `You are Sarah, a friendly and knowledgeable insurance specialist for Daily Event Insurance.
+You help partners and potential partners understand our event insurance platform.
+
+Key facts about Daily Event Insurance:
+- We provide liability insurance for event operators, gyms, climbing facilities, and adventure businesses
+- Partners earn commissions (25-37.5%) by offering our insurance to their customers
+- Our platform offers instant quotes and same-day coverage
+- We handle all claims and customer support
+
+Commission tiers:
+- 0-999 participants: 25% ($10/participant)
+- 1,000-2,499: 27.5% ($11/participant)
+- 2,500-4,999: 30% ($12/participant)
+- 5,000-9,999: 32.5% ($13/participant)
+- 10,000-24,999: 35% ($14/participant)
+- 25,000+: 37.5% ($15/participant)
+
+Communication style:
+- Be conversational, warm, and professional
+- Keep responses concise (2-3 sentences) since this is a voice conversation
+- Ask clarifying questions when needed
+- Be helpful and solution-oriented`
+
+  if (context?.screenType?.startsWith('onboarding')) {
+    systemPrompt += `
+
+Current context: The user is going through the partner onboarding process.
+${context.currentStepName ? `They are currently on the "${context.currentStepName}" step.` : ''}
+Help them complete the onboarding smoothly. Answer questions about the process and reassure them.`
+  } else if (context?.screenType?.startsWith('partner-')) {
+    systemPrompt += `
+
+Current context: The user is an existing partner using their dashboard.
+${context.screenName ? `They are on the "${context.screenName}" page.` : ''}
+Help them with partner-specific questions about earnings, policies, or platform features.`
+  } else if (context?.journeyStage === 'consideration') {
+    systemPrompt += `
+
+Current context: The user is exploring our platform and considering becoming a partner.
+Focus on explaining the benefits of partnership and answering their questions about how it works.`
+  }
+
+  return {
+    name: "Sarah",
+    firstMessage: "Hi! I'm Sarah from Daily Event Insurance. How can I help you today?",
+    transcriber: {
+      provider: "deepgram" as const,
+      model: "nova-2" as const,
+      language: "en-US" as const
+    },
+    voice: {
+      provider: "openai" as const,
+      voiceId: "nova" as const
+    },
+    model: {
+      provider: "openai" as const,
+      model: "gpt-4o" as const,
+      messages: [{
+        role: "system" as const,
+        content: systemPrompt
+      }]
+    }
+  }
 }
 
 export function VoiceAgentGlobal() {
@@ -29,12 +101,78 @@ export function VoiceAgentGlobal() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isAgentSpeaking, setIsAgentSpeaking] = useState(false)
 
-  const liveKitClientRef = useRef<LiveKitVoiceClient | null>(null)
+  const vapiRef = useRef<Vapi | null>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
 
   // Get context-aware quick actions
   const quickActions = getContextualQuickActions(context)
+
+  // Initialize VAPI instance
+  useEffect(() => {
+    const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+    if (publicKey && !vapiRef.current) {
+      vapiRef.current = new Vapi(publicKey)
+
+      // Set up event listeners
+      vapiRef.current.on('call-start', () => {
+        console.log('[VAPI] Call started')
+        setStatus('connected')
+      })
+
+      vapiRef.current.on('call-end', () => {
+        console.log('[VAPI] Call ended')
+        setStatus('disconnected')
+        setInputVolume(0)
+        setOutputVolume(0)
+        setIsAgentSpeaking(false)
+      })
+
+      vapiRef.current.on('speech-start', () => {
+        setIsAgentSpeaking(true)
+        setOutputVolume(0.7)
+      })
+
+      vapiRef.current.on('speech-end', () => {
+        setIsAgentSpeaking(false)
+        setOutputVolume(0)
+      })
+
+      vapiRef.current.on('message', (message) => {
+        if (message.type === 'transcript') {
+          const role = message.role === 'user' ? 'user' : 'assistant'
+          const prefix = role === 'user' ? 'You' : 'Sarah'
+
+          if (message.transcriptType === 'final') {
+            setTranscript(prev => [...prev, `${prefix}: ${message.transcript}`])
+            setMessages(prev => [...prev, { role, content: message.transcript }])
+          }
+        }
+      })
+
+      vapiRef.current.on('volume-level', (level) => {
+        setInputVolume(level)
+      })
+
+      vapiRef.current.on('error', (error) => {
+        console.error('[VAPI] Error:', error)
+        if (error.message?.includes('Permission') || error.message?.includes('NotAllowed')) {
+          setErrorType('microphone')
+        } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+          setErrorType('network')
+        } else {
+          setErrorType('connection')
+        }
+        setStatus('error')
+      })
+    }
+
+    return () => {
+      if (vapiRef.current) {
+        vapiRef.current.stop()
+      }
+    }
+  }, [])
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -55,75 +193,37 @@ export function VoiceAgentGlobal() {
     transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [transcript])
 
-  // Start voice conversation with LiveKit
+  // Start voice conversation with VAPI
   const startConversation = async () => {
+    const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+
+    if (!publicKey) {
+      console.error('VAPI public key not configured')
+      setErrorType('connection')
+      setStatus('error')
+      return
+    }
+
     setStatus('connecting')
     setErrorType(null)
 
     try {
-      // Get LiveKit token from our API
-      const response = await fetch('/api/voice/realtime', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ context }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to get voice session')
+      // Initialize VAPI if not already done
+      if (!vapiRef.current) {
+        vapiRef.current = new Vapi(publicKey)
       }
 
-      const { token, url } = await response.json()
+      // Build assistant config with current context
+      const assistantConfig = buildAssistantConfig(context)
 
-      // Create LiveKit client with callbacks
-      liveKitClientRef.current = new LiveKitVoiceClient(
-        { url, token },
-        {
-          onConnected: () => {
-            console.log('[Voice] Connected to LiveKit')
-            setStatus('connected')
-            setTranscript(['Sarah: Hi, I\'m Sarah from Daily Event Insurance. How can I help you today?'])
-            setMessages([{ role: 'assistant', content: 'Hi, I\'m Sarah from Daily Event Insurance. How can I help you today?' }])
-          },
-          onDisconnected: () => {
-            console.log('[Voice] Disconnected from LiveKit')
-            setStatus('disconnected')
-            setInputVolume(0)
-            setOutputVolume(0)
-          },
-          onError: (error) => {
-            console.error('[Voice] LiveKit error:', error)
-            if (error.message?.includes('Permission') || error.message?.includes('NotAllowed')) {
-              setErrorType('microphone')
-            } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-              setErrorType('network')
-            } else {
-              setErrorType('connection')
-            }
-            setStatus('error')
-          },
-          onTranscript: (text, role) => {
-            const prefix = role === 'user' ? 'You' : 'Sarah'
-            setTranscript(prev => [...prev, `${prefix}: ${text}`])
-            setMessages(prev => [...prev, { role, content: text }])
-          },
-          onSpeaking: (isSpeaking) => {
-            setIsAgentSpeaking(isSpeaking)
-            if (isSpeaking) {
-              setOutputVolume(0.7)
-            } else {
-              setOutputVolume(0)
-            }
-          },
-          onAudioLevel: (level) => {
-            setInputVolume(level)
-          },
-        }
-      )
+      // Start the call with transient assistant
+      await vapiRef.current.start(assistantConfig)
 
-      // Connect to LiveKit room
-      await liveKitClientRef.current.connect()
+      // Add initial message to transcript
+      setTranscript(['Sarah: Hi! I\'m Sarah from Daily Event Insurance. How can I help you today?'])
+      setMessages([{ role: 'assistant', content: 'Hi! I\'m Sarah from Daily Event Insurance. How can I help you today?' }])
     } catch (error: unknown) {
-      console.error('Error starting conversation:', error)
+      console.error('Error starting VAPI conversation:', error)
       const errorMessage = error instanceof Error ? error.message : ''
       if (errorMessage.includes('Permission') || errorMessage.includes('NotAllowed')) {
         setErrorType('microphone')
@@ -138,9 +238,8 @@ export function VoiceAgentGlobal() {
 
   // End voice conversation
   const endConversation = useCallback(() => {
-    if (liveKitClientRef.current) {
-      liveKitClientRef.current.disconnect()
-      liveKitClientRef.current = null
+    if (vapiRef.current) {
+      vapiRef.current.stop()
     }
 
     setStatus('disconnected')
@@ -151,17 +250,13 @@ export function VoiceAgentGlobal() {
 
   // Toggle mute
   const toggleMute = () => {
-    if (liveKitClientRef.current) {
-      if (isMuted) {
-        liveKitClientRef.current.unmute()
-      } else {
-        liveKitClientRef.current.mute()
-      }
+    if (vapiRef.current) {
+      vapiRef.current.setMuted(!isMuted)
     }
     setIsMuted(!isMuted)
   }
 
-  // Handle quick action click - send as data message to agent
+  // Handle quick action click
   const handleQuickAction = async (action: string) => {
     const actionMessages: Record<string, string> = {
       explain_current_step: `Can you help me understand what I need to do on this ${context.currentStepName || 'step'}?`,
@@ -184,11 +279,14 @@ export function VoiceAgentGlobal() {
     setTranscript(prev => [...prev, `You: ${message}`])
     setMessages(prev => [...prev, { role: 'user', content: message }])
 
-    // Send as data message to the LiveKit agent
-    if (liveKitClientRef.current) {
-      await liveKitClientRef.current.sendData({
-        type: 'user_message',
-        text: message,
+    // Send message to VAPI
+    if (vapiRef.current) {
+      vapiRef.current.send({
+        type: 'add-message',
+        message: {
+          role: 'user',
+          content: message
+        }
       })
     }
   }
