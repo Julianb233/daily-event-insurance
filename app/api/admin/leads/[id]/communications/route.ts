@@ -76,19 +76,6 @@ export async function GET(request: NextRequest, context: RouteContext) {
         return notFoundError("Lead")
       }
 
-      let query = db!
-        .select()
-        .from(leadCommunications)
-        .where(eq(leadCommunications.leadId, id))
-
-      if (channel) {
-        query = db!
-          .select()
-          .from(leadCommunications)
-          .where(eq(leadCommunications.leadId, id))
-          .$dynamic()
-      }
-
       const [{ total }] = await db!
         .select({ total: count() })
         .from(leadCommunications)

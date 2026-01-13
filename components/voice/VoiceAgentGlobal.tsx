@@ -29,7 +29,8 @@ export function VoiceAgentGlobal() {
 
   const elevenLabsRef = useRef<ElevenLabsWebSocket | null>(null)
   const recorderRef = useRef<AudioRecorder | null>(null)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
 
   // Get context-aware quick actions
@@ -44,7 +45,8 @@ export function VoiceAgentGlobal() {
   const initSpeechRecognition = useCallback(() => {
     if (typeof window === 'undefined') return null
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SpeechRecognition) {
       console.warn('Speech recognition not supported')
       return null
@@ -55,7 +57,7 @@ export function VoiceAgentGlobal() {
     recognition.interimResults = true
     recognition.lang = 'en-US'
 
-    recognition.onresult = async (event) => {
+    recognition.onresult = async (event: any) => {
       const result = event.results[event.results.length - 1]
       const transcriptText = result[0].transcript
 
@@ -65,7 +67,7 @@ export function VoiceAgentGlobal() {
       }
     }
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error)
       if (event.error === 'not-allowed') {
         setStatus('error')

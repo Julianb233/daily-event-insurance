@@ -19,7 +19,7 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY || ""
  */
 export const stripe = stripeSecretKey
   ? new Stripe(stripeSecretKey, {
-      apiVersion: "2025-02-24.acacia",
+      apiVersion: "2025-12-15.clover",
       typescript: true,
       appInfo: {
         name: "Daily Event Insurance",

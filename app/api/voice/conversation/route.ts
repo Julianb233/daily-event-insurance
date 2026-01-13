@@ -4,9 +4,14 @@ import { buildContextAwarePrompt } from '@/lib/voice/context-prompts'
 import type { VoiceContextData } from '@/lib/voice/voice-context'
 import { nanoid } from 'nanoid'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY not configured')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 interface ConversationMessage {
   role: 'user' | 'assistant' | 'system'
@@ -37,6 +42,7 @@ export async function POST(request: NextRequest) {
     ]
 
     // Get completion from OpenAI
+    const openai = getOpenAI()
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: openAIMessages,
