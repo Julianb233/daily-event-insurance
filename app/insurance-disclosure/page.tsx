@@ -34,8 +34,9 @@ export default function InsuranceDisclosurePage() {
             <p className="text-slate-600 leading-relaxed">
               Daily Event Insurance is an insurance technology platform that enables fitness facilities,
               adventure sports operators, and equipment rental businesses to offer embedded insurance
-              coverage to their customers. We are a subsidiary of HiQOR and operate as a licensed
-              insurance producer in multiple states.
+              coverage to their customers. We operate as a High-Core partner and a licensed
+              insurance producer in multiple states. Daily Event Insurance is an independent company
+              and is not owned by, controlled by, or a subsidiary of High-Core.
             </p>
           </section>
 
@@ -151,7 +152,7 @@ export default function InsuranceDisclosurePage() {
             </p>
             <div className="mt-4 p-6 bg-slate-50 rounded-xl border border-slate-200">
               <p className="text-slate-700 font-medium">Daily Event Insurance</p>
-              <p className="text-slate-600">A HiQOR Company</p>
+              <p className="text-slate-600">A High-Core Partner</p>
               <p className="text-slate-600 mt-2">
                 Email: <a href="mailto:compliance@dailyeventinsurance.com" className="text-teal-600 hover:text-teal-700">compliance@dailyeventinsurance.com</a>
               </p>

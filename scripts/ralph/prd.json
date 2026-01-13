@@ -1,0 +1,321 @@
+{
+  "projectName": "Daily Event Insurance - Partner Integration Support Agent",
+  "branchName": "feature/integration-support-agent",
+  "prdFile": "/root/daily-event-insurance/docs/PRD-CUSTOMER-SUPPORT-AGENT.md",
+  "currentPhase": 1,
+  "status": "in_progress",
+  "milestones": [
+    {
+      "id": 1,
+      "name": "Phase 1: Database Schema & Infrastructure",
+      "status": "in_progress",
+      "tasks": [
+        {
+          "id": "1.1",
+          "name": "Add support_conversations table to lib/db/schema.ts",
+          "status": "complete",
+          "estimatedMinutes": 30,
+          "description": "Create support_conversations table for partner integration help sessions"
+        },
+        {
+          "id": "1.2",
+          "name": "Add support_messages table to schema",
+          "status": "complete",
+          "estimatedMinutes": 20,
+          "dependencies": ["1.1"]
+        },
+        {
+          "id": "1.3",
+          "name": "Add onboarding_recordings table to schema",
+          "status": "complete",
+          "estimatedMinutes": 20,
+          "description": "For screen recording during onboarding"
+        },
+        {
+          "id": "1.4",
+          "name": "Add integration_docs table to schema",
+          "status": "complete",
+          "estimatedMinutes": 20,
+          "description": "For RAG-powered integration documentation search"
+        },
+        {
+          "id": "1.5",
+          "name": "Add partner_integrations table to schema",
+          "status": "complete",
+          "estimatedMinutes": 25,
+          "description": "Track integration status for each partner"
+        },
+        {
+          "id": "1.6",
+          "name": "Run Drizzle migrations to Supabase",
+          "status": "pending",
+          "estimatedMinutes": 15,
+          "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5"],
+          "notes": "Migration 0002_gray_lady_bullseye.sql generated - apply with drizzle-kit push when DB available"
+        },
+        {
+          "id": "1.7",
+          "name": "Set up Supabase Realtime for chat",
+          "status": "complete",
+          "estimatedMinutes": 90,
+          "dependencies": ["1.6"],
+          "notes": "Created lib/support/ with RealtimeChatService, useSupportChat hook, and types"
+        }
+      ],
+      "focus": "Set up database schema for integration support system"
+    },
+    {
+      "id": 2,
+      "name": "Phase 2: AI Integration Agent Core",
+      "status": "complete",
+      "tasks": [
+        {
+          "id": "2.1",
+          "name": "Create AI integration agent service (lib/support/integration-agent.ts)",
+          "status": "complete",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.7"],
+          "description": "OpenAI GPT-4o agent with system prompt for technical integration help",
+          "notes": "IntegrationAgent class with function calling, API route at /api/support/chat"
+        },
+        {
+          "id": "2.2",
+          "name": "Implement generate_widget_code tool",
+          "status": "complete",
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Generate widget embed code for vanilla JS, React, Vue, Angular"
+        },
+        {
+          "id": "2.3",
+          "name": "Implement generate_api_snippet tool",
+          "status": "complete",
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Generate API code snippets for JavaScript, Python, PHP, curl"
+        },
+        {
+          "id": "2.4",
+          "name": "Implement get_pos_integration_guide tool",
+          "status": "complete",
+          "estimatedMinutes": 90,
+          "dependencies": ["2.1"],
+          "description": "Return step-by-step guides for Mindbody, Pike13, ClubReady, Mariana Tek, Square"
+        },
+        {
+          "id": "2.5",
+          "name": "Implement check_integration_status tool",
+          "status": "complete",
+          "estimatedMinutes": 45,
+          "dependencies": ["2.1", "1.5"],
+          "description": "Check if partner's widget/API/webhook is working"
+        },
+        {
+          "id": "2.6",
+          "name": "Implement search_integration_docs tool",
+          "status": "complete",
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1", "1.4"],
+          "description": "Semantic search over integration documentation"
+        },
+        {
+          "id": "2.7",
+          "name": "Implement escalate_to_dev_team tool",
+          "status": "complete",
+          "estimatedMinutes": 30,
+          "dependencies": ["2.1"],
+          "description": "Create support ticket for dev team with context"
+        }
+      ],
+      "focus": "Build the AI agent with integration-focused tools"
+    },
+    {
+      "id": 3,
+      "name": "Phase 3: Chat UI Components",
+      "status": "in_progress",
+      "tasks": [
+        {
+          "id": "3.1",
+          "name": "Create IntegrationChatWidget component",
+          "status": "complete",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.7"],
+          "description": "Chat widget for partner portal and onboarding flow",
+          "notes": "components/support/IntegrationChatWidget.tsx with real-time messaging"
+        },
+        {
+          "id": "3.2",
+          "name": "Add CodeSnippetDisplay component",
+          "status": "complete",
+          "estimatedMinutes": 45,
+          "dependencies": ["3.1"],
+          "description": "Syntax-highlighted code display with copy button",
+          "notes": "components/support/CodeSnippetDisplay.tsx with language detection, copy button"
+        },
+        {
+          "id": "3.3",
+          "name": "Integrate chat into onboarding flow",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["3.1"],
+          "description": "Add chat widget to /onboarding pages with step context"
+        },
+        {
+          "id": "3.4",
+          "name": "Integrate chat into partner portal",
+          "status": "pending",
+          "estimatedMinutes": 45,
+          "dependencies": ["3.1"],
+          "description": "Add chat widget to /partner/* pages"
+        },
+        {
+          "id": "3.5",
+          "name": "Add typing indicators and message streaming",
+          "status": "complete",
+          "estimatedMinutes": 45,
+          "dependencies": ["3.1", "2.1"],
+          "notes": "Typing indicators included in IntegrationChatWidget"
+        }
+      ],
+      "focus": "Build chat UI with code snippet support"
+    },
+    {
+      "id": 4,
+      "name": "Phase 4: Screen Recording",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "4.1",
+          "name": "Integrate rrweb library",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "description": "Add rrweb for DOM-based screen recording"
+        },
+        {
+          "id": "4.2",
+          "name": "Create useOnboardingRecording hook",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["4.1"],
+          "description": "Hook to start/stop/upload recordings"
+        },
+        {
+          "id": "4.3",
+          "name": "Build recording upload to Supabase Storage",
+          "status": "pending",
+          "estimatedMinutes": 45,
+          "dependencies": ["4.2", "1.3"]
+        },
+        {
+          "id": "4.4",
+          "name": "Add recording opt-in UI to onboarding",
+          "status": "pending",
+          "estimatedMinutes": 30,
+          "dependencies": ["4.2"],
+          "description": "Permission dialog and recording indicator"
+        },
+        {
+          "id": "4.5",
+          "name": "Create recording playback for admin",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["4.3"],
+          "description": "Admin can replay partner's onboarding session"
+        }
+      ],
+      "focus": "Screen recording for guided onboarding help"
+    },
+    {
+      "id": 5,
+      "name": "Phase 5: Integration Documentation & RAG",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "5.1",
+          "name": "Create integration docs content (Markdown)",
+          "status": "pending",
+          "estimatedMinutes": 180,
+          "description": "Write docs for widget, API, each POS system, troubleshooting"
+        },
+        {
+          "id": "5.2",
+          "name": "Build embedding generation service",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["1.4"],
+          "description": "Generate OpenAI embeddings for doc chunks"
+        },
+        {
+          "id": "5.3",
+          "name": "Create semantic search API",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["5.2"],
+          "description": "POST /api/support/docs/search with vector similarity"
+        },
+        {
+          "id": "5.4",
+          "name": "Seed initial integration docs",
+          "status": "pending",
+          "estimatedMinutes": 30,
+          "dependencies": ["5.1", "5.2"]
+        }
+      ],
+      "focus": "Build knowledge base for RAG-powered responses"
+    },
+    {
+      "id": 6,
+      "name": "Phase 6: Admin Support Dashboard",
+      "status": "pending",
+      "tasks": [
+        {
+          "id": "6.1",
+          "name": "Create /admin/support page with conversation list",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["1.1"]
+        },
+        {
+          "id": "6.2",
+          "name": "Build conversation detail view",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["6.1"],
+          "description": "View full conversation, partner info, integration status"
+        },
+        {
+          "id": "6.3",
+          "name": "Add escalation queue view",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["6.1"],
+          "description": "List escalated tickets for dev team"
+        },
+        {
+          "id": "6.4",
+          "name": "Create integration health dashboard",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["1.5"],
+          "description": "Overview of partner integration statuses"
+        },
+        {
+          "id": "6.5",
+          "name": "Add recording viewer to admin",
+          "status": "pending",
+          "estimatedMinutes": 30,
+          "dependencies": ["4.5", "6.2"]
+        }
+      ],
+      "focus": "Admin tools for managing support and integrations"
+    }
+  ],
+  "totalTasks": 35,
+  "completedTasks": 16,
+  "estimatedHours": 32,
+  "nextTask": {
+    "id": "3.3",
+    "name": "Integrate chat into onboarding flow",
+    "description": "Add IntegrationChatWidget to /onboarding pages with step context"
+  }
+}

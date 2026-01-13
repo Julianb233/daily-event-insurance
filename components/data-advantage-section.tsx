@@ -241,7 +241,7 @@ export function DataAdvantageSection() {
             , Not Just Transactions
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
-            Because HIQOR activates during participation, we see what ticketing and registration systems can't.
+            Because HIQOR activates during participation, we see what ticketing and registration systems can&apos;t.
             This is experience intelligence, not marketing data.
           </p>
         </motion.div>

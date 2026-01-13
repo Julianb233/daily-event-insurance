@@ -1,0 +1,9 @@
+livekit-agents>=1.0.0
+livekit>=0.17.0
+livekit-plugins-openai>=1.0.0
+livekit-plugins-silero>=1.0.0
+livekit-plugins-deepgram>=1.0.0
+openai>=1.0.0
+httpx>=0.25.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0

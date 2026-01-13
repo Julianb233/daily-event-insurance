@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Sparkles
 } from "lucide-react"
+import { AboutPageContext } from "@/components/voice"
 
 // Floating orb component for background decoration
 function FloatingOrb({ className, delay = 0 }: { className: string; delay?: number }) {
@@ -98,6 +99,7 @@ export default function AboutPage() {
 
   return (
     <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
+      <AboutPageContext />
       <Header />
 
       {/* Hero Section with Glassmorphism */}
@@ -667,7 +669,7 @@ export default function AboutPage() {
               <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/10 to-emerald-500/10 rounded-3xl blur-2xl" />
               <div className="relative backdrop-blur-sm bg-white/80 rounded-3xl p-12 border border-slate-200 shadow-2xl">
                 <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-8 leading-tight">
-                  "HIQOR is the InsurTech SaaS infrastructure for events-based insurance."
+                  &quot;HIQOR is the InsurTech SaaS infrastructure for events-based insurance.&quot;
                 </p>
                 <motion.div
                   whileHover={{ scale: 1.05 }}

@@ -35,7 +35,7 @@ const testimonials: Testimonial[] = [
     results: {
       percentage: "$2,400",
       metric: "extra monthly revenue",
-      additional: "91% member opt-in rate"
+      additional: "Zero setup costs"
     },
   },
   {
@@ -67,7 +67,7 @@ const testimonials: Testimonial[] = [
     results: {
       percentage: "43%",
       metric: "increase in transaction value",
-      additional: "68% customer opt-in rate"
+      additional: "48-hour setup time"
     },
   },
   {
@@ -115,7 +115,7 @@ const testimonials: Testimonial[] = [
     results: {
       percentage: "60%",
       metric: "reduction in insurance costs",
-      additional: "82% customer opt-in rate"
+      additional: "30% commission rate"
     },
   },
 ]

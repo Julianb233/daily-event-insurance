@@ -1,0 +1,15 @@
+# Ralph Progress Log
+Project: Daily Event Insurance - Call Center Implementation
+Started: 2025-01-12
+
+## Codebase Patterns
+- Next.js 16, React 19, TypeScript, Tailwind CSS 4
+- GoHighLevel CRM integration
+- Drizzle ORM for database
+- shadcn/ui component library
+- Vercel deployment
+
+## PRD Reference
+See /root/daily-event-insurance/docs/PRD-CALL-CENTER.json for full task breakdown
+
+---

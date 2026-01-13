@@ -142,7 +142,7 @@ export function WhoWeAreSection() {
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
-            We're the Infrastructure Behind{' '}
+            We&apos;re the Infrastructure Behind{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
               Events-Based Insurance
             </span>
@@ -198,7 +198,7 @@ export function WhoWeAreSection() {
                 The Activation, Data, and Monetization Layer
               </h3>
               <p className="text-lg text-slate-300 mb-8 max-w-3xl">
-                We're the infrastructure that allows insurance to turn on during real-world events—workouts,
+                We&apos;re the infrastructure that allows insurance to turn on during real-world events—workouts,
                 races, games, adventures, and experiences—and turn off automatically when those events end.
               </p>
 
@@ -210,9 +210,21 @@ export function WhoWeAreSection() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.5 }}
-                  className="flex-1 max-w-xs"
+                  className="flex-1 max-w-xs relative"
                 >
-                  <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 text-center">
+                  {/* Subtle static glow effect */}
+                  <motion.div
+                    className="absolute -inset-2 rounded-2xl bg-sky-500/10 blur-xl"
+                    animate={{
+                      opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <div className="relative bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 text-center">
                     <div className="w-12 h-12 bg-sky-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
                       <Building2 className="w-6 h-6 text-sky-400" />
                     </div>
@@ -249,9 +261,22 @@ export function WhoWeAreSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.7 }}
-                  className="flex-1 max-w-xs"
+                  className="flex-1 max-w-xs relative"
                 >
-                  <div className="bg-gradient-to-br from-teal-500/20 to-teal-600/20 backdrop-blur-sm rounded-xl p-6 border border-teal-500/50 text-center relative overflow-hidden">
+                  {/* Subtle static glow effect */}
+                  <motion.div
+                    className="absolute -inset-3 rounded-2xl bg-gradient-to-r from-teal-500/15 via-teal-400/20 to-teal-500/15 blur-xl"
+                    animate={{
+                      opacity: [0.5, 0.7, 0.5],
+                      scale: [1, 1.02, 1],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <div className="relative bg-gradient-to-br from-teal-500/20 to-teal-600/20 backdrop-blur-sm rounded-xl p-6 border border-teal-500/50 text-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent" />
                     <div className="relative z-10">
                       <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -291,9 +316,22 @@ export function WhoWeAreSection() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.9 }}
-                  className="flex-1 max-w-xs"
+                  className="flex-1 max-w-xs relative"
                 >
-                  <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 text-center">
+                  {/* Subtle static glow effect */}
+                  <motion.div
+                    className="absolute -inset-2 rounded-2xl bg-emerald-500/10 blur-xl"
+                    animate={{
+                      opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1,
+                    }}
+                  />
+                  <div className="relative bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 text-center">
                     <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
                       <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />

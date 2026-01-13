@@ -100,7 +100,6 @@ export async function GET(request: NextRequest) {
             totalParticipants,
             conversionRate: totalQuotes > 0 ? ((totalPolicies / totalQuotes) * 100).toFixed(2) : "0.00",
             averageQuoteValue: totalQuotes > 0 ? (totalRevenue / totalQuotes).toFixed(2) : "0.00",
-            optInRate: "65.00", // Mock opt-in rate
           },
           timeSeries: timeSeriesData,
           byProduct: {
@@ -228,7 +227,6 @@ export async function GET(request: NextRequest) {
           totalParticipants,
           conversionRate,
           averageQuoteValue,
-          optInRate: "65.00", // This would come from actual data
         },
         byProduct,
         topMetrics: {

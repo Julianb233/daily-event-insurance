@@ -56,6 +56,42 @@ export interface ResourceDownload {
   downloaded_at: string
 }
 
+export interface SupportConversation {
+  id: string
+  partner_id?: string
+  partner_email?: string
+  partner_name?: string
+  session_id: string
+  page_url?: string
+  onboarding_step?: number
+  topic?: string
+  tech_stack?: string
+  integration_context?: string
+  status: string
+  priority: string
+  escalated_at?: string
+  escalated_to?: string
+  escalation_reason?: string
+  resolution?: string
+  resolved_at?: string
+  helpful_rating?: number
+  feedback?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface SupportMessage {
+  id: string
+  conversation_id: string
+  role: string
+  content: string
+  content_type?: string
+  code_snippet?: string
+  code_language?: string
+  tools_used?: string
+  created_at: string
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -83,6 +119,16 @@ export interface Database {
         Row: ResourceDownload
         Insert: Omit<ResourceDownload, "id" | "downloaded_at">
         Update: Partial<Omit<ResourceDownload, "id" | "downloaded_at">>
+      }
+      support_conversations: {
+        Row: SupportConversation
+        Insert: Omit<SupportConversation, "id" | "created_at" | "updated_at">
+        Update: Partial<Omit<SupportConversation, "id" | "created_at">>
+      }
+      support_messages: {
+        Row: SupportMessage
+        Insert: Omit<SupportMessage, "id" | "created_at">
+        Update: Partial<Omit<SupportMessage, "id" | "created_at">>
       }
     }
     Views: Record<string, never>

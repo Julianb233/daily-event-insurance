@@ -448,3 +448,375 @@ export type Claim = typeof claims.$inferSelect
 export type NewClaim = typeof claims.$inferInsert
 export type ClaimDocument = typeof claimDocuments.$inferSelect
 export type NewClaimDocument = typeof claimDocuments.$inferInsert
+
+// ================= Call Center / Lead Management Tables =================
+
+// Leads - Central lead management for AI call center
+export const leads = pgTable("leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Source tracking
+  source: text("source").notNull(), // website_quote, partner_referral, cold_list, ad_campaign
+  sourceDetails: text("source_details"), // JSON: campaign_id, partner_id, etc.
+  
+  // Contact info
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  
+  // Business context
+  businessType: text("business_type"), // gym, climbing, rental, adventure
+  businessName: text("business_name"),
+  estimatedParticipants: integer("estimated_participants"),
+  
+  // Interest & Activity scoring
+  interestLevel: text("interest_level").default("cold"), // cold, warm, hot
+  interestScore: integer("interest_score").default(0), // 0-100
+  lastActivityAt: timestamp("last_activity_at"),
+  activityHistory: text("activity_history"), // JSON array of actions
+  
+  // Geographic
+  city: text("city"),
+  state: text("state"),
+  zipCode: text("zip_code"),
+  timezone: text("timezone").default("America/Los_Angeles"),
+  
+  // Lead value tracking ($40 → $100)
+  initialValue: decimal("initial_value", { precision: 10, scale: 2 }).default("40.00"),
+  convertedValue: decimal("converted_value", { precision: 10, scale: 2 }),
+  
+  // Status workflow
+  status: text("status").default("new"), // new, contacted, qualified, demo_scheduled, proposal_sent, converted, lost, dnc
+  statusReason: text("status_reason"),
+  
+  // Assignment
+  assignedAgentId: text("assigned_agent_id"), // AI agent or human
+  
+  // Conversion tracking
+  convertedAt: timestamp("converted_at"),
+  convertedPolicyId: uuid("converted_policy_id").references(() => policies.id),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("idx_leads_status").on(table.status),
+  sourceIdx: index("idx_leads_source").on(table.source),
+  interestLevelIdx: index("idx_leads_interest_level").on(table.interestLevel),
+  businessTypeIdx: index("idx_leads_business_type").on(table.businessType),
+  createdAtIdx: index("idx_leads_created_at").on(table.createdAt),
+}))
+
+// Lead communications - All call/SMS/email interactions
+export const leadCommunications = pgTable("lead_communications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }).notNull(),
+  
+  // Communication type
+  channel: text("channel").notNull(), // call, sms, email
+  direction: text("direction").notNull(), // inbound, outbound
+  
+  // Call-specific
+  callDuration: integer("call_duration"), // seconds
+  callRecordingUrl: text("call_recording_url"),
+  callTranscript: text("call_transcript"), // Full transcript JSON
+  callSummary: text("call_summary"), // AI-generated summary
+  
+  // SMS-specific
+  smsContent: text("sms_content"),
+  smsStatus: text("sms_status"), // sent, delivered, failed, received
+  
+  // Disposition
+  disposition: text("disposition"), // reached, voicemail, no_answer, busy, callback_requested, not_interested, dnc
+  nextFollowUpAt: timestamp("next_follow_up_at"),
+  
+  // AI Agent tracking
+  agentId: text("agent_id"), // Which AI agent handled
+  agentScriptUsed: text("agent_script_used"), // Script identifier
+  agentConfidenceScore: decimal("agent_confidence_score", { precision: 3, scale: 2 }), // 0.00-1.00
+  
+  // Sentiment & outcome
+  sentimentScore: decimal("sentiment_score", { precision: 3, scale: 2 }), // -1.00 to 1.00
+  outcome: text("outcome"), // positive, neutral, negative, escalate
+  
+  // LiveKit tracking
+  livekitRoomId: text("livekit_room_id"),
+  livekitSessionId: text("livekit_session_id"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  leadIdIdx: index("idx_lead_communications_lead_id").on(table.leadId),
+  channelIdx: index("idx_lead_communications_channel").on(table.channel),
+  dispositionIdx: index("idx_lead_communications_disposition").on(table.disposition),
+  createdAtIdx: index("idx_lead_communications_created_at").on(table.createdAt),
+}))
+
+// Agent scripts - Customizable AI call scripts
+export const agentScripts = pgTable("agent_scripts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  name: text("name").notNull(),
+  description: text("description"),
+  
+  // Targeting criteria
+  businessType: text("business_type"), // null = all types
+  interestLevel: text("interest_level"), // cold, warm, hot
+  geographicRegion: text("geographic_region"), // null = all regions
+  
+  // Script content
+  systemPrompt: text("system_prompt").notNull(), // Base AI instructions
+  openingScript: text("opening_script").notNull(), // How to start the call
+  keyPoints: text("key_points"), // JSON array of talking points
+  objectionHandlers: text("objection_handlers"), // JSON map of objection -> response
+  closingScript: text("closing_script"),
+  
+  // Configuration
+  maxCallDuration: integer("max_call_duration").default(300), // seconds
+  voiceId: text("voice_id").default("alloy"), // TTS voice
+  
+  isActive: boolean("is_active").default(true),
+  priority: integer("priority").default(0), // Higher = preferred
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  businessTypeIdx: index("idx_agent_scripts_business_type").on(table.businessType),
+  interestLevelIdx: index("idx_agent_scripts_interest_level").on(table.interestLevel),
+  activeIdx: index("idx_agent_scripts_active").on(table.isActive),
+}))
+
+// Scheduled actions - Cron-driven follow-ups and reminders
+export const scheduledActions = pgTable("scheduled_actions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }).notNull(),
+  
+  actionType: text("action_type").notNull(), // call, sms, email
+  scheduledFor: timestamp("scheduled_for").notNull(),
+  
+  // Context
+  reason: text("reason"), // follow_up, reminder, callback_requested
+  scriptId: uuid("script_id").references(() => agentScripts.id),
+  customMessage: text("custom_message"),
+  
+  // Status
+  status: text("status").default("pending"), // pending, processing, completed, failed, cancelled
+  attempts: integer("attempts").default(0),
+  maxAttempts: integer("max_attempts").default(3),
+  
+  processedAt: timestamp("processed_at"),
+  error: text("error"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  leadIdIdx: index("idx_scheduled_actions_lead_id").on(table.leadId),
+  scheduledForIdx: index("idx_scheduled_actions_scheduled_for").on(table.scheduledFor),
+  statusIdx: index("idx_scheduled_actions_status").on(table.status),
+}))
+
+// Conversion events - Track the $40→$100 journey
+export const conversionEvents = pgTable("conversion_events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => leads.id).notNull(),
+  
+  eventType: text("event_type").notNull(), // page_view, quote_started, call_completed, demo_scheduled, proposal_viewed, converted
+  eventValue: decimal("event_value", { precision: 10, scale: 2 }), // Attributed value
+  
+  metadata: text("metadata"), // JSON with event details
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  leadIdIdx: index("idx_conversion_events_lead_id").on(table.leadId),
+  eventTypeIdx: index("idx_conversion_events_event_type").on(table.eventType),
+  createdAtIdx: index("idx_conversion_events_created_at").on(table.createdAt),
+}))
+
+// Type exports for call center tables
+export type Lead = typeof leads.$inferSelect
+export type NewLead = typeof leads.$inferInsert
+export type LeadCommunication = typeof leadCommunications.$inferSelect
+export type NewLeadCommunication = typeof leadCommunications.$inferInsert
+export type AgentScript = typeof agentScripts.$inferSelect
+export type NewAgentScript = typeof agentScripts.$inferInsert
+export type ScheduledAction = typeof scheduledActions.$inferSelect
+export type NewScheduledAction = typeof scheduledActions.$inferInsert
+export type ConversionEvent = typeof conversionEvents.$inferSelect
+export type NewConversionEvent = typeof conversionEvents.$inferInsert
+
+// ================= Partner Integration Support Agent Tables =================
+
+// Support conversations - for partner integration help
+export const supportConversations = pgTable("support_conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Partner info
+  partnerId: uuid("partner_id").references(() => partners.id),
+  partnerEmail: text("partner_email"),
+  partnerName: text("partner_name"),
+  
+  // Session info
+  sessionId: text("session_id").notNull(),
+  pageUrl: text("page_url"),
+  onboardingStep: integer("onboarding_step"),
+  
+  // Technical context
+  topic: text("topic"), // onboarding, widget_install, api_integration, pos_setup, troubleshooting
+  techStack: text("tech_stack"), // JSON: { framework: "react", pos: "mindbody", etc. }
+  integrationContext: text("integration_context"), // JSON with current integration state
+  
+  // Status
+  status: text("status").default("active"), // active, resolved, escalated, abandoned
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  
+  // Escalation
+  escalatedAt: timestamp("escalated_at"),
+  escalatedTo: uuid("escalated_to").references(() => users.id),
+  escalationReason: text("escalation_reason"),
+  
+  // Resolution
+  resolution: text("resolution"),
+  resolvedAt: timestamp("resolved_at"),
+  
+  // Satisfaction
+  helpfulRating: integer("helpful_rating"),
+  feedback: text("feedback"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_support_conversations_partner_id").on(table.partnerId),
+  statusIdx: index("idx_support_conversations_status").on(table.status),
+  topicIdx: index("idx_support_conversations_topic").on(table.topic),
+  createdAtIdx: index("idx_support_conversations_created_at").on(table.createdAt),
+}))
+
+// Support messages - individual messages in a conversation
+export const supportMessages = pgTable("support_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id, { onDelete: "cascade" }).notNull(),
+  
+  // Sender
+  role: text("role").notNull(), // user, assistant, system
+  
+  // Content
+  content: text("content").notNull(),
+  contentType: text("content_type").default("text"), // text, code, error, action
+  
+  // Code snippets shared
+  codeSnippet: text("code_snippet"),
+  codeLanguage: text("code_language"),
+  
+  // AI metadata
+  toolsUsed: text("tools_used"), // JSON array of tools called
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  conversationIdIdx: index("idx_support_messages_conversation_id").on(table.conversationId),
+  roleIdx: index("idx_support_messages_role").on(table.role),
+  createdAtIdx: index("idx_support_messages_created_at").on(table.createdAt),
+}))
+
+// Screen recordings for onboarding assistance
+export const onboardingRecordings = pgTable("onboarding_recordings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Owner
+  partnerId: uuid("partner_id").references(() => partners.id),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id),
+  
+  // Recording info
+  recordingUrl: text("recording_url").notNull(),
+  duration: integer("duration"),
+  
+  // Context
+  onboardingStep: integer("onboarding_step"),
+  stepName: text("step_name"),
+  
+  // Issues detected
+  issuesDetected: text("issues_detected"), // JSON array of detected problems
+  
+  // Status
+  status: text("status").default("processing"), // processing, ready, analyzed, failed
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_onboarding_recordings_partner_id").on(table.partnerId),
+  conversationIdIdx: index("idx_onboarding_recordings_conversation_id").on(table.conversationId),
+  statusIdx: index("idx_onboarding_recordings_status").on(table.status),
+}))
+
+// Integration documentation - for RAG
+export const integrationDocs = pgTable("integration_docs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Content
+  title: text("title").notNull(),
+  slug: text("slug").unique().notNull(),
+  content: text("content").notNull(),
+  
+  // Categorization
+  category: text("category").notNull(), // widget, api, pos, webhook, troubleshooting
+  posSystem: text("pos_system"),
+  framework: text("framework"),
+  
+  // Search
+  embedding: text("embedding"), // Vector embedding for semantic search
+  
+  // Code examples
+  codeExamples: text("code_examples"), // JSON array of code snippets
+  
+  isPublished: boolean("is_published").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("idx_integration_docs_category").on(table.category),
+  posSystemIdx: index("idx_integration_docs_pos_system").on(table.posSystem),
+  frameworkIdx: index("idx_integration_docs_framework").on(table.framework),
+  publishedIdx: index("idx_integration_docs_published").on(table.isPublished),
+}))
+
+// Partner integration status tracking
+export const partnerIntegrations = pgTable("partner_integrations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
+  
+  // Integration type
+  integrationType: text("integration_type").notNull(), // widget, api, pos
+  posSystem: text("pos_system"),
+  
+  // Status
+  status: text("status").default("pending"), // pending, configured, testing, live, failed
+  
+  // Configuration
+  configuration: text("configuration"), // JSON with integration settings
+  apiKeyGenerated: boolean("api_key_generated").default(false),
+  webhookConfigured: boolean("webhook_configured").default(false),
+  
+  // Testing
+  lastTestedAt: timestamp("last_tested_at"),
+  testResult: text("test_result"),
+  testErrors: text("test_errors"), // JSON array of errors
+  
+  // Go live
+  wentLiveAt: timestamp("went_live_at"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_integrations_partner_id").on(table.partnerId),
+  integrationTypeIdx: index("idx_partner_integrations_type").on(table.integrationType),
+  statusIdx: index("idx_partner_integrations_status").on(table.status),
+}))
+
+// Type exports for integration support tables
+export type SupportConversation = typeof supportConversations.$inferSelect
+export type NewSupportConversation = typeof supportConversations.$inferInsert
+export type SupportMessage = typeof supportMessages.$inferSelect
+export type NewSupportMessage = typeof supportMessages.$inferInsert
+export type OnboardingRecording = typeof onboardingRecordings.$inferSelect
+export type NewOnboardingRecording = typeof onboardingRecordings.$inferInsert
+export type IntegrationDoc = typeof integrationDocs.$inferSelect
+export type NewIntegrationDoc = typeof integrationDocs.$inferInsert
+export type PartnerIntegration = typeof partnerIntegrations.$inferSelect
+export type NewPartnerIntegration = typeof partnerIntegrations.$inferInsert

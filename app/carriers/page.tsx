@@ -33,7 +33,7 @@ import {
 import { carrierCategories, carrierCategoryIconMap } from "@/lib/carrier-category-data"
 
 const heroStats = [
-  { value: "68%", label: "Average Opt-In Rate" },
+  { value: "100%", label: "Coverage Rate" },
   { value: "4x", label: "Lower CAC vs Traditional" },
   { value: "$0", label: "Upfront Integration Cost" },
 ]
@@ -80,8 +80,8 @@ const howItWorks = [
   },
   {
     step: "02",
-    title: "Participants Opt Into Coverage",
-    description: "During checkout or registration, participants see your coverage offer. One click to add protection. 68% average opt-in rate.",
+    title: "Participants Receive Coverage",
+    description: "During checkout or registration, participants receive comprehensive coverage. One-click activation with instant protection.",
     icon: UserCheck
   },
   {
@@ -329,7 +329,7 @@ export default function CarriersPage() {
               Acquire Customers Where
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 animate-gradient">
-                They're Already Active
+                They&apos;re Already Active
               </span>
             </motion.h1>
 
@@ -631,7 +631,7 @@ export default function CarriersPage() {
               Underwriting Intelligence
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                Traditional Carriers Can't Access
+                Traditional Carriers Can&apos;t Access
               </span>
             </h2>
             <p className="text-lg text-slate-300 max-w-3xl mx-auto">
@@ -855,9 +855,9 @@ export default function CarriersPage() {
                           <div className="flex gap-6">
                             <div>
                               <div className={`text-lg font-bold ${colors.textDark}`}>
-                                {category.marketStats.optInRate}
+                                100%
                               </div>
-                              <div className="text-xs text-slate-500">Opt-In Rate</div>
+                              <div className="text-xs text-slate-500">Coverage Rate</div>
                             </div>
                             <div>
                               <div className={`text-lg font-bold ${colors.textDark}`}>
@@ -925,7 +925,7 @@ export default function CarriersPage() {
               transition={{ delay: 0.2 }}
             >
               Join forward-thinking carriers who are acquiring customers through embedded,
-              event-triggered distribution. Let's build the future of insurance together.
+              event-triggered distribution. Let&apos;s build the future of insurance together.
             </motion.p>
 
             <motion.div

@@ -487,14 +487,14 @@ export default function LeadFlowPage() {
               </span>
             </h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              These aren't cold leads—they're verified, active participants who've already demonstrated
+              These aren&apos;t cold leads—they&apos;re verified, active participants who&apos;ve already demonstrated
               interest in protection.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Target, title: "68%", subtitle: "Average Opt-In Rate", desc: "Intent-rich leads ready to engage" },
+              { icon: Target, title: "100%", subtitle: "Coverage Rate", desc: "All participants receive protection" },
               { icon: TrendingUp, title: "4x", subtitle: "Lower CAC", desc: "Vs. traditional acquisition channels" },
               { icon: Users, title: "25-45", subtitle: "Age Demo Sweet Spot", desc: "Hard-to-reach active lifestyle segment" },
               { icon: Zap, title: "Real-Time", subtitle: "Data Delivery", desc: "Leads flow instantly to your systems" }

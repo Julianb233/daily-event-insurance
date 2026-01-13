@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Footer() {
   return (
@@ -20,7 +21,7 @@ export default function Footer() {
                 Daily Event Insurance
               </h3>
               <p className="text-sm text-[#14B8A6] font-medium mb-4">
-                A HiQOR Company
+                A High-Core Partner
               </p>
               <p className="text-sm text-[#64748B] leading-relaxed mb-6">
                 Empowering fitness businesses with embedded insurance technology.
@@ -123,11 +124,11 @@ export default function Footer() {
               Ready to start earning commission? Sign up today—no contracts, no setup fees.
             </p>
 
-            {/* CTA Button */}
-            <motion.div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col gap-3">
               <Link
                 href="/#apply"
-                className="inline-flex items-center gap-2 bg-[#14B8A6] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0D9488] transition-colors text-sm"
+                className="inline-flex items-center justify-center gap-2 bg-[#14B8A6] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0D9488] transition-colors text-sm"
               >
                 Get Started Today
                 <svg
@@ -144,12 +145,40 @@ export default function Footer() {
                   />
                 </svg>
               </Link>
-            </motion.div>
 
-            {/* Contact */}
-            <div className="mt-6">
+              {/* Click-to-Call CTA */}
+              <a
+                href="tel:+15551234567"
+                className="inline-flex items-center justify-center gap-2 bg-white text-[#14B8A6] font-semibold px-6 py-3 rounded-lg border-2 border-[#14B8A6] hover:bg-[#F0FDFA] transition-colors text-sm"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                Talk to a Specialist
+              </a>
+            </div>
+
+            {/* Contact Info */}
+            <div className="mt-6 space-y-2">
               <p className="text-sm text-[#64748B]">
-                Questions? Email us at{" "}
+                <a
+                  href="tel:+15551234567"
+                  className="text-[#14B8A6] hover:text-[#0D9488] font-medium"
+                >
+                  (555) 123-4567
+                </a>
+              </p>
+              <p className="text-sm text-[#64748B]">
                 <a
                   href="mailto:partners@dailyeventinsurance.com"
                   className="text-[#14B8A6] hover:text-[#0D9488] font-medium"
@@ -161,13 +190,50 @@ export default function Footer() {
           </motion.div>
         </div>
 
+        {/* High-Core Partnership Disclosure */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mb-8 p-6 bg-[#F8FAFC] rounded-xl border border-gray-200"
+        >
+          <h4 className="text-sm font-bold text-[#1E293B] uppercase tracking-wider mb-3">
+            Partnership Disclosure
+          </h4>
+          <p className="text-xs text-[#64748B] leading-relaxed">
+            <strong>Important:</strong> Daily Event Insurance is an independent company and is not owned by,
+            controlled by, or a subsidiary of High-Core. We operate as a High-Core Partner through a referral
+            partnership arrangement. High-Core does not underwrite, sell, or administer insurance policies
+            offered through Daily Event Insurance. This partnership allows us to provide enhanced services
+            to our customers while maintaining our independence as a separate business entity. For questions
+            about our partnership, please contact us at{" "}
+            <a
+              href="mailto:partners@dailyeventinsurance.com"
+              className="text-[#14B8A6] hover:text-[#0D9488]"
+            >
+              partners@dailyeventinsurance.com
+            </a>.
+          </p>
+        </motion.div>
+
         {/* Divider */}
         <div className="border-t border-gray-200 pt-8">
-          {/* Bottom bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-[#64748B] font-medium">
-              © {new Date().getFullYear()} Daily Event Insurance. All rights reserved.
-            </p>
+          {/* Bottom bar with logo on left */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            {/* Logo on the left */}
+            <div className="flex items-center gap-4">
+              <Image
+                src="/images/logo-color.png"
+                alt="Daily Event Insurance"
+                width={120}
+                height={40}
+                className="h-10 w-auto"
+              />
+              <p className="text-sm text-[#64748B] font-medium">
+                © {new Date().getFullYear()} Daily Event Insurance. All rights reserved.
+              </p>
+            </div>
 
             {/* Legal Links */}
             <div className="flex items-center gap-6 text-sm text-[#64748B]">
@@ -183,15 +249,16 @@ export default function Footer() {
             </div>
 
             <div className="flex items-center gap-2 text-sm text-[#64748B]">
-              <span>Powered by</span>
+              <span>A</span>
               <Link
-                href="https://hiqor.com"
+                href="https://high-core.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-[#14B8A6] hover:text-[#0D9488] transition-colors"
               >
-                HiQOR
+                High-Core
               </Link>
+              <span>Partner</span>
             </div>
           </div>
 

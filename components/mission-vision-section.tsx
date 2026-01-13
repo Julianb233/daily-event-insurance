@@ -93,7 +93,20 @@ export function MissionVisionSection() {
               transition={{ duration: 0.3 }}
               className="relative h-full"
             >
-              {/* Glow effect on hover */}
+              {/* Subtle static glow effect behind the card */}
+              <motion.div
+                className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-teal-500/8 via-teal-400/12 to-teal-500/8 blur-2xl"
+                animate={{
+                  opacity: [0.4, 0.6, 0.4],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              {/* Enhanced glow effect on hover */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-teal-500/20 via-teal-400/30 to-teal-500/20 blur-xl"
                 initial={{ opacity: 0 }}
@@ -140,7 +153,21 @@ export function MissionVisionSection() {
               transition={{ duration: 0.3 }}
               className="relative h-full"
             >
-              {/* Glow effect on hover */}
+              {/* Subtle static glow effect behind the card */}
+              <motion.div
+                className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-sky-500/8 via-sky-400/12 to-sky-500/8 blur-2xl"
+                animate={{
+                  opacity: [0.4, 0.6, 0.4],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+              />
+              {/* Enhanced glow effect on hover */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-sky-500/20 via-sky-400/30 to-sky-500/20 blur-xl"
                 initial={{ opacity: 0 }}
@@ -187,8 +214,8 @@ export function MissionVisionSection() {
             <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 border border-teal-100 shadow-lg">
               <Quote className="w-10 h-10 text-teal-500/30 mx-auto mb-4" />
               <p className="text-lg md:text-xl text-slate-700 italic leading-relaxed mb-6">
-                "We believe the future of insurance isn't about selling policies—it's about enabling moments.
-                When you align coverage to behavior, everyone wins."
+                &quot;We believe the future of insurance isn&apos;t about selling policies—it&apos;s about enabling moments.
+                When you align coverage to behavior, everyone wins.&quot;
               </p>
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold">

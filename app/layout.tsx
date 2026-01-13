@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next"
 import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
 import { SessionProvider } from "@/components/providers/session-provider"
+import { VoiceAgentProvider } from "@/lib/voice/voice-context"
+import { VoiceAgentGlobal } from "@/components/voice"
 import "./globals.css"
 
 const roboto = Roboto({
@@ -48,14 +50,14 @@ export const metadata: Metadata = {
     "rental insurance",
     "member coverage",
     "business insurance",
-    "HiQOR",
+    "High-Core",
     "instant insurance",
     "liability coverage",
     "member benefits",
     "revenue stream"
   ],
-  authors: [{ name: "HiQOR" }],
-  creator: "HiQOR",
+  authors: [{ name: "Daily Event Insurance" }],
+  creator: "Daily Event Insurance",
   publisher: "Daily Event Insurance",
   openGraph: {
     title: "Daily Event Insurance | Same-Day Coverage for Business Members",
@@ -120,8 +122,8 @@ export default function RootLayout({
     "image": "https://dailyeventinsurance.com/images/og-image.png",
     "provider": {
       "@type": "Organization",
-      "name": "HiQOR",
-      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members"
+      "name": "Daily Event Insurance",
+      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members (a High-Core partner)"
     },
     "areaServed": {
       "@type": "Country",
@@ -161,7 +163,10 @@ export default function RootLayout({
         className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable}`}
       >
         <SessionProvider>
-          <SmoothScroll>{children}</SmoothScroll>
+          <VoiceAgentProvider>
+            <SmoothScroll>{children}</SmoothScroll>
+            <VoiceAgentGlobal />
+          </VoiceAgentProvider>
         </SessionProvider>
         <Analytics />
       </body>
