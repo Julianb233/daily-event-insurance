@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-console.log("--- LOADED API/ADMIN/MICROSITES/ROUTE ---");
 import { requireAdmin, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, microsites, partners, adminEarnings } from "@/lib/db"
 import { eq, sql, count, desc, asc, ilike, or, and } from "drizzle-orm"
@@ -170,9 +169,7 @@ export async function POST(request: NextRequest) {
         return badRequest("Slug already exists")
       }
 
-
-
-      console.log("[Microsites Debug] Inserting microsite...");
+      // Create microsite
       const [newMicrosite] = await db!
         .insert(microsites)
         .values({
@@ -186,8 +183,7 @@ export async function POST(request: NextRequest) {
           setupFee: "550.00",
           feeCollected: false,
         })
-        .returning({ id: microsites.id, slug: microsites.slug }); // Explicit return to avoid mapping issues
-      console.log("[Microsites Debug] Microsite created:", newMicrosite);
+        .returning()
 
       // Create admin earnings record for $550 setup fee
       await db!

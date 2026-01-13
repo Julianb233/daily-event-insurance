@@ -14,21 +14,21 @@ export default function SupportPage() {
             description: "Complete documentation on how to integrate and maximize your partnership.",
             icon: BookOpen,
             action: "Read Guide",
-            href: "#"
+            href: "/support/docs"
         },
         {
             title: "Marketing Assets",
             description: "Logos, banners, and templates to help you promote insurance to your members.",
             icon: Download,
             action: "Download Kit",
-            href: "#"
+            href: "/support/resources"
         },
         {
             title: "API Documentation",
             description: "Technical specifications for integrating our insurance engine directly into your platform.",
             icon: FileText,
             action: "View Docs",
-            href: "/partners/api-docs" // Placeholder link
+            href: "/support/docs"
         }
     ]
 

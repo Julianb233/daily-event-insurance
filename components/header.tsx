@@ -98,7 +98,7 @@ export default function Header() {
     const elementId = href.replace("#", "")
     const element = document.getElementById(elementId)
     if (element) {
-      const headerOffset = 80
+      const headerOffset = 120
       const elementPosition = element.getBoundingClientRect().top
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset
 
@@ -133,11 +133,10 @@ export default function Header() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
             ? "bg-white shadow-[0_1px_3px_0_rgb(0,0,0,0.1),0_1px_2px_-1px_rgb(0,0,0,0.1)]"
             : "bg-white border-b border-gray-100"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -198,9 +197,8 @@ export default function Header() {
                 >
                   More
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      moreOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-200 ${moreOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </motion.button>
 
@@ -246,9 +244,8 @@ export default function Header() {
                 >
                   Industries
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      categoriesOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-200 ${categoriesOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </motion.button>
 
@@ -274,12 +271,11 @@ export default function Header() {
                               transition={{ delay: idx * 0.05 }}
                               className="flex items-start gap-3 px-3 py-3 rounded-lg hover:bg-slate-50 transition-colors group"
                             >
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                                category.color === 'teal' ? 'bg-teal-100 text-teal-600' :
-                                category.color === 'sky' ? 'bg-sky-100 text-sky-600' :
-                                category.color === 'purple' ? 'bg-purple-100 text-purple-600' :
-                                'bg-orange-100 text-orange-600'
-                              }`}>
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${category.color === 'teal' ? 'bg-teal-100 text-teal-600' :
+                                  category.color === 'sky' ? 'bg-sky-100 text-sky-600' :
+                                    category.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                      'bg-orange-100 text-orange-600'
+                                }`}>
                                 <Icon className="w-5 h-5" />
                               </div>
                               <div>
@@ -455,9 +451,8 @@ export default function Header() {
                   >
                     Industries
                     <ChevronDown
-                      className={`w-5 h-5 transition-transform duration-200 ${
-                        mobileCategoriesOpen ? "rotate-180" : ""
-                      }`}
+                      className={`w-5 h-5 transition-transform duration-200 ${mobileCategoriesOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 

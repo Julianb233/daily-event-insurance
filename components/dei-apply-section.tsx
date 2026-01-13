@@ -276,11 +276,10 @@ export function ApplySection() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => setSelectedOption(option.id)}
-                className={`w-full p-5 rounded-xl text-left transition-all flex items-start gap-4 group ${
-                  selectedOption === option.id
-                    ? "bg-gradient-to-r from-teal-500/20 to-teal-600/20 border-2 border-teal-400"
-                    : "bg-white/5 border-2 border-transparent hover:border-teal-200"
-                }`}
+                className={`w-full p-5 rounded-xl text-left transition-all flex items-start gap-4 group ${selectedOption === option.id
+                  ? "bg-gradient-to-r from-teal-500/20 to-teal-600/20 border-2 border-teal-400"
+                  : "bg-white/5 border-2 border-transparent hover:border-teal-200"
+                  }`}
               >
                 <div
                   className={`${selectedOption === option.id ? "text-teal-600" : "text-slate-400 group-hover:text-slate-700"} transition-colors`}
@@ -580,9 +579,9 @@ export function ApplySection() {
                 ) : (
                   <>
                     <div className="text-center mb-6">
-                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Apply in 10 Minutes</h3>
+                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Live in 24 Hours</h3>
                       <p className="text-slate-600 mb-4">
-                        Quick 10-minute application. Live in 48 hours. $4,200/month average revenue.
+                        $0 setup fee • $0 cost to customers • Live in 24 hours • $4,200/month average revenue.
                       </p>
 
                       {/* Quick Stats */}
@@ -592,7 +591,7 @@ export function ApplySection() {
                           <div className="text-xs text-slate-500">Application</div>
                         </div>
                         <div className="text-center border-x border-teal-200">
-                          <div className="text-2xl font-bold text-teal-600">48hrs</div>
+                          <div className="text-2xl font-bold text-teal-600">24hrs</div>
                           <div className="text-xs text-slate-500">Go Live</div>
                         </div>
                         <div className="text-center">
@@ -698,19 +697,17 @@ export function ApplySection() {
                               type="button"
                               onClick={() => setSelectedBusinessType(type.id)}
                               disabled={isSubmitting}
-                              className={`w-full p-4 rounded-lg text-left transition-all flex items-start gap-4 ${
-                                selectedBusinessType === type.id
-                                  ? "bg-gradient-to-r from-teal-500/20 to-teal-600/20 border-2 border-teal-400"
-                                  : "bg-white/5 border-2 border-transparent hover:border-teal-200"
-                              }`}
+                              className={`w-full p-4 rounded-lg text-left transition-all flex items-start gap-4 ${selectedBusinessType === type.id
+                                ? "bg-gradient-to-r from-teal-500/20 to-teal-600/20 border-2 border-teal-400"
+                                : "bg-white/5 border-2 border-transparent hover:border-teal-200"
+                                }`}
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
                             >
-                              <div className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${
-                                selectedBusinessType === type.id
-                                  ? "border-teal-400 bg-teal-500/20"
-                                  : "border-white/30"
-                              }`}>
+                              <div className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center border-2 ${selectedBusinessType === type.id
+                                ? "border-teal-400 bg-teal-500/20"
+                                : "border-white/30"
+                                }`}>
                                 {selectedBusinessType === type.id && (
                                   <div className="w-3 h-3 rounded-full bg-teal-400" />
                                 )}

@@ -90,7 +90,7 @@ export default function HeroSection() {
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-600 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
               </motion.button>
 
-              {/* Secondary CTA - Talk to Specialist */}
+              {/* Secondary CTA - Start Chat */}
               <motion.button
                 onClick={openVoiceAgent}
                 whileHover={{ scale: 1.03 }}
@@ -98,7 +98,7 @@ export default function HeroSection() {
                 className="group inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-teal-700 bg-white border-2 border-teal-600 rounded-xl hover:bg-teal-50 transition-all duration-300 cursor-pointer"
               >
                 <MessageCircle className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                <span>Talk to a Specialist</span>
+                <span>Chat Now • $0 Setup</span>
               </motion.button>
             </motion.div>
 
