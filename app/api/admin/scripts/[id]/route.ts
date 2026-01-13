@@ -1,178 +1,178 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, agentScripts } from "@/lib/db"
+import { db } from "@/lib/db"
+import { agentScripts } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { isDevMode } from "@/lib/mock-data"
-import {
-  successResponse,
-  notFoundError,
-  serverError,
-  validationError,
-} from "@/lib/api-responses"
-import { z } from "zod"
 
-type RouteContext = {
+interface RouteParams {
   params: Promise<{ id: string }>
-}
-
-const updateScriptSchema = z.object({
-  name: z.string().min(1).max(200).optional(),
-  description: z.string().max(1000).optional().nullable(),
-  businessType: z.string().max(50).optional().nullable(),
-  interestLevel: z.enum(["cold", "warm", "hot"]).optional().nullable(),
-  geographicRegion: z.string().max(100).optional().nullable(),
-  systemPrompt: z.string().min(1).optional(),
-  openingScript: z.string().min(1).optional(),
-  keyPoints: z.string().optional().nullable(),
-  objectionHandlers: z.string().optional().nullable(),
-  closingScript: z.string().optional().nullable(),
-  maxCallDuration: z.number().int().min(60).max(3600).optional(),
-  voiceId: z.string().max(50).optional(),
-  isActive: z.boolean().optional(),
-  priority: z.number().int().min(0).max(100).optional(),
-})
-
-const mockScript = {
-  id: "s1",
-  name: "Cold Outreach - Gym",
-  description: "Initial outreach script for gym prospects",
-  businessType: "gym",
-  interestLevel: "cold",
-  geographicRegion: null,
-  systemPrompt: "You are an AI sales agent for Daily Event Insurance...",
-  openingScript: "Hi, this is Alex from Daily Event Insurance...",
-  keyPoints: JSON.stringify(["Low cost per participant", "$4.99 coverage", "No paperwork"]),
-  objectionHandlers: JSON.stringify({ "too expensive": "Our coverage is just $4.99 per participant..." }),
-  closingScript: "Would you like to schedule a quick demo?",
-  maxCallDuration: 300,
-  voiceId: "alloy",
-  isActive: true,
-  priority: 10,
-  createdAt: "2024-12-15T00:00:00Z",
-  updatedAt: "2024-12-20T00:00:00Z",
 }
 
 /**
  * GET /api/admin/scripts/[id]
- * Get a single agent script
  */
-export async function GET(request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   return withAuth(async () => {
-    try {
-      await requireAdmin()
-      const { id } = await context.params
+    await requireAdmin()
+    const { id } = await params
 
-      if (isDevMode || !isDbConfigured()) {
-        return successResponse({ ...mockScript, id })
+    try {
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
+        )
       }
 
-      const [script] = await db!
+      const [script] = await db
         .select()
         .from(agentScripts)
         .where(eq(agentScripts.id, id))
         .limit(1)
 
       if (!script) {
-        return notFoundError("Script")
+        return NextResponse.json(
+          { success: false, error: "Script not found" },
+          { status: 404 }
+        )
       }
 
-      return successResponse(script)
-    } catch (error: any) {
-      console.error("[Admin Script] GET Error:", error)
-      return serverError(error.message || "Failed to fetch script")
+      return NextResponse.json({
+        success: true,
+        data: script,
+      })
+    } catch (error) {
+      console.error("[Script] GET Error:", error)
+      return NextResponse.json(
+        { success: false, error: "Failed to fetch script" },
+        { status: 500 }
+      )
     }
   })
 }
 
 /**
  * PATCH /api/admin/scripts/[id]
- * Update an agent script
  */
-export async function PATCH(request: NextRequest, context: RouteContext) {
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
   return withAuth(async () => {
-    try {
-      await requireAdmin()
-      const { id } = await context.params
-      const body = await request.json()
+    await requireAdmin()
+    const { id } = await params
 
-      const validationResult = updateScriptSchema.safeParse(body)
-      if (!validationResult.success) {
-        return validationError(
-          "Invalid script data",
-          validationResult.error.flatten().fieldErrors
+    try {
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
         )
       }
 
-      const data = validationResult.data
+      const body = await request.json()
 
-      if (isDevMode || !isDbConfigured()) {
-        return successResponse({
-          ...mockScript,
-          id,
-          ...data,
-          updatedAt: new Date().toISOString(),
-        }, "Script updated")
+      const [existing] = await db
+        .select()
+        .from(agentScripts)
+        .where(eq(agentScripts.id, id))
+        .limit(1)
+
+      if (!existing) {
+        return NextResponse.json(
+          { success: false, error: "Script not found" },
+          { status: 404 }
+        )
       }
 
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, unknown> = {
         updatedAt: new Date(),
       }
 
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined) {
-          updateData[key] = value
-        }
-      })
+      const allowedFields = [
+        "name",
+        "description",
+        "businessType",
+        "interestLevel",
+        "geographicRegion",
+        "systemPrompt",
+        "openingScript",
+        "closingScript",
+        "maxCallDuration",
+        "voiceId",
+        "isActive",
+        "priority",
+      ]
 
-      const [updated] = await db!
+      for (const field of allowedFields) {
+        if (body[field] !== undefined) {
+          updateData[field] = body[field]
+        }
+      }
+
+      // Handle JSON fields
+      if (body.keyPoints !== undefined) {
+        updateData.keyPoints = JSON.stringify(body.keyPoints)
+      }
+      if (body.objectionHandlers !== undefined) {
+        updateData.objectionHandlers = JSON.stringify(body.objectionHandlers)
+      }
+
+      const [updated] = await db
         .update(agentScripts)
         .set(updateData)
         .where(eq(agentScripts.id, id))
         .returning()
 
-      if (!updated) {
-        return notFoundError("Script")
-      }
-
-      return successResponse(updated, "Script updated")
-    } catch (error: any) {
-      console.error("[Admin Script] PATCH Error:", error)
-      return serverError(error.message || "Failed to update script")
+      return NextResponse.json({
+        success: true,
+        data: updated,
+      })
+    } catch (error) {
+      console.error("[Script] PATCH Error:", error)
+      return NextResponse.json(
+        { success: false, error: "Failed to update script" },
+        { status: 500 }
+      )
     }
   })
 }
 
 /**
  * DELETE /api/admin/scripts/[id]
- * Delete an agent script (soft delete by deactivating)
  */
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   return withAuth(async () => {
-    try {
-      await requireAdmin()
-      const { id } = await context.params
+    await requireAdmin()
+    const { id } = await params
 
-      if (isDevMode || !isDbConfigured()) {
-        return successResponse({ id }, "Script deleted")
+    try {
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
+        )
       }
 
-      const [deleted] = await db!
-        .update(agentScripts)
-        .set({
-          isActive: false,
-          updatedAt: new Date(),
-        })
+      const [deleted] = await db
+        .delete(agentScripts)
         .where(eq(agentScripts.id, id))
         .returning()
 
       if (!deleted) {
-        return notFoundError("Script")
+        return NextResponse.json(
+          { success: false, error: "Script not found" },
+          { status: 404 }
+        )
       }
 
-      return successResponse({ id }, "Script deleted")
-    } catch (error: any) {
-      console.error("[Admin Script] DELETE Error:", error)
-      return serverError(error.message || "Failed to delete script")
+      return NextResponse.json({
+        success: true,
+        message: "Script deleted successfully",
+      })
+    } catch (error) {
+      console.error("[Script] DELETE Error:", error)
+      return NextResponse.json(
+        { success: false, error: "Failed to delete script" },
+        { status: 500 }
+      )
     }
   })
 }

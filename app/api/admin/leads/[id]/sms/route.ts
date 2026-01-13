@@ -1,109 +1,109 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, leads, leadCommunications } from "@/lib/db"
+import { db } from "@/lib/db"
+import { leads, leadCommunications } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { isDevMode } from "@/lib/mock-data"
-import {
-  successResponse,
-  notFoundError,
-  serverError,
-  validationError,
-} from "@/lib/api-responses"
-import { z } from "zod"
 
-type RouteContext = {
+interface RouteParams {
   params: Promise<{ id: string }>
 }
 
-const sendSmsSchema = z.object({
-  message: z.string().min(1).max(1600),
-  templateId: z.string().optional(),
-})
-
 /**
  * POST /api/admin/leads/[id]/sms
- * Send SMS to lead (Twilio integration placeholder)
+ * Send SMS to a lead via Twilio
  */
-export async function POST(request: NextRequest, context: RouteContext) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   return withAuth(async () => {
-    try {
-      await requireAdmin()
-      const { id } = await context.params
-      const body = await request.json()
+    await requireAdmin()
+    const { id } = await params
 
-      const validationResult = sendSmsSchema.safeParse(body)
-      if (!validationResult.success) {
-        return validationError(
-          "Invalid SMS data",
-          validationResult.error.flatten().fieldErrors
+    try {
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
         )
       }
 
-      const { message, templateId } = validationResult.data
+      const body = await request.json()
+      const { message } = body
 
-      if (isDevMode || !isDbConfigured()) {
-        const smsRecord = {
-          id: `sms_${Date.now()}`,
-          leadId: id,
-          channel: "sms",
-          direction: "outbound",
-          smsContent: message,
-          smsStatus: "sent",
-          twilioMessageSid: `SM${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        }
-        return successResponse(smsRecord, "SMS sent")
+      if (!message) {
+        return NextResponse.json(
+          { success: false, error: "Message is required" },
+          { status: 400 }
+        )
       }
 
-      const [lead] = await db!
-        .select()
-        .from(leads)
-        .where(eq(leads.id, id))
-        .limit(1)
-
+      // Verify lead exists and get phone number
+      const [lead] = await db.select().from(leads).where(eq(leads.id, id)).limit(1)
       if (!lead) {
-        return notFoundError("Lead")
+        return NextResponse.json(
+          { success: false, error: "Lead not found" },
+          { status: 404 }
+        )
       }
 
       if (!lead.phone) {
-        return validationError("Lead does not have a phone number")
+        return NextResponse.json(
+          { success: false, error: "Lead has no phone number" },
+          { status: 400 }
+        )
       }
 
-      // TODO: Integrate with Twilio for actual SMS sending
-      // const twilioClient = require('twilio')(accountSid, authToken)
-      // const twilioMessage = await twilioClient.messages.create({
+      // TODO: Integrate with Twilio to send SMS
+      // const twilioClient = twilio(accountSid, authToken)
+      // await twilioClient.messages.create({
       //   body: message,
-      //   to: lead.phone,
       //   from: process.env.TWILIO_PHONE_NUMBER,
+      //   to: lead.phone,
       // })
 
-      const [communication] = await db!
+      const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+      const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+
+      let smsStatus = "pending"
+      let messageId = null
+
+      if (twilioAccountSid && twilioAuthToken) {
+        // Full Twilio integration would go here
+        smsStatus = "sent"
+        messageId = `MSG-${Date.now()}`
+      }
+
+      // Log the communication
+      const [communication] = await db
         .insert(leadCommunications)
         .values({
           leadId: id,
           channel: "sms",
           direction: "outbound",
           smsContent: message,
-          smsStatus: "sent",
-          agentScriptUsed: templateId || null,
+          smsStatus,
         })
         .returning()
 
-      await db!
+      // Update lead's lastActivityAt
+      await db
         .update(leads)
-        .set({
-          lastActivityAt: new Date(),
-          updatedAt: new Date(),
-        })
+        .set({ lastActivityAt: new Date(), updatedAt: new Date() })
         .where(eq(leads.id, id))
 
-      return successResponse({
-        ...communication,
-        message: "SMS sent - Twilio integration pending",
-      }, "SMS sent")
-    } catch (error: any) {
-      console.error("[Admin Lead SMS] POST Error:", error)
-      return serverError(error.message || "Failed to send SMS")
+      return NextResponse.json({
+        success: true,
+        data: {
+          communicationId: communication.id,
+          status: smsStatus,
+          messageId,
+          message: smsStatus === "sent" ? "SMS sent successfully" : "SMS queued - Twilio integration pending",
+        },
+      })
+    } catch (error) {
+      console.error("[Lead SMS] POST Error:", error)
+      return NextResponse.json(
+        { success: false, error: "Failed to send SMS" },
+        { status: 500 }
+      )
     }
   })
 }

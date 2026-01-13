@@ -77,6 +77,16 @@ export const partners = pgTable("partners", {
   documentsCompletedAt: timestamp("documents_completed_at"),
   approvedAt: timestamp("approved_at"),
   approvedBy: uuid("approved_by").references(() => users.id),
+  // Microsite fields
+  websiteUrl: text("website_url"),
+  micrositeSlug: text("microsite_slug").unique(),
+  micrositeUrl: text("microsite_url"),
+  micrositeActive: boolean("microsite_active").default(false),
+  brandLogoUrl: text("brand_logo_url"),
+  brandPrimaryColor: text("brand_primary_color"),
+  brandSecondaryColor: text("brand_secondary_color"),
+  brandFontFamily: text("brand_font_family"),
+  micrositeGeneratedAt: timestamp("microsite_generated_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
@@ -392,6 +402,30 @@ export const claims = pgTable("claims", {
   partnerStatusIdx: index("idx_claims_partner_status").on(table.partnerId, table.status),
 }))
 
+// Partner leads - customers from microsite forms
+export const partnerLeads = pgTable("partner_leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "cascade" }).notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  address: text("address").notNull(),
+  source: text("source").default("microsite"), // microsite, manual, api
+  status: text("status").default("new"), // new, contacted, quoted, converted, lost
+  quoteId: uuid("quote_id").references(() => quotes.id),
+  policyId: uuid("policy_id").references(() => policies.id),
+  convertedAt: timestamp("converted_at"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  partnerIdIdx: index("idx_partner_leads_partner_id").on(table.partnerId),
+  statusIdx: index("idx_partner_leads_status").on(table.status),
+  emailIdx: index("idx_partner_leads_email").on(table.email),
+  createdAtIdx: index("idx_partner_leads_created_at").on(table.createdAt),
+}))
+
 // Claim documents - supporting documentation for claims
 export const claimDocuments = pgTable("claim_documents", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -448,6 +482,8 @@ export type Claim = typeof claims.$inferSelect
 export type NewClaim = typeof claims.$inferInsert
 export type ClaimDocument = typeof claimDocuments.$inferSelect
 export type NewClaimDocument = typeof claimDocuments.$inferInsert
+export type PartnerLead = typeof partnerLeads.$inferSelect
+export type NewPartnerLead = typeof partnerLeads.$inferInsert
 
 // ================= Call Center / Lead Management Tables =================
 

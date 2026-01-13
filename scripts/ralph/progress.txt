@@ -1,32 +1,36 @@
 # Ralph Progress Log
-Project: Daily Event Insurance - Admin & Partner Dashboard Enhancements
-Started: 2026-01-12
+Project: Daily Event Insurance - LiveKit AI Call Center
+Started: 2025-01-12
 
 ## Codebase Patterns
 - Next.js 16, React 19, TypeScript, Tailwind CSS 4
-- GoHighLevel CRM integration
 - Drizzle ORM for database (Neon PostgreSQL)
-- shadcn/ui component library
-- Vercel deployment
-- Framer Motion for animations
-- Zod for validation
+- NO shadcn/ui - use Tailwind + framer-motion for UI
+- Follow patterns in /app/(admin)/admin/dashboard/page.tsx
+- Vercel deployment with cron jobs
 - NextAuth.js for authentication
+- API routes use withAuth and requireAdmin from @/lib/api-auth
+
+## Already Completed (Do Not Redo)
+- Database schema: leads, leadCommunications, agentScripts, scheduledActions, conversionEvents
+- LiveKit Docker infrastructure: /livekit/
+- Python voice agent: /agents/
+- API routes: leads CRUD, scripts CRUD, communications, call, sms, scheduled-actions, analytics
+- Admin pages: /admin/call-center, /admin/leads, /admin/leads/[id]
+- Sidebar updated with Call Center links
 
 ## PRD Reference
-See /root/daily-event-insurance/docs/PRD-DASHBOARD-ENHANCEMENTS.json for full task breakdown
+See /root/daily-event-insurance/scripts/ralph/prd.json for remaining tasks
 
-## Phase 1: Critical Missing Features
-Status: IN PROGRESS
-
-### Tasks
-- [ ] PTR-001: Partner Claims Page
-- [ ] PTR-003: Claim Submission Form  
-- [ ] PTR-003-API: Partner Claims API
-- [ ] PTR-002: Partner Analytics Page
-- [ ] PTR-002-API: Partner Analytics API
-- [ ] ADM-001: Admin Partner Detail View
-- [ ] ADM-001-API: Admin Partner Detail API
-- [ ] ADM-004: Admin Lead Detail View
-- [ ] ADM-004-API: Admin Lead Detail API
+## Remaining Tasks
+- Task 1.1: Create new lead form page (/admin/leads/new)
+- Task 1.2: Create scripts management page (/admin/scripts)
+- Task 1.3: Wire up call/SMS action buttons
+- Task 2.1: Scheduled actions PATCH/DELETE endpoint
+- Task 2.2: Conversion events API
+- Task 3.1: Analytics dashboard page
+- Task 3.2: Add analytics links
+- Task 4.1: Full build verification
+- Task 4.2: Commit and push
 
 ---

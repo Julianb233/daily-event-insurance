@@ -1,107 +1,88 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, leads, leadCommunications } from "@/lib/db"
+import { db } from "@/lib/db"
+import { leads } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import { isDevMode } from "@/lib/mock-data"
-import {
-  successResponse,
-  notFoundError,
-  serverError,
-  validationError,
-} from "@/lib/api-responses"
-import { z } from "zod"
 
-type RouteContext = {
+interface RouteParams {
   params: Promise<{ id: string }>
 }
 
-const initiateCallSchema = z.object({
-  scriptId: z.string().uuid().optional(),
-  agentId: z.string().optional(),
-})
-
 /**
  * POST /api/admin/leads/[id]/call
- * Initiate an outbound call via LiveKit (placeholder)
+ * Initiate an outbound call via LiveKit
  */
-export async function POST(request: NextRequest, context: RouteContext) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   return withAuth(async () => {
-    try {
-      await requireAdmin()
-      const { id } = await context.params
-      const body = await request.json().catch(() => ({}))
+    await requireAdmin()
+    const { id } = await params
 
-      const validationResult = initiateCallSchema.safeParse(body)
-      if (!validationResult.success) {
-        return validationError(
-          "Invalid call parameters",
-          validationResult.error.flatten().fieldErrors
+    try {
+      if (!db) {
+        return NextResponse.json(
+          { success: false, error: "Database not configured" },
+          { status: 500 }
         )
       }
 
-      const { scriptId, agentId } = validationResult.data
+      const body = await request.json()
+      const { scriptId } = body
 
-      if (isDevMode || !isDbConfigured()) {
-        const callRecord = {
-          id: `call_${Date.now()}`,
-          leadId: id,
-          channel: "call",
-          direction: "outbound",
-          status: "initiated",
-          livekitRoomId: `room_${Date.now()}`,
-          livekitSessionId: `session_${Date.now()}`,
-          agentId: agentId || "ai_agent_default",
-          agentScriptUsed: scriptId || null,
-          createdAt: new Date().toISOString(),
-        }
-        return successResponse(callRecord, "Call initiated")
-      }
-
-      const [lead] = await db!
-        .select()
-        .from(leads)
-        .where(eq(leads.id, id))
-        .limit(1)
-
+      // Verify lead exists and get phone number
+      const [lead] = await db.select().from(leads).where(eq(leads.id, id)).limit(1)
       if (!lead) {
-        return notFoundError("Lead")
+        return NextResponse.json(
+          { success: false, error: "Lead not found" },
+          { status: 404 }
+        )
       }
 
-      // TODO: Integrate with LiveKit for actual call initiation
-      // For now, create a communication record as placeholder
-      const livekitRoomId = `room_${Date.now()}`
-      const livekitSessionId = `session_${Date.now()}`
+      if (!lead.phone) {
+        return NextResponse.json(
+          { success: false, error: "Lead has no phone number" },
+          { status: 400 }
+        )
+      }
 
-      const [communication] = await db!
-        .insert(leadCommunications)
-        .values({
+      // TODO: Integrate with LiveKit SIP to make outbound call
+      // This would:
+      // 1. Create a LiveKit room with lead metadata
+      // 2. Dispatch the agent to the room
+      // 3. Create SIP participant to dial out
+
+      const livekitUrl = process.env.LIVEKIT_URL || "ws://localhost:7880"
+      const livekitApiKey = process.env.LIVEKIT_API_KEY
+      const livekitApiSecret = process.env.LIVEKIT_API_SECRET
+
+      if (!livekitApiKey || !livekitApiSecret) {
+        return NextResponse.json(
+          { success: false, error: "LiveKit not configured" },
+          { status: 500 }
+        )
+      }
+
+      // Generate room name
+      const roomName = `call-${id}-${Date.now()}`
+
+      // For now, return the call setup info
+      // Full implementation would use @livekit/server-sdk
+      return NextResponse.json({
+        success: true,
+        data: {
+          roomName,
           leadId: id,
-          channel: "call",
-          direction: "outbound",
-          disposition: "initiated",
-          agentId: agentId || "ai_agent_default",
-          agentScriptUsed: scriptId || null,
-          livekitRoomId,
-          livekitSessionId,
-        })
-        .returning()
-
-      await db!
-        .update(leads)
-        .set({
-          lastActivityAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .where(eq(leads.id, id))
-
-      return successResponse({
-        ...communication,
-        status: "initiated",
-        message: "Call initiated - LiveKit integration pending",
-      }, "Call initiated")
-    } catch (error: any) {
-      console.error("[Admin Lead Call] POST Error:", error)
-      return serverError(error.message || "Failed to initiate call")
+          phone: lead.phone,
+          scriptId,
+          status: "pending",
+          message: "Call initiated - LiveKit integration pending full setup",
+        },
+      })
+    } catch (error) {
+      console.error("[Lead Call] POST Error:", error)
+      return NextResponse.json(
+        { success: false, error: "Failed to initiate call" },
+        { status: 500 }
+      )
     }
   })
 }

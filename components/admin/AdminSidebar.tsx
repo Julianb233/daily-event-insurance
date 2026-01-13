@@ -19,6 +19,8 @@ import {
   FileText,
   AlertTriangle,
   TrendingUp,
+  Phone,
+  MessageSquare,
 } from "lucide-react"
 
 // Check dev mode
@@ -32,8 +34,10 @@ const MOCK_USER = {
 
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Partners", href: "/admin/partners", icon: Users },
+  { label: "Call Center", href: "/admin/call-center", icon: Phone, highlight: true },
   { label: "Leads", href: "/admin/leads", icon: Users },
+  { label: "Scripts", href: "/admin/scripts", icon: MessageSquare },
+  { label: "Partners", href: "/admin/partners", icon: Users },
   { label: "Policies", href: "/admin/policies", icon: FileText },
   { label: "Commission Tiers", href: "/admin/commission-tiers", icon: Layers },
   { label: "Payouts", href: "/admin/payouts", icon: DollarSign },
