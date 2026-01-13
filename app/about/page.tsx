@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Sparkles
 } from "lucide-react"
+import { AboutPageContext } from "@/components/voice"
 
 // Floating orb component for background decoration
 function FloatingOrb({ className, delay = 0 }: { className: string; delay?: number }) {
@@ -98,6 +99,7 @@ export default function AboutPage() {
 
   return (
     <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
+      <AboutPageContext />
       <Header />
 
       {/* Hero Section with Glassmorphism */}
