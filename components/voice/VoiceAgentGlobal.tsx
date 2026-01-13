@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { ElevenLabsWebSocket, AudioRecorder } from '@/lib/voice/elevenlabs-websocket'
 import { useVoiceAgent } from '@/lib/voice/voice-context'
 import { getContextualStarters, getContextualQuickActions } from '@/lib/voice/context-prompts'
@@ -447,54 +446,55 @@ export function VoiceAgentGlobal() {
               {/* Controls */}
               <div className="px-6 py-4 bg-white border-t flex items-center justify-center gap-4">
                 {status === 'disconnected' ? (
-                  <Button
+                  <button
                     onClick={startConversation}
-                    className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-6 rounded-full"
-                    size="lg"
+                    className="flex items-center justify-center bg-teal-500 hover:bg-teal-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors"
                   >
                     <Phone className="h-5 w-5 mr-2" />
                     Start Call
-                  </Button>
+                  </button>
                 ) : status === 'connecting' ? (
-                  <Button disabled className="px-8 py-6 rounded-full" size="lg">
+                  <button disabled className="flex items-center justify-center bg-gray-400 text-white px-8 py-4 rounded-full text-lg font-semibold cursor-not-allowed">
                     <span className="animate-spin mr-2">
                       <Phone className="h-5 w-5" />
                     </span>
                     Connecting...
-                  </Button>
+                  </button>
                 ) : (
                   <>
-                    <Button
+                    <button
                       onClick={toggleMute}
-                      variant={isMuted ? 'destructive' : 'outline'}
-                      size="lg"
-                      className="rounded-full h-14 w-14"
+                      className={`flex items-center justify-center rounded-full h-14 w-14 transition-colors ${
+                        isMuted
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'border-2 border-gray-300 hover:bg-gray-100 text-gray-700'
+                      }`}
                     >
                       {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                       onClick={() => {
                         endConversation()
                         setTranscript([])
                         setMessages([])
                         setConversationId(null)
                       }}
-                      variant="destructive"
-                      size="lg"
-                      className="rounded-full h-14 w-14"
+                      className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full h-14 w-14 transition-colors"
                     >
                       <PhoneOff className="h-5 w-5" />
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                       onClick={() => setIsSpeakerMuted(!isSpeakerMuted)}
-                      variant={isSpeakerMuted ? 'destructive' : 'outline'}
-                      size="lg"
-                      className="rounded-full h-14 w-14"
+                      className={`flex items-center justify-center rounded-full h-14 w-14 transition-colors ${
+                        isSpeakerMuted
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'border-2 border-gray-300 hover:bg-gray-100 text-gray-700'
+                      }`}
                     >
                       {isSpeakerMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-                    </Button>
+                    </button>
                   </>
                 )}
               </div>
