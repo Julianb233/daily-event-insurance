@@ -25,10 +25,14 @@ import { DataAdvantageSection } from "@/components/data-advantage-section"
 import { HowTheModelWorksSection } from "@/components/how-the-model-works-section"
 import { WhyThisMattersSection } from "@/components/why-this-matters-section"
 import { MissionVisionSection } from "@/components/mission-vision-section"
+import { HomePageContext } from "@/components/voice"
 
 export default function Home() {
   return (
     <main className="relative overflow-x-hidden max-w-full bg-white">
+      {/* Voice Agent Context */}
+      <HomePageContext />
+
       {/* 1. Header - Navigation bar */}
       <Header />
 

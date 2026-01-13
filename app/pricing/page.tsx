@@ -6,6 +6,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ArrowLeft, Check, Shield, Building2, Mountain, Bike, Zap, ChevronRight, DollarSign, BadgeCheck } from "lucide-react"
 import Link from "next/link"
+import { PricingPageContext } from "@/components/voice"
 
 // Pricing tiers - Insurance commission structure
 const pricingTiers = [
@@ -138,6 +139,7 @@ export default function PricingPage() {
 
   return (
     <main className="relative min-h-screen bg-white overflow-x-hidden">
+      <PricingPageContext />
       <Header />
 
       {/* Floating Shields Background */}

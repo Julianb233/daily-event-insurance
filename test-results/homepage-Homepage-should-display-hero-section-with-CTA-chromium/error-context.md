@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "Vercel logo":
+        - /url: /home
+        - button "Vercel Logo":
+          - img "Vercel Logo"
+      - navigation [ref=e5]:
+        - navigation [ref=e6]:
+          - link "Sign Up" [ref=e7] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fdaily-event-insurance-lpqfobmw6-ai-acrobatics.vercel.app%252F%26nonce%3D5d6efcf14a0f12ff590e4ad9596c3793f687155d8c38c82aa9cac19f9ec31213
+            - paragraph [ref=e9]: Sign Up
+    - main [ref=e10]:
+      - generic [ref=e11]:
+        - heading "Log in to Vercel" [level=1] [ref=e14]
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - textbox "Email Address" [ref=e18]
+            - button "Continue with Email" [ref=e20] [cursor=pointer]:
+              - generic [ref=e21]: Continue with Email
+          - generic [ref=e22]:
+            - button "Continue with Google" [ref=e23] [cursor=pointer]:
+              - img [ref=e25]
+              - generic [ref=e31]: Continue with Google
+            - button "Continue with GitHub" [ref=e32] [cursor=pointer]:
+              - img [ref=e34]
+              - generic [ref=e38]: Continue with GitHub
+            - button "Continue with SAML SSO" [ref=e40] [cursor=pointer]:
+              - img [ref=e42]
+              - generic [ref=e44]: Continue with SAML SSO
+            - button "Continue with Passkey" [ref=e45] [cursor=pointer]:
+              - img [ref=e47]
+              - generic [ref=e49]: Continue with Passkey
+            - button "Show other options" [ref=e50] [cursor=pointer]:
+              - generic [ref=e51]: Show other options
+        - paragraph [ref=e52]:
+          - text: Don't have an account?
+          - link "Sign Up" [ref=e53] [cursor=pointer]:
+            - /url: /signup?next=%2Fsso-api%3Furl%3Dhttps%3A%2F%2Fdaily-event-insurance-lpqfobmw6-ai-acrobatics.vercel.app%2F%26nonce%3D5d6efcf14a0f12ff590e4ad9596c3793f687155d8c38c82aa9cac19f9ec31213
+      - generic [ref=e56]:
+        - link "Terms" [ref=e57] [cursor=pointer]:
+          - /url: /legal/terms
+        - link "Privacy Policy" [ref=e58] [cursor=pointer]:
+          - /url: /legal/privacy-policy
+  - alert [ref=e59]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img
+```

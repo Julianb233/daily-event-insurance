@@ -29,6 +29,8 @@ import {
   Loader2
 } from "lucide-react"
 import { RevenueCalculator } from "@/components/revenue-calculator"
+import { VoiceContextSetter } from "@/components/voice"
+import type { ScreenType } from "@/lib/voice/voice-context"
 
 // Shared form data interface
 interface OnboardingFormData {
@@ -1181,8 +1183,50 @@ export default function OnboardingForm() {
     }
   }
 
+  // Get step-specific screen type for voice agent context
+  const getOnboardingScreenType = (): ScreenType => {
+    switch (currentStep) {
+      case 1: return 'onboarding-business'
+      case 2: return 'onboarding-integration'
+      case 3: return 'onboarding-products'
+      case 4: return 'onboarding-review'
+      default: return 'onboarding'
+    }
+  }
+
+  const getStepName = (): string => {
+    switch (currentStep) {
+      case 1: return 'Business Information'
+      case 2: return 'Integration Setup'
+      case 3: return 'Customize Products'
+      case 4: return 'Go Live'
+      default: return 'Onboarding'
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Dynamic Voice Agent Context - updates with each step */}
+      <VoiceContextSetter
+        screenType={getOnboardingScreenType()}
+        screenName={getStepName()}
+        journeyStage="onboarding"
+        onboardingStep={currentStep}
+        onboardingTotalSteps={4}
+        currentStepName={getStepName()}
+        userName={formData.contactName || undefined}
+        userEmail={formData.email || undefined}
+        businessName={formData.businessName || undefined}
+        businessType={formData.businessType || undefined}
+        selectedProducts={formData.selectedProducts}
+        suggestedTopics={[
+          currentStep === 1 ? "What information do you need?" : undefined,
+          currentStep === 2 ? "Which integration is right for me?" : undefined,
+          currentStep === 3 ? "How do I price products?" : undefined,
+          currentStep === 4 ? "What happens after I submit?" : undefined,
+        ].filter(Boolean) as string[]}
+      />
+
       <Header />
 
       <div className="pt-32 pb-20 px-4">
