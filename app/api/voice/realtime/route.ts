@@ -15,9 +15,15 @@ export async function POST(request: NextRequest) {
     const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
     if (!apiKey || !apiSecret || !wsUrl) {
-      console.error('Missing LiveKit configuration')
+      const missing = []
+      if (!apiKey) missing.push('LIVEKIT_API_KEY')
+      if (!apiSecret) missing.push('LIVEKIT_API_SECRET')
+      if (!wsUrl) missing.push('NEXT_PUBLIC_LIVEKIT_URL')
+
+      console.error('Missing LiveKit configuration:', missing.join(', '))
+
       return NextResponse.json(
-        { error: 'Voice service not configured' },
+        { error: 'Voice service configuration error', details: `Missing: ${missing.join(', ')}` },
         { status: 500 }
       )
     }
