@@ -1,0 +1,257 @@
+{
+  "project": "Fred Cary Founder Decision OS",
+  "description": "AI-powered coaching system that guides founders from idea to traction using Fred Cary's methodology with silent diagnostics, positioning framework, and investor lens",
+  "version": "2.0.0",
+  "createdAt": "2025-01-13",
+  "features": [
+    {
+      "id": "voice-agent-websocket",
+      "title": "Voice Agent with WebSocket Real-Time Communication",
+      "description": "Real-time voice and video communication using LiveKit WebSocket infrastructure with AI-powered voice assistants and human agent handoff",
+      "priority": "high",
+      "status": "planned",
+      "userStoriesCount": 13,
+      "prdFile": "prd-01-voice-agent-websocket.md"
+    },
+    {
+      "id": "ai-business-analyst-chat",
+      "title": "AI Business Analyst Chat (Sahara-Style Coaching)",
+      "description": "Embedded ChatGPT-style interface for strategic guidance and judgment amplification. Diagnoses before prescribing.",
+      "priority": "high",
+      "status": "planned",
+      "userStoriesCount": 14,
+      "prdFile": "prd-02-ai-business-analyst-chat.md"
+    },
+    {
+      "id": "founder-decision-os",
+      "title": "Founder Decision OS (Fred Cary Coaching System)",
+      "description": "Complete coaching system with 9-step gating process, silent diagnostics, positioning framework, and investor lens",
+      "priority": "critical",
+      "status": "planned",
+      "prdFile": "prd-03-founder-decision-os.md",
+      "modules": [
+        {
+          "id": "startup-process-engine",
+          "title": "Startup Process Engine (9-Step Gating)",
+          "description": "Gating process from idea to traction - founders cannot advance until current step is validated",
+          "steps": [
+            {"step": 1, "name": "Define the Real Problem", "gate": "No vague/abstract problems"},
+            {"step": 2, "name": "Identify Buyer and Environment", "gate": "No 'everyone' as target"},
+            {"step": 3, "name": "Establish Founder Edge", "gate": "Must have credible insight/access"},
+            {"step": 4, "name": "Define Simplest Viable Solution", "gate": "No overbuilt solutions"},
+            {"step": 5, "name": "Validate Before Building", "gate": "Must have real user interaction"},
+            {"step": 6, "name": "Define First GTM Motion", "gate": "No hand-waved distribution"},
+            {"step": 7, "name": "Install Execution Discipline", "gate": "Weekly priorities + ownership"},
+            {"step": 8, "name": "Run Contained Pilot", "gate": "Measurable results required"},
+            {"step": 9, "name": "Decide What Earns Right to Scale", "gate": "Evidence-based decision"}
+          ],
+          "userStories": ["US-001", "US-002", "US-003", "US-004", "US-005", "US-006", "US-007", "US-008", "US-009", "US-010"]
+        },
+        {
+          "id": "silent-diagnostic-system",
+          "title": "Silent Diagnostic System",
+          "description": "Continuous internal evaluation of positioning clarity and investor readiness - founders don't choose, system diagnoses",
+          "phases": [
+            {
+              "phase": 1,
+              "name": "Universal Entry",
+              "behavior": "Ask: What are you building? Who is it for? What are you trying to accomplish right now?",
+              "doNot": ["Mention investor readiness", "Mention positioning frameworks", "Show scores or assessments"]
+            },
+            {
+              "phase": 2,
+              "name": "Silent Diagnosis",
+              "positioningSignals": ["ICP vague or undefined", "'Everyone' as target market", "Buzzword-heavy messaging", "High effort but low traction"],
+              "investorSignals": ["Mentions fundraising/valuation/decks", "Uploads deck", "Asks 'are we ready to raise?'"]
+            },
+            {
+              "phase": 3,
+              "name": "Selective Introduction",
+              "positioningTrigger": "ICP unclear, can't explain value crisply, weak traction despite activity",
+              "investorTrigger": "Founder explicitly discusses fundraising, uploads deck, asks about raising",
+              "rule": "Introduce only ONE framework at a time"
+            },
+            {
+              "phase": 4,
+              "name": "Formal Assessments",
+              "trigger": "After trust and clarity established",
+              "language": "If it's helpful, we can formally pressure-test this using the same criteria investors (or buyers) will use."
+            }
+          ],
+          "userStories": ["US-011", "US-012", "US-013", "US-014", "US-015"]
+        },
+        {
+          "id": "positioning-readiness-framework",
+          "title": "Positioning Readiness Framework",
+          "description": "A-F grading system for market clarity, not marketing copy",
+          "scoring": {
+            "clarity": {
+              "weight": "30%",
+              "questions": [
+                "Can founder explain in one sentence without jargon?",
+                "Is problem from customer's POV?",
+                "Does solution map to problem?",
+                "Is target customer specific enough to identify in real world?"
+              ],
+              "grades": {
+                "A": "Instantly understandable, specific, obvious fit",
+                "C": "Understandable with effort, some vagueness",
+                "F": "Confusing, abstract, or feature-driven"
+              }
+            },
+            "differentiation": {
+              "weight": "25%",
+              "questions": [
+                "Why this solution vs alternatives?",
+                "Awareness of direct and indirect competitors?",
+                "Is 'why you' articulated credibly?"
+              ],
+              "grades": {
+                "A": "Clear differentiation rooted in insight/advantage",
+                "C": "Some differentiation, mostly surface-level",
+                "F": "Undifferentiated or dismissive of competition"
+              }
+            },
+            "marketUnderstanding": {
+              "weight": "20%",
+              "questions": [
+                "Does founder understand the landscape?",
+                "Is problem validated through real customer interaction?",
+                "How do customers currently solve this?"
+              ],
+              "grades": {
+                "A": "Deep understanding, validated problem",
+                "C": "Partial understanding, limited validation",
+                "F": "Assumptions without evidence"
+              }
+            },
+            "narrativeStrength": {
+              "weight": "25%",
+              "questions": [
+                "Does story feel coherent and compelling?",
+                "Is there a clear 'why now'?",
+                "Would this create curiosity/urgency in buyer?"
+              ],
+              "grades": {
+                "A": "Tight, urgent, coherent narrative",
+                "C": "Understandable but lacks urgency",
+                "F": "Meandering or unfocused story"
+              }
+            }
+          },
+          "outputs": {
+            "positioningGrade": "A-F",
+            "narrativeTightnessScore": "1-10",
+            "gaps": "3-5 specific gaps",
+            "nextActions": "3 actions to improve positioning clarity"
+          },
+          "doNot": ["Rewrite marketing copy unless requested", "Suggest channels, ads, or branding"],
+          "userStories": ["US-016", "US-017", "US-018", "US-019", "US-020", "US-021", "US-022"]
+        },
+        {
+          "id": "investor-lens",
+          "title": "Investor Lens (VC Evaluation Framework)",
+          "description": "Evaluate companies the way a VC partner would prepare for IC - Pre-Seed, Seed, and Series A only",
+          "coreEvaluationAxes": [
+            "Team (founder-market fit, learning velocity, ability to recruit)",
+            "Market (size, urgency, timing inflection)",
+            "Problem (painful, frequent, expensive, clear buyer)",
+            "Solution & Differentiation (why this, why now)",
+            "Go-To-Market (credible path, early repeatability)",
+            "Traction Quality (retention, usage, revenue - not vanity)",
+            "Business Model (pricing, margins, scalability)",
+            "Fund Fit (why this investor, why this round, why now)"
+          ],
+          "hiddenVCFilters": [
+            {"filter": "Outcome Size Mismatch", "meaning": "Too small to move the fund"},
+            {"filter": "Weak Internal Sponsor", "meaning": "No partner willing to carry conviction"},
+            {"filter": "Pattern-Matching Bias", "meaning": "Looks unfamiliar or too familiar in wrong way"},
+            {"filter": "Momentum Gap", "meaning": "No social proof or external validation"},
+            {"filter": "Complexity Cost", "meaning": "Too much work to reach conviction"}
+          ],
+          "stageEvaluations": {
+            "preSeed": {
+              "primaryQuestion": "Can this team find and earn product-market fit?",
+              "lookFor": ["Narrow ICP", "Single wedge use case", "Founder-led discovery", "Feasibility", "Clear why-now"],
+              "killSignals": ["Broad market with no wedge", "Patents before validation", "No clear buyer"],
+              "output": ["First-meeting verdict (Yes/No/Not yet)", "Top 3 kill-risks", "Next 3 proof actions (≤30 days)"]
+            },
+            "seed": {
+              "primaryQuestion": "Is repeatability beginning to emerge?",
+              "lookFor": ["Progress toward ~$1M ARR", "Retention evidence", "One GTM motion that works", "Series A milestone logic"],
+              "killSignals": ["Vanity metrics substituting for retention", "Hiring sales before demand proven", "GTM only in slides"],
+              "output": ["Scores for traction quality, repeatability, Series A clarity", "6-12 month Series A milestone map"]
+            },
+            "seriesA": {
+              "primaryQuestion": "Is PMF proven and is growth repeatable?",
+              "lookFor": ["Strong PMF evidence", "Repeatable acquisition channel", "Improving unit economics", "Operating rigor"],
+              "killSignals": ["Growth spikes without repeatability", "Weak retention masked by spend", "No operating cadence"],
+              "output": ["10+ likely investor objections with responses", "90-day Series A readiness plan with metric targets"]
+            }
+          },
+          "deckRequestProtocol": {
+            "coreRule": "Never ask for a deck by default. Always issue provisional verdict first.",
+            "requestDeckWhen": [
+              "Company is near the line (Not yet, but close)",
+              "Missing structural info (GTM, retention, economics)",
+              "Founder explicitly asks for deck review"
+            ],
+            "preSeedLanguage": "A deck is likely premature. A 1-2 page summary covering ICP, problem, early evidence, and what you're trying to de-risk would be more useful.",
+            "seedLanguage": "You're close enough that a deck could sharpen the investor read. If you want, upload it and I'll review from IC perspective.",
+            "seriesALanguage": "At this stage, a deck is the right artifact. I'll review it the way a Series A partner would."
+          },
+          "guardrails": [
+            "Do not encourage fundraising by default",
+            "Say plainly when something is not venture-backable",
+            "Offer alternatives when VC is wrong for the business",
+            "Never optimize narrative over fundamentals",
+            "Capital is a tool, not the goal"
+          ],
+          "userStories": ["US-023", "US-024", "US-025", "US-026", "US-027", "US-028", "US-029", "US-030"]
+        }
+      ],
+      "integrationUserStories": ["US-031", "US-032", "US-033"],
+      "totalUserStories": 33
+    }
+  ],
+  "corePhilosophy": {
+    "founderDecisionOS": "Never optimize downstream artifacts (decks, patents, hiring, fundraising) before upstream truth is established",
+    "saharaCoaching": "Sahara doesn't execute tasks — it sharpens judgment so everything users execute actually works",
+    "silentDiagnostics": "Founders do not choose diagnostics. The system diagnoses silently, then introduces the right lens at the right moment",
+    "investorLens": "This is not a checklist to game investors. It is a framework to help founders understand how VCs actually make decisions"
+  },
+  "guardrails": {
+    "nonNegotiable": [
+      "Never encourage fundraising by default",
+      "Say plainly when not venture-backable",
+      "Offer alternatives when VC is wrong for business",
+      "Never optimize narrative over fundamentals",
+      "Capital is a tool, not the goal",
+      "Diagnose before prescribe",
+      "Ask before answer",
+      "No empty validation ('Great question!')",
+      "Founders stay in control of decisions"
+    ]
+  },
+  "conversationState": {
+    "schema": {
+      "currentStep": "1-9",
+      "stepCompletions": "Record<number, {completed, date}>",
+      "positioningSignals": "low|medium|high",
+      "investorSignals": "low|medium|high",
+      "activeFramework": "none|positioning|investor",
+      "positioningGrade": "A-F",
+      "narrativeTightness": "1-10",
+      "investorVerdict": "yes|no|not_yet",
+      "stage": "pre_seed|seed|series_a"
+    }
+  },
+  "successMetrics": [
+    "80% of founders complete Step 1-5 before asking about investors",
+    "Positioning framework introduced only when warranted",
+    "Investor lens introduced only when founder raises topic",
+    "90% of founders report feeling 'guided, not evaluated'",
+    "Zero premature fundraising encouragement",
+    "Average 6+ messages before any framework introduction"
+  ]
+}
