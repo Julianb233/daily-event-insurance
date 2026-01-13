@@ -19,6 +19,11 @@ import {
   FileText,
   AlertTriangle,
   TrendingUp,
+  Globe,
+  Plug,
+  ScrollText,
+  Wallet,
+  Phone,
 } from "lucide-react"
 
 // Check dev mode
@@ -37,9 +42,19 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
+    label: "My Earnings",
+    href: "/admin/my-earnings",
+    icon: Wallet,
+  },
+  {
     label: "Partners",
     href: "/admin/partners",
     icon: Users,
+  },
+  {
+    label: "Microsites",
+    href: "/admin/microsites",
+    icon: Globe,
   },
   {
     label: "Policies",
@@ -60,6 +75,21 @@ const navItems = [
     label: "Claims",
     href: "/admin/claims",
     icon: AlertTriangle,
+  },
+  {
+    label: "Call Center",
+    href: "/admin/voice-agent",
+    icon: Phone,
+  },
+  {
+    label: "API Integrations",
+    href: "/admin/integrations",
+    icon: Plug,
+  },
+  {
+    label: "Contracts",
+    href: "/admin/contracts",
+    icon: ScrollText,
   },
   {
     label: "Reports",

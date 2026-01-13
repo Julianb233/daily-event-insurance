@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Dispatch the named agent to the room
     try {
       const agentDispatch = new AgentDispatchClient(httpUrl, apiKey, apiSecret)
-      await agentDispatch.createDispatch(roomName, 'Quinn-521', {
+      await agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
         metadata: JSON.stringify({ context }),
       })
       console.log(`Dispatched agent Quinn-521 to room: ${roomName}`)
