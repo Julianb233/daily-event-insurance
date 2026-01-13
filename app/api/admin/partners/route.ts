@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
 
         // Apply sorting
         filtered.sort((a, b) => {
-          const aVal = a[sortBy as keyof typeof a]
-          const bVal = b[sortBy as keyof typeof b]
+          const aVal = a[sortBy as keyof typeof a] ?? ""
+          const bVal = b[sortBy as keyof typeof b] ?? ""
           if (sortOrder === "asc") {
             return aVal > bVal ? 1 : -1
           }

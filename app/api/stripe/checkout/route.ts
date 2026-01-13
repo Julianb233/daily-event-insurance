@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const { quoteId, customerEmail, customerName } = validationResult.data
 
     // Retrieve quote from database
-    const [quote] = await db.select().from(quotes).where(eq(quotes.id, quoteId)).limit(1)
+    const [quote] = await db!.select().from(quotes).where(eq(quotes.id, quoteId)).limit(1)
 
     if (!quote) {
       return NextResponse.json(

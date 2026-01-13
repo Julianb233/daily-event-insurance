@@ -51,7 +51,7 @@ export function verifyWebhookSignature(
  */
 async function isEventProcessed(eventId: string): Promise<boolean> {
   try {
-    const [existing] = await db
+    const [existing] = await db!
       .select()
       .from(webhookEvents)
       .where(eq(webhookEvents.id, eventId))
@@ -73,7 +73,7 @@ async function recordWebhookEvent(
   error?: string
 ): Promise<void> {
   try {
-    await db.insert(webhookEvents).values({
+    await db!.insert(webhookEvents).values({
       id: event.id,
       source: "stripe",
       eventType: event.type,
@@ -132,14 +132,14 @@ async function handleCheckoutSessionCompleted(
   }
 
   // Retrieve quote
-  const [quote] = await db.select().from(quotes).where(eq(quotes.id, quoteId)).limit(1)
+  const [quote] = await db!.select().from(quotes).where(eq(quotes.id, quoteId)).limit(1)
 
   if (!quote) {
     throw new Error(`Quote not found: ${quoteId}`)
   }
 
   // Check if policy already exists for this quote (idempotency)
-  const [existingPolicy] = await db
+  const [existingPolicy] = await db!
     .select()
     .from(policies)
     .where(eq(policies.quoteId, quoteId))
@@ -201,7 +201,7 @@ async function handleCheckoutSessionCompleted(
     commissionTier: quote.commissionTier,
   }
 
-  const [policy] = await db.insert(policies).values(policyData).returning()
+  const [policy] = await db!.insert(policies).values(policyData).returning()
 
   if (!policy) {
     throw new Error("Failed to create policy")
@@ -244,7 +244,7 @@ async function handleCheckoutSessionCompleted(
     }),
   }
 
-  const [payment] = await db.insert(payments).values(paymentData).returning()
+  const [payment] = await db!.insert(payments).values(paymentData).returning()
 
   if (!payment) {
     throw new Error("Failed to create payment record")
@@ -253,7 +253,7 @@ async function handleCheckoutSessionCompleted(
   console.log("[Webhook] Payment recorded:", payment.paymentNumber)
 
   // Update quote status to accepted
-  await db
+  await db!
     .update(quotes)
     .set({
       status: "accepted",
@@ -283,14 +283,14 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise
   }
 
   // Record failed payment if policy/payment exists
-  const [existingPayment] = await db
+  const [existingPayment] = await db!
     .select()
     .from(payments)
     .where(eq(payments.stripePaymentIntentId, paymentIntent.id))
     .limit(1)
 
   if (existingPayment) {
-    await db
+    await db!
       .update(payments)
       .set({
         status: "failed",
@@ -310,7 +310,7 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise
 async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
   console.log("[Webhook] Processing charge.refunded:", charge.id)
 
-  const [payment] = await db
+  const [payment] = await db!
     .select()
     .from(payments)
     .where(eq(payments.stripeChargeId, charge.id))
@@ -323,7 +323,7 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
 
   const refundAmount = charge.amount_refunded / 100 // Convert from cents
 
-  await db
+  await db!
     .update(payments)
     .set({
       status: charge.refunded ? "refunded" : "partially_refunded",
@@ -335,7 +335,7 @@ async function handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
 
   // Update policy status if fully refunded
   if (charge.refunded) {
-    await db
+    await db!
       .update(policies)
       .set({
         status: "cancelled",

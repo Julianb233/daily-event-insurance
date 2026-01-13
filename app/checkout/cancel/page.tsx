@@ -6,11 +6,12 @@
 
 "use client"
 
+import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { XCircle, ArrowLeft, RotateCcw, Home } from "lucide-react"
 import Link from "next/link"
 
-export default function CheckoutCancelPage() {
+function CheckoutCancelContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const quoteId = searchParams.get("quote_id")
@@ -155,5 +156,13 @@ export default function CheckoutCancelPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CheckoutCancelPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <CheckoutCancelContent />
+    </Suspense>
   )
 }
