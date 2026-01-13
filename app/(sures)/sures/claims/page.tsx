@@ -16,6 +16,7 @@ import {
   Shield,
   AlertCircle,
 } from 'lucide-react';
+import EmptyState from '@/components/shared/EmptyState';
 
 // Types
 interface Claim {
@@ -385,16 +386,25 @@ export default function SuresClaimsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {paginatedClaims.length === 0 ? (
+                {mockClaims.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center">
-                      <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500 font-medium">
-                        No claims found
-                      </p>
-                      <p className="text-gray-400 text-sm">
-                        Try adjusting your search or filters
-                      </p>
+                    <td colSpan={6}>
+                      <EmptyState
+                        icon={AlertCircle}
+                        title="No claims filed"
+                        description="Claims will appear here when participants file them."
+                      />
+                    </td>
+                  </tr>
+                ) : paginatedClaims.length === 0 ? (
+                  <tr>
+                    <td colSpan={6}>
+                      <EmptyState
+                        icon={AlertCircle}
+                        title="No claims found"
+                        description="Try adjusting your search or filters"
+                        variant="compact"
+                      />
                     </td>
                   </tr>
                 ) : (

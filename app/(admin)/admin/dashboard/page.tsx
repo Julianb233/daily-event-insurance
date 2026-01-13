@@ -17,6 +17,9 @@ import {
   XCircle,
 } from "lucide-react"
 import Link from "next/link"
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber"
+import { SparklineCard } from "@/components/charts/SparklineCard"
+import { SkeletonStatsRow, SkeletonChart } from "@/components/shared/Skeleton"
 
 // Types for dashboard data from API
 interface DashboardStats {
@@ -141,16 +144,21 @@ export default function AdminDashboardPage() {
   if (isLoading) {
     return (
       <div className="p-6 lg:p-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-slate-200 rounded w-48" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-slate-200 rounded-xl" />
-            ))}
+        <div className="space-y-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-slate-200 rounded w-48 mb-2" />
+            <div className="h-4 bg-slate-100 rounded w-64" />
           </div>
+
+          <SkeletonStatsRow stats={4} />
+
           <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-80 bg-slate-200 rounded-xl" />
-            <div className="h-80 bg-slate-200 rounded-xl" />
+            <div className="lg:col-span-2">
+              <SkeletonChart className="h-80" />
+            </div>
+            <div>
+              <SkeletonChart className="h-80" />
+            </div>
           </div>
         </div>
       </div>
@@ -158,6 +166,12 @@ export default function AdminDashboardPage() {
   }
 
   const data = dashboardData || generateMockData()
+
+  // Mock sparkline data for 7-day trends
+  const premiumTrend = [245000, 252000, 258000, 265000, 272000, 280000, 287540]
+  const partnerTrend = [32, 33, 35, 36, 37, 38, 38]
+  const policyTrend = [3200, 3350, 3480, 3620, 3720, 3810, 3842]
+  const payoutTrend = [18500, 17200, 16800, 16200, 15900, 15800, 15670]
 
   return (
     <div className="p-6 lg:p-8">
@@ -179,19 +193,16 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-white" />
-            </div>
-            <span className="flex items-center text-sm font-medium text-green-600">
-              <ArrowUpRight className="w-4 h-4" />
-              12.5%
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Total Premium</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.revenue.totalPremium)}</p>
+          <SparklineCard
+            title="Total Premium"
+            value={data.revenue.totalPremium}
+            data={premiumTrend}
+            icon={<DollarSign className="w-6 h-6" />}
+            color="violet"
+            change={12.5}
+            format="currency"
+          />
         </motion.div>
 
         {/* Total Partners */}
@@ -199,18 +210,16 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-sm text-slate-500">
-              {data.overview.pendingPartners} pending
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Active Partners</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.activePartners}</p>
+          <SparklineCard
+            title="Active Partners"
+            value={data.overview.activePartners}
+            data={partnerTrend}
+            icon={<Building2 className="w-6 h-6" />}
+            color="blue"
+            change={5.6}
+            subtitle={`${data.overview.pendingPartners} pending`}
+          />
         </motion.div>
 
         {/* Total Policies */}
@@ -218,19 +227,16 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-            <span className="flex items-center text-sm font-medium text-green-600">
-              <ArrowUpRight className="w-4 h-4" />
-              8.3%
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Total Policies</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.totalPolicies.toLocaleString()}</p>
+          <SparklineCard
+            title="Total Policies"
+            value={data.overview.totalPolicies}
+            data={policyTrend}
+            icon={<FileText className="w-6 h-6" />}
+            color="emerald"
+            change={8.3}
+            format="number"
+          />
         </motion.div>
 
         {/* Pending Payouts */}
@@ -238,15 +244,17 @@ export default function AdminDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-              <Clock className="w-6 h-6 text-white" />
-            </div>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Pending Payouts</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.pendingPayouts.totalAmount)}</p>
+          <SparklineCard
+            title="Pending Payouts"
+            value={data.pendingPayouts.totalAmount}
+            data={payoutTrend}
+            icon={<Clock className="w-6 h-6" />}
+            color="amber"
+            change={-15.3}
+            format="currency"
+            subtitle={`${data.pendingPayouts.count} payouts`}
+          />
         </motion.div>
       </div>
 
@@ -287,7 +295,9 @@ export default function AdminDashboardPage() {
                     <p className="text-sm text-slate-500">{partner.policies} policies</p>
                   </div>
                 </div>
-                <p className="font-bold text-slate-900">{formatCurrency(partner.revenue)}</p>
+                <div className="font-bold text-slate-900">
+                  <AnimatedNumber value={partner.revenue} format="currency" />
+                </div>
               </div>
             ))}
           </div>
@@ -330,11 +340,15 @@ export default function AdminDashboardPage() {
           <div className="mt-6 space-y-3 pt-4 border-t border-slate-200">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-600">Avg. Commission Rate</span>
-              <span className="font-semibold text-slate-900">{(data.revenue.avgCommissionRate * 100).toFixed(1)}%</span>
+              <div className="font-semibold text-slate-900">
+                <AnimatedNumber value={data.revenue.avgCommissionRate * 100} format="percentage" decimals={1} />
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-600">Total Commissions</span>
-              <span className="font-semibold text-slate-900">{formatCurrency(data.revenue.totalCommissions)}</span>
+              <div className="font-semibold text-slate-900">
+                <AnimatedNumber value={data.revenue.totalCommissions} format="currency" />
+              </div>
             </div>
           </div>
 
@@ -390,7 +404,7 @@ export default function AdminDashboardPage() {
                 Process Payouts
               </p>
               <p className="text-sm text-slate-500">
-                {formatCurrency(data.pendingPayouts.totalAmount)} pending
+                <AnimatedNumber value={data.pendingPayouts.totalAmount} format="currency" /> pending
               </p>
             </div>
             <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-violet-500 group-hover:translate-x-1 transition-all" />

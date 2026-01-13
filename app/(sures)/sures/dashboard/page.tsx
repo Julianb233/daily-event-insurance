@@ -28,6 +28,9 @@ import {
   Area,
   AreaChart,
 } from "recharts"
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
+import { SparklineCard } from '@/components/charts/SparklineCard'
+import { SkeletonStatsRow, SkeletonChart } from '@/components/shared/Skeleton'
 
 // Types for Sures dashboard data
 interface SuresDashboardStats {
@@ -209,23 +212,36 @@ export default function SuresDashboardPage() {
   if (isLoading) {
     return (
       <div className="p-6 lg:p-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-slate-200 rounded w-48" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-slate-200 rounded-xl" />
-            ))}
+        <div className="space-y-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-slate-200 rounded w-48 mb-2" />
+            <div className="h-5 bg-slate-100 rounded w-32" />
           </div>
+          <SkeletonStatsRow stats={4} />
           <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-80 bg-slate-200 rounded-xl" />
-            <div className="h-80 bg-slate-200 rounded-xl" />
+            <div className="lg:col-span-2">
+              <SkeletonChart className="h-80" />
+            </div>
+            <div className="space-y-6">
+              <SkeletonChart className="h-40" />
+              <SkeletonChart className="h-40" />
+            </div>
           </div>
+          <SkeletonChart className="h-64" />
         </div>
       </div>
     )
   }
 
   const data = dashboardData || generateMockData()
+
+  // Generate sparkline data for the last 7 days
+  const sparklineData = {
+    totalPolicies: [3750, 3780, 3810, 3820, 3835, 3840, 3842],
+    activePolicies: [3150, 3175, 3200, 3215, 3230, 3238, 3241],
+    totalParticipants: [12100, 12200, 12300, 12350, 12400, 12430, 12450],
+    pendingClaims: [28, 25, 27, 24, 26, 24, 23],
+  }
 
   return (
     <div className="p-6 lg:p-8">
@@ -247,18 +263,17 @@ export default function SuresDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-            <span className="flex items-center text-sm font-medium text-emerald-600">
-              <TrendingUp className="w-4 h-4" />
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Total Policies</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.totalPolicies.toLocaleString()}</p>
+          <SparklineCard
+            title="Total Policies"
+            value={<AnimatedNumber value={data.overview.totalPolicies} format="number" />}
+            data={sparklineData.totalPolicies}
+            trend="up"
+            change="+2.4%"
+            icon={<FileText className="w-6 h-6 text-white" />}
+            iconColor="from-emerald-500 to-emerald-600"
+            sparklineColor="#10b981"
+          />
         </motion.div>
 
         {/* Active Policies */}
@@ -266,18 +281,17 @@ export default function SuresDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-sm text-slate-500">
-              {((data.overview.activePolicies / data.overview.totalPolicies) * 100).toFixed(1)}%
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Active Policies</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.activePolicies.toLocaleString()}</p>
+          <SparklineCard
+            title="Active Policies"
+            value={<AnimatedNumber value={data.overview.activePolicies} format="number" />}
+            data={sparklineData.activePolicies}
+            trend="up"
+            change={`${((data.overview.activePolicies / data.overview.totalPolicies) * 100).toFixed(1)}%`}
+            icon={<Shield className="w-6 h-6 text-white" />}
+            iconColor="from-emerald-500 to-emerald-600"
+            sparklineColor="#10b981"
+          />
         </motion.div>
 
         {/* Total Participants */}
@@ -285,18 +299,17 @@ export default function SuresDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-sm text-slate-500">
-              Avg {Math.round(data.overview.totalParticipants / data.overview.totalPolicies)}
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Total Participants</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.totalParticipants.toLocaleString()}</p>
+          <SparklineCard
+            title="Total Participants"
+            value={<AnimatedNumber value={data.overview.totalParticipants} format="number" />}
+            data={sparklineData.totalParticipants}
+            trend="up"
+            change={`Avg ${Math.round(data.overview.totalParticipants / data.overview.totalPolicies)}`}
+            icon={<Users className="w-6 h-6 text-white" />}
+            iconColor="from-emerald-500 to-emerald-600"
+            sparklineColor="#10b981"
+          />
         </motion.div>
 
         {/* Pending Claims */}
@@ -304,18 +317,17 @@ export default function SuresDashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-sm text-slate-500">
-              {data.overview.claimsThisMonth} this month
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mb-1">Pending Claims</p>
-          <p className="text-2xl font-bold text-slate-900">{data.overview.pendingClaims}</p>
+          <SparklineCard
+            title="Pending Claims"
+            value={<AnimatedNumber value={data.overview.pendingClaims} format="number" />}
+            data={sparklineData.pendingClaims}
+            trend="down"
+            change={`${data.overview.claimsThisMonth} this month`}
+            icon={<AlertCircle className="w-6 h-6 text-white" />}
+            iconColor="from-amber-500 to-amber-600"
+            sparklineColor="#f59e0b"
+          />
         </motion.div>
       </div>
 
@@ -398,28 +410,36 @@ export default function SuresDashboardPage() {
                   <Clock className="w-5 h-5 text-amber-600" />
                   <span className="text-sm font-medium text-slate-700">Pending</span>
                 </div>
-                <span className="font-bold text-slate-900">{data.claimsStats.pending}</span>
+                <span className="font-bold text-slate-900">
+                  <AnimatedNumber value={data.claimsStats.pending} format="number" />
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   <span className="text-sm font-medium text-slate-700">Approved</span>
                 </div>
-                <span className="font-bold text-slate-900">{data.claimsStats.approved}</span>
+                <span className="font-bold text-slate-900">
+                  <AnimatedNumber value={data.claimsStats.approved} format="number" />
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
                 <div className="flex items-center gap-3">
                   <RefreshCw className="w-5 h-5 text-slate-600" />
                   <span className="text-sm font-medium text-slate-700">Under Review</span>
                 </div>
-                <span className="font-bold text-slate-900">{data.claimsStats.underReview}</span>
+                <span className="font-bold text-slate-900">
+                  <AnimatedNumber value={data.claimsStats.underReview} format="number" />
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-red-50">
                 <div className="flex items-center gap-3">
                   <XCircle className="w-5 h-5 text-red-600" />
                   <span className="text-sm font-medium text-slate-700">Rejected</span>
                 </div>
-                <span className="font-bold text-slate-900">{data.claimsStats.rejected}</span>
+                <span className="font-bold text-slate-900">
+                  <AnimatedNumber value={data.claimsStats.rejected} format="number" />
+                </span>
               </div>
             </div>
             <Link
@@ -457,11 +477,15 @@ export default function SuresDashboardPage() {
               <div className="pt-3 border-t border-slate-200">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-slate-500">Policies Synced</span>
-                  <span className="text-sm font-semibold text-slate-900">{data.apiSync.policiesSynced.toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-slate-900">
+                    <AnimatedNumber value={data.apiSync.policiesSynced} format="number" />
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-500">Claims Synced</span>
-                  <span className="text-sm font-semibold text-slate-900">{data.apiSync.claimsSynced.toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-slate-900">
+                    <AnimatedNumber value={data.apiSync.claimsSynced} format="number" />
+                  </span>
                 </div>
               </div>
             </div>
@@ -537,7 +561,9 @@ export default function SuresDashboardPage() {
                     <span className="text-sm text-slate-900">{policy.partnerName}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-slate-900">{policy.participants}</span>
+                    <span className="text-sm text-slate-900">
+                      <AnimatedNumber value={policy.participants} format="number" />
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm text-slate-600">{formatDate(policy.effectiveDate)}</span>

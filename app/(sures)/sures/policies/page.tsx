@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import EmptyState from '@/components/shared/EmptyState';
 
 // Types
 interface Policy {
@@ -488,13 +489,22 @@ export default function SuresPoliciesPage() {
           )}
 
           {/* Empty State */}
-          {paginatedPolicies.length === 0 && (
-            <div className="px-6 py-12 text-center">
-              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No policies found</h3>
-              <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+          {mockPolicies.length === 0 ? (
+            <EmptyState
+              icon={FileText}
+              title="No policies found"
+              description="Policies will appear here once you start creating them."
+            />
+          ) : paginatedPolicies.length === 0 ? (
+            <div className="px-6 py-12">
+              <EmptyState
+                icon={FileText}
+                title="No policies found"
+                description="Try adjusting your search or filter criteria"
+                variant="compact"
+              />
             </div>
-          )}
+          ) : null}
         </motion.div>
       </div>
     </div>

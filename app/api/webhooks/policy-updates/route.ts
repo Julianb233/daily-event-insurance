@@ -23,8 +23,8 @@ function verifySignature(payload: string, signature: string): boolean {
     .digest("hex")
 
   return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
+    new Uint8Array(Buffer.from(signature)),
+    new Uint8Array(Buffer.from(expectedSignature))
   )
 }
 

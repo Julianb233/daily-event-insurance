@@ -17,6 +17,7 @@ import {
   Download,
 } from "lucide-react"
 import { DataTable, Column } from "@/components/admin/DataTable"
+import EmptyState from "@/components/shared/EmptyState"
 
 interface Policy {
   id: string
@@ -395,14 +396,24 @@ export default function PoliciesPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <DataTable
-          columns={columns}
-          data={filteredPolicies}
-          idKey="id"
-          searchQuery={searchQuery}
-          onExport={() => {}}
-          emptyMessage="No policies found matching your criteria"
-        />
+        {policies.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-lg border border-slate-100">
+            <EmptyState
+              icon={FileText}
+              title="No policies found"
+              description="Policies will appear here once partners start creating them."
+            />
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={filteredPolicies}
+            idKey="id"
+            searchQuery={searchQuery}
+            onExport={() => {}}
+            emptyMessage="No policies found matching your criteria"
+          />
+        )}
       </motion.div>
     </div>
   )

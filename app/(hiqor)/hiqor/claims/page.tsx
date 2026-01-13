@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Calendar,
 } from 'lucide-react'
+import EmptyState from '@/components/shared/EmptyState'
 
 // TypeScript types
 interface Claim {
@@ -386,6 +387,28 @@ export default function HiqorClaimsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
+              {data?.claims.length === 0 ? (
+                <tr>
+                  <td colSpan={8}>
+                    <EmptyState
+                      icon={AlertCircle}
+                      title="No claims filed"
+                      description="Claims will appear here when participants file them."
+                    />
+                  </td>
+                </tr>
+              ) : paginatedClaims.length === 0 ? (
+                <tr>
+                  <td colSpan={8}>
+                    <EmptyState
+                      icon={AlertCircle}
+                      title="No claims found"
+                      description="Try adjusting your search or filters"
+                      variant="compact"
+                    />
+                  </td>
+                </tr>
+              ) : null}
               {paginatedClaims.map((claim, index) => {
                 const statusConfig = getStatusConfig(claim.status)
                 const StatusIcon = statusConfig.icon

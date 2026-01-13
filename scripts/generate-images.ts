@@ -75,7 +75,7 @@ async function generateImage(prompt: string, outputPath: string): Promise<void> 
 
     if (imageData && 'inlineData' in imageData && imageData.inlineData) {
       const buffer = Buffer.from(imageData.inlineData.data, 'base64');
-      fs.writeFileSync(outputPath, buffer);
+      fs.writeFileSync(outputPath, new Uint8Array(buffer));
       console.log(`✓ Saved: ${outputPath}`);
     } else {
       console.error(`✗ No image data for: ${outputPath}`);

@@ -18,6 +18,7 @@ import {
   MessageSquare,
   ExternalLink,
 } from "lucide-react"
+import EmptyState from "@/components/shared/EmptyState"
 
 interface Claim {
   id: string
@@ -246,6 +247,24 @@ export default function ClaimsPage() {
 
       {/* Claims List */}
       <div className="space-y-4">
+        {claims.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-100">
+            <EmptyState
+              icon={AlertTriangle}
+              title="No claims filed"
+              description="Claims will appear here when participants file them."
+            />
+          </div>
+        ) : filteredClaims.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 shadow-lg border border-slate-100">
+            <EmptyState
+              icon={AlertTriangle}
+              title="No claims found"
+              description="Try adjusting your search or filters"
+              variant="compact"
+            />
+          </div>
+        ) : null}
         {filteredClaims.map((claim, index) => {
           const status = statusConfig[claim.status]
           const StatusIcon = status.icon
@@ -338,17 +357,6 @@ export default function ClaimsPage() {
             </motion.div>
           )
         })}
-
-        {filteredClaims.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12"
-          >
-            <AlertTriangle className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-600">No claims found</p>
-          </motion.div>
-        )}
       </div>
     </div>
   )

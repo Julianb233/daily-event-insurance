@@ -16,77 +16,8 @@ interface Message {
   content: string
 }
 
-// Build assistant config with context-aware system prompt
-function buildAssistantConfig(context?: {
-  screenType?: string
-  screenName?: string
-  currentStepName?: string
-  journeyStage?: string
-}) {
-  let systemPrompt = `You are Sarah, a friendly and knowledgeable insurance specialist for Daily Event Insurance.
-You help partners and potential partners understand our event insurance platform.
-
-Key facts about Daily Event Insurance:
-- We provide liability insurance for event operators, gyms, climbing facilities, and adventure businesses
-- Partners earn commissions (25-37.5%) by offering our insurance to their customers
-- Our platform offers instant quotes and same-day coverage
-- We handle all claims and customer support
-
-Commission tiers:
-- 0-999 participants: 25% ($10/participant)
-- 1,000-2,499: 27.5% ($11/participant)
-- 2,500-4,999: 30% ($12/participant)
-- 5,000-9,999: 32.5% ($13/participant)
-- 10,000-24,999: 35% ($14/participant)
-- 25,000+: 37.5% ($15/participant)
-
-Communication style:
-- Be conversational, warm, and professional
-- Keep responses concise (2-3 sentences) since this is a voice conversation
-- Ask clarifying questions when needed
-- Be helpful and solution-oriented`
-
-  if (context?.screenType?.startsWith('onboarding')) {
-    systemPrompt += `
-
-Current context: The user is going through the partner onboarding process.
-${context.currentStepName ? `They are currently on the "${context.currentStepName}" step.` : ''}
-Help them complete the onboarding smoothly. Answer questions about the process and reassure them.`
-  } else if (context?.screenType?.startsWith('partner-')) {
-    systemPrompt += `
-
-Current context: The user is an existing partner using their dashboard.
-${context.screenName ? `They are on the "${context.screenName}" page.` : ''}
-Help them with partner-specific questions about earnings, policies, or platform features.`
-  } else if (context?.journeyStage === 'consideration') {
-    systemPrompt += `
-
-Current context: The user is exploring our platform and considering becoming a partner.
-Focus on explaining the benefits of partnership and answering their questions about how it works.`
-  }
-
-  return {
-    name: "Sarah",
-    firstMessage: "Hi! I'm Sarah from Daily Event Insurance. How can I help you today?",
-    transcriber: {
-      provider: "deepgram" as const,
-      model: "nova-2" as const,
-      language: "en-US" as const
-    },
-    voice: {
-      provider: "openai" as const,
-      voiceId: "nova" as const
-    },
-    model: {
-      provider: "openai" as const,
-      model: "gpt-4o" as const,
-      messages: [{
-        role: "system" as const,
-        content: systemPrompt
-      }]
-    }
-  }
-}
+// VAPI Assistant ID (pre-created in VAPI dashboard)
+const VAPI_ASSISTANT_ID = "6d853887-f8c7-483e-857b-4d37ade71adc"
 
 export function VoiceAgentGlobal() {
   const { context, isOpen, openVoiceAgent, closeVoiceAgent } = useVoiceAgent()
@@ -213,11 +144,8 @@ export function VoiceAgentGlobal() {
         vapiRef.current = new Vapi(publicKey)
       }
 
-      // Build assistant config with current context
-      const assistantConfig = buildAssistantConfig(context)
-
-      // Start the call with transient assistant
-      await vapiRef.current.start(assistantConfig)
+      // Start the call with pre-configured assistant ID
+      await vapiRef.current.start(VAPI_ASSISTANT_ID)
 
       // Add initial message to transcript
       setTranscript(['Sarah: Hi! I\'m Sarah from Daily Event Insurance. How can I help you today?'])

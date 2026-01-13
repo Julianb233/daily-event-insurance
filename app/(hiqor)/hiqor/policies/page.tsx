@@ -17,6 +17,7 @@ import {
   AlertCircle,
   TrendingUp,
 } from 'lucide-react'
+import EmptyState from '@/components/shared/EmptyState'
 
 // TypeScript types
 interface Policy {
@@ -377,7 +378,17 @@ export default function HiqorPoliciesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {paginatedPolicies.length > 0 ? (
+              {data?.policies.length === 0 ? (
+                <tr>
+                  <td colSpan={7}>
+                    <EmptyState
+                      icon={FileText}
+                      title="No policies found"
+                      description="Policies will appear here once you start creating them."
+                    />
+                  </td>
+                </tr>
+              ) : paginatedPolicies.length > 0 ? (
                 paginatedPolicies.map((policy, index) => (
                   <motion.tr
                     key={policy.id}

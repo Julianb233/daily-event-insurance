@@ -25,13 +25,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
+import { SparklineCard } from '@/components/charts/SparklineCard'
+import { SkeletonStatsRow, SkeletonChart } from '@/components/shared/Skeleton'
 
 interface DashboardData {
   income: {
-    today: { amount: number; change: number; policies: number }
-    week: { amount: number; change: number; policies: number }
-    month: { amount: number; change: number; policies: number }
-    ytd: { amount: number; change: number }
+    today: { amount: number; change: number; policies: number; sparkline: number[] }
+    week: { amount: number; change: number; policies: number; sparkline: number[] }
+    month: { amount: number; change: number; policies: number; sparkline: number[] }
+    ytd: { amount: number; change: number; sparkline: number[] }
   }
   chartData: Array<{ date: string; premium: number; policies: number }>
   stats: {
@@ -58,10 +61,10 @@ interface DashboardData {
 // Mock data for development
 const mockData: DashboardData = {
   income: {
-    today: { amount: 3450, change: 8, policies: 12 },
-    week: { amount: 18230, change: 5, policies: 67 },
-    month: { amount: 72540, change: 12, policies: 243 },
-    ytd: { amount: 687540, change: 32 },
+    today: { amount: 3450, change: 8, policies: 12, sparkline: [2800, 3100, 2900, 3300, 3000, 3200, 3450] },
+    week: { amount: 18230, change: 5, policies: 67, sparkline: [16500, 17200, 17800, 17500, 18000, 17900, 18230] },
+    month: { amount: 72540, change: 12, policies: 243, sparkline: [64000, 66500, 68200, 70100, 69800, 71200, 72540] },
+    ytd: { amount: 687540, change: 32, sparkline: [520000, 560000, 595000, 620000, 645000, 665000, 687540] },
   },
   chartData: Array.from({ length: 30 }, (_, i) => ({
     date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
@@ -127,14 +130,19 @@ export default function HiqorDashboardPage() {
   if (loading) {
     return (
       <div className="p-8">
-        <div className="animate-pulse space-y-8">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="grid grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
-            ))}
+        <div className="space-y-8">
+          <div className="h-8 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+          <SkeletonStatsRow stats={4} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <SkeletonChart className="h-80" />
+            </div>
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-20 bg-gray-200 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
           </div>
-          <div className="h-80 bg-gray-200 rounded-xl"></div>
         </div>
       </div>
     )
@@ -182,88 +190,57 @@ export default function HiqorDashboardPage() {
 
       {/* Income Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-5 h-5" />
-            </div>
-            <span className={`flex items-center gap-1 text-sm font-medium ${
-              (data?.income.today.change || 0) >= 0 ? 'text-green-200' : 'text-red-200'
-            }`}>
-              {(data?.income.today.change || 0) >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              {formatPercent(data?.income.today.change || 0)} vs yesterday
-            </span>
-          </div>
-          <p className="text-3xl font-bold">{formatCurrency(data?.income.today.amount || 0)}</p>
-          <p className="text-indigo-200 text-sm mt-1">Today's Premium • {data?.income.today.policies} policies</p>
-        </motion.div>
+        <SparklineCard
+          title="Today's Premium"
+          value={data?.income.today.amount || 0}
+          format="currency"
+          change={data?.income.today.change || 0}
+          changeLabel="vs yesterday"
+          subtitle={`${data?.income.today.policies} policies`}
+          sparklineData={data?.income.today.sparkline || []}
+          gradient="from-indigo-500 to-indigo-600"
+          icon={<DollarSign className="w-5 h-5" />}
+          delay={0}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <span className={`flex items-center gap-1 text-sm font-medium ${
-              (data?.income.week.change || 0) >= 0 ? 'text-green-200' : 'text-red-200'
-            }`}>
-              {(data?.income.week.change || 0) >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              {formatPercent(data?.income.week.change || 0)} vs last week
-            </span>
-          </div>
-          <p className="text-3xl font-bold">{formatCurrency(data?.income.week.amount || 0)}</p>
-          <p className="text-blue-200 text-sm mt-1">This Week • {data?.income.week.policies} policies</p>
-        </motion.div>
+        <SparklineCard
+          title="This Week"
+          value={data?.income.week.amount || 0}
+          format="currency"
+          change={data?.income.week.change || 0}
+          changeLabel="vs last week"
+          subtitle={`${data?.income.week.policies} policies`}
+          sparklineData={data?.income.week.sparkline || []}
+          gradient="from-blue-500 to-blue-600"
+          icon={<TrendingUp className="w-5 h-5" />}
+          delay={0.1}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5" />
-            </div>
-            <span className={`flex items-center gap-1 text-sm font-medium ${
-              (data?.income.month.change || 0) >= 0 ? 'text-green-200' : 'text-red-200'
-            }`}>
-              {(data?.income.month.change || 0) >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              {formatPercent(data?.income.month.change || 0)} vs last month
-            </span>
-          </div>
-          <p className="text-3xl font-bold">{formatCurrency(data?.income.month.amount || 0)}</p>
-          <p className="text-purple-200 text-sm mt-1">This Month • {data?.income.month.policies} policies</p>
-        </motion.div>
+        <SparklineCard
+          title="This Month"
+          value={data?.income.month.amount || 0}
+          format="currency"
+          change={data?.income.month.change || 0}
+          changeLabel="vs last month"
+          subtitle={`${data?.income.month.policies} policies`}
+          sparklineData={data?.income.month.sparkline || []}
+          gradient="from-purple-500 to-purple-600"
+          icon={<Calendar className="w-5 h-5" />}
+          delay={0.2}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Wallet className="w-5 h-5" />
-            </div>
-            <span className={`flex items-center gap-1 text-sm font-medium ${
-              (data?.income.ytd.change || 0) >= 0 ? 'text-green-200' : 'text-red-200'
-            }`}>
-              {(data?.income.ytd.change || 0) >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              {formatPercent(data?.income.ytd.change || 0)} vs last year
-            </span>
-          </div>
-          <p className="text-3xl font-bold">{formatCurrency(data?.income.ytd.amount || 0)}</p>
-          <p className="text-violet-200 text-sm mt-1">Year to Date</p>
-        </motion.div>
+        <SparklineCard
+          title="Year to Date"
+          value={data?.income.ytd.amount || 0}
+          format="currency"
+          change={data?.income.ytd.change || 0}
+          changeLabel="vs last year"
+          subtitle=""
+          sparklineData={data?.income.ytd.sparkline || []}
+          gradient="from-violet-500 to-violet-600"
+          icon={<Wallet className="w-5 h-5" />}
+          delay={0.3}
+        />
       </div>
 
       {/* Chart and Stats */}
@@ -320,7 +297,9 @@ export default function HiqorDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Policies</p>
-                  <p className="text-lg font-bold text-gray-900">{data?.stats.totalPolicies.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    <AnimatedNumber value={data?.stats.totalPolicies || 0} format="number" />
+                  </p>
                 </div>
               </div>
             </div>
@@ -332,7 +311,9 @@ export default function HiqorDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Active Policies</p>
-                  <p className="text-lg font-bold text-gray-900">{data?.stats.activePolicies.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    <AnimatedNumber value={data?.stats.activePolicies || 0} format="number" />
+                  </p>
                 </div>
               </div>
             </div>
@@ -344,7 +325,9 @@ export default function HiqorDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Participants</p>
-                  <p className="text-lg font-bold text-gray-900">{data?.stats.totalParticipants.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    <AnimatedNumber value={data?.stats.totalParticipants || 0} format="number" />
+                  </p>
                 </div>
               </div>
             </div>
@@ -356,7 +339,9 @@ export default function HiqorDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Pending Claims</p>
-                  <p className="text-lg font-bold text-gray-900">{data?.stats.pendingClaims}</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    <AnimatedNumber value={data?.stats.pendingClaims || 0} format="number" />
+                  </p>
                 </div>
               </div>
             </div>
@@ -401,7 +386,7 @@ export default function HiqorDashboardPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{policy.holderName}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {formatCurrency(policy.premium)}
+                    <AnimatedNumber value={policy.premium} format="currency" />
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
