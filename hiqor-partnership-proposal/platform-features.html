@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Event Insurance - Platform Features</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      padding: 40px;
+      color: white;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header img {
+      height: 50px;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(20, 184, 166, 0.2);
+      border: 1px solid rgba(20, 184, 166, 0.4);
+      color: #5eead4;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      font-size: 18px;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #14b8a6, #10b981, #06b6d4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(20, 184, 166, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card.large {
+      grid-column: span 2;
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #14b8a6, #10b981);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.3);
+    }
+
+    .feature-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: white;
+    }
+
+    .feature-card p {
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      color: #14b8a6;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .mock-ui {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mock-browser {
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .mock-browser-header {
+      background: #0f172a;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mock-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mock-dot.red { background: #ef4444; }
+    .mock-dot.yellow { background: #eab308; }
+    .mock-dot.green { background: #22c55e; }
+
+    .mock-content {
+      padding: 20px;
+    }
+
+    .mock-chat {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mock-message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+    }
+
+    .mock-message.incoming {
+      background: rgba(20, 184, 166, 0.2);
+      color: #5eead4;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+
+    .mock-message.outgoing {
+      background: rgba(100, 116, 139, 0.3);
+      color: #e2e8f0;
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+    }
+
+    .mock-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mock-input input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: white;
+      font-size: 13px;
+    }
+
+    .mock-input button {
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .qr-demo {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .qr-placeholder {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .qr-placeholder svg {
+      width: 100px;
+      height: 100px;
+    }
+
+    .qr-info h4 {
+      color: white;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .qr-info p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .microsite-preview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .microsite-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .microsite-item .icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .microsite-item span {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .screen-record-demo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+
+    .record-dot {
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .screen-record-demo span {
+      color: #fca5a5;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .cta-section {
+      text-align: center;
+      margin-top: 60px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cta-section h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      color: #94a3b8;
+      margin-bottom: 24px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 50px rgba(20, 184, 166, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-card.large {
+        grid-column: span 1;
+      }
+
+      .qr-demo {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: #0f172a;
+        padding: 20px;
+      }
+
+      .feature-card {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        page-break-inside: avoid;
+      }
+
+      .feature-card h3 {
+        color: #0f172a;
+      }
+
+      .feature-card p,
+      .feature-list li {
+        color: #475569;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://dailyeventinsurance.com/images/logo-color.png" alt="Daily Event Insurance">
+      <div class="badge">Platform Capabilities</div>
+      <h1>Built for Partners Like HIQOR</h1>
+      <p>Our platform includes everything you need to launch, manage, and scale events-based insurance across your network.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Live Chat Support -->
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Live Chat Support</h3>
+        <p>Real-time chat support built directly into the platform. Your customers get instant answers to their insurance questions.</p>
+        <ul class="feature-list">
+          <li>Instant response to customer inquiries</li>
+          <li>Smart routing to the right support agent</li>
+          <li>Full conversation history tracking</li>
+          <li>Available 7 days a week</li>
+        </ul>
+        <div class="mock-ui">
+          <div class="mock-browser">
+            <div class="mock-browser-header">
+              <span class="mock-dot red"></span>
+              <span class="mock-dot yellow"></span>
+              <span class="mock-dot green"></span>
+            </div>
+            <div class="mock-content">
+              <div class="mock-chat">
+                <div class="mock-message incoming">Hi! I need help with my event insurance policy.</div>
+                <div class="mock-message outgoing">Of course! I can help you with that. What's your event date?</div>
+                <div class="mock-message incoming">It's next Saturday at the community center.</div>
+              </div>
+              <div class="mock-input">
+                <input type="text" placeholder="Type your message...">
+                <button>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMS/Text Support -->
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>SMS Text Support</h3>
+        <p>Meet customers where they are. Our SMS support system allows customers to get help via text message.</p>
+        <ul class="feature-list">
+          <li>Two-way SMS communication</li>
+          <li>Policy status updates via text</li>
+          <li>Appointment reminders</li>
+          <li>Claim status notifications</li>
+        </ul>
+        <div class="mock-ui">
+          <div style="background: #0f172a; border-radius: 20px; padding: 12px; max-width: 280px; margin: 0 auto;">
+            <div style="background: #1e293b; border-radius: 16px; padding: 16px;">
+              <div style="text-align: center; font-size: 11px; color: #64748b; margin-bottom: 12px;">Today 2:34 PM</div>
+              <div style="background: #14b8a6; color: white; padding: 10px 14px; border-radius: 16px 16px 16px 4px; font-size: 13px; margin-bottom: 8px;">
+                Your policy #DEI-28471 is now active for Saturday's event. Reply HELP for assistance.
+              </div>
+              <div style="background: #334155; color: white; padding: 10px 14px; border-radius: 16px 16px 4px 16px; font-size: 13px; margin-left: auto; max-width: 80%; text-align: right;">
+                Thanks! What's covered?
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen Recording -->
+      <div class="feature-card">
+        <div class="feature-icon">🎥</div>
+        <h3>Screen Recording & Co-Browse</h3>
+        <p>When customers need hands-on help, our support team can record sessions and even co-browse to guide them through the process.</p>
+        <ul class="feature-list">
+          <li>Live screen sharing for complex issues</li>
+          <li>Recorded sessions for training purposes</li>
+          <li>Co-browsing to guide customers step-by-step</li>
+          <li>Secure, encrypted sessions</li>
+        </ul>
+        <div class="screen-record-demo">
+          <div class="record-dot"></div>
+          <span>Recording in progress - Helping customer complete checkout...</span>
+        </div>
+      </div>
+
+      <!-- Partner Onboarding -->
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Business Onboarding</h3>
+        <p>Comprehensive onboarding system that gets new partners up and running quickly with personalized training and support.</p>
+        <ul class="feature-list">
+          <li>Guided setup wizard</li>
+          <li>Video training library</li>
+          <li>1-on-1 onboarding calls</li>
+          <li>Best practices documentation</li>
+          <li>Integration support team</li>
+        </ul>
+      </div>
+
+      <!-- QR Code Creation -->
+      <div class="feature-card">
+        <div class="feature-icon">📲</div>
+        <h3>QR Code Generation</h3>
+        <p>Generate custom QR codes that link directly to your insurance purchase page. Perfect for flyers, signage, and event materials.</p>
+        <ul class="feature-list">
+          <li>Custom-branded QR codes</li>
+          <li>Track scans and conversions</li>
+          <li>Dynamic links (update destination anytime)</li>
+          <li>Print-ready formats (PNG, SVG, PDF)</li>
+        </ul>
+        <div class="qr-demo">
+          <div class="qr-placeholder">
+            <svg viewBox="0 0 100 100">
+              <rect fill="#0f172a" x="0" y="0" width="30" height="30"/>
+              <rect fill="#0f172a" x="35" y="0" width="10" height="10"/>
+              <rect fill="#0f172a" x="55" y="0" width="10" height="10"/>
+              <rect fill="#0f172a" x="70" y="0" width="30" height="30"/>
+              <rect fill="#0f172a" x="5" y="5" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
+              <rect fill="#0f172a" x="75" y="5" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
+              <rect fill="#14b8a6" x="10" y="10" width="10" height="10"/>
+              <rect fill="#14b8a6" x="80" y="10" width="10" height="10"/>
+              <rect fill="#0f172a" x="0" y="35" width="10" height="10"/>
+              <rect fill="#0f172a" x="20" y="35" width="10" height="10"/>
+              <rect fill="#0f172a" x="45" y="35" width="20" height="10"/>
+              <rect fill="#0f172a" x="80" y="35" width="10" height="10"/>
+              <rect fill="#0f172a" x="0" y="50" width="25" height="10"/>
+              <rect fill="#0f172a" x="35" y="50" width="10" height="10"/>
+              <rect fill="#0f172a" x="55" y="50" width="20" height="10"/>
+              <rect fill="#0f172a" x="90" y="50" width="10" height="10"/>
+              <rect fill="#0f172a" x="0" y="70" width="30" height="30"/>
+              <rect fill="#0f172a" x="5" y="75" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
+              <rect fill="#14b8a6" x="10" y="80" width="10" height="10"/>
+              <rect fill="#0f172a" x="40" y="70" width="10" height="10"/>
+              <rect fill="#0f172a" x="60" y="70" width="10" height="10"/>
+              <rect fill="#0f172a" x="80" y="70" width="20" height="10"/>
+              <rect fill="#0f172a" x="40" y="85" width="25" height="10"/>
+              <rect fill="#0f172a" x="75" y="85" width="10" height="10"/>
+              <rect fill="#0f172a" x="90" y="85" width="10" height="15"/>
+            </svg>
+          </div>
+          <div class="qr-info">
+            <h4>Scan to Purchase Coverage</h4>
+            <p>Custom QR codes link directly to your branded insurance purchase page. Track every scan and conversion in real-time.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Microsite Creation -->
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Microsite Creation</h3>
+        <p>Fully branded insurance microsites deployed in days, not months. Each site is customized to match your brand perfectly.</p>
+        <ul class="feature-list">
+          <li>Custom domain (insurance.yourbrand.com)</li>
+          <li>Your logo, colors, and branding</li>
+          <li>Mobile-optimized responsive design</li>
+          <li>SEO-friendly pages</li>
+          <li>Analytics and conversion tracking</li>
+        </ul>
+        <div class="microsite-preview">
+          <div class="microsite-item">
+            <div class="icon">🎨</div>
+            <span>Custom Branding</span>
+          </div>
+          <div class="microsite-item">
+            <div class="icon">📱</div>
+            <span>Mobile Ready</span>
+          </div>
+          <div class="microsite-item">
+            <div class="icon">🔒</div>
+            <span>SSL Secured</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Integration Support -->
+      <div class="feature-card large">
+        <div class="feature-icon">🛠️</div>
+        <h3>Live Integration Support</h3>
+        <p>Our dedicated technical team provides live support to help partners integrate with their existing systems. We don't just hand you documentation — we work alongside your team to ensure a seamless integration.</p>
+        <ul class="feature-list">
+          <li>Dedicated integration specialist assigned to your account</li>
+          <li>Live screen-sharing sessions to troubleshoot issues</li>
+          <li>API documentation and sandbox environment</li>
+          <li>Webhook configuration assistance</li>
+          <li>Custom integration development when needed</li>
+          <li>Post-launch monitoring and optimization</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2>Ready to See It in Action?</h2>
+      <p>Schedule a live demo to see all these features working together.</p>
+      <a href="https://dailyeventinsurance.com/about/hiqor/presentation" class="cta-button">
+        View Full Presentation →
+      </a>
+    </div>
+  </div>
+</body>
+</html>

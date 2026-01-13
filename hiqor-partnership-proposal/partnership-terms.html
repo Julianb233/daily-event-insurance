@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HIQOR Partnership - Terms Sheet</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #f0fdfa 0%, #ecfeff 100%);
+      padding: 40px;
+      border-bottom: 4px solid;
+      border-image: linear-gradient(90deg, #14b8a6, #10b981, #06b6d4) 1;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .logo img {
+      height: 36px;
+      width: auto;
+    }
+
+    .doc-type {
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 16px;
+      color: #64748b;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .terms-section {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .terms-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .terms-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .terms-section h2 .icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #14b8a6, #10b981);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+
+    .term-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .term-row:last-child {
+      border-bottom: none;
+    }
+
+    .term-label {
+      font-size: 14px;
+      color: #64748b;
+      flex: 1;
+    }
+
+    .term-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0f172a;
+      text-align: right;
+      flex: 1;
+    }
+
+    .term-value.highlight {
+      color: #14b8a6;
+      font-size: 18px;
+    }
+
+    .term-value.large {
+      font-size: 24px;
+      color: #14b8a6;
+    }
+
+    .included-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+      color: #0d9488;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid #99f6e4;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .service-item {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .service-item strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .service-item span {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .service-item .price {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #14b8a6;
+      background: #f0fdfa;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .note-box {
+      background: linear-gradient(135deg, #fef3c7, #fef9c3);
+      border: 1px solid #fcd34d;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+
+    .note-box strong {
+      color: #92400e;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .note-box p {
+      color: #a16207;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      background: #0f172a;
+      padding: 32px 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .footer strong {
+      color: white;
+    }
+
+    .contact-info {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #334155;
+    }
+
+    .contact-info a {
+      color: #14b8a6;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+
+      .container {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-top">
+        <div class="logo">
+          <img src="https://dailyeventinsurance.com/images/logo-color.png" alt="Daily Event Insurance">
+        </div>
+        <span class="doc-type">Terms Sheet</span>
+      </div>
+      <h1>HIQOR Partnership Terms</h1>
+      <p>Daily Event Insurance + HIQOR Strategic Partnership Agreement</p>
+    </div>
+
+    <div class="content">
+      <div class="terms-section">
+        <h2><span class="icon">$</span> Revenue Structure</h2>
+        <div class="term-row">
+          <span class="term-label">Revenue Split Model</span>
+          <span class="term-value large">70% / 30%</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">HIQOR Retention</span>
+          <span class="term-value highlight">70% of gross premium</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Daily Event Insurance Share</span>
+          <span class="term-value">30% of gross premium</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Payout Frequency</span>
+          <span class="term-value">Monthly via ACH</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Reporting</span>
+          <span class="term-value">Real-time dashboard access</span>
+        </div>
+      </div>
+
+      <div class="terms-section">
+        <h2><span class="icon">🖥</span> Microsite Services</h2>
+        <div class="term-row">
+          <span class="term-label">Monthly Fee per Microsite</span>
+          <span class="term-value large">$600/month</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Setup Fee</span>
+          <span class="term-value">Waived</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Custom Branding</span>
+          <span class="term-value"><span class="included-badge">Included</span></span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Custom Domain Setup</span>
+          <span class="term-value"><span class="included-badge">Included</span></span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Hosting & Maintenance</span>
+          <span class="term-value"><span class="included-badge">Included</span></span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">SSL Certificate</span>
+          <span class="term-value"><span class="included-badge">Included</span></span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Updates & Improvements</span>
+          <span class="term-value"><span class="included-badge">Included</span></span>
+        </div>
+      </div>
+
+      <div class="terms-section">
+        <h2><span class="icon">🎯</span> Included Services (No Additional Cost)</h2>
+        <div class="services-grid">
+          <div class="service-item">
+            <strong>Customer Support</strong>
+            <span>Email & chat support for all customer inquiries</span>
+            <div class="price">Included</div>
+          </div>
+          <div class="service-item">
+            <strong>Onboarding & Training</strong>
+            <span>Complete platform training for your team</span>
+            <div class="price">Included</div>
+          </div>
+          <div class="service-item">
+            <strong>Sales Resources</strong>
+            <span>Marketing collateral, scripts, promotional materials</span>
+            <div class="price">Included</div>
+          </div>
+          <div class="service-item">
+            <strong>Strategic Introductions</strong>
+            <span>Access to partner network and industry connections</span>
+            <div class="price">Included</div>
+          </div>
+          <div class="service-item">
+            <strong>Analytics & Reporting</strong>
+            <span>Real-time dashboards, monthly performance reports</span>
+            <div class="price">Included</div>
+          </div>
+          <div class="service-item">
+            <strong>Claims Assistance</strong>
+            <span>Full claims processing and customer support</span>
+            <div class="price">Included</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="terms-section">
+        <h2><span class="icon">🔒</span> Technology & Compliance</h2>
+        <div class="term-row">
+          <span class="term-label">Security Standard</span>
+          <span class="term-value">SOC 2 Type II Certified</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Data Protection</span>
+          <span class="term-value">GDPR / CCPA Compliant</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Platform Uptime SLA</span>
+          <span class="term-value">99.9%</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Data Encryption</span>
+          <span class="term-value">AES-256 / TLS 1.3</span>
+        </div>
+      </div>
+
+      <div class="terms-section">
+        <h2><span class="icon">📅</span> Contract Terms</h2>
+        <div class="term-row">
+          <span class="term-label">Initial Term</span>
+          <span class="term-value">12 months</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Renewal</span>
+          <span class="term-value">Auto-renew annually</span>
+        </div>
+        <div class="term-row">
+          <span class="term-label">Termination Notice</span>
+          <span class="term-value">90 days written notice</span>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <strong>Note</strong>
+        <p>
+          This terms sheet is provided for discussion purposes and does not constitute a binding agreement.
+          Final terms will be documented in the formal Partnership Agreement upon mutual consent.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p><strong>Daily Event Insurance</strong></p>
+      <p>Events-Based InsurTech Platform</p>
+      <div class="contact-info">
+        <a href="https://dailyeventinsurance.com/about/hiqor/presentation">View Full Presentation →</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
