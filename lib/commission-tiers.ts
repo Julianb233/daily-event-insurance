@@ -3,6 +3,8 @@
  *
  * Centralized configuration for partner commission calculations.
  * Extracted from revenue-calculator.tsx for reuse across the application.
+ *
+ * Note: Coverage is now REQUIRED for all participants (100% coverage).
  */
 
 export interface CommissionTier {
@@ -20,7 +22,7 @@ export interface LocationOption {
 
 export interface EarningsCalculation {
   totalParticipants: number
-  optedInParticipants: number
+  coveredParticipants: number
   commissionTier: CommissionTier
   effectivePerParticipant: number
   locationBonus: number
@@ -55,12 +57,6 @@ export const locationOptions: LocationOption[] = [
 ]
 
 /**
- * Expected opt-in rate for coverage
- * Based on historical data across partner network
- */
-export const OPT_IN_RATE = 0.65
-
-/**
  * Volume tier options for UI selectors
  */
 export const volumeTiers = [
@@ -90,22 +86,23 @@ export function getLocationOption(locations: number): LocationOption {
 
 /**
  * Calculate earnings based on participants and locations
+ * Coverage is required for all participants (100%)
  */
 export function calculateEarnings(
   monthlyParticipants: number,
   locations: number = 1
 ): EarningsCalculation {
   const totalParticipants = monthlyParticipants * (locations > 1 ? locations : 1)
-  const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE)
+  const coveredParticipants = totalParticipants // 100% coverage required
   const commissionTier = getCommissionTier(totalParticipants)
   const locationOption = getLocationOption(locations)
   const effectivePerParticipant = commissionTier.perParticipant + locationOption.bonus
-  const monthlyEarnings = optedInParticipants * effectivePerParticipant
+  const monthlyEarnings = coveredParticipants * effectivePerParticipant
   const annualEarnings = monthlyEarnings * 12
 
   return {
     totalParticipants,
-    optedInParticipants,
+    coveredParticipants,
     commissionTier,
     effectivePerParticipant,
     locationBonus: locationOption.bonus,
@@ -117,16 +114,15 @@ export function calculateEarnings(
 
 /**
  * Calculate projected earnings for a specific year-month
+ * Coverage is required for all participants (100%)
  */
 export function calculateMonthlyCommission(
   totalParticipants: number,
-  optInRate: number = OPT_IN_RATE,
   locationBonus: number = 0
 ): number {
-  const optedIn = Math.round(totalParticipants * optInRate)
   const tier = getCommissionTier(totalParticipants)
   const effectiveRate = tier.perParticipant + locationBonus
-  return optedIn * effectiveRate
+  return totalParticipants * effectiveRate
 }
 
 /**
@@ -166,6 +162,7 @@ export function formatCurrency(value: number): string {
 
 /**
  * Generate chart data for earnings visualization
+ * Coverage is required for all participants (100%)
  */
 export function generateEarningsChartData(locations: number = 1): Array<{
   participants: number
@@ -179,10 +176,9 @@ export function generateEarningsChartData(locations: number = 1): Array<{
   ]
 
   return dataPoints.map(participants => {
-    const optedIn = Math.round(participants * OPT_IN_RATE)
     const tier = getCommissionTier(participants)
     const effectiveRate = tier.perParticipant + locationOption.bonus
-    const monthlyEarnings = Math.round(optedIn * effectiveRate)
+    const monthlyEarnings = Math.round(participants * effectiveRate) // 100% coverage
 
     return {
       participants,
