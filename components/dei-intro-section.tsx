@@ -187,7 +187,7 @@ export function DEIIntroSection() {
 
       {/* Scroll indicator - enhanced visibility */}
       <motion.div
-        className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
+        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
         transition={{ delay: 1.2, duration: 0.8 }}
