@@ -3,7 +3,6 @@ import { requireAuth, requirePartner, withAuth } from "@/lib/api-auth"
 import { db, isDbConfigured, partners, partnerProducts, partnerDocuments } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode, MOCK_PARTNER, MOCK_PRODUCTS } from "@/lib/mock-data"
-import { getGHLClient, isGHLConfigured } from "@/lib/ghl"
 
 /**
  * GET /api/partner
@@ -142,59 +141,18 @@ export async function POST(request: NextRequest) {
       // Don't fail the whole request, just log it
     }
 
-    // Initiate GHL onboarding (create contact and send documents)
-    if (isGHLConfigured()) {
-      try {
-        const ghl = getGHLClient()
-        // Split contact name into first/last for GHL
-        const nameParts = finalContactName.split(' ')
-        const firstName = nameParts[0] || finalContactName
-        const lastName = nameParts.slice(1).join(' ') || ''
-
-        const ghlResult = await ghl.initiatePartnerOnboarding({
+    // Create document records (pending status - to be sent manually or via future integration)
+    try {
+      const documentTypes = ["partner_agreement", "w9", "direct_deposit"]
+      await db!.insert(partnerDocuments).values(
+        documentTypes.map((docType) => ({
           partnerId: partner.id,
-          email: finalContactEmail,
-          firstName,
-          lastName,
-          phone: finalContactPhone || undefined,
-          businessName: finalBusinessName,
-          businessType: finalBusinessType,
-          integrationType: finalIntegrationType || "widget",
-        })
-
-        // Update partner with GHL IDs
-        if (ghlResult.contact?.id || ghlResult.opportunity?.id) {
-          await db!
-            .update(partners)
-            .set({
-              ghlContactId: ghlResult.contact?.id,
-              ghlOpportunityId: ghlResult.opportunity?.id,
-              documentsStatus: "sent",
-              documentsSentAt: new Date(),
-              status: "documents_sent",
-              updatedAt: new Date(),
-            })
-            .where(eq(partners.id, partner.id))
-
-          // Create document records
-          const documentTypes = ["partner_agreement", "w9", "direct_deposit"]
-          await db!.insert(partnerDocuments).values(
-            documentTypes.map((docType) => ({
-              partnerId: partner.id,
-              documentType: docType,
-              status: "sent",
-              sentAt: new Date(),
-            }))
-          )
-        }
-
-        console.log(`[Partner] GHL onboarding initiated for partner ${partner.id}`)
-      } catch (ghlError) {
-        console.error("[Partner] GHL onboarding error:", ghlError)
-        // Don't fail partner creation if GHL fails - admin can trigger manually
-      }
-    } else {
-      console.log("[Partner] GHL not configured, skipping document sending")
+          documentType: docType,
+          status: "pending",
+        }))
+      )
+    } catch (docError) {
+      console.error("Error creating document records:", docError)
     }
 
     return NextResponse.json({ partner }, { status: 201 })

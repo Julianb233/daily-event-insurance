@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2 } from "lucide-react"
+import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, Handshake } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
 import { industryCategories } from "@/lib/category-data"
@@ -112,6 +112,7 @@ export default function Header() {
     { label: "Benefits", href: "#benefits" },
     { label: "Pricing", href: "/pricing" },
     { label: "For Carriers", href: "/carriers" },
+    { label: "Work With Us", href: "/work-with-us" },
   ]
 
   return (

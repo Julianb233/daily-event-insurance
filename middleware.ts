@@ -29,15 +29,19 @@ const publicRoutes = [
   "/insurance-disclosure",
   "/industries",
   "/categories",
+  "/carriers",
   "/for-gyms",
   "/for-climbing",
   "/for-rentals",
   "/for-adventure",
   "/hero-demo",
+  "/work-with-us",
   "/sign-in",
   "/sign-up",
+  "/checkout",
   "/api/auth",
   "/api/webhook", // Webhooks need to be public
+  "/api/stripe", // Stripe webhooks and checkout need to be accessible
 ]
 
 // Dev mode middleware - bypasses auth entirely
