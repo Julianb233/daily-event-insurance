@@ -33,77 +33,97 @@ export function VoiceAgentGlobal() {
   const [isAgentSpeaking, setIsAgentSpeaking] = useState(false)
 
   const vapiRef = useRef<Vapi | null>(null)
+  const listenersAttachedRef = useRef(false)
   const transcriptEndRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
 
   // Get context-aware quick actions
   const quickActions = getContextualQuickActions(context)
 
+  // Function to attach event listeners to VAPI instance
+  const attachEventListeners = useCallback((vapi: Vapi) => {
+    if (listenersAttachedRef.current) {
+      console.log('[VAPI] Event listeners already attached, skipping')
+      return
+    }
+
+    console.log('[VAPI] Attaching event listeners')
+    listenersAttachedRef.current = true
+
+    vapi.on('call-start', () => {
+      console.log('[VAPI] Call started')
+      setStatus('connected')
+    })
+
+    vapi.on('call-end', () => {
+      console.log('[VAPI] Call ended')
+      setStatus('disconnected')
+      setInputVolume(0)
+      setOutputVolume(0)
+      setIsAgentSpeaking(false)
+    })
+
+    vapi.on('speech-start', () => {
+      console.log('[VAPI] Agent speech started')
+      setIsAgentSpeaking(true)
+      setOutputVolume(0.7)
+    })
+
+    vapi.on('speech-end', () => {
+      console.log('[VAPI] Agent speech ended')
+      setIsAgentSpeaking(false)
+      setOutputVolume(0)
+    })
+
+    vapi.on('message', (message) => {
+      console.log('[VAPI] Message received:', message.type, message)
+      if (message.type === 'transcript') {
+        const role = message.role === 'user' ? 'user' : 'assistant'
+        const prefix = role === 'user' ? 'You' : 'Sarah'
+
+        if (message.transcriptType === 'final') {
+          setTranscript(prev => [...prev, `${prefix}: ${message.transcript}`])
+          setMessages(prev => [...prev, { role, content: message.transcript }])
+        }
+      }
+    })
+
+    vapi.on('volume-level', (level) => {
+      setInputVolume(level)
+    })
+
+    vapi.on('error', (error) => {
+      console.error('[VAPI] Error:', error)
+      const errorMsg = typeof error === 'object' && error !== null ? JSON.stringify(error) : String(error)
+      if (errorMsg.includes('Permission') || errorMsg.includes('NotAllowed')) {
+        setErrorType('microphone')
+      } else if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+        setErrorType('network')
+      } else {
+        setErrorType('connection')
+      }
+      setStatus('error')
+    })
+  }, [])
+
   // Initialize VAPI instance
   useEffect(() => {
     const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
+    console.log('[VAPI] Init check - Public key exists:', !!publicKey, 'Vapi instance exists:', !!vapiRef.current)
+
     if (publicKey && !vapiRef.current) {
+      console.log('[VAPI] Creating new Vapi instance')
       vapiRef.current = new Vapi(publicKey)
-
-      // Set up event listeners
-      vapiRef.current.on('call-start', () => {
-        console.log('[VAPI] Call started')
-        setStatus('connected')
-      })
-
-      vapiRef.current.on('call-end', () => {
-        console.log('[VAPI] Call ended')
-        setStatus('disconnected')
-        setInputVolume(0)
-        setOutputVolume(0)
-        setIsAgentSpeaking(false)
-      })
-
-      vapiRef.current.on('speech-start', () => {
-        setIsAgentSpeaking(true)
-        setOutputVolume(0.7)
-      })
-
-      vapiRef.current.on('speech-end', () => {
-        setIsAgentSpeaking(false)
-        setOutputVolume(0)
-      })
-
-      vapiRef.current.on('message', (message) => {
-        if (message.type === 'transcript') {
-          const role = message.role === 'user' ? 'user' : 'assistant'
-          const prefix = role === 'user' ? 'You' : 'Sarah'
-
-          if (message.transcriptType === 'final') {
-            setTranscript(prev => [...prev, `${prefix}: ${message.transcript}`])
-            setMessages(prev => [...prev, { role, content: message.transcript }])
-          }
-        }
-      })
-
-      vapiRef.current.on('volume-level', (level) => {
-        setInputVolume(level)
-      })
-
-      vapiRef.current.on('error', (error) => {
-        console.error('[VAPI] Error:', error)
-        if (error.message?.includes('Permission') || error.message?.includes('NotAllowed')) {
-          setErrorType('microphone')
-        } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-          setErrorType('network')
-        } else {
-          setErrorType('connection')
-        }
-        setStatus('error')
-      })
+      attachEventListeners(vapiRef.current)
     }
 
     return () => {
       if (vapiRef.current) {
+        console.log('[VAPI] Cleanup - stopping call')
         vapiRef.current.stop()
       }
     }
-  }, [])
+  }, [attachEventListeners])
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -128,8 +148,13 @@ export function VoiceAgentGlobal() {
   const startConversation = async () => {
     const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
 
+    console.log('[VAPI] startConversation called')
+    console.log('[VAPI] Public key exists:', !!publicKey)
+    console.log('[VAPI] Public key value:', publicKey ? publicKey.substring(0, 8) + '...' : 'undefined')
+    console.log('[VAPI] Assistant ID:', VAPI_ASSISTANT_ID)
+
     if (!publicKey) {
-      console.error('VAPI public key not configured')
+      console.error('[VAPI] Public key not configured')
       setErrorType('connection')
       setStatus('error')
       return
@@ -141,18 +166,25 @@ export function VoiceAgentGlobal() {
     try {
       // Initialize VAPI if not already done
       if (!vapiRef.current) {
+        console.log('[VAPI] Creating new Vapi instance in startConversation')
         vapiRef.current = new Vapi(publicKey)
+        attachEventListeners(vapiRef.current)
       }
 
-      // Start the call with pre-configured assistant ID
-      await vapiRef.current.start(VAPI_ASSISTANT_ID)
+      console.log('[VAPI] Starting call with assistant ID:', VAPI_ASSISTANT_ID)
 
-      // Add initial message to transcript
-      setTranscript(['Sarah: Hi! I\'m Sarah from Daily Event Insurance. How can I help you today?'])
-      setMessages([{ role: 'assistant', content: 'Hi! I\'m Sarah from Daily Event Insurance. How can I help you today?' }])
+      // Start the call with pre-configured assistant ID
+      const call = await vapiRef.current.start(VAPI_ASSISTANT_ID)
+      console.log('[VAPI] Call started successfully:', call)
+
+      // Clear previous transcript and wait for actual greeting from assistant
+      setTranscript([])
+      setMessages([])
     } catch (error: unknown) {
-      console.error('Error starting VAPI conversation:', error)
-      const errorMessage = error instanceof Error ? error.message : ''
+      console.error('[VAPI] Error starting conversation:', error)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      console.error('[VAPI] Error message:', errorMessage)
+
       if (errorMessage.includes('Permission') || errorMessage.includes('NotAllowed')) {
         setErrorType('microphone')
       } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
