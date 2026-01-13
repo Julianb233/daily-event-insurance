@@ -137,7 +137,17 @@ export async function GET(request: NextRequest) {
           pendingFees: mockMicrosites.filter(m => !m.feeCollected).length * 550,
         }
 
-        return paginatedResponse({ microsites: paginatedData, stats }, page, pageSize, filtered.length)
+        return NextResponse.json({
+          success: true,
+          data: paginatedData,
+          stats,
+          pagination: {
+            page,
+            pageSize,
+            total: filtered.length,
+            totalPages: Math.ceil(filtered.length / pageSize),
+          },
+        })
       }
 
       // Build where conditions
@@ -211,12 +221,17 @@ export async function GET(request: NextRequest) {
         })
         .from(microsites)
 
-      return paginatedResponse(
-        { microsites: micrositesData, stats },
-        page,
-        pageSize,
-        Number(total)
-      )
+      return NextResponse.json({
+        success: true,
+        data: micrositesData,
+        stats,
+        pagination: {
+          page,
+          pageSize,
+          total: Number(total),
+          totalPages: Math.ceil(Number(total) / pageSize),
+        },
+      })
     } catch (error: any) {
       console.error("[Admin Microsites] GET Error:", error)
       return serverError(error.message || "Failed to fetch microsites")
