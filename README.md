@@ -18,13 +18,20 @@ Daily Event Insurance provides a seamless way for active lifestyle businesses to
 
 ## Tech Stack
 
-| Technology | Version |
-|------------|---------|
-| Next.js | 16 (App Router) |
-| React | 19 |
-| TypeScript | 5.x |
-| Tailwind CSS | 4 |
-| Framer Motion | 12 |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js | 16 (App Router) | React framework |
+| React | 19 | UI library |
+| TypeScript | 5.x | Type safety |
+| Tailwind CSS | 4 | Styling |
+| Framer Motion | 12 | Animations |
+| **Supabase** | - | Backend database (PostgreSQL) |
+| **Pinecone** | - | Vector database for AI/search |
+| Drizzle ORM | 0.45+ | Database ORM |
+| NextAuth.js | 5 (beta) | Authentication |
+| Stripe | 20+ | Payments |
+
+> **Note:** This project uses **Supabase** as the sole backend database provider. Pinecone is used for vector embeddings and AI-powered search functionality.
 
 ---
 
@@ -141,16 +148,7 @@ See [IMAGES-NEEDED.md](./IMAGES-NEEDED.md) for a complete list of image assets t
 Located in `/docs/va-implementation/`:
 - [README.md](./docs/va-implementation/README.md) - Overview and quick links
 - [Task Checklist](./docs/va-implementation/task-checklist.md) - Master task list for VAs
-- [GHL Tasks](./docs/va-implementation/gohighlevel-tasks.md) - Step-by-step GHL setup
 - [Image Prompts](./docs/va-implementation/image-generation-prompts.md) - AI image generation prompts
-
-### GoHighLevel Documentation
-Located in `/docs/gohighlevel/`:
-- [README.md](./docs/gohighlevel/README.md) - GHL implementation overview
-- **Workflows**: Partner inquiry, onboarding sequences
-- **Emails**: Welcome series, onboarding, outreach campaigns
-- **Automations**: Wait steps, conditional logic
-- **Setup**: Custom fields, forms, pipelines
 
 ---
 
