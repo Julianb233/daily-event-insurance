@@ -1,6 +1,6 @@
-# Daily Event Insurance - Customer Support & Onboarding Agent PRD
+# Daily Event Insurance - Partner Integration Support Agent PRD
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Last Updated:** 2025-01-13  
 **Status:** Draft
 
@@ -9,20 +9,26 @@
 ## 1. Executive Summary
 
 ### Vision
-Create an AI-powered customer support system with live chat, screen recording for onboarding, and intelligent agent assistance. This system will handle partner onboarding, quote assistance, and general support inquiries while reducing human support overhead by 70%.
+Create an AI-powered technical support agent that helps partners with onboarding, POS system integrations, API endpoint management, widget installation, and troubleshooting. This is NOT a customer service tool for policy lookups - it's a **technical integration assistant** that helps partners successfully integrate Daily Event Insurance into their existing systems.
+
+### Target Users
+- **New Partners** going through onboarding
+- **Technical Staff** at partner businesses implementing integrations
+- **Existing Partners** troubleshooting issues or expanding integrations
 
 ### Key Features
-- **Live Chat Widget** - Embeddable chat for partners and customers
-- **Screen Recording Agent** - Guided onboarding with screen capture
-- **AI Support Agent** - Context-aware responses using RAG
-- **Escalation System** - Seamless handoff to human agents
-- **Knowledge Base Integration** - Self-service documentation
+- **Live Chat Widget** - Embedded in partner portal and onboarding flow
+- **Screen Recording** - Capture partner's screen during onboarding for guided help
+- **Integration Assistant** - Help with POS systems, booking platforms, API setup
+- **Code Snippet Generator** - Generate custom widget/API code for partner's stack
+- **Troubleshooting Agent** - Debug integration issues with context awareness
+- **Escalation to Dev Team** - Seamless handoff for complex technical issues
 
 ### Key Metrics
-- **Response Time:** < 10 seconds for AI responses
-- **Resolution Rate:** 80%+ without human intervention
-- **Onboarding Completion:** 90%+ of partners complete onboarding
-- **CSAT Score:** 4.5+ out of 5
+- **Onboarding Completion:** 95%+ of partners complete setup
+- **Integration Success Rate:** 90%+ first-time successful integrations
+- **Time to Live:** < 24 hours from signup to live integration
+- **Support Ticket Reduction:** 70% fewer escalations to human support
 
 ---
 
@@ -31,45 +37,41 @@ Create an AI-powered customer support system with live chat, screen recording fo
 ### Stack
 | Component | Technology |
 |-----------|------------|
-| **Chat Backend** | Next.js API Routes + WebSocket |
-| **AI Agent** | OpenAI GPT-4o / Claude |
-| **Screen Recording** | RecordRTC / rrweb |
-| **Real-time Messaging** | Supabase Realtime or Pusher |
-| **Knowledge Base** | Vector embeddings + Supabase pgvector |
-| **Frontend** | React components with Framer Motion |
-| **Storage** | Supabase Storage for recordings |
+| **Chat Backend** | Next.js API Routes + Supabase Realtime |
+| **AI Agent** | OpenAI GPT-4o with function calling |
+| **Screen Recording** | rrweb (DOM recording) + Supabase Storage |
+| **Knowledge Base** | Vector embeddings for integration docs |
+| **Frontend** | React components (existing onboarding flow) |
+| **Code Generation** | AI-powered snippet generation |
 
 ### System Diagram
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Partner/Customer                         │
+│                     Partner (Technical User)                 │
 └─────────────────────┬───────────────────────────────────────┘
                       │
         ┌─────────────▼─────────────┐
-        │     Chat Widget (React)   │
+        │   Onboarding Flow / Chat  │
         │  - Live chat interface    │
-        │  - Screen share button    │
-        │  - File attachments       │
+        │  - Screen recording       │
+        │  - Code snippet display   │
         └─────────────┬─────────────┘
                       │
         ┌─────────────▼─────────────┐
-        │   WebSocket / Realtime    │
-        │   (Supabase Realtime)     │
+        │   AI Integration Agent    │
+        │  - Onboarding context     │
+        │  - POS system knowledge   │
+        │  - API documentation      │
+        │  - Troubleshooting logic  │
         └─────────────┬─────────────┘
                       │
         ┌─────────────▼─────────────┐
-        │     AI Support Agent      │
-        │  - Context awareness      │
-        │  - RAG knowledge base     │
-        │  - Tool calling           │
-        └─────────────┬─────────────┘
-                      │
-        ┌─────────────▼─────────────┐
-        │   Action Router           │
-        │  - Quote lookup           │
-        │  - Policy info            │
-        │  - Onboarding help        │
-        │  - Escalation             │
+        │   Tool Functions          │
+        │  - generate_widget_code   │
+        │  - generate_api_snippet   │
+        │  - check_integration      │
+        │  - lookup_pos_docs        │
+        │  - escalate_to_dev        │
         └───────────────────────────┘
 ```
 
@@ -78,147 +80,145 @@ Create an AI-powered customer support system with live chat, screen recording fo
 ## 3. Database Schema Additions
 
 ```typescript
-// Chat conversations
-export const chatConversations = pgTable("chat_conversations", {
+// Support conversations - for partner integration help
+export const supportConversations = pgTable("support_conversations", {
   id: uuid("id").primaryKey().defaultRandom(),
   
-  // Participant info
-  participantType: text("participant_type").notNull(), // partner, customer, lead, anonymous
-  participantId: uuid("participant_id"), // references users/partners/leads
-  participantEmail: text("participant_email"),
-  participantName: text("participant_name"),
+  // Partner info
+  partnerId: uuid("partner_id").references(() => partners.id),
+  partnerEmail: text("partner_email"),
+  partnerName: text("partner_name"),
   
   // Session info
-  sessionId: text("session_id").notNull(), // Browser session ID
-  pageUrl: text("page_url"), // Where chat was initiated
-  userAgent: text("user_agent"),
+  sessionId: text("session_id").notNull(),
+  pageUrl: text("page_url"), // Which onboarding step or partner portal page
+  onboardingStep: integer("onboarding_step"), // 1-4 if in onboarding
   
-  // Context
-  topic: text("topic"), // onboarding, quote_help, policy_question, general
-  context: text("context"), // JSON with relevant IDs (quote_id, policy_id, etc.)
+  // Technical context
+  topic: text("topic"), // onboarding, widget_install, api_integration, pos_setup, troubleshooting
+  techStack: text("tech_stack"), // JSON: { framework: "react", pos: "mindbody", etc. }
+  integrationContext: text("integration_context"), // JSON with current integration state
   
   // Status
   status: text("status").default("active"), // active, resolved, escalated, abandoned
   priority: text("priority").default("normal"), // low, normal, high, urgent
   
-  // Assignment
-  assignedAgentId: text("assigned_agent_id"), // AI agent or human agent ID
+  // Escalation
   escalatedAt: timestamp("escalated_at"),
   escalatedTo: uuid("escalated_to").references(() => users.id),
   escalationReason: text("escalation_reason"),
   
-  // Satisfaction
-  csatScore: integer("csat_score"), // 1-5
-  csatFeedback: text("csat_feedback"),
+  // Resolution
+  resolution: text("resolution"), // How the issue was resolved
+  resolvedAt: timestamp("resolved_at"),
   
-  // Timestamps
+  // Satisfaction
+  helpfulRating: integer("helpful_rating"), // 1-5
+  feedback: text("feedback"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  resolvedAt: timestamp("resolved_at"),
 });
 
-// Chat messages
-export const chatMessages = pgTable("chat_messages", {
+// Support messages
+export const supportMessages = pgTable("support_messages", {
   id: uuid("id").primaryKey().defaultRandom(),
-  conversationId: uuid("conversation_id").references(() => chatConversations.id, { onDelete: "cascade" }).notNull(),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id, { onDelete: "cascade" }).notNull(),
   
   // Sender
-  role: text("role").notNull(), // user, assistant, system, agent
-  senderName: text("sender_name"),
+  role: text("role").notNull(), // user, assistant, system
   
   // Content
   content: text("content").notNull(),
-  contentType: text("content_type").default("text"), // text, image, file, screen_recording, action
+  contentType: text("content_type").default("text"), // text, code, error, action
   
-  // Attachments
-  attachmentUrl: text("attachment_url"),
-  attachmentType: text("attachment_type"), // image, pdf, video
-  attachmentName: text("attachment_name"),
+  // Code snippets shared
+  codeSnippet: text("code_snippet"), // Generated code
+  codeLanguage: text("code_language"), // javascript, python, etc.
   
   // AI metadata
-  aiModel: text("ai_model"), // gpt-4o, claude-3
-  aiConfidence: decimal("ai_confidence", { precision: 3, scale: 2 }),
   toolsUsed: text("tools_used"), // JSON array of tools called
-  
-  // Status
-  isRead: boolean("is_read").default(false),
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Screen recordings for onboarding
-export const screenRecordings = pgTable("screen_recordings", {
+// Screen recordings for onboarding assistance
+export const onboardingRecordings = pgTable("onboarding_recordings", {
   id: uuid("id").primaryKey().defaultRandom(),
   
   // Owner
   partnerId: uuid("partner_id").references(() => partners.id),
-  conversationId: uuid("conversation_id").references(() => chatConversations.id),
+  conversationId: uuid("conversation_id").references(() => supportConversations.id),
   
   // Recording info
   recordingUrl: text("recording_url").notNull(),
-  thumbnailUrl: text("thumbnail_url"),
   duration: integer("duration"), // seconds
-  fileSize: integer("file_size"), // bytes
   
   // Context
-  purpose: text("purpose").notNull(), // onboarding, support, demo
-  stepName: text("step_name"), // Which onboarding step
-  pagesCaptured: text("pages_captured"), // JSON array of pages visited
+  onboardingStep: integer("onboarding_step"), // 1-4
+  stepName: text("step_name"), // Business Info, Integration, Customize, Go Live
+  
+  // Issues detected
+  issuesDetected: text("issues_detected"), // JSON array of detected problems
   
   // Status
-  status: text("status").default("processing"), // processing, ready, failed
-  
-  // Metadata
-  browserInfo: text("browser_info"),
-  screenResolution: text("screen_resolution"),
+  status: text("status").default("processing"), // processing, ready, analyzed, failed
   
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Knowledge base articles
-export const knowledgeArticles = pgTable("knowledge_articles", {
+// Integration documentation - for RAG
+export const integrationDocs = pgTable("integration_docs", {
   id: uuid("id").primaryKey().defaultRandom(),
   
   // Content
   title: text("title").notNull(),
   slug: text("slug").unique().notNull(),
   content: text("content").notNull(), // Markdown
-  summary: text("summary"),
   
   // Categorization
-  category: text("category").notNull(), // getting_started, quotes, policies, billing, integration
-  tags: text("tags"), // JSON array
+  category: text("category").notNull(), // widget, api, pos, webhook, troubleshooting
+  posSystem: text("pos_system"), // mindbody, pike13, etc. (if POS-specific)
+  framework: text("framework"), // react, vue, vanilla (if framework-specific)
   
   // Search
   embedding: text("embedding"), // Vector embedding for semantic search
   
-  // Status
+  // Code examples
+  codeExamples: text("code_examples"), // JSON array of code snippets
+  
   isPublished: boolean("is_published").default(true),
-  sortOrder: integer("sort_order").default(0),
-  
-  // Metrics
-  viewCount: integer("view_count").default(0),
-  helpfulCount: integer("helpful_count").default(0),
-  notHelpfulCount: integer("not_helpful_count").default(0),
-  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Canned responses for agents
-export const cannedResponses = pgTable("canned_responses", {
+// Partner integration status tracking
+export const partnerIntegrations = pgTable("partner_integrations", {
   id: uuid("id").primaryKey().defaultRandom(),
+  partnerId: uuid("partner_id").references(() => partners.id).notNull(),
   
-  shortcut: text("shortcut").unique().notNull(), // /greeting, /pricing, etc.
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  category: text("category"), // greeting, closing, pricing, technical
+  // Integration type
+  integrationType: text("integration_type").notNull(), // widget, api, pos
+  posSystem: text("pos_system"), // mindbody, pike13, etc.
   
-  // Usage tracking
-  useCount: integer("use_count").default(0),
+  // Status
+  status: text("status").default("pending"), // pending, configured, testing, live, failed
   
-  isActive: boolean("is_active").default(true),
+  // Configuration
+  configuration: text("configuration"), // JSON with integration settings
+  apiKeyGenerated: boolean("api_key_generated").default(false),
+  webhookConfigured: boolean("webhook_configured").default(false),
+  
+  // Testing
+  lastTestedAt: timestamp("last_tested_at"),
+  testResult: text("test_result"), // success, failed, partial
+  testErrors: text("test_errors"), // JSON array of errors
+  
+  // Go live
+  wentLiveAt: timestamp("went_live_at"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 ```
 
@@ -301,66 +301,140 @@ export const cannedResponses = pgTable("canned_responses", {
 
 ### System Prompt
 ```
-You are Alex, a helpful customer support agent for Daily Event Insurance. 
-You help partners and customers with:
-- Understanding our insurance products (liability, equipment, cancellation)
-- Getting quotes and purchasing policies
-- Onboarding as a new partner
-- Technical integration questions
-- Billing and commission inquiries
+You are a technical integration specialist for Daily Event Insurance. You help partners 
+integrate our insurance products into their existing systems - POS, booking platforms, 
+websites, and custom applications.
+
+Your expertise:
+- Widget installation (JavaScript embed, React component)
+- REST API integration (quotes, policies, webhooks)
+- POS system integrations (Mindbody, Pike13, ClubReady, Mariana Tek, Square)
+- Booking platform connections (Calendly, Acuity, custom systems)
+- Troubleshooting integration issues
+- Guiding partners through the onboarding flow
 
 You have access to:
-- Partner and customer account information
-- Quote and policy details
-- Knowledge base articles
-- Ability to schedule callbacks
+- Partner's current onboarding step and business info
+- Code snippet generator for their specific tech stack
+- Integration documentation and examples
+- POS-specific setup guides
+- Ability to test their integration endpoints
 
 Guidelines:
-- Be friendly, professional, and concise
-- If you don't know something, say so and offer to escalate
-- For sensitive topics (refunds, disputes), escalate to human agent
-- Always confirm you've understood the question before answering
+- Be technical but accessible - explain concepts clearly
+- Provide code examples when helpful
+- If you detect an error, explain what went wrong and how to fix it
+- For complex custom integrations, escalate to the dev team
+- Always confirm their tech stack before providing code
 ```
 
 ### Available Tools
 ```typescript
-const supportAgentTools = [
+const integrationAgentTools = [
   {
-    name: "lookup_quote",
-    description: "Look up quote details by quote number or email",
-    parameters: { quoteNumber: "string?", email: "string?" }
+    name: "generate_widget_code",
+    description: "Generate widget embed code for partner's website",
+    parameters: {
+      partnerId: "string",
+      framework: "vanilla | react | vue | angular",
+      customization: {
+        primaryColor: "string?",
+        position: "bottom-right | bottom-left | inline",
+        products: "string[]"
+      }
+    }
   },
   {
-    name: "lookup_policy",
-    description: "Look up policy details by policy number or email",
-    parameters: { policyNumber: "string?", email: "string?" }
+    name: "generate_api_snippet",
+    description: "Generate API integration code snippet",
+    parameters: {
+      language: "javascript | python | php | curl",
+      endpoint: "create_quote | get_policy | webhook_setup",
+      partnerId: "string"
+    }
   },
   {
-    name: "get_partner_info",
-    description: "Get partner account details and status",
+    name: "get_pos_integration_guide",
+    description: "Get step-by-step integration guide for a specific POS system",
+    parameters: {
+      posSystem: "mindbody | pike13 | clubready | mariana_tek | square | custom",
+      integrationType: "widget | api | webhook"
+    }
+  },
+  {
+    name: "check_integration_status",
+    description: "Check if partner's integration is working correctly",
+    parameters: {
+      partnerId: "string",
+      checkType: "widget_installed | api_connected | webhook_active"
+    }
+  },
+  {
+    name: "get_partner_onboarding_status",
+    description: "Get partner's current onboarding step and configuration",
     parameters: { partnerId: "string" }
   },
   {
-    name: "search_knowledge_base",
-    description: "Search help articles for relevant information",
-    parameters: { query: "string" }
+    name: "test_api_endpoint",
+    description: "Test partner's API endpoint connectivity",
+    parameters: {
+      partnerId: "string",
+      endpoint: "string",
+      method: "GET | POST"
+    }
   },
   {
-    name: "schedule_callback",
-    description: "Schedule a callback from a human agent",
-    parameters: { phone: "string", preferredTime: "string", reason: "string" }
+    name: "search_integration_docs",
+    description: "Search integration documentation for specific topics",
+    parameters: { query: "string", category: "widget | api | pos | troubleshooting" }
   },
   {
-    name: "escalate_to_human",
-    description: "Transfer conversation to a human agent",
-    parameters: { reason: "string", priority: "string" }
-  },
-  {
-    name: "create_support_ticket",
-    description: "Create a support ticket for follow-up",
-    parameters: { subject: "string", description: "string", priority: "string" }
+    name: "escalate_to_dev_team",
+    description: "Escalate complex technical issue to development team",
+    parameters: {
+      issue: "string",
+      partnerInfo: "string",
+      errorLogs: "string?",
+      priority: "low | medium | high | urgent"
+    }
   }
 ];
+```
+
+### POS System Knowledge Base
+```typescript
+const posIntegrations = {
+  mindbody: {
+    name: "Mindbody",
+    integrationTypes: ["webhook", "api"],
+    setupGuide: "/docs/integrations/mindbody",
+    commonIssues: ["OAuth token expiry", "Webhook URL validation", "Class booking sync"]
+  },
+  pike13: {
+    name: "Pike13",
+    integrationTypes: ["webhook", "widget"],
+    setupGuide: "/docs/integrations/pike13",
+    commonIssues: ["API rate limits", "Member ID mapping"]
+  },
+  clubready: {
+    name: "ClubReady",
+    integrationTypes: ["api", "widget"],
+    setupGuide: "/docs/integrations/clubready",
+    commonIssues: ["Authentication flow", "Event type mapping"]
+  },
+  mariana_tek: {
+    name: "Mariana Tek",
+    integrationTypes: ["webhook", "api"],
+    setupGuide: "/docs/integrations/mariana-tek",
+    commonIssues: ["GraphQL queries", "Subscription handling"]
+  },
+  square: {
+    name: "Square",
+    integrationTypes: ["api", "webhook"],
+    setupGuide: "/docs/integrations/square",
+    commonIssues: ["Location ID setup", "Item catalog sync"]
+  }
+};
 ```
 
 ---
