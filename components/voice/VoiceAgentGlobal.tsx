@@ -81,8 +81,8 @@ export function VoiceAgentGlobal() {
           onConnected: () => {
             console.log('[Voice] Connected to LiveKit')
             setStatus('connected')
-            setTranscript(['Specialist: Hello! How can I help you today?'])
-            setMessages([{ role: 'assistant', content: 'Hello! How can I help you today?' }])
+            setTranscript(['Sarah: Hi, I\'m Sarah from Daily Event Insurance. How can I help you today?'])
+            setMessages([{ role: 'assistant', content: 'Hi, I\'m Sarah from Daily Event Insurance. How can I help you today?' }])
           },
           onDisconnected: () => {
             console.log('[Voice] Disconnected from LiveKit')
@@ -102,7 +102,7 @@ export function VoiceAgentGlobal() {
             setStatus('error')
           },
           onTranscript: (text, role) => {
-            const prefix = role === 'user' ? 'You' : 'Specialist'
+            const prefix = role === 'user' ? 'You' : 'Sarah'
             setTranscript(prev => [...prev, `${prefix}: ${text}`])
             setMessages(prev => [...prev, { role, content: text }])
           },
@@ -237,7 +237,7 @@ export function VoiceAgentGlobal() {
           <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-white/40">
             <Image
               src="/images/avatars/voice-agent.jpg"
-              alt="AI Voice Specialist"
+              alt="Sarah - Insurance Specialist"
               width={40}
               height={40}
               className="h-full w-full object-cover"
@@ -271,7 +271,7 @@ export function VoiceAgentGlobal() {
                       <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-white/40">
                         <Image
                           src="/images/avatars/voice-agent.jpg"
-                          alt="AI Voice Specialist"
+                          alt="Sarah - Insurance Specialist"
                           width={48}
                           height={48}
                           className="h-full w-full object-cover"
@@ -287,9 +287,9 @@ export function VoiceAgentGlobal() {
                     <div>
                       <h3 className="font-semibold">Let&apos;s Talk</h3>
                       <p className="text-sm text-white/80">
-                        {status === 'disconnected' && 'AI-powered support ready'}
-                        {status === 'connecting' && 'Connecting...'}
-                        {status === 'connected' && (isAgentSpeaking ? 'Agent is speaking...' : 'Listening...')}
+                        {status === 'disconnected' && 'Sarah is ready to help'}
+                        {status === 'connecting' && 'Connecting to Sarah...'}
+                        {status === 'connected' && (isAgentSpeaking ? 'Sarah is speaking...' : 'Listening...')}
                         {status === 'error' && 'Connection error'}
                       </p>
                     </div>
@@ -321,7 +321,7 @@ export function VoiceAgentGlobal() {
                     <Phone className="h-12 w-12 mb-3 text-gray-300" />
                     <p className="text-center">
                       Click &quot;Start Call&quot; to speak<br />
-                      with our AI Specialist
+                      with Sarah
                     </p>
                     <p className="text-xs text-gray-400 mt-2">
                       Get instant answers about our insurance platform
@@ -339,6 +339,8 @@ export function VoiceAgentGlobal() {
                             ? 'bg-teal-100 text-teal-900 ml-8'
                             : line.startsWith('System:')
                             ? 'bg-yellow-100 text-yellow-900 mx-4'
+                            : line.startsWith('Sarah:')
+                            ? 'bg-white text-gray-900 mr-8 shadow-sm'
                             : 'bg-white text-gray-900 mr-8 shadow-sm'
                         }`}
                       >
@@ -357,7 +359,7 @@ export function VoiceAgentGlobal() {
                             <span className="h-2 w-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                             <span className="h-2 w-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                           </span>
-                          Speaking...
+                          Sarah is speaking...
                         </span>
                       </motion.div>
                     )}
