@@ -14,7 +14,8 @@ from livekit.agents import (
     llm,
 )
 from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import deepgram, openai, silero
+from livekit.plugins import openai, silero
+
 
 logger = logging.getLogger("voice-agent")
 
@@ -76,7 +77,7 @@ async def entrypoint(ctx: JobContext):
 
     assistant = VoiceAssistant(
         vad=ctx.proc.userdata["vad"],
-        stt=deepgram.STT(),
+        stt=openai.STT(),
         llm=openai.LLM(model="gpt-4o-mini"),
         tts=openai.TTS(voice="nova"),
         chat_ctx=initial_ctx,

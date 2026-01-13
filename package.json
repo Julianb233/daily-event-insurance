@@ -6,6 +6,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "dev:voice": "cd livekit-agent && python3 -m venv venv && source venv/bin/activate && python3 agent_realtime.py dev",
+    "install:voice": "cd livekit-agent && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
     "lint": "eslint .",
     "start": "next start"
   },
