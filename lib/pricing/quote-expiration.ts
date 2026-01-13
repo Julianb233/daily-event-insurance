@@ -267,7 +267,7 @@ export async function batchUpdateExpiredQuotes(): Promise<ExpirationResult> {
           lt(quotes.expiresAt, now)
         )
       )
-      .returning({ id: quotes.id })
+      .returning()
 
     const expired = result.length
 
