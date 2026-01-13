@@ -17,9 +17,13 @@ export default function Footer() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-2xl font-bold text-[#1E293B] mb-2">
-                Daily Event Insurance
-              </h3>
+              <Image
+                src="/images/logo-color.png"
+                alt="Daily Event Insurance"
+                width={180}
+                height={45}
+                className="h-12 w-auto mb-2"
+              />
               <p className="text-sm text-[#14B8A6] font-medium mb-4">
                 A High-Core Partner
               </p>
