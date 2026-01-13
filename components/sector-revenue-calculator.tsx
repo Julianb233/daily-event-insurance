@@ -31,8 +31,6 @@ const locationOptions = [
   { label: "25+ Locations", value: 30, bonus: 2 },
 ]
 
-const OPT_IN_RATE = 0.65
-
 function getCommissionTier(totalVolume: number) {
   return commissionTiers.find(tier => totalVolume >= tier.minVolume && totalVolume <= tier.maxVolume) || commissionTiers[0]
 }
@@ -46,13 +44,13 @@ export function SectorRevenueCalculator({ sectorTitle, sectorSlug }: SectorReven
   const [monthlyVolume, setMonthlyVolume] = useState(2500)
   const [locations, setLocations] = useState(1)
 
-  // Calculate revenue
+  // Calculate revenue (100% coverage required)
   const totalParticipants = monthlyVolume * locations
-  const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE)
+  const coveredParticipants = totalParticipants
   const commissionTier = getCommissionTier(totalParticipants)
   const locationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
   const effectivePerParticipant = commissionTier.perParticipant + locationOption.bonus
-  const monthlyRevenue = optedInParticipants * effectivePerParticipant
+  const monthlyRevenue = coveredParticipants * effectivePerParticipant
   const annualRevenue = monthlyRevenue * 12
 
   // Animated values
@@ -149,10 +147,9 @@ export function SectorRevenueCalculator({ sectorTitle, sectorSlug }: SectorReven
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {volumeTiers.map((tier) => {
                       const tierParticipants = tier.value * locations
-                      const tierOptedIn = Math.round(tierParticipants * OPT_IN_RATE)
                       const tierCommission = getCommissionTier(tierParticipants)
                       const tierLocationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
-                      const tierEarnings = tierOptedIn * (tierCommission.perParticipant + tierLocationOption.bonus)
+                      const tierEarnings = tierParticipants * (tierCommission.perParticipant + tierLocationOption.bonus)
 
                       return (
                         <motion.button
@@ -208,8 +205,8 @@ export function SectorRevenueCalculator({ sectorTitle, sectorSlug }: SectorReven
                     <span className="font-semibold text-slate-700">{totalParticipants.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-500">Participants with coverage</span>
-                    <span className="font-semibold text-teal-600">{optedInParticipants.toLocaleString()}</span>
+                    <span className="text-slate-500">Covered participants</span>
+                    <span className="font-semibold text-teal-600">{coveredParticipants.toLocaleString()}</span>
                   </div>
                   <div className="border-t border-slate-200 pt-3 mt-3">
                     <div className="flex justify-between items-center text-sm">

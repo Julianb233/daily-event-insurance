@@ -4,7 +4,6 @@ import { db, isDbConfigured, partners, monthlyEarnings } from "@/lib/db"
 import { eq, and, like } from "drizzle-orm"
 import {
   calculateMonthlyCommission,
-  OPT_IN_RATE,
   getLastNMonths,
 } from "@/lib/commission-tiers"
 import { isDevMode, MOCK_EARNINGS } from "@/lib/mock-data"
