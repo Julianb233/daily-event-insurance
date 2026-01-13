@@ -4,30 +4,29 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 
-const faqs = [
-  {
-    question: "How quickly can members get coverage?",
-    answer: "Members can purchase and activate coverage instantly - same day, same moment. No waiting periods.",
+{
+  question: "How quickly can members get coverage?",
+    answer: "Members can purchase and activate coverage instantly - same day, same moment. No waiting periods. They receive digital proof of coverage immediately via email.",
   },
-  {
-    question: "What types of businesses can partner with you?",
-    answer: "We work with gyms, fitness centers, rock climbing facilities, equipment rental shops, adventure sports operators, and more.",
+{
+  question: "What types of businesses can partner with you?",
+    answer: "We work with Race Directors, Gyms & Fitness Centers, Climbing Facilities, Ski Resorts, and Corporate Event Organizers. Our platform supports virtually any active event type.",
   },
-  {
-    question: "How do I integrate with my existing systems?",
-    answer: "We offer simple API integration or a standalone partner portal. Most businesses are live within 24-48 hours.",
+{
+  question: "How do I integrate with my existing systems?",
+    answer: "We offer seamless integration with major platforms like RunSignup, BikeReg, MindBody, and Zen Planner. Most partners are live within 24-48 hours.",
   },
-  {
-    question: "What's the revenue sharing model?",
-    answer: "Partners earn a commission on every policy sold. Contact us for specific rates based on your volume.",
+{
+  question: "What's the revenue sharing model?",
+    answer: "Partners earn 20-40% commission on every policy sold. Commission rates are volume-based - the more participants you cover, the higher your rate.",
   },
-  {
-    question: "What does the insurance cover?",
-    answer: "Coverage includes activity-related injuries, equipment damage, and liability protection. Policies are tailored to your business type.",
+{
+  question: "What specifically does the insurance cover?",
+    answer: "Policies are sector-specific but generally cover medical expenses, emergency transport, trip cancellation, and activity-related injuries. We fill the gaps that general liability misses.",
   },
-  {
-    question: "Is there a minimum commitment?",
-    answer: "No minimums required. Pay only for the coverage your members purchase.",
+{
+  question: "Is there a cost to become a partner?",
+    answer: "No. There are no setup fees, monthly subscriptions, or minimum commitments. You only pay (or rather, your participants pay) for the coverage purchased.",
   },
 ]
 

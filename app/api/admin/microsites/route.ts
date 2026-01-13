@@ -286,7 +286,6 @@ export async function POST(request: NextRequest) {
         return successResponse(newMicrosite, "Microsite created successfully", 201)
       }
 
-      console.log("[Microsites Debug] Checking partner...");
       // Check if partner exists
       const [partner] = await db!
         .select()
@@ -298,12 +297,32 @@ export async function POST(request: NextRequest) {
         return badRequest("Partner not found")
       }
 
-      console.log("[Microsites Debug] Checking slug...");
       // Check if slug already exists
       const [existingSlug] = await db!
         .select()
         .from(microsites)
         .where(eq(microsites.slug, slug))
+        .limit(1)
+
+      if (existingSlug) {
+        return badRequest("Slug already exists")
+      }
+
+      // Create microsite
+      const [newMicrosite] = await db!
+        .insert(microsites)
+        .values({
+          partnerId,
+          slug,
+          customDomain: customDomain || null,
+          isActive: true,
+          logoUrl: logoUrl || null,
+          primaryColor: primaryColor || "#14B8A6",
+          businessName: businessName || partner.businessName,
+          setupFee: "550.00",
+          feeCollected: false,
+        })
+        .returning()
         .limit(1)
 
       if (existingSlug) {
