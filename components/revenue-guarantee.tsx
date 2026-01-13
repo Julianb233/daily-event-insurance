@@ -90,7 +90,7 @@ export function RevenueGuarantee() {
                   transition={{ delay: 0.4 }}
                   className="font-[family-name:var(--font-oswald)] text-2xl md:text-4xl font-bold text-white mb-3 uppercase tracking-tight"
                 >
-                  The $500 First Month Guarantee
+                  The $1,000 First Month Guarantee<span className="text-white/70">*</span>
                 </motion.h3>
 
                 {/* Description */}
@@ -102,9 +102,9 @@ export function RevenueGuarantee() {
                   className="text-white/95 text-base md:text-lg leading-relaxed max-w-3xl"
                 >
                   If you don&apos;t earn at least{" "}
-                  <span className="font-bold text-white">$500 in commissions</span> in your first{" "}
+                  <span className="font-bold text-white">$1,000 in commissions</span> in your first{" "}
                   <span className="font-bold text-white">90 days</span>, we&apos;ll pay you{" "}
-                  <span className="font-bold text-white">$250 for your time</span>.{" "}
+                  <span className="font-bold text-white">$500 for your time</span>.{" "}
                   <span className="font-extrabold text-white underline decoration-2 decoration-white/50">
                     You literally cannot lose.
                   </span>
@@ -140,13 +140,24 @@ export function RevenueGuarantee() {
               </div>
             </div>
 
+            {/* Qualification disclaimer */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.65 }}
+              className="mt-4 text-white/60 text-xs md:text-sm"
+            >
+              *Guarantee applies to qualified partners with verified foot traffic of 100+ daily visitors.
+            </motion.p>
+
             {/* Bottom accent bar */}
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.7, duration: 0.8 }}
-              className="mt-6 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full origin-left"
+              className="mt-4 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full origin-left"
             />
           </div>
 
