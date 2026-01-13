@@ -4,28 +4,29 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 
-{
-  question: "How quickly can members get coverage?",
+const faqs = [
+  {
+    question: "How quickly can members get coverage?",
     answer: "Members can purchase and activate coverage instantly - same day, same moment. No waiting periods. They receive digital proof of coverage immediately via email.",
   },
-{
-  question: "What types of businesses can partner with you?",
+  {
+    question: "What types of businesses can partner with you?",
     answer: "We work with Race Directors, Gyms & Fitness Centers, Climbing Facilities, Ski Resorts, and Corporate Event Organizers. Our platform supports virtually any active event type.",
   },
-{
-  question: "How do I integrate with my existing systems?",
+  {
+    question: "How do I integrate with my existing systems?",
     answer: "We offer seamless integration with major platforms like RunSignup, BikeReg, MindBody, and Zen Planner. Most partners are live within 24-48 hours.",
   },
-{
-  question: "What's the revenue sharing model?",
+  {
+    question: "What's the revenue sharing model?",
     answer: "Partners earn 20-40% commission on every policy sold. Commission rates are volume-based - the more participants you cover, the higher your rate.",
   },
-{
-  question: "What specifically does the insurance cover?",
+  {
+    question: "What specifically does the insurance cover?",
     answer: "Policies are sector-specific but generally cover medical expenses, emergency transport, trip cancellation, and activity-related injuries. We fill the gaps that general liability misses.",
   },
-{
-  question: "Is there a cost to become a partner?",
+  {
+    question: "Is there a cost to become a partner?",
     answer: "No. There are no setup fees, monthly subscriptions, or minimum commitments. You only pay (or rather, your participants pay) for the coverage purchased.",
   },
 ]
