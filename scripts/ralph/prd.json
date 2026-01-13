@@ -1,274 +1,372 @@
 {
-  "projectName": "Daily Event Insurance - Supabase Call Center Setup",
-  "branchName": "feature/livekit-call-center",
-  "prdFile": "/root/daily-event-insurance/docs/PRD-LIVEKIT-CALL-CENTER.md",
+  "projectName": "Daily Event Insurance - Customer Support & Onboarding Agent",
+  "branchName": "feature/customer-support-agent",
+  "prdFile": "/root/daily-event-insurance/docs/PRD-CUSTOMER-SUPPORT-AGENT.md",
   "currentPhase": 1,
-  "status": "in-progress",
+  "status": "pending",
   "milestones": [
     {
       "id": 1,
-      "name": "Phase 1: Database & Supabase Setup",
-      "status": "in-progress",
+      "name": "Phase 1: Chat Infrastructure & Database",
+      "status": "pending",
       "tasks": [
         {
           "id": "1.1",
-          "name": "Update db/index.ts to support Supabase PostgreSQL",
-          "status": "completed",
-          "estimatedMinutes": 30
+          "name": "Add chat_conversations table to lib/db/schema.ts",
+          "status": "pending",
+          "estimatedMinutes": 30,
+          "description": "Create chat_conversations table with participant info, session tracking, status, assignment, and CSAT fields"
         },
         {
           "id": "1.2",
-          "name": "Generate and run Drizzle migrations to Supabase",
+          "name": "Add chat_messages table to schema",
           "status": "pending",
           "estimatedMinutes": 30,
-          "dependencies": ["1.1"]
+          "dependencies": ["1.1"],
+          "description": "Create chat_messages table with role, content, attachments, AI metadata"
         },
         {
           "id": "1.3",
-          "name": "Seed admin users (julianb233@gmail.com, julian@aiacrobatics.com)",
+          "name": "Add screen_recordings table to schema",
           "status": "pending",
-          "estimatedMinutes": 15,
-          "dependencies": ["1.2"]
+          "estimatedMinutes": 20,
+          "description": "Create screen_recordings table for onboarding recordings"
         },
         {
           "id": "1.4",
-          "name": "Verify DATABASE_URL is set in Vercel environment",
+          "name": "Add knowledge_articles table to schema",
           "status": "pending",
-          "estimatedMinutes": 10,
-          "dependencies": ["1.2"]
+          "estimatedMinutes": 20,
+          "description": "Create knowledge_articles table with content, embedding, metrics"
         },
         {
           "id": "1.5",
-          "name": "Test database connection and admin login",
+          "name": "Add canned_responses table to schema",
           "status": "pending",
           "estimatedMinutes": 15,
-          "dependencies": ["1.3", "1.4"]
+          "description": "Create canned_responses table for quick agent replies"
+        },
+        {
+          "id": "1.6",
+          "name": "Run Drizzle migrations to Supabase",
+          "status": "pending",
+          "estimatedMinutes": 15,
+          "dependencies": ["1.1", "1.2", "1.3", "1.4", "1.5"],
+          "description": "Run npx drizzle-kit push to apply schema changes"
+        },
+        {
+          "id": "1.7",
+          "name": "Set up Supabase Realtime for chat",
+          "status": "pending",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.6"],
+          "description": "Configure Supabase Realtime subscriptions for live message updates"
+        },
+        {
+          "id": "1.8",
+          "name": "Create chat API endpoints",
+          "status": "pending",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.7"],
+          "description": "Create POST /api/chat/conversations, GET/POST messages endpoints"
+        },
+        {
+          "id": "1.9",
+          "name": "Build ChatWidget React component",
+          "status": "pending",
+          "estimatedMinutes": 180,
+          "dependencies": ["1.8"],
+          "description": "Create components/chat/ChatWidget.tsx with message list, input, typing indicators"
+        },
+        {
+          "id": "1.10",
+          "name": "Create message persistence layer",
+          "status": "pending",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.2", "1.8"],
+          "description": "Build lib/chat/message-service.ts for CRUD operations"
         }
       ],
-      "focus": "Connect app to Supabase PostgreSQL and seed admin users"
+      "focus": "Set up database schema and real-time chat infrastructure"
     },
     {
       "id": 2,
-      "name": "Phase 2: Lead Management APIs",
+      "name": "Phase 2: AI Support Agent",
       "status": "pending",
       "tasks": [
         {
           "id": "2.1",
-          "name": "Create POST /api/admin/leads endpoint",
+          "name": "Create AI agent service with OpenAI",
           "status": "pending",
-          "estimatedMinutes": 45,
-          "dependencies": ["1.5"]
+          "estimatedMinutes": 120,
+          "dependencies": ["1.8"],
+          "description": "Build lib/chat/ai-agent.ts with system prompt and tool definitions"
         },
         {
           "id": "2.2",
-          "name": "Create GET /api/admin/leads with filters",
+          "name": "Build context loader for user/quotes/policies",
           "status": "pending",
-          "estimatedMinutes": 45,
-          "dependencies": ["1.5"]
+          "estimatedMinutes": 90,
+          "dependencies": ["2.1"],
+          "description": "Create functions to load relevant context for AI agent"
         },
         {
           "id": "2.3",
-          "name": "Create GET /api/admin/leads/[id] endpoint",
+          "name": "Implement quote lookup tool",
           "status": "pending",
-          "estimatedMinutes": 30,
-          "dependencies": ["2.1"]
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Add lookup_quote tool for AI to fetch quote details"
         },
         {
           "id": "2.4",
-          "name": "Create PATCH /api/admin/leads/[id] endpoint",
+          "name": "Implement policy info tool",
           "status": "pending",
-          "estimatedMinutes": 30,
-          "dependencies": ["2.1"]
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Add lookup_policy tool for AI to fetch policy details"
         },
         {
           "id": "2.5",
-          "name": "Create POST /api/admin/leads/[id]/call endpoint",
-          "status": "completed",
-          "estimatedMinutes": 60,
-          "dependencies": ["2.1"]
+          "name": "Implement knowledge base search tool",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["1.4", "2.1"],
+          "description": "Add search_knowledge_base tool with semantic search"
         },
         {
           "id": "2.6",
-          "name": "Create POST /api/admin/leads/[id]/sms endpoint",
-          "status": "completed",
-          "estimatedMinutes": 45,
-          "dependencies": ["2.1"]
+          "name": "Add escalation detection and routing",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Detect when to escalate and route to human agents"
+        },
+        {
+          "id": "2.7",
+          "name": "Create response streaming for UX",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["2.1"],
+          "description": "Stream AI responses for better perceived performance"
+        },
+        {
+          "id": "2.8",
+          "name": "Build conversation history manager",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["1.10", "2.1"],
+          "description": "Manage conversation context window for AI"
         }
       ],
-      "focus": "Build CRUD APIs for lead management"
+      "focus": "Build intelligent AI support agent with tool calling"
     },
     {
       "id": 3,
-      "name": "Phase 3: Admin Dashboard UI",
+      "name": "Phase 3: Screen Recording & Onboarding",
       "status": "pending",
       "tasks": [
         {
           "id": "3.1",
-          "name": "Create leads list page at /admin/leads",
-          "status": "completed",
+          "name": "Integrate RecordRTC/rrweb library",
+          "status": "pending",
           "estimatedMinutes": 120,
-          "dependencies": ["2.2"]
+          "description": "Add screen recording library and configure for browser compatibility"
         },
         {
           "id": "3.2",
-          "name": "Create lead detail page at /admin/leads/[id]",
-          "status": "completed",
-          "estimatedMinutes": 120,
-          "dependencies": ["3.1", "2.3"]
+          "name": "Create screen recording React hook",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["3.1"],
+          "description": "Build hooks/useScreenRecording.ts with start/stop/pause"
         },
         {
           "id": "3.3",
-          "name": "Add communication history component",
+          "name": "Build recording upload to Supabase Storage",
           "status": "pending",
           "estimatedMinutes": 60,
-          "dependencies": ["3.2"]
+          "dependencies": ["1.3", "3.2"],
+          "description": "Upload recordings to Supabase Storage bucket"
         },
         {
           "id": "3.4",
-          "name": "Create script management page at /admin/scripts",
-          "status": "completed",
-          "estimatedMinutes": 90,
-          "dependencies": ["1.5"]
+          "name": "Create onboarding step tracker",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["3.2"],
+          "description": "Track which onboarding steps are captured"
         },
         {
           "id": "3.5",
-          "name": "Create call center dashboard at /admin/call-center",
-          "status": "completed",
-          "estimatedMinutes": 120,
-          "dependencies": ["3.1"]
+          "name": "Build recording playback component",
+          "status": "pending",
+          "estimatedMinutes": 90,
+          "dependencies": ["3.3"],
+          "description": "Create components/recordings/RecordingPlayer.tsx"
+        },
+        {
+          "id": "3.6",
+          "name": "Add recording annotations/notes",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["3.5"],
+          "description": "Allow agents to add timestamped notes to recordings"
         }
       ],
-      "focus": "Build admin UI for lead and call management"
+      "focus": "Implement screen recording for guided onboarding"
     },
     {
       "id": 4,
-      "name": "Phase 4: LiveKit Voice Agent",
+      "name": "Phase 4: Knowledge Base",
       "status": "pending",
       "tasks": [
         {
           "id": "4.1",
-          "name": "Create LiveKit Docker infrastructure (docker-compose.livekit.yml)",
+          "name": "Create knowledge article CRUD APIs",
           "status": "pending",
-          "estimatedMinutes": 120,
-          "dependencies": ["1.5"]
+          "estimatedMinutes": 90,
+          "dependencies": ["1.4"],
+          "description": "Build /api/admin/knowledge endpoints for article management"
         },
         {
           "id": "4.2",
-          "name": "Configure Twilio SIP trunk for LiveKit",
+          "name": "Build article editor with markdown",
           "status": "pending",
-          "estimatedMinutes": 60,
-          "dependencies": ["4.1"]
+          "estimatedMinutes": 90,
+          "dependencies": ["4.1"],
+          "description": "Create admin UI for editing knowledge articles"
         },
         {
           "id": "4.3",
-          "name": "Create base LiveKit Python agent scaffold",
+          "name": "Implement vector embedding generation",
           "status": "pending",
-          "estimatedMinutes": 120,
-          "dependencies": ["4.1"]
+          "estimatedMinutes": 60,
+          "dependencies": ["4.1"],
+          "description": "Generate embeddings using OpenAI for semantic search"
         },
         {
           "id": "4.4",
-          "name": "Implement script selection logic in agent",
+          "name": "Create semantic search API",
           "status": "pending",
           "estimatedMinutes": 60,
-          "dependencies": ["4.3"]
+          "dependencies": ["4.3"],
+          "description": "Build /api/knowledge/search with vector similarity"
         },
         {
           "id": "4.5",
-          "name": "Add voicemail detection to agent",
+          "name": "Build public knowledge base UI",
           "status": "pending",
           "estimatedMinutes": 60,
-          "dependencies": ["4.3"]
-        },
-        {
-          "id": "4.6",
-          "name": "Implement call transcript logging",
-          "status": "pending",
-          "estimatedMinutes": 60,
-          "dependencies": ["4.3"]
+          "dependencies": ["4.1"],
+          "description": "Create /help page with searchable articles"
         }
       ],
-      "focus": "Set up self-hosted LiveKit with AI voice agent"
+      "focus": "Build knowledge base for self-service and AI RAG"
     },
     {
       "id": 5,
-      "name": "Phase 5: SMS & Scheduling",
+      "name": "Phase 5: Admin Dashboard",
       "status": "pending",
       "tasks": [
         {
           "id": "5.1",
-          "name": "Create Twilio SMS service lib",
+          "name": "Create conversation list view",
           "status": "pending",
-          "estimatedMinutes": 60,
-          "dependencies": ["1.5"]
+          "estimatedMinutes": 90,
+          "dependencies": ["1.10"],
+          "description": "Build /admin/support page with conversation list"
         },
         {
           "id": "5.2",
-          "name": "Create inbound SMS webhook",
+          "name": "Build conversation detail/reply interface",
           "status": "pending",
-          "estimatedMinutes": 60,
-          "dependencies": ["5.1"]
+          "estimatedMinutes": 120,
+          "dependencies": ["5.1"],
+          "description": "Create /admin/support/[id] with full conversation view and reply"
         },
         {
           "id": "5.3",
-          "name": "Create scheduled actions processor (cron)",
-          "status": "completed",
-          "estimatedMinutes": 90,
-          "dependencies": ["1.5"]
+          "name": "Add agent takeover functionality",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["5.2"],
+          "description": "Allow human agents to take over from AI"
         },
         {
           "id": "5.4",
-          "name": "Set up Vercel cron job for /api/cron/process-actions",
-          "status": "completed",
+          "name": "Create analytics dashboard",
+          "status": "pending",
+          "estimatedMinutes": 120,
+          "dependencies": ["1.10"],
+          "description": "Build support metrics: response times, CSAT, resolution rates"
+        },
+        {
+          "id": "5.5",
+          "name": "Build canned response manager",
+          "status": "pending",
+          "estimatedMinutes": 60,
+          "dependencies": ["1.5"],
+          "description": "Create UI to manage quick reply templates"
+        },
+        {
+          "id": "5.6",
+          "name": "Add screen recording viewer",
+          "status": "pending",
           "estimatedMinutes": 30,
-          "dependencies": ["5.3"]
+          "dependencies": ["3.5"],
+          "description": "Integrate recording player into admin dashboard"
         }
       ],
-      "focus": "SMS integration and automated scheduling"
+      "focus": "Build admin interface for managing support conversations"
     },
     {
       "id": 6,
-      "name": "Phase 6: Analytics & Conversion Tracking",
+      "name": "Phase 6: Widget Deployment",
       "status": "pending",
       "tasks": [
         {
           "id": "6.1",
-          "name": "Create conversion event logger",
+          "name": "Create embeddable widget bundle",
           "status": "pending",
-          "estimatedMinutes": 60,
-          "dependencies": ["1.5"]
+          "estimatedMinutes": 90,
+          "dependencies": ["1.9"],
+          "description": "Build standalone JS bundle for widget embed"
         },
         {
           "id": "6.2",
-          "name": "Build lead value calculator ($40 → $100)",
+          "name": "Build widget configuration options",
           "status": "pending",
           "estimatedMinutes": 60,
-          "dependencies": ["6.1"]
+          "dependencies": ["6.1"],
+          "description": "Add position, color, greeting customization"
         },
         {
           "id": "6.3",
-          "name": "Create GET /api/admin/analytics/conversions",
-          "status": "completed",
-          "estimatedMinutes": 60,
-          "dependencies": ["6.1"]
+          "name": "Add widget installation instructions",
+          "status": "pending",
+          "estimatedMinutes": 30,
+          "dependencies": ["6.1"],
+          "description": "Create documentation for widget installation"
         },
         {
           "id": "6.4",
-          "name": "Add conversion analytics to admin dashboard",
+          "name": "Create partner-specific widget customization",
           "status": "pending",
-          "estimatedMinutes": 120,
-          "dependencies": ["6.3"]
+          "estimatedMinutes": 60,
+          "dependencies": ["6.2"],
+          "description": "Allow partners to customize their widget appearance"
         }
       ],
-      "focus": "Track lead-to-customer conversion journey"
+      "focus": "Package and deploy embeddable chat widget"
     }
   ],
-  "totalTasks": 31,
-  "completedTasks": 10,
-  "estimatedHours": 42,
+  "totalTasks": 40,
+  "completedTasks": 0,
+  "estimatedHours": 48,
   "nextTask": {
-    "id": "1.2",
-    "name": "Generate and run Drizzle migrations to Supabase",
-    "description": "Run 'npx drizzle-kit push' to apply schema to Supabase PostgreSQL database at db.nuirjcyiyghnvxpgkllj.supabase.co"
+    "id": "1.1",
+    "name": "Add chat_conversations table to lib/db/schema.ts",
+    "description": "Create the chat_conversations table with all fields as defined in PRD-CUSTOMER-SUPPORT-AGENT.md section 3"
   }
 }
