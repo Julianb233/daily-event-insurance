@@ -608,7 +608,7 @@ export default function InsuranceCompliancePage() {
           </div>
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-slate-500 text-sm">
-              Daily Event Insurance is a HiQOR company. For more information about our insurance products
+              Daily Event Insurance is a High-Core partner. For more information about our insurance products
               and services, please visit our{' '}
               <Link href="/insurance-disclosure" className="text-teal-600 hover:text-teal-700">
                 Insurance Disclosure

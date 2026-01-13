@@ -143,7 +143,7 @@ function MarketCard({ market, index }: { market: typeof markets[0]; index: numbe
           {/* Content */}
           <div className="relative z-10 flex-1 flex flex-col">
             {/* Icon - Centered */}
-            <div className="flex justify-center sm:justify-start mb-6">
+            <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-2xl bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
                 <market.icon className="w-8 h-8 text-white" />
               </div>

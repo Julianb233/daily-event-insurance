@@ -33,7 +33,7 @@ import {
 import { carrierCategories, carrierCategoryIconMap } from "@/lib/carrier-category-data"
 
 const heroStats = [
-  { value: "68%", label: "Average Opt-In Rate" },
+  { value: "100%", label: "Coverage Rate" },
   { value: "4x", label: "Lower CAC vs Traditional" },
   { value: "$0", label: "Upfront Integration Cost" },
 ]
@@ -80,8 +80,8 @@ const howItWorks = [
   },
   {
     step: "02",
-    title: "Participants Opt Into Coverage",
-    description: "During checkout or registration, participants see your coverage offer. One click to add protection. 68% average opt-in rate.",
+    title: "Participants Receive Coverage",
+    description: "During checkout or registration, participants receive comprehensive coverage. One-click activation with instant protection.",
     icon: UserCheck
   },
   {
@@ -855,9 +855,9 @@ export default function CarriersPage() {
                           <div className="flex gap-6">
                             <div>
                               <div className={`text-lg font-bold ${colors.textDark}`}>
-                                {category.marketStats.optInRate}
+                                100%
                               </div>
-                              <div className="text-xs text-slate-500">Opt-In Rate</div>
+                              <div className="text-xs text-slate-500">Coverage Rate</div>
                             </div>
                             <div>
                               <div className={`text-lg font-bold ${colors.textDark}`}>

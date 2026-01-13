@@ -33,15 +33,12 @@ const locationOptions = [
   { label: "25+ Locations", value: 30, bonus: 2 },
 ]
 
-// Expected opt-in rate
-const OPT_IN_RATE = 0.65
-
 // Get commission tier based on total volume
 function getCommissionTier(totalVolume: number) {
   return commissionTiers.find(tier => totalVolume >= tier.minVolume && totalVolume <= tier.maxVolume) || commissionTiers[0]
 }
 
-// Generate chart data points for visualization
+// Generate chart data points for visualization (100% coverage required)
 function generateChartData(locations: number = 1) {
   const data = []
   const locationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
@@ -52,10 +49,9 @@ function generateChartData(locations: number = 1) {
   ]
 
   for (const participants of dataPoints) {
-    const optedIn = Math.round(participants * OPT_IN_RATE)
     const tier = getCommissionTier(participants)
     const effectiveRate = tier.perParticipant + locationOption.bonus
-    const monthlyEarnings = Math.round(optedIn * effectiveRate)
+    const monthlyEarnings = Math.round(participants * effectiveRate) // 100% coverage required
 
     data.push({
       participants,
@@ -109,13 +105,13 @@ export function RevenueCalculator() {
   // Generate chart data based on current location selection
   const chartData = useMemo(() => generateChartData(locations), [locations])
 
-  // Calculate revenue with tiered commission
+  // Calculate revenue with tiered commission (100% coverage required)
   const totalParticipants = monthlyVolume * locations
-  const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE)
+  const coveredParticipants = totalParticipants // 100% coverage required
   const commissionTier = getCommissionTier(totalParticipants)
   const locationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
   const effectivePerParticipant = commissionTier.perParticipant + locationOption.bonus
-  const monthlyRevenue = optedInParticipants * effectivePerParticipant
+  const monthlyRevenue = coveredParticipants * effectivePerParticipant
   const annualRevenue = monthlyRevenue * 12
 
   // Animated values
@@ -327,12 +323,8 @@ export function RevenueCalculator() {
                       <span className="font-semibold text-slate-700">{totalParticipants.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-500">Est. opt-in rate</span>
-                      <span className="font-semibold text-slate-700">65%</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-500">Participants with coverage</span>
-                      <span className="font-semibold text-teal-600">{optedInParticipants.toLocaleString()}</span>
+                      <span className="text-slate-500">Covered participants</span>
+                      <span className="font-semibold text-teal-600">{coveredParticipants.toLocaleString()}</span>
                     </div>
                     <div className="border-t border-slate-200 pt-3 mt-3">
                       <div className="flex justify-between items-center text-sm">

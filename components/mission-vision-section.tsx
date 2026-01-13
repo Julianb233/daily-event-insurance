@@ -93,7 +93,20 @@ export function MissionVisionSection() {
               transition={{ duration: 0.3 }}
               className="relative h-full"
             >
-              {/* Glow effect on hover */}
+              {/* Subtle static glow effect behind the card */}
+              <motion.div
+                className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-teal-500/8 via-teal-400/12 to-teal-500/8 blur-2xl"
+                animate={{
+                  opacity: [0.4, 0.6, 0.4],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              {/* Enhanced glow effect on hover */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-teal-500/20 via-teal-400/30 to-teal-500/20 blur-xl"
                 initial={{ opacity: 0 }}
@@ -140,7 +153,21 @@ export function MissionVisionSection() {
               transition={{ duration: 0.3 }}
               className="relative h-full"
             >
-              {/* Glow effect on hover */}
+              {/* Subtle static glow effect behind the card */}
+              <motion.div
+                className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-sky-500/8 via-sky-400/12 to-sky-500/8 blur-2xl"
+                animate={{
+                  opacity: [0.4, 0.6, 0.4],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+              />
+              {/* Enhanced glow effect on hover */}
               <motion.div
                 className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-sky-500/20 via-sky-400/30 to-sky-500/20 blur-xl"
                 initial={{ opacity: 0 }}

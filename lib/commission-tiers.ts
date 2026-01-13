@@ -57,6 +57,12 @@ export const locationOptions: LocationOption[] = [
 ]
 
 /**
+ * Coverage rate - now required for all participants (100%)
+ * Kept for backwards compatibility with existing imports
+ */
+export const OPT_IN_RATE = 1.0
+
+/**
  * Volume tier options for UI selectors
  */
 export const volumeTiers = [

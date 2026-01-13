@@ -524,7 +524,7 @@ export default function PartnerEarningsPage() {
                     {formatCurrency(projectedEarnings.monthlyEarnings)}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
-                    {projectedEarnings.tierPercentage}% commission tier • {projectedEarnings.optedInParticipants.toLocaleString()} opted in (65%)
+                    {projectedEarnings.tierPercentage}% commission tier • {projectedEarnings.coveredParticipants.toLocaleString()} covered (100%)
                   </p>
                 </div>
               )}

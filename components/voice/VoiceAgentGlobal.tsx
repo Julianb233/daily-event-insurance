@@ -252,7 +252,7 @@ export function VoiceAgentGlobal() {
     if (context.screenType.startsWith('partner-')) {
       return 'Get Support'
     }
-    return 'Talk to a Specialist'
+    return "Let's Talk"
   }
 
   // Get context indicator
@@ -310,8 +310,18 @@ export function VoiceAgentGlobal() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center">
-                        <MessageCircle className="h-6 w-6" />
+                      <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
+                        <img
+                          src="/images/support-avatar.jpg"
+                          alt="Support specialist"
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            // Fallback to icon if image fails to load
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <MessageCircle className="h-6 w-6 hidden" />
                       </div>
                       {status === 'connected' && (
                         <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4">
@@ -321,7 +331,7 @@ export function VoiceAgentGlobal() {
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold">Talk to a Specialist</h3>
+                      <h3 className="font-semibold">Let's Talk</h3>
                       <p className="text-sm text-white/80">
                         {status === 'disconnected' && 'AI-powered support ready'}
                         {status === 'connecting' && 'Connecting...'}

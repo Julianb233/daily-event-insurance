@@ -233,7 +233,7 @@ export default function CategoryPageContent({ category }: { category: CarrierCat
               {[
                 { label: "Market Size", value: category.marketStats.marketSize },
                 { label: "Annual Growth", value: category.marketStats.annualGrowth },
-                { label: "Opt-In Rate", value: category.marketStats.optInRate },
+                { label: "Coverage Rate", value: "100%" },
                 { label: "Avg Premium", value: category.marketStats.avgPremium },
                 { label: "Claims Freq", value: category.marketStats.claimsFrequency },
               ].map((stat, index) => (

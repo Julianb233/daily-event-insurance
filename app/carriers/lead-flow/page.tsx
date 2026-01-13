@@ -494,7 +494,7 @@ export default function LeadFlowPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Target, title: "68%", subtitle: "Average Opt-In Rate", desc: "Intent-rich leads ready to engage" },
+              { icon: Target, title: "100%", subtitle: "Coverage Rate", desc: "All participants receive protection" },
               { icon: TrendingUp, title: "4x", subtitle: "Lower CAC", desc: "Vs. traditional acquisition channels" },
               { icon: Users, title: "25-45", subtitle: "Age Demo Sweet Spot", desc: "Hard-to-reach active lifestyle segment" },
               { icon: Zap, title: "Real-Time", subtitle: "Data Delivery", desc: "Leads flow instantly to your systems" }

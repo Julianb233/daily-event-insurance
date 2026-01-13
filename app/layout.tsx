@@ -50,14 +50,14 @@ export const metadata: Metadata = {
     "rental insurance",
     "member coverage",
     "business insurance",
-    "HiQOR",
+    "High-Core",
     "instant insurance",
     "liability coverage",
     "member benefits",
     "revenue stream"
   ],
-  authors: [{ name: "HiQOR" }],
-  creator: "HiQOR",
+  authors: [{ name: "Daily Event Insurance" }],
+  creator: "Daily Event Insurance",
   publisher: "Daily Event Insurance",
   openGraph: {
     title: "Daily Event Insurance | Same-Day Coverage for Business Members",
@@ -122,8 +122,8 @@ export default function RootLayout({
     "image": "https://dailyeventinsurance.com/images/og-image.png",
     "provider": {
       "@type": "Organization",
-      "name": "HiQOR",
-      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members"
+      "name": "Daily Event Insurance",
+      "description": "Insurance technology platform enabling businesses to offer same-day coverage to members (a High-Core partner)"
     },
     "areaServed": {
       "@type": "Country",

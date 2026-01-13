@@ -163,9 +163,9 @@ export async function POST(request: NextRequest) {
 
     const partner = partnerResult[0]
 
-    // Calculate earnings
-    const optedInParticipants = Math.round(totalParticipants * OPT_IN_RATE)
-    const partnerCommission = calculateMonthlyCommission(totalParticipants, OPT_IN_RATE, locationBonus)
+    // Calculate earnings (100% coverage is now required)
+    const coveredParticipants = totalParticipants
+    const partnerCommission = calculateMonthlyCommission(totalParticipants, locationBonus)
 
     // Check if record exists
     const existing = await db!
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
         .update(monthlyEarnings)
         .set({
           totalParticipants,
-          optedInParticipants,
+          optedInParticipants: coveredParticipants,
           partnerCommission: String(partnerCommission),
         })
         .where(eq(monthlyEarnings.id, existing[0].id))
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
           partnerId: partner.id,
           yearMonth,
           totalParticipants,
-          optedInParticipants,
+          optedInParticipants: coveredParticipants,
           partnerCommission: String(partnerCommission),
         })
         .returning()
