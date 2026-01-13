@@ -194,7 +194,7 @@ function AgentContent({ onClose, context, errorType }: { onClose: () => void, co
                             barCount={7} 
                             trackRef={audioTrack} 
                             className="h-full w-full"
-                            options={{ color: '#14b8a6', minHeight: 20 }}
+                            options={{ minHeight: 20 }}
                         />
                     ) : (
                         <div className="text-sm text-gray-400">Waiting for audio...</div>
