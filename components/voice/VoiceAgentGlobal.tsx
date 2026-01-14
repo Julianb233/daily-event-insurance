@@ -136,15 +136,12 @@ function AgentContent({ onClose, context, errorType, errorMessage }: { onClose: 
   const connectionState = useConnectionState()
   const { state, audioTrack } = useVoiceAssistant()
   const { isMicrophoneEnabled, localParticipant } = useLocalParticipant()
-  const { isAgentActive, connect, disconnect } = useVoiceAgent()
   const pathname = usePathname()
 
   // Don't show on microsites
   if (pathname?.startsWith("/events")) {
     return null
   }
-
-  // Auto-connect in dev mode functionality logic...alParticipant } = useLocalParticipant()
   const [transcript, setTranscript] = useState<string[]>([])
 
   // Basic transcript handling - typically you'd listen to room events for data messages or transcription

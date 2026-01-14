@@ -14,6 +14,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params
+    if (!db) return { title: "Page Not Found" }
     const [microsite] = await db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1)
 
     if (!microsite) return { title: "Page Not Found" }
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MicrositePage({ params }: PageProps) {
     const { slug } = await params
+    if (!db) notFound()
     const [microsite] = await db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1)
 
     if (!microsite || !microsite.isActive) {
@@ -33,8 +35,8 @@ export default async function MicrositePage({ params }: PageProps) {
     }
 
     const primaryColor = microsite.primaryColor || "#14B8A6"
-    // Use the first branding image as background
-    const bgImage = microsite.brandingImages && microsite.brandingImages.length > 0 ? microsite.brandingImages[0] : null
+    // Background image not currently available on microsites - use default
+    const bgImage = null
 
     return (
         <div className="min-h-screen flex flex-col font-sans text-slate-900 relative selection:bg-blue-100 selection:text-blue-900">
