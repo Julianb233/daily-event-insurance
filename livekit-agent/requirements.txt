@@ -4,3 +4,4 @@ livekit-plugins-deepgram>=0.11.0
 livekit-plugins-silero>=0.11.0
 livekit-plugins-cartesia>=0.11.0
 python-dotenv>=1.0.0
+supabase>=2.0.0

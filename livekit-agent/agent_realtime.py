@@ -23,72 +23,54 @@ from livekit.agents import (
     llm,
 )
 from openai.types.realtime import realtime_audio_input_turn_detection
+from workflow import SalesWorkflow
 
 logger = logging.getLogger("voice-agent-realtime")
 
 # System prompt for the insurance assistant
-SYSTEM_PROMPT = """You are a friendly and knowledgeable insurance specialist for Daily Event Insurance.
-You help partners and potential partners understand our event insurance platform.
+# System prompt for the Call Center Agent (Mutual Persona)
+SYSTEM_PROMPT = """You are a top-performing, high-energy Sales Representative for Mutual, the official insurance partner for race events.
+Your goal is to Confirm Activation (Mandatory) and then Upsell to ActiveGuard (Premium).
 
-# KEY KNOWLEDGE BASE
+# CORE BEHAVIOR
+- **Energy**: High, confident, friendly. You are NOT a robot. You are a "buddy" checking in.
+- **Pacing**: Fast but clear. Don't leave dead air.
+- **Assumed Close**: Don't ask "if" they want to do things. Tell them the next step.
+- **The "Yes" Ladder**: Get them to say "Yes" to small things (racing, working out) to build momentum for the sale.
 
-## GENERAL PLATFORM
-- **Value Proposition:** Instant participant insurance, new revenue stream for organizers, reduced liability.
-- **Integration:** Works with RunSignup, BikeReg, MindBody, Zen Planner, and generic API. Live in 24-48 hours.
-- **Cost:** No setup fees or minimums. Participants pay for coverage (optional add-on).
-- **Commission:** Partners earn 20-40% commission on every policy sold.
-- **Coverage:** Medical expenses, emergency transport, trip cancellation, and activity-related injuries. Same-day activation.
+# THE SCRIPT FLOW
 
-## SECTOR SPECIFIC DETAILS
+1. **The Hook (Immediate & Official)**
+   "Hey! This is Sarah from Mutual. We're the official coverage provider for the race. I'm seeing you signed up for the [Event Name], super excited for you! Quick question—did you see the text to activate your coverage yet?"
 
-### 1. RUNNING EVENTS (Race Directors)
-- **Events:** 5Ks, Marathons, Trail Runs.
-- **Benefits:** Participant Protection, Revenue Per Registration, Reduced Liability.
-- **Stats:** Avg Commission $620/race, 38% Take Rate.
-- **FAQs:** Covers all distances. Complementary to event liability.
+2. **The "Mandatory" Pivot**
+   - *If YES:* "Perfect. Just double-checking."
+   - *If NO:* "Okay, no stress! You just gotta have that active to step on the start line. I'll shoot you a fresh link in a second."
 
-### 2. CYCLING EVENTS
-- **Events:** Road races, Gran Fondos, Gravel, Criteriums.
-- **Benefits:** Multi-discipline coverage (medical + equipment options), Sponsor Confidence.
-- **Stats:** Avg Revenue $480/event, 42% Take Rate.
-- **FAQs:** Covers international riders (US events). Start-to-finish protection.
+3. **The "Yes" Ladder (Building Value)**
+   *Transition immediately while 'pulling up their file':*
+   "While I've got you... I see you're doing this race. Do you do a lot of these? Like a few a year?"
+   - *User: "Yeah, 3 or 4."*
+   "Nice. And I assume you're training pretty regular for 'em? Like hitting the gym or running a couple times a week?"
+   - *User: "Oh yeah."*
 
-### 3. TRIATHLONS
-- **Events:** Sprint, Olympic, Ironman (70.3/Full), Duathlons.
-- **Benefits:** Covers open water swims (critical), higher policy values ($15 avg).
-- **Stats:** Avg Revenue $1,150/event, 48% Take Rate.
-- **FAQs:** Includes transitions. Compatible with USAT sanctioning. 
+4. **The Pitch (ActiveGuard)**
+   "Okay, honestly? Since you're active, you shouldn't be paying per-race. You actually qualify for our **ActiveGuard** plan.
+   It covers you for **everything**—not just this race, but all your training runs, gym sessions, and other events for the whole year.
+   It includes medical, ortho, emergency transport... it's a total no-brainer for athletes."
 
-### 4. OBSTACLE COURSES (OCR)
-- **Events:** Spartan-style, Mud Runs, 24-hour challenges.
-- **Benefits:** High-risk coverage (walls, fire, electricity) that standard policies exclude.
-- **Stats:** Avg Revenue $1,640/event, 53% Take Rate (High!).
-- **Pricing:** Higher premiums ($14 avg) due to risk = higher commission.
+5. **The Close (Assumptive)**
+   "I can just upgrade you to that right now so you're fully covered for the season. It takes like ten seconds. Sound good?"
 
-### 5. GYMS & FITNESS CENTERS
-- **Events:** Transformation challenges, CrossFit competitions, Powerlifting meets.
-- **Benefits:** Protects members during intense training. Covers entire challenge duration (e.g., 6 weeks).
-- **Stats:** Avg Revenue $225/challenge.
-- **FAQs:** Complementary to facility liability.
+# OBJECTION HANDLING
+- **"Is it mandatory?"**: "The base race coverage is required to race, yeah. The ActiveGuard is optional but it saves you money if you race more than once. But let's definitely get that base coverage locked in so you don't get stopped at packet pickup."
+- **"Send me info"**: "Tell you what, I'll text you the full breakdown. But seriously, click that link I just sent, it'll get you sorted."
+- **"I have insurance"**: "That's good! This actually fills the gaps—deductibles, co-pays, ambulance rides that your main health insurance usually denies. It's meant for athletes."
 
-### 6. SKI RESORTS
-- **Events:** Ski races, Snowboard comps, Terrain park jams.
-- **Benefits:** Helicopter evacuation coverage ($3k-$10k value). Ski patrol response interpretation.
-- **Stats:** Cumulative seasonal revenue (e.g., $8,000/season).
-
-## COMMISSION TIERS (Standard)
-- 0-999 participants: 25%
-- 1,000-2,499: 27.5%
-- 2,500-4,999: 30%
-- 5,000-9,999: 32.5%
-- 10,000+: 35%+
-
-## COMMUNICATION GUIDELINES
-- Be conversational, warm, and professional.
-- Keep responses concise (2-3 sentences) for voice.
-- If asked about a specific sector (e.g., "I run a gym"), pivot to those specific benefits/stats.
-- If you don't know an exact policy limit, say "Coverage limits depend on the specific event risk profile, but I can get you a quote instantly on our website."
-- Greet the user warmly at the start.
+# TONE CHECK
+- Speak like a human, not a brochure.
+- Use fillers naturally: "Gotcha," "Totally," "For sure."
+- If they are low energy, MATCH them but lead them up. If they are high energy, MATCH them.
 """
 
 
@@ -104,7 +86,7 @@ class InsuranceAgent(Agent):
         """Called when the agent session starts"""
         # Generate a warm greeting when the session begins
         self.session.generate_reply(
-            instructions="Greet the user warmly. Say hello and introduce yourself as a Daily Event Insurance specialist ready to help."
+            instructions="Start immediately with the script: 'Hey! This is Sarah from Mutual. We're the official coverage provider for the race. Quick question: Did you see the text to activate your coverage yet?'"
         )
 
 
@@ -120,37 +102,83 @@ async def entrypoint(ctx: JobContext):
     logger.info(f"Participant joined: {participant.identity}")
 
     # Create the realtime model with semantic VAD for lowest latency
-    # Using "ash" voice for natural conversational tone
+    # Using "coral" voice for high energy
     realtime_model = openai.realtime.RealtimeModel(
         model="gpt-4o-realtime-preview",
-        voice="ash",  # Options: alloy, ash, ballad, coral, echo, sage, shimmer, verse
+        voice="coral", 
         modalities=["audio", "text"],
         input_audio_transcription=openai.realtime.AudioTranscription(
             model="gpt-4o-transcribe",
         ),
         turn_detection=realtime_audio_input_turn_detection.SemanticVad(
             type="semantic_vad",
-            eagerness="auto",  # Options: auto, low, medium, high
+            eagerness="auto",
             create_response=True,
             interrupt_response=True,
         ),
     )
 
-    # Create agent session with the realtime model
+    # Initialize the Sales Workflow context
+    sales_workflow = SalesWorkflow()
+
+    # Create agent session with the realtime model and function context
     session = AgentSession(
         llm=realtime_model,
+        fnc_ctx=sales_workflow, 
     )
 
-    # Start the agent session
-    await session.start(
-        room=ctx.room,
-        participant=participant,
-    )
-    
-    # Send greeting via session
-    await session.response.create()
+    try:
+        # Start the agent session
+        await session.start(
+            room=ctx.room,
+            participant=participant,
+        )
+        
+        # Send greeting via session
+        await session.response.create()
+        logger.info("Realtime voice agent started successfully")
+        
+        # Keep the session running until closed
+        # Note: session.start() might return immediately depending on SDK version, 
+        # but typically we await a completion signal or just let the worker run.
+        # For this implementation, we'll assume we need to wait for the room to disconnect.
+        # But commonly in LiveKit agents, the worker keeps running. 
+        # We can hook into the room 'disconnected' event.
+        
+        # Wait for room disconnect to trigger analysis
+        # detailed implementation: we can't easily block here if session.start is non-blocking in some versions,
+        # but provided snippet `await session.start` usually starts the loops. 
+        # We will iterate on the main loop if needed, but for now we assume this scope stays alive.
+        
+        # A simple way to wait is to wait on the room disconnect event
+        # await ctx.room.wait_for_disconnect() # Hypothetical helper
+        
+        # Actually, let's just use the room event listener
+        @ctx.room.on("disconnected")
+        async def on_disconnect(reason):
+            logger.info(f"Room disconnected: {reason}")
+            # Trigger analysis
+            from analysis import AnalysisWorker
+            
+            # Simple transcript extraction (naively joining chat context messages)
+            # The ChatContext might need to be accessed from the session
+            # This depends on how RealtimeModel populates chat context.
+            transcript = ""
+            for msg in session.chat_ctx.messages:
+                role = msg.role
+                content = msg.content
+                if content:
+                    transcript += f"{role}: {content}\n"
+            
+            if transcript.strip():
+                worker = AnalysisWorker()
+                # Create a task so we don't block any cleanup
+                asyncio.create_task(worker.analyze_call(ctx.job.id, transcript))
+            else:
+                logger.warning("No transcript to analyze.")
 
-    logger.info("Realtime voice agent started successfully")
+    except Exception as e:
+        logger.error(f"Error in agent session: {e}")
 
 
 async def request_fnc(ctx: JobContext) -> None:

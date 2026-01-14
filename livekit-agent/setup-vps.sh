@@ -7,11 +7,10 @@ set -e
 echo "=== Daily Event Insurance Voice Agent Setup ==="
 
 # Install Python 3.11 if not present
-if ! command -v python3.11 &> /dev/null; then
-    echo "Installing Python 3.11..."
-    sudo apt update
-    sudo apt install -y python3.11 python3.11-venv python3.11-dev
-fi
+# Ensure Python dependencies
+echo "Installing Python dependencies..."
+sudo apt update
+sudo apt install -y python3 python3-venv python3-dev python3-pip
 
 # Create app directory
 APP_DIR="/opt/voice-agent"
@@ -26,7 +25,7 @@ cp .env $APP_DIR/
 
 # Create virtual environment
 cd $APP_DIR
-python3.11 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
@@ -44,7 +43,7 @@ WorkingDirectory=/opt/voice-agent
 EnvironmentFile=/opt/voice-agent/.env
 ExecStart=/opt/voice-agent/venv/bin/python /opt/voice-agent/agent_realtime.py start
 Restart=always
-RestartSec=10
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

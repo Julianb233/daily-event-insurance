@@ -41,7 +41,8 @@ async function main() {
             console.log(`    ID: ${site.id}`)
             console.log(`    Primary Color: ${site.primaryColor}`)
             console.log(`    Active: ${site.isActive}`)
-            console.log(`    Validation: ${site.setupFee ? 'Fee Paid' : 'Fee Pending'}`)
+            console.log(`    Fee Status: ${site.feeCollected ? 'Paid' : 'Pending'}`);
+            console.log(`    Logo URL: ${site.logoUrl || "MISSING"}`);
             console.log(`----------------------------------------`)
         })
     }
