@@ -18,6 +18,11 @@ async function main() {
     const { db, partners, microsites } = await import("@/lib/db")
     const { eq } = await import("drizzle-orm")
 
+    if (!db) {
+        console.error("❌ Database connection not available")
+        process.exit(1)
+    }
+
     console.log("🚀 Starting Comprehensive Firecrawl Verification...")
 
     if (!process.env.FIRECRAWL_API_KEY) {

@@ -78,9 +78,10 @@ async function main() {
         console.log(`Microsite Slug: ${testSlug}`)
         console.log(`Custom Domain: www.oceanpacificgym.com`)
 
-    } catch (error) {
+    } catch (error: unknown) {
         // If duplicate key error, we can ignore or log
-        if (error.code === '23505') {
+        const dbError = error as { code?: string }
+        if (dbError.code === '23505') {
             console.log("⚠️  Sample data likely already exists (duplicate key).")
         } else {
             console.error("\n❌ Creation Failed:", error)

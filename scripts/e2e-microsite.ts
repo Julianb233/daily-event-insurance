@@ -18,6 +18,11 @@ async function main() {
     // Dynamically import DB after env is loaded
     const { db, partners, microsites, adminEarnings } = await import("@/lib/db")
 
+    if (!db) {
+        console.error("❌ Database connection not available")
+        process.exit(1)
+    }
+
     console.log("🚀 Starting E2E Microsite Creation Test...")
 
     // 1. Setup Test Partner

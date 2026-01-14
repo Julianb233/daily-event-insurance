@@ -4,7 +4,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { motion } from "framer-motion"
 import { Ticket, Search, Filter, Clock, ChevronRight, RefreshCw, AlertCircle, Plus } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -30,7 +30,7 @@ interface TicketListResponse {
     }
 }
 
-export default function SupportTicketsPage() {
+function TicketsContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
 
@@ -134,9 +134,7 @@ export default function SupportTicketsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50">
-            <Header />
-
+        <>
             {/* Hero Section */}
             <section className="bg-white pt-32 pb-16 border-b border-slate-100">
                 <div className="container mx-auto px-4 max-w-6xl">
@@ -381,7 +379,28 @@ export default function SupportTicketsPage() {
                     )}
                 </div>
             </section>
+        </>
+    )
+}
 
+function TicketsLoading() {
+    return (
+        <section className="py-32">
+            <div className="container mx-auto px-4 max-w-6xl text-center">
+                <RefreshCw className="w-8 h-8 text-teal-600 animate-spin mx-auto mb-4" />
+                <p className="text-slate-600">Loading...</p>
+            </div>
+        </section>
+    )
+}
+
+export default function SupportTicketsPage() {
+    return (
+        <main className="min-h-screen bg-slate-50">
+            <Header />
+            <Suspense fallback={<TicketsLoading />}>
+                <TicketsContent />
+            </Suspense>
             <Footer />
         </main>
     )

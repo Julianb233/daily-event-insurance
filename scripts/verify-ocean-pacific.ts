@@ -15,6 +15,11 @@ async function main() {
     // Dynamically import DB
     const { db, microsites } = await import("@/lib/db")
 
+    if (!db) {
+        console.error("❌ Database connection not available")
+        process.exit(1)
+    }
+
     console.log("🚀 Checking for Ocean Pacific Gym...")
 
     try {

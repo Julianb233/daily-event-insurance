@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, X, Sparkles } from 'lucide-react'
+import { usePathname } from "next/navigation"
 import {
   LiveKitRoom,
   RoomAudioRenderer,
@@ -23,6 +24,13 @@ const SERVER_URL = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
 export function VoiceAgentGlobal() {
   const { context, isOpen, openVoiceAgent, closeVoiceAgent } = useVoiceAgent()
+  const pathname = usePathname()
+
+  // Don't show on microsites
+  if (pathname?.startsWith("/events")) {
+    return null
+  }
+
   const [token, setToken] = useState<string>('')
   const [errorType, setErrorType] = useState<ErrorType | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -128,6 +136,15 @@ function AgentContent({ onClose, context, errorType, errorMessage }: { onClose: 
   const connectionState = useConnectionState()
   const { state, audioTrack } = useVoiceAssistant()
   const { isMicrophoneEnabled, localParticipant } = useLocalParticipant()
+  const { isAgentActive, connect, disconnect } = useVoiceAgent()
+  const pathname = usePathname()
+
+  // Don't show on microsites
+  if (pathname?.startsWith("/events")) {
+    return null
+  }
+
+  // Auto-connect in dev mode functionality logic...alParticipant } = useLocalParticipant()
   const [transcript, setTranscript] = useState<string[]>([])
 
   // Basic transcript handling - typically you'd listen to room events for data messages or transcription

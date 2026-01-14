@@ -4,7 +4,6 @@ import { eq } from "drizzle-orm"
 import { MicroSiteForm } from "./_components/MicroSiteForm"
 import { Metadata } from "next"
 
-// Force dynamic rendering to ensure fresh data from DB
 export const dynamic = "force-dynamic"
 
 interface PageProps {
@@ -13,113 +12,135 @@ interface PageProps {
     }>
 }
 
-// Generate metadata for the microsite
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params
+    const [microsite] = await db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1)
 
-    const [microsite] = await db
-        .select()
-        .from(microsites)
-        .where(eq(microsites.slug, slug))
-        .limit(1)
-
-    if (!microsite) {
-        return {
-            title: "Page Not Found",
-        }
-    }
+    if (!microsite) return { title: "Page Not Found" }
 
     return {
         title: `${microsite.businessName} - Daily Event Insurance`,
-        description: `Get event insurance for ${microsite.businessName}. Instant coverage, zero deductible, 100% compliant.`,
+        description: `Get event insurance for ${microsite.businessName}. Instant coverage.`,
     }
 }
 
 export default async function MicrositePage({ params }: PageProps) {
     const { slug } = await params
-    console.log("🔍 MicrositePage hit with slug:", slug)
-
-    const [microsite] = await db
-        .select()
-        .from(microsites)
-        .where(eq(microsites.slug, slug))
-        .limit(1)
-
-    console.log("🔍 Microsite DB Result:", microsite ? `Found (Active: ${microsite.isActive})` : "Not Found")
+    const [microsite] = await db.select().from(microsites).where(eq(microsites.slug, slug)).limit(1)
 
     if (!microsite || !microsite.isActive) {
-        console.log("❌ Microsite 404 triggered")
         notFound()
     }
 
-    // Determine colors from DB or default
-    const primaryColor = microsite.primaryColor || "#14B8A6" // Default teal
+    const primaryColor = microsite.primaryColor || "#14B8A6"
+    // Use the first branding image as background
+    const bgImage = microsite.brandingImages && microsite.brandingImages.length > 0 ? microsite.brandingImages[0] : null
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            {/* Header with Business Branding */}
-            <header className="bg-white border-b border-slate-200">
-                <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        {microsite.logoUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={microsite.logoUrl} alt={microsite.businessName || "Business Logo"} className="h-10 w-auto object-contain" />
-                        ) : (
-                            <div className="h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold text-xl" style={{ backgroundColor: primaryColor }}>
-                                {microsite.businessName?.charAt(0) || "B"}
-                            </div>
-                        )}
-                        <span className="font-bold text-xl text-slate-900">{microsite.businessName}</span>
-                    </div>
-                    <div className="hidden md:flex items-center gap-2 text-sm text-slate-500">
-                        <span>Powered by</span>
-                        <span className="font-bold text-slate-700">Daily Event Insurance</span>
-                    </div>
+        <div className="min-h-screen flex flex-col font-sans text-slate-900 relative selection:bg-blue-100 selection:text-blue-900">
+
+            {/* Background Image Layer */}
+            <div className="fixed inset-0 z-0">
+                {bgImage ? (
+                    <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={bgImage} alt="Background" className="w-full h-full object-cover scale-[1.02]" />
+                        {/* Refined Gradient: Subtle white vignette to keep focus but allow image to shine */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/40 to-white/20 backdrop-blur-[2px]"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-transparent to-white/40"></div>
+                    </>
+                ) : (
+                    <div className="w-full h-full bg-slate-50"></div>
+                )}
+            </div>
+
+            {/* Header - Transparent/Minimal */}
+            <header className="relative z-10 container mx-auto px-6 py-6 flex items-center justify-between">
+                {/* Partner Logo - Left Aligned */}
+                <div className="flex items-center gap-4">
+                    {microsite.logoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={microsite.logoUrl}
+                            alt={microsite.businessName || "Partner"}
+                            className="h-12 md:h-20 w-auto object-contain drop-shadow-lg"
+                        />
+                    ) : (
+                        <span className="text-2xl font-bold tracking-tight">{microsite.businessName}</span>
+                    )}
+                </div>
+
+                {/* Trust/Powered By - Right Aligned (Subtle) */}
+                <div className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/40 shadow-sm">
+                    Powered by Daily Event Insurance
                 </div>
             </header>
 
-            {/* Main Content Area */}
-            <main className="container mx-auto px-4 py-12">
-                <div className="max-w-4xl mx-auto">
-                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
-                        {/* Hero Banner Area */}
-                        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 md:p-12 text-center relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
 
-                            <h1 className="text-3xl md:text-5xl font-black mb-4 relative z-10">
-                                Official Event Insurance
-                            </h1>
-                            <p className="text-lg text-slate-300 max-w-2xl mx-auto relative z-10">
-                                Required coverage for events at <span className="text-white font-bold border-b-2 border-dashed" style={{ borderColor: primaryColor }}>{microsite.businessName}</span>
-                            </p>
-                        </div>
+            {/* Main Content - Centered Split */}
+            <main className="relative z-10 flex-grow container mx-auto px-6 py-8 md:py-16 flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-24">
 
-                        {/* Form Section */}
-                        <div className="p-8 md:p-12">
-                            <div className="text-center mb-10">
-                                <h2 className="text-2xl font-bold text-slate-900 mb-2">Get Your Certificate Instantly</h2>
-                                <p className="text-slate-600">Select your activity type to verify coverage requirements</p>
-                            </div>
-
-                            <div className="p-6 bg-slate-50 rounded-xl border border-slate-200">
-                                <MicroSiteForm primaryColor={primaryColor} businessName={microsite.businessName || "Our Facility"} />
-                            </div>
-                        </div>
+                {/* Left Column: Welcoming Marketing Copy with Background Blur for readability */}
+                <div className="max-w-xl text-center md:text-left">
+                    <div className="inline-block px-4 py-1.5 mb-8 text-sm font-bold tracking-wide text-blue-900 bg-white/60 backdrop-blur-md rounded-full border border-white/50 shadow-sm uppercase">
+                        Event Coverage Check-In
                     </div>
 
-                    {/* Trust Badges */}
-                    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center opacity-60 grayscale hover:grayscale-0 transition-all">
-                        {/* Placeholders for trust badges */}
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-[1] mb-8 drop-shadow-xl filter">
+                        Enjoy your day at <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-700 to-indigo-600">
+                            {microsite.businessName}
+                        </span>
+                    </h1>
+
+                    <div className="bg-white/40 backdrop-blur-md p-6 rounded-2xl border border-white/30 shadow-sm mb-10">
+                        <p className="text-xl md:text-2xl text-slate-800 font-medium leading-relaxed drop-shadow-sm">
+                            We've partnered with Daily Event Insurance to keep you safe. Please take a moment to activate your coverage below.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 text-sm font-bold text-slate-700">
+                        <div className="flex items-center gap-2 bg-white/70 px-4 py-2 rounded-xl shadow-sm border border-white/50">
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse"></div>
+                            Active Coverage
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/70 px-4 py-2 rounded-xl shadow-sm border border-white/50">
+                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                            Instant Approval
+                        </div>
                     </div>
                 </div>
+
+
+                {/* Right Column: Activation Form */}
+                <div className="w-full max-w-md relative">
+                    <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full transform scale-110"></div>
+
+                    <div className="relative bg-white/80 backdrop-blur-2xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/60 overflow-hidden">
+                        <div className="px-8 py-6 border-b border-gray-100/50 bg-white/50 flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-900">Guest Check-In</h2>
+                                <p className="text-sm text-slate-500 font-medium">Activate your visitor coverage</p>
+                            </div>
+                            <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs ring-4 ring-white">
+                                1
+                            </div>
+                        </div>
+
+                        <div className="p-8">
+                            <MicroSiteForm primaryColor={primaryColor} businessName={microsite.businessName || "our facility"} />
+                        </div>
+                    </div>
+
+                    <div className="mt-8 flex items-center justify-center gap-2 opacity-60">
+                        <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest bg-white/50 px-3 py-1 rounded-full">
+                            Secure 256-bit SSL
+                        </div>
+                    </div>
+                </div>
+
             </main>
 
-            {/* Footer */}
-            <footer className="bg-white border-t border-slate-200 py-8 mt-12">
-                <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} Daily Event Insurance. All rights reserved.</p>
-                </div>
-            </footer>
         </div>
     )
 }

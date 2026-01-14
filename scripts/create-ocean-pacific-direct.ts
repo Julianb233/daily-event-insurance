@@ -51,7 +51,7 @@ async function main() {
             slug: testSlug,
             customDomain: "www.oceanpacificgym.com",
             isActive: true, // IMPORTANT
-            logoUrl: null, // User can update later? Or maybe I should add a fake one?
+            logoUrl: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=200&auto=format&fit=crop", // Placeholder Logo
             primaryColor: "#0066CC",
             businessName: "Ocean Pacific Gym",
             setupFee: "550.00",
