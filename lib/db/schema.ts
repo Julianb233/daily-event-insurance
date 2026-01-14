@@ -994,3 +994,79 @@ export type ContractTemplate = typeof contractTemplates.$inferSelect
 export type NewContractTemplate = typeof contractTemplates.$inferInsert
 export type PartnerContractSignature = typeof partnerContractSignatures.$inferSelect
 export type NewPartnerContractSignature = typeof partnerContractSignatures.$inferInsert
+
+// ================= Support Tickets Tables =================
+
+// Support tickets - Customer/Partner support ticket management
+export const supportTickets = pgTable("support_tickets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Ticket identification
+  ticketNumber: text("ticket_number").unique().notNull(), // Format: #DEI-XXXXX
+
+  // Ticket content
+  subject: text("subject").notNull(),
+  description: text("description").notNull(),
+
+  // Status and classification
+  status: text("status").notNull().default("open"), // open, in_progress, waiting_customer, resolved, closed
+  priority: text("priority").notNull().default("medium"), // low, medium, high, urgent
+  category: text("category").notNull().default("general"), // billing, technical, integration, general
+
+  // Contact information
+  contactName: text("contact_name").notNull(),
+  contactEmail: text("contact_email").notNull(),
+
+  // Relationships
+  userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  partnerId: uuid("partner_id").references(() => partners.id, { onDelete: "set null" }),
+  assignedTo: uuid("assigned_to").references(() => users.id, { onDelete: "set null" }),
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
+  closedAt: timestamp("closed_at"),
+
+  // Metadata
+  metadata: text("metadata"), // JSON string for additional data
+}, (table) => ({
+  ticketNumberIdx: index("idx_support_tickets_ticket_number").on(table.ticketNumber),
+  statusIdx: index("idx_support_tickets_status").on(table.status),
+  priorityIdx: index("idx_support_tickets_priority").on(table.priority),
+  categoryIdx: index("idx_support_tickets_category").on(table.category),
+  userIdIdx: index("idx_support_tickets_user_id").on(table.userId),
+  partnerIdIdx: index("idx_support_tickets_partner_id").on(table.partnerId),
+  assignedToIdx: index("idx_support_tickets_assigned_to").on(table.assignedTo),
+  createdAtIdx: index("idx_support_tickets_created_at").on(table.createdAt),
+  emailStatusIdx: index("idx_support_tickets_email_status").on(table.contactEmail, table.status),
+}))
+
+// Support ticket replies - Responses and updates on tickets
+export const supportTicketReplies = pgTable("support_ticket_replies", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ticketId: uuid("ticket_id").references(() => supportTickets.id, { onDelete: "cascade" }).notNull(),
+
+  // Reply content
+  content: text("content").notNull(),
+  isInternal: boolean("is_internal").default(false).notNull(), // Internal notes vs customer-visible
+
+  // Author information
+  authorId: uuid("author_id").references(() => users.id, { onDelete: "set null" }),
+  authorName: text("author_name").notNull(),
+  authorEmail: text("author_email"),
+  authorRole: text("author_role").notNull().default("customer"), // customer, support, admin
+
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  ticketIdIdx: index("idx_support_ticket_replies_ticket_id").on(table.ticketId),
+  authorIdIdx: index("idx_support_ticket_replies_author_id").on(table.authorId),
+  createdAtIdx: index("idx_support_ticket_replies_created_at").on(table.createdAt),
+}))
+
+// Type exports for support tickets tables
+export type SupportTicket = typeof supportTickets.$inferSelect
+export type NewSupportTicket = typeof supportTickets.$inferInsert
+export type SupportTicketReply = typeof supportTicketReplies.$inferSelect
+export type NewSupportTicketReply = typeof supportTicketReplies.$inferInsert

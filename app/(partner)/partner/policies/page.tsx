@@ -16,6 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react"
 import { formatCurrency } from "@/lib/commission-tiers"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 interface Policy {
   id: string
@@ -376,6 +377,8 @@ export default function PoliciesPage() {
           })
         )}
       </div>
+
+      <IntegrationChatWidget topic="troubleshooting" />
     </div>
   )
 }

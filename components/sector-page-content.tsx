@@ -361,12 +361,12 @@ function CTASection() {
             </motion.a>
 
             <motion.a
-              href="/#apply"
+              href="/onboarding"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white font-black uppercase rounded-full hover:bg-white/30 transition-colors"
             >
-              Request Demo
+              Start Application
             </motion.a>
           </div>
         </motion.div>

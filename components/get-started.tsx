@@ -89,38 +89,31 @@ export default function GetStarted() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <a
-                href="mailto:partnerships@dailyeventinsurance.com?subject=Schedule a Demo"
+                href="/onboarding"
                 className="group inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-teal-600 bg-white rounded-lg shadow-lg hover:bg-teal-50 transition-all duration-200 hover:shadow-xl hover:scale-105"
               >
-                Schedule a Demo
+                Start Free Onboarding
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </a>
 
               <a
-                href="mailto:sales@dailyeventinsurance.com"
+                href="/login"
                 className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 hover:bg-white/20 transition-all duration-200"
               >
-                Contact Sales
+                Partner Login
               </a>
             </div>
 
             {/* Contact Info */}
             <div className="mt-10 pt-8 border-t border-white/20">
-              <p className="text-teal-100 text-sm mb-3">Prefer to talk directly?</p>
+              <p className="text-teal-100 text-sm mb-3">Need help getting set up?</p>
               <div className="flex flex-col sm:flex-row gap-4 text-white">
                 <a
-                  href="mailto:partnerships@dailyeventinsurance.com"
+                  href="mailto:support@dailyeventinsurance.com"
                   className="inline-flex items-center hover:text-teal-100 transition-colors"
                 >
                   <Mail className="h-5 w-5 mr-2" />
-                  partnerships@dailyeventinsurance.com
-                </a>
-                <a
-                  href="tel:+1-555-123-4567"
-                  className="inline-flex items-center hover:text-teal-100 transition-colors"
-                >
-                  <Phone className="h-5 w-5 mr-2" />
-                  +1 (555) 123-4567
+                  support@dailyeventinsurance.com
                 </a>
               </div>
             </div>
@@ -138,17 +131,17 @@ export default function GetStarted() {
                     Thank You!
                   </h3>
                   <p className="text-gray-600">
-                    We&apos;ll be in touch within 24 hours.
+                    We'll be in touch within 24 hours.
                   </p>
                 </div>
               ) : (
                 <>
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      Get in Touch
+                      Have Questions?
                     </h3>
                     <p className="text-gray-600">
-                      Fill out the form and our team will contact you shortly
+                      Send us a message or start your application directly.
                     </p>
                   </div>
 
@@ -232,12 +225,27 @@ export default function GetStarted() {
                         className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors bg-white"
                       >
                         <option value="">Select your business type</option>
-                        <option value="coworking">Coworking Space</option>
-                        <option value="gym">Gym / Fitness Center</option>
-                        <option value="community">Community Organization</option>
-                        <option value="sports">Sports Club</option>
-                        <option value="recreation">Recreation Center</option>
-                        <option value="events">Event Venue</option>
+                        <optgroup label="Fitness & Facilities">
+                          <option value="gyms-fitness">Gyms & Fitness Centers</option>
+                          <option value="rock-climbing">Rock Climbing Facilities</option>
+                          <option value="wellness-recovery">Wellness & Recovery</option>
+                          <option value="medispas">MediSpas & Aesthetic Centers</option>
+                          <option value="schools-universities">Schools & Universities</option>
+                        </optgroup>
+                        <optgroup label="Races & Events">
+                          <option value="race-directors">Race Directors / Running Events</option>
+                          <option value="marathons">Marathons & Fun Runs</option>
+                          <option value="obstacle-courses">Obstacle Course Races (OCR)</option>
+                          <option value="cycling-events">Cycling Events / Bike Races</option>
+                          <option value="triathlons">Triathlons / Multi-Sport</option>
+                          <option value="corporate-wellness">Corporate Wellness Events</option>
+                        </optgroup>
+                        <optgroup label="Adventure & Outdoors">
+                          <option value="ski-resorts">Ski Resorts & Snow Sports</option>
+                          <option value="skydiving">Skydiving & Aerial Sports</option>
+                          <option value="water-sports">Water Sports & Adventure</option>
+                          <option value="equipment-rentals">Equipment Rentals</option>
+                        </optgroup>
                         <option value="other">Other</option>
                       </select>
                     </div>

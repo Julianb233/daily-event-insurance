@@ -46,9 +46,9 @@ const businessTypes = [
 
 const options = [
   {
-    id: "demo",
-    title: "Click to Apply",
-    description: "Quick 10-minute application. See how embedded insurance can increase revenue for your facility",
+    id: "apply",
+    title: "Start Application",
+    description: "Quick 10-minute setup. Create your free account and start earning today.",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path

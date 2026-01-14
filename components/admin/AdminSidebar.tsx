@@ -24,8 +24,10 @@ import {
   ScrollText,
   Wallet,
   Phone,
+  MessageCircle,
 } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
+import { NotificationBell } from "@/components/admin/NotificationCenter"
 
 // Check dev mode
 const isDevMode = !process.env.NEXT_PUBLIC_AUTH_SECRET
@@ -83,6 +85,11 @@ const navItems = [
     icon: Phone,
   },
   {
+    label: "Support",
+    href: "/admin/support",
+    icon: MessageCircle,
+  },
+  {
     label: "API Integrations",
     href: "/admin/integrations",
     icon: Plug,
@@ -127,17 +134,20 @@ function SidebarInnerContent({
 
   return (
     <>
-      {/* Logo */}
+      {/* Logo and Notifications */}
       <div className="p-6 border-b border-slate-200 dark:border-slate-700">
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center shadow-lg">
-            <ShieldCheck className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <span className="font-bold text-slate-900 dark:text-white">Admin Portal</span>
-            <span className="block text-xs text-slate-500 dark:text-slate-400">Daily Event Insurance</span>
-          </div>
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/admin/dashboard" className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center shadow-lg">
+              <ShieldCheck className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <span className="font-bold text-slate-900 dark:text-white">Admin Portal</span>
+              <span className="block text-xs text-slate-500 dark:text-slate-400">Daily Event Insurance</span>
+            </div>
+          </Link>
+          <NotificationBell />
+        </div>
       </div>
 
       {/* User info */}
@@ -257,16 +267,19 @@ export function AdminSidebar() {
             </div>
             <span className="font-bold text-slate-900 dark:text-white">Admin Portal</span>
           </Link>
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-          >
-            {isMobileOpen ? (
-              <X className="w-6 h-6 text-slate-600 dark:text-slate-300" />
-            ) : (
-              <Menu className="w-6 h-6 text-slate-600 dark:text-slate-300" />
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              {isMobileOpen ? (
+                <X className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+              ) : (
+                <Menu className="w-6 h-6 text-slate-600 dark:text-slate-300" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

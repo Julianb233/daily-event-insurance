@@ -47,6 +47,12 @@ export async function requireAuth(): Promise<{ userId: string }> {
  * Requires admin role for API route
  */
 export async function requireAdmin(): Promise<AuthenticatedUser> {
+  // Dev mode bypass
+  if (isDevMode) {
+    console.log("[DEV MODE] Admin auth bypassed - using mock admin")
+    return { userId: MOCK_USER.id, user: { ...MOCK_USER, role: "admin" } }
+  }
+
   const session = await auth()
 
   if (!session?.user?.id) {

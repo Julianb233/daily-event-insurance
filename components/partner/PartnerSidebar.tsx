@@ -15,6 +15,7 @@ import {
   X,
   Shield,
   ChevronRight,
+  FileText,
 } from "lucide-react"
 
 // Check dev mode - no AUTH_SECRET means dev mode
@@ -36,6 +37,11 @@ const navItems = [
     label: "Earnings",
     href: "/partner/earnings",
     icon: DollarSign,
+  },
+  {
+    label: "Claims",
+    href: "/partner/claims",
+    icon: FileText,
   },
   {
     label: "Materials",

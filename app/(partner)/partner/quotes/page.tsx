@@ -16,6 +16,7 @@ import {
   ExternalLink,
 } from "lucide-react"
 import { formatCurrency } from "@/lib/commission-tiers"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 interface Quote {
   id: string
@@ -343,6 +344,8 @@ export default function QuotesPage() {
           })
         )}
       </div>
+
+      <IntegrationChatWidget topic="troubleshooting" />
     </div>
   )
 }

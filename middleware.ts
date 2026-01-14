@@ -42,6 +42,7 @@ const publicRoutes = [
   "/api/auth",
   "/api/webhook", // Webhooks need to be public
   "/api/stripe", // Stripe webhooks and checkout need to be accessible
+  "/events", // Public microsites
 ]
 
 // Dev mode middleware - bypasses auth entirely

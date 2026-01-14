@@ -25,6 +25,7 @@ export function VoiceAgentGlobal() {
   const { context, isOpen, openVoiceAgent, closeVoiceAgent } = useVoiceAgent()
   const [token, setToken] = useState<string>('')
   const [errorType, setErrorType] = useState<ErrorType | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   // Fetch token when the agent is opened
   useEffect(() => {
@@ -46,9 +47,10 @@ export function VoiceAgentGlobal() {
           const data = await response.json()
           setToken(data.token)
           setErrorType(null)
-        } catch (err) {
+        } catch (err: any) {
           console.error("Token fetch error details:", err)
           setErrorType('connection')
+          setErrorMessage(err.message || 'Failed to connect')
         }
       }
       fetchToken()
@@ -112,6 +114,7 @@ export function VoiceAgentGlobal() {
               onClose={handleDisconnect}
               context={context}
               errorType={errorType}
+              errorMessage={errorMessage}
             />
             <RoomAudioRenderer />
           </LiveKitRoom>
@@ -121,7 +124,7 @@ export function VoiceAgentGlobal() {
   )
 }
 
-function AgentContent({ onClose, context, errorType }: { onClose: () => void, context: any, errorType: ErrorType | null }) {
+function AgentContent({ onClose, context, errorType, errorMessage }: { onClose: () => void, context: any, errorType: ErrorType | null, errorMessage?: string }) {
   const connectionState = useConnectionState()
   const { state, audioTrack } = useVoiceAssistant()
   const { isMicrophoneEnabled, localParticipant } = useLocalParticipant()
@@ -210,8 +213,9 @@ function AgentContent({ onClose, context, errorType }: { onClose: () => void, co
         )}
 
         {errorType && (
-          <div className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm">
-            {errorType === 'connection' ? 'Connection Error' : 'Error occurred'}
+          <div className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm text-center">
+            <p className="font-semibold">{errorType === 'connection' ? 'Connection Error' : 'Error occurred'}</p>
+            {errorMessage && <p className="text-xs mt-1 opacity-90">{errorMessage}</p>}
           </div>
         )}
       </div>
@@ -221,8 +225,8 @@ function AgentContent({ onClose, context, errorType }: { onClose: () => void, co
         <button
           onClick={() => localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled)}
           className={`flex items-center justify-center rounded-full h-14 w-14 transition-colors ${!isMicrophoneEnabled
-              ? 'bg-red-500 hover:bg-red-600 text-white'
-              : 'border-2 border-gray-300 hover:bg-gray-100 text-gray-700'
+            ? 'bg-red-500 hover:bg-red-600 text-white'
+            : 'border-2 border-gray-300 hover:bg-gray-100 text-gray-700'
             }`}
         >
           {!isMicrophoneEnabled ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}

@@ -25,7 +25,7 @@ function GymHeroSection() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500">
       {/* Sparkle Effects */}
-      
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -88,12 +88,12 @@ function GymHeroSection() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             <motion.a
-              href="#demo-form"
+              href="/onboarding"
               whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -12px rgba(0,0,0,0.3)" }}
               whileTap={{ scale: 0.98 }}
               className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-teal-700 bg-white rounded-full shadow-2xl hover:bg-teal-50 transition-all duration-300"
             >
-              <span>Request a Demo</span>
+              <span>Start Free Onboarding</span>
               <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </motion.a>
 
@@ -212,7 +212,7 @@ function ProblemSolutionSection() {
             viewport={{ once: true }}
             className="relative bg-gradient-to-br from-teal-600 to-teal-500 rounded-2xl p-8 overflow-hidden"
           >
-                        <div className="relative z-10">
+            <div className="relative z-10">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mb-6">
                 <Zap className="w-6 h-6 text-white" />
               </div>
@@ -298,7 +298,7 @@ function HowItWorksSection() {
               className="relative"
             >
               <div className={`relative bg-gradient-to-br ${step.color} rounded-2xl p-8 h-full overflow-hidden group hover:scale-105 transition-transform duration-300`}>
-                
+
                 {/* Number Badge */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl font-black text-teal-600">{step.number}</span>
@@ -428,7 +428,7 @@ function RevenueCalculatorSection() {
 
   return (
     <section className="relative bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 py-20 md:py-32 overflow-hidden">
-      
+
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -601,7 +601,7 @@ function TestimonialSection() {
           viewport={{ once: true }}
           className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 overflow-hidden"
         >
-          
+
           {/* Quote Icon */}
           <div className="relative z-10">
             <div className="w-16 h-16 bg-teal-600/20 rounded-full flex items-center justify-center mb-6">
@@ -649,7 +649,7 @@ function TestimonialSection() {
 // Demo Form Section
 function DemoFormSection() {
   return (
-    <section id="demo-form" className="relative bg-teal-900 py-20 md:py-32">
+    <section className="relative bg-teal-900 py-20 md:py-32">
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -663,123 +663,21 @@ function DemoFormSection() {
             <span className="block text-teal-400">To Your Gym?</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-4">
-            Schedule a personalized demo and see exactly how Daily Event Insurance works with your facility
+            Start your free onboarding and see exactly how Daily Event Insurance works with your facility
           </p>
-          <p className="text-teal-400 font-bold">
+          <p className="text-teal-400 font-bold mb-8">
             Free setup • No commitment • Start earning revenue this week
           </p>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="bg-teal-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
-        >
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white font-semibold mb-2">Your Name *</label>
-                <input
-                  type="text"
-                  placeholder="John Smith"
-                  required
-                  className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-              <div>
-                <label className="block text-white font-semibold mb-2">Email Address *</label>
-                <input
-                  type="email"
-                  placeholder="john@yourgym.com"
-                  required
-                  className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white font-semibold mb-2">Gym Name *</label>
-                <input
-                  type="text"
-                  placeholder="Your Gym Name"
-                  required
-                  className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-              <div>
-                <label className="block text-white font-semibold mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-white font-semibold mb-2">Gym Type *</label>
-                <select
-                  required
-                  className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500"
-                >
-                  <option value="">Select Type</option>
-                  <option value="traditional">Traditional Gym</option>
-                  <option value="crossfit">CrossFit Box</option>
-                  <option value="boutique">Boutique Fitness Studio</option>
-                  <option value="climbing">Climbing Gym</option>
-                  <option value="yoga">Yoga/Pilates Studio</option>
-                  <option value="martial-arts">Martial Arts</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-white font-semibold mb-2">Avg. Daily Check-ins</label>
-                <select className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500">
-                  <option value="">Select Range</option>
-                  <option value="0-50">0-50</option>
-                  <option value="50-100">50-100</option>
-                  <option value="100-200">100-200</option>
-                  <option value="200-500">200-500</option>
-                  <option value="500+">500+</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-white font-semibold mb-2">Current POS/Software System</label>
-              <input
-                type="text"
-                placeholder="e.g., MindBody, Zen Planner, Wodify, etc."
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white font-semibold mb-2">What are you most interested in?</label>
-              <textarea
-                placeholder="Tell us about your gym and what you'd like to achieve with insurance revenue..."
-                rows={4}
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -12px rgba(20, 184, 166, 0.4)" }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-teal-500 text-white font-black uppercase px-8 py-5 rounded-full text-lg tracking-wider hover:bg-teal-400 transition-colors shadow-xl"
-            >
-              Request Your Personalized Demo
-            </motion.button>
-
-            <p className="text-center text-slate-400 text-sm">
-              We&apos;ll respond within 4 hours to schedule your demo. Most gyms are up and running within 24 hours.
-            </p>
-          </form>
+          <motion.a
+            href="/onboarding"
+            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -12px rgba(20, 184, 166, 0.4)" }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-teal-500 text-white font-black uppercase px-12 py-5 rounded-full text-lg tracking-wider hover:bg-teal-400 transition-colors shadow-xl"
+          >
+            Start Free Onboarding
+            <ArrowRight className="w-5 h-5" />
+          </motion.a>
         </motion.div>
 
         {/* Additional Trust Signals */}

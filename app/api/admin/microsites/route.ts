@@ -129,7 +129,8 @@ export async function POST(request: NextRequest) {
       await requireAdmin()
 
       const body = await request.json()
-      const { partnerId, slug, customDomain, logoUrl, primaryColor, businessName } = body
+      const { partnerId, slug, customDomain, logoUrl: initialLogoUrl, primaryColor, businessName } = body
+      let logoUrl = initialLogoUrl
 
       if (!partnerId) {
         return badRequest("Partner ID is required")
@@ -145,17 +146,101 @@ export async function POST(request: NextRequest) {
         return badRequest("Slug must be lowercase alphanumeric with hyphens only")
       }
 
-
-
-      // Check if partner exists
+      // Check if partner exists (Moved UP for search context)
       const [partner] = await db!
-        .select()
+        .select({
+          businessName: partners.businessName,
+          // businessType: partners.businessType, // Re-enable if schema verified
+        })
         .from(partners)
         .where(eq(partners.id, partnerId))
         .limit(1)
 
       if (!partner) {
         return badRequest("Partner not found")
+      }
+
+      // Firecrawl Integration with Tiered Fallback
+      if (!logoUrl || !primaryColor) {
+        const firecrawlKey = process.env.FIRECRAWL_API_KEY
+
+        if (firecrawlKey) {
+          try {
+            let scrapeUrl: string | null = null
+
+            // Strategy 1: Explicit Custom Domain
+            if (customDomain) {
+              scrapeUrl = customDomain.startsWith('http') ? customDomain : `https://${customDomain}`
+              console.log(`[Firecrawl] Strategy 1: Scraping custom domain: ${scrapeUrl}`)
+            }
+
+            // Strategy 2: Search by Business Name
+            if (!scrapeUrl && partner.businessName) {
+              console.log(`[Firecrawl] Strategy 2: Searching for business name: "${partner.businessName}"`)
+              const searchResponse = await fetch("https://api.firecrawl.dev/v1/search", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${firecrawlKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ query: partner.businessName, limit: 1 })
+              })
+
+              if (searchResponse.ok) {
+                const searchData = await searchResponse.json()
+                if (searchData.data && searchData.data.length > 0) {
+                  scrapeUrl = searchData.data[0].url
+                  console.log(`[Firecrawl] Search found URL: ${scrapeUrl}`)
+                }
+              }
+            }
+
+            // Strategy 3: Search by Name + Context (Skipped for now as businessType is unverified)
+            // ...
+
+            // Execute Scrape if URL found
+            if (scrapeUrl) {
+              console.log(`[Firecrawl] Executing Scrape on: ${scrapeUrl}`)
+              const firecrawlResponse = await fetch("https://api.firecrawl.dev/v1/scrape", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${firecrawlKey}`
+                },
+                body: JSON.stringify({
+                  url: scrapeUrl,
+                  formats: ["json"],
+                  jsonOptions: {
+                    prompt: "Extract the brand logo URL, primary brand hex color, main font family, and secondary brand colors."
+                  }
+                })
+              })
+
+              if (firecrawlResponse.ok) {
+                const data = await firecrawlResponse.json()
+                const metadata = data.data?.metadata
+                const jsonResult = data.data?.json
+
+                // Checking metadata for OG image (Logo proxy)
+                if (!logoUrl && metadata?.ogImage) {
+                  logoUrl = metadata.ogImage
+                  // Also try to find a cleaner logo from JSON if available
+                  console.log(`[Firecrawl] Found logo (OG): ${logoUrl}`)
+                }
+
+                // Log extended branding for verification/future use
+                if (jsonResult) {
+                  console.log("[Firecrawl] Extracted Branding JSON:", JSON.stringify(jsonResult, null, 2))
+                }
+
+              } else {
+                console.warn(`[Firecrawl] Scrape failed: ${firecrawlResponse.status}`)
+              }
+            }
+
+          } catch (fcError) {
+            console.error("[Firecrawl] Error during auto-branding:", fcError)
+          }
+        } else {
+          console.log("[Firecrawl] No API key found, skipping auto-branding.")
+        }
       }
 
       // Check if slug already exists

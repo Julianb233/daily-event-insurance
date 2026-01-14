@@ -13,8 +13,8 @@ interface TimelineStep {
 const timelineSteps: TimelineStep[] = [
   {
     day: 'Day 1',
-    title: 'Schedule Demo',
-    description: '15-minute platform walkthrough',
+    title: 'Create Account',
+    description: '10-minute onboarding process',
     icon: Calendar,
   },
   {
@@ -116,24 +116,21 @@ export function TimelineSection() {
                   <div
                     key={index}
                     data-step-index={index}
-                    className={`flex flex-col items-center text-center transition-all duration-500 ${
-                      visibleSteps[index]
+                    className={`flex flex-col items-center text-center transition-all duration-500 ${visibleSteps[index]
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-4'
-                    }`}
+                      }`}
                   >
                     {/* Icon Circle */}
                     <div
-                      className={`w-[120px] h-[120px] rounded-full flex items-center justify-center mb-6 transition-all duration-500 ${
-                        visibleSteps[index]
+                      className={`w-[120px] h-[120px] rounded-full flex items-center justify-center mb-6 transition-all duration-500 ${visibleSteps[index]
                           ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
                           : 'bg-slate-200 scale-90'
-                      }`}
+                        }`}
                     >
                       <Icon
-                        className={`w-12 h-12 transition-colors duration-500 ${
-                          visibleSteps[index] ? 'text-white' : 'text-slate-400'
-                        }`}
+                        className={`w-12 h-12 transition-colors duration-500 ${visibleSteps[index] ? 'text-white' : 'text-slate-400'
+                          }`}
                       />
                     </div>
 
@@ -179,25 +176,22 @@ export function TimelineSection() {
                   <div
                     key={index}
                     data-step-index={index}
-                    className={`flex gap-6 transition-all duration-500 ${
-                      visibleSteps[index]
+                    className={`flex gap-6 transition-all duration-500 ${visibleSteps[index]
                         ? 'opacity-100 translate-x-0'
                         : 'opacity-0 -translate-x-4'
-                    }`}
+                      }`}
                   >
                     {/* Icon Circle */}
                     <div className="flex-shrink-0">
                       <div
-                        className={`w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-500 ${
-                          visibleSteps[index]
+                        className={`w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-500 ${visibleSteps[index]
                             ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
                             : 'bg-slate-200 scale-90'
-                        }`}
+                          }`}
                       >
                         <Icon
-                          className={`w-6 h-6 transition-colors duration-500 ${
-                            visibleSteps[index] ? 'text-white' : 'text-slate-400'
-                          }`}
+                          className={`w-6 h-6 transition-colors duration-500 ${visibleSteps[index] ? 'text-white' : 'text-slate-400'
+                            }`}
                         />
                       </div>
                     </div>
@@ -224,11 +218,11 @@ export function TimelineSection() {
         {/* Call to Action */}
         <div className="text-center mt-12 md:mt-16">
           <p className="text-lg text-slate-600 mb-6">
-            Ready to get started? Schedule your demo today.
+            Ready to get started? Create your account today.
           </p>
-          <button className="px-8 py-3 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition-colors duration-200 shadow-lg shadow-teal-500/30">
-            Schedule Your Demo
-          </button>
+          <a href="/onboarding" className="px-8 py-3 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition-colors duration-200 shadow-lg shadow-teal-500/30">
+            Start Free Onboarding
+          </a>
         </div>
       </div>
     </section>

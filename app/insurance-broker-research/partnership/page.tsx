@@ -25,11 +25,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-export const metadata = {
-  title: "Partner With HiQor & Daily Event Insurance | BOR Partnership",
-  description: "Strategic partnership opportunity with Daily Event Insurance and HiQor as your Broker of Record. Turnkey insurance solutions for event professionals.",
-  keywords: "insurance partnership, broker of record partnership, event insurance partner, HiQor BOR",
-};
+// Note: metadata must be defined in a separate layout.tsx or a server component wrapper
+// See: https://nextjs.org/docs/app/api-reference/functions/generate-metadata
 
 const containerVariants = {
   hidden: { opacity: 0 },

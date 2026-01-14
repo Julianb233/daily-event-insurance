@@ -155,18 +155,20 @@
         {
           "id": "3.3",
           "name": "Integrate chat into onboarding flow",
-          "status": "pending",
+          "status": "complete",
           "estimatedMinutes": 60,
           "dependencies": ["3.1"],
-          "description": "Add chat widget to /onboarding pages with step context"
+          "description": "Add chat widget to /onboarding pages with step context",
+          "notes": "IntegrationChatWidget added to onboarding-form.tsx with step context"
         },
         {
           "id": "3.4",
           "name": "Integrate chat into partner portal",
-          "status": "pending",
+          "status": "complete",
           "estimatedMinutes": 45,
           "dependencies": ["3.1"],
-          "description": "Add chat widget to /partner/* pages"
+          "description": "Add chat widget to /partner/* pages",
+          "notes": "Chat widget integrated across all partner pages: dashboard, earnings, quotes, policies, materials, settings, profile"
         },
         {
           "id": "3.5",

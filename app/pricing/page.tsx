@@ -253,9 +253,8 @@ export default function PricingPage() {
                 onMouseLeave={() => setHoveredCard(null)}
               >
                 <motion.div
-                  className={`relative h-full bg-gradient-to-br ${tier.gradient} bg-white rounded-3xl overflow-hidden border ${
-                    tier.featured ? 'border-teal-500 border-2' : 'border-slate-200'
-                  } transition-all duration-500 shadow-lg`}
+                  className={`relative h-full bg-gradient-to-br ${tier.gradient} bg-white rounded-3xl overflow-hidden border ${tier.featured ? 'border-teal-500 border-2' : 'border-slate-200'
+                    } transition-all duration-500 shadow-lg`}
                   whileHover={{
                     rotateY: 5,
                     rotateX: -5,
@@ -295,9 +294,8 @@ export default function PricingPage() {
                       }}
                       transition={{ duration: 0.5 }}
                     >
-                      <div className={`inline-flex p-3 rounded-xl ${
-                        tier.featured ? 'bg-teal-50' : 'bg-slate-50'
-                      }`}>
+                      <div className={`inline-flex p-3 rounded-xl ${tier.featured ? 'bg-teal-50' : 'bg-slate-50'
+                        }`}>
                         <tier.icon className="w-8 h-8 text-teal-500" />
                       </div>
                     </motion.div>
@@ -351,11 +349,10 @@ export default function PricingPage() {
                     {/* CTA Button */}
                     <motion.a
                       href="/#apply"
-                      className={`block w-full py-3 px-6 rounded-xl font-bold text-center transition-all duration-300 ${
-                        tier.featured
+                      className={`block w-full py-3 px-6 rounded-xl font-bold text-center transition-all duration-300 ${tier.featured
                           ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/30'
                           : 'bg-slate-50 text-teal-600 border border-slate-200 hover:border-teal-500 hover:bg-teal-50'
-                      }`}
+                        }`}
                       whileHover={{ scale: 1.05, boxShadow: tier.featured ? "0 0 20px rgba(20,184,166,0.4)" : "0 0 10px rgba(20,184,166,0.2)" }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -463,11 +460,11 @@ export default function PricingPage() {
                   Ready to Start <span className="text-teal-500">Earning?</span>
                 </motion.h3>
                 <p className="text-slate-600 mb-8 text-lg">
-                  Schedule a demo to see how easy it is to add insurance to your member experience and start generating passive revenue today.
+                  Start your free onboarding to see how easy it is to add insurance to your member experience and start generating passive revenue today.
                 </p>
 
                 <motion.a
-                  href="/#apply"
+                  href="/onboarding"
                   className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-bold text-lg rounded-full transition-all duration-300 shadow-xl shadow-teal-500/30"
                   whileHover={{
                     scale: 1.05,
@@ -475,7 +472,7 @@ export default function PricingPage() {
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Schedule a Demo
+                  Start Free Onboarding
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1, repeat: Infinity }}
@@ -485,7 +482,7 @@ export default function PricingPage() {
                 </motion.a>
 
                 <p className="mt-6 text-sm text-slate-500">
-                  No credit card required • 15-minute demo • Get started in 48 hours
+                  No credit card required • 10-minute setup • Get started in 48 hours
                 </p>
               </div>
 

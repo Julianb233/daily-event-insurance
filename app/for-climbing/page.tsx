@@ -99,15 +99,15 @@ function ClimbingHeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <motion.button
+            <motion.a
+              href="/onboarding"
               whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.3)" }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-black uppercase text-teal-700 bg-white rounded-full shadow-2xl hover:bg-cyan-50 transition-all duration-300"
             >
-              <span>Request a Demo</span>
+              <span>Start Free Onboarding</span>
               <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
-            </motion.button>
+            </motion.a>
           </motion.div>
 
           {/* Trust Indicators */}
@@ -458,7 +458,7 @@ function TestimonialSection() {
           className="relative"
         >
           {/* Quote Mark */}
-{/* Decorative quote mark */}
+          {/* Decorative quote mark */}
           <div className="absolute -top-8 -left-4 text-9xl text-teal-200 font-serif leading-none">
             &quot;
           </div>
@@ -485,10 +485,10 @@ function TestimonialSection() {
   )
 }
 
-// CTA Section with Demo Form
+// CTA Section
 function DemoFormSection() {
   return (
-    <section id="demo-form" className="relative bg-teal-900 py-20 md:py-32">
+    <section className="relative bg-teal-900 py-20 md:py-32">
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -507,92 +507,16 @@ function DemoFormSection() {
           <p className="text-base md:text-lg text-teal-400 font-bold max-w-2xl mx-auto mb-8">
             Free to join. No setup costs. Start earning in days, not weeks.
           </p>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="bg-teal-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
-        >
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                placeholder="Your Name *"
-                required
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <input
-                type="email"
-                placeholder="Email Address *"
-                required
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                placeholder="Climbing Facility Name *"
-                required
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-
-            <input
-              type="text"
-              placeholder="City & State *"
-              required
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-
-            <select
-              required
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              <option value="">Facility Type *</option>
-              <option>Indoor Bouldering Only</option>
-              <option>Indoor Roped Climbing</option>
-              <option>Indoor + Outdoor Programs</option>
-              <option>Outdoor Guiding Service</option>
-              <option>Mixed Facility</option>
-            </select>
-
-            <select className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500">
-              <option value="">Estimated Monthly Climbers</option>
-              <option>Under 100</option>
-              <option>100-500</option>
-              <option>500-1,000</option>
-              <option>1,000-2,500</option>
-              <option>2,500+</option>
-            </select>
-
-            <textarea
-              placeholder="Tell us about your facility and what you're looking for..."
-              rows={4}
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white font-black uppercase px-8 py-5 rounded-full text-lg tracking-wider hover:from-teal-400 hover:to-teal-500 transition-all shadow-xl"
-            >
-              Request Your Demo
-            </motion.button>
-          </form>
-
-          <p className="text-slate-400 text-sm text-center mt-6">
-            We&apos;ll contact you within 24 hours to schedule your personalized demo.
-          </p>
+          <motion.a
+            href="/onboarding"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-black uppercase rounded-full text-lg tracking-wider hover:from-teal-400 hover:to-teal-500 transition-all shadow-xl"
+          >
+            Start Free Onboarding
+            <ArrowRight className="w-6 h-6" />
+          </motion.a>
         </motion.div>
 
         {/* Additional Benefits */}

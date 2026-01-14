@@ -3,31 +3,76 @@
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { motion } from "framer-motion"
-import { Mail, Phone, MessageSquare, Clock, MapPin, Send } from "lucide-react"
+import { Mail, Phone, MessageSquare, Clock, MapPin, Send, Ticket, ExternalLink } from "lucide-react"
 import { useState } from "react"
 import { useVoiceAgent } from "@/lib/voice/voice-context"
+import Link from "next/link"
+import { TicketCategory, TicketPriority, CATEGORY_CONFIG } from "@/lib/support/ticket-types"
+
+interface TicketResponse {
+    ticket: {
+        id: string
+        ticketNumber: string
+        subject: string
+        status: string
+        priority: string
+        category: string
+        createdAt: string
+    }
+}
 
 export default function SupportContactPage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         subject: "",
-        message: ""
+        message: "",
+        category: TicketCategory.GENERAL as string,
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+    const [ticketNumber, setTicketNumber] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const { openVoiceAgent } = useVoiceAgent()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
+        setErrorMessage(null)
 
-        // Simulate submission
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        try {
+            const response = await fetch("/api/support/tickets", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message,
+                    category: formData.category,
+                    priority: TicketPriority.MEDIUM,
+                }),
+            })
 
-        setSubmitStatus("success")
-        setIsSubmitting(false)
-        setFormData({ name: "", email: "", subject: "", message: "" })
+            const data = await response.json()
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Failed to submit ticket")
+            }
+
+            const ticketData = data.data as TicketResponse
+            setTicketNumber(ticketData.ticket.ticketNumber)
+            setSubmitStatus("success")
+            setFormData({ name: "", email: "", subject: "", message: "", category: TicketCategory.GENERAL })
+        } catch (error: any) {
+            console.error("Error submitting ticket:", error)
+            setErrorMessage(error.message || "Failed to submit ticket. Please try again.")
+            setSubmitStatus("error")
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const contactMethods = [
@@ -146,17 +191,59 @@ export default function SupportContactPage() {
                                     className="bg-teal-50 border border-teal-200 rounded-xl p-8 text-center"
                                 >
                                     <div className="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-4">
-                                        <svg className="w-8 h-8 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        <Ticket className="w-8 h-8 text-teal-600" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Ticket Created!</h3>
+                                    {ticketNumber && (
+                                        <div className="mb-4">
+                                            <p className="text-sm text-slate-500 mb-1">Your ticket number:</p>
+                                            <p className="text-2xl font-mono font-bold text-teal-600">{ticketNumber}</p>
+                                        </div>
+                                    )}
+                                    <p className="text-slate-600 mb-4">We'll respond within 4 hours during business days.</p>
+                                    <p className="text-sm text-slate-500 mb-6">
+                                        Save your ticket number to track your request status.
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                        <Link
+                                            href={`/support/tickets?email=${encodeURIComponent(formData.email || "")}`}
+                                            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold"
+                                        >
+                                            View My Tickets
+                                            <ExternalLink className="w-4 h-4" />
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                setSubmitStatus("idle")
+                                                setTicketNumber(null)
+                                            }}
+                                            className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-semibold"
+                                        >
+                                            Submit Another Ticket
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            ) : submitStatus === "error" ? (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="bg-red-50 border border-red-200 rounded-xl p-8 text-center"
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                                        <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Message Sent!</h3>
-                                    <p className="text-slate-600">We'll get back to you within 4 hours.</p>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Submission Failed</h3>
+                                    <p className="text-slate-600 mb-4">{errorMessage || "Something went wrong. Please try again."}</p>
                                     <button
-                                        onClick={() => setSubmitStatus("idle")}
-                                        className="mt-4 text-teal-600 font-semibold hover:underline"
+                                        onClick={() => {
+                                            setSubmitStatus("idle")
+                                            setErrorMessage(null)
+                                        }}
+                                        className="text-red-600 font-semibold hover:underline"
                                     >
-                                        Send another message
+                                        Try Again
                                     </button>
                                 </motion.div>
                             ) : (
@@ -184,6 +271,20 @@ export default function SupportContactPage() {
                                             required
                                             disabled={isSubmitting}
                                         />
+                                    </div>
+                                    <div>
+                                        <label className="block text-slate-700 font-medium mb-2">Category</label>
+                                        <select
+                                            value={formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                            className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white"
+                                            disabled={isSubmitting}
+                                        >
+                                            <option value={TicketCategory.GENERAL}>General Inquiry</option>
+                                            <option value={TicketCategory.BILLING}>Billing Question</option>
+                                            <option value={TicketCategory.TECHNICAL}>Technical Support</option>
+                                            <option value={TicketCategory.INTEGRATION}>Integration Help</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-slate-700 font-medium mb-2">Subject</label>
@@ -215,11 +316,11 @@ export default function SupportContactPage() {
                                         className="w-full px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
                                     >
                                         {isSubmitting ? (
-                                            "Sending..."
+                                            "Creating Ticket..."
                                         ) : (
                                             <>
-                                                Send Message
-                                                <Send className="w-4 h-4" />
+                                                Submit Ticket
+                                                <Ticket className="w-4 h-4" />
                                             </>
                                         )}
                                     </button>

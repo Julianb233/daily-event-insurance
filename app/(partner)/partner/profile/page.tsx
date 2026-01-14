@@ -15,6 +15,7 @@ import {
   Shield,
   Copy,
 } from "lucide-react"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 interface Partner {
   id: string
@@ -501,6 +502,13 @@ export default function PartnerProfilePage() {
           </motion.div>
         </div>
       </div>
+
+      <IntegrationChatWidget
+        topic="widget_install"
+        partnerId={data?.partner.id}
+        partnerEmail={data?.partner.contact_email}
+        partnerName={data?.partner.contact_name}
+      />
     </div>
   )
 }

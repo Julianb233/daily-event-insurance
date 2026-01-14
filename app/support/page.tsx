@@ -1,13 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { FAQSection } from "@/components/faq-section"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import { motion } from "framer-motion"
 import { LifeBuoy, FileText, MessageSquare, Phone, Mail, BookOpen, Download } from "lucide-react"
 import Link from "next/link"
 
 export default function SupportPage() {
+    const [isChatOpen, setIsChatOpen] = useState(false)
     const resources = [
         {
             title: "Partner Guide",
@@ -38,21 +41,24 @@ export default function SupportPage() {
             title: "Call Us",
             value: "(555) 123-4567",
             href: "tel:+15551234567",
-            subtext: "Mon-Fri, 9am-6pm EST"
+            subtext: "Mon-Fri, 9am-6pm EST",
+            isChat: false
         },
         {
             icon: Mail,
             title: "Email Support",
             value: "support@dailyeventinsurance.com",
             href: "mailto:support@dailyeventinsurance.com",
-            subtext: "Response within 24 hours"
+            subtext: "Response within 24 hours",
+            isChat: false
         },
         {
             icon: MessageSquare,
             title: "Live Chat",
             value: "Start a Chat",
             href: "#",
-            subtext: "Available 24/7 for tailored support"
+            subtext: "Available 24/7 for tailored support",
+            isChat: true
         }
     ]
 
@@ -95,23 +101,47 @@ export default function SupportPage() {
             <section className="py-12 -mt-10 relative z-10">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                        {contactMethods.map((method, index) => (
-                            <motion.a
-                                key={index}
-                                href={method.href}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 + (index * 0.1) }}
-                                className="bg-white p-6 rounded-xl shadow-lg border border-slate-100 flex flex-col items-center text-center hover:shadow-xl hover:border-teal-100 transition-all duration-300 group"
-                            >
-                                <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-4 text-slate-600 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
-                                    <method.icon className="w-6 h-6" />
-                                </div>
-                                <h3 className="font-bold text-slate-900 mb-1">{method.title}</h3>
-                                <div className="text-teal-600 font-medium mb-1">{method.value}</div>
-                                <div className="text-xs text-slate-500">{method.subtext}</div>
-                            </motion.a>
-                        ))}
+                        {contactMethods.map((method, index) => {
+                            const cardClasses = "bg-white p-6 rounded-xl shadow-lg border border-slate-100 flex flex-col items-center text-center hover:shadow-xl hover:border-teal-100 transition-all duration-300 group cursor-pointer"
+                            const content = (
+                                <>
+                                    <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-4 text-slate-600 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
+                                        <method.icon className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="font-bold text-slate-900 mb-1">{method.title}</h3>
+                                    <div className="text-teal-600 font-medium mb-1">{method.value}</div>
+                                    <div className="text-xs text-slate-500">{method.subtext}</div>
+                                </>
+                            )
+
+                            if (method.isChat) {
+                                return (
+                                    <motion.button
+                                        key={index}
+                                        onClick={() => setIsChatOpen(true)}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 + (index * 0.1) }}
+                                        className={cardClasses}
+                                    >
+                                        {content}
+                                    </motion.button>
+                                )
+                            }
+
+                            return (
+                                <motion.a
+                                    key={index}
+                                    href={method.href}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 + (index * 0.1) }}
+                                    className={cardClasses}
+                                >
+                                    {content}
+                                </motion.a>
+                            )
+                        })}
                     </div>
                 </div>
             </section>
@@ -146,6 +176,17 @@ export default function SupportPage() {
             </section>
 
             <Footer />
+
+            {/* Live Chat Widget */}
+            {isChatOpen && (
+                <IntegrationChatWidget
+                    topic="troubleshooting"
+                    pageUrl="/support"
+                    position="bottom-right"
+                    defaultOpen={true}
+                    onClose={() => setIsChatOpen(false)}
+                />
+            )}
         </main>
     )
 }

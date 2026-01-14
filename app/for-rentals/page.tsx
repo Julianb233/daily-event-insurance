@@ -77,12 +77,12 @@ function RentalHeroSection() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <motion.a
-              href="#demo-form"
+              href="/onboarding"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-white text-teal-600 font-black uppercase px-10 py-5 rounded-full text-lg tracking-wider hover:bg-teal-50 transition-colors shadow-xl inline-flex items-center justify-center gap-2"
             >
-              Request a Demo
+              Start Free Onboarding
               <ArrowRight className="w-5 h-5" />
             </motion.a>
             <motion.a
@@ -518,82 +518,19 @@ function CTASection() {
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-4">
             Join 500+ rental businesses already earning commissions and protecting their equipment.
           </p>
-          <p className="text-base text-teal-400 font-bold">
-            Request a demo and see how easy it is to integrate insurance into your rental process.
+          <p className="text-base text-teal-400 font-bold mb-8">
+            Create your account and see how easy it is to integrate insurance into your rental process.
           </p>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="bg-teal-800/50 backdrop-blur-sm rounded-2xl border border-teal-500/20 p-8 md:p-12"
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                placeholder="Your Name *"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <input
-                type="email"
-                placeholder="Email Address *"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="Business Name *"
-              required
-              value={formData.businessName}
-              onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            <select
-              value={formData.rentalType}
-              onChange={(e) => setFormData({ ...formData, rentalType: e.target.value })}
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500"
-              required
-            >
-              <option value="">Select Rental Type *</option>
-              <option value="bikes">Bike Rentals</option>
-              <option value="water-sports">Kayak / Paddleboard / Water Sports</option>
-              <option value="ski-snowboard">Ski / Snowboard Rentals</option>
-              <option value="adventure-gear">Adventure Gear / Camping</option>
-              <option value="specialty">Specialty Equipment</option>
-              <option value="other">Other</option>
-            </select>
-            <textarea
-              placeholder="Tell us about your rental business and average transaction volume..."
-              rows={4}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full px-6 py-4 rounded-lg bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-teal-500 text-white font-black uppercase px-8 py-5 rounded-full text-lg tracking-wider hover:bg-teal-400 transition-colors shadow-xl flex items-center justify-center gap-2"
-            >
-              Request a Demo
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
-          </form>
-
-          <div className="mt-8 text-center">
-            <p className="text-slate-400 text-sm">
-              We&apos;ll get back to you within 24 hours to schedule your personalized demo.
-            </p>
-          </div>
+          <motion.a
+            href="/onboarding"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-2 bg-teal-500 text-white font-black uppercase px-10 py-5 rounded-full text-lg tracking-wider hover:bg-teal-400 transition-colors shadow-xl"
+          >
+            Start Free Onboarding
+            <ArrowRight className="w-5 h-5" />
+          </motion.a>
         </motion.div>
 
         {/* Trust indicators */}

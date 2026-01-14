@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { ArrowLeft, CheckCircle2, FileText } from "lucide-react"
 import { QuoteRequestForm } from "@/components/partner/QuoteRequestForm"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 export default function NewQuotePage() {
   const router = useRouter()
@@ -118,6 +119,8 @@ export default function NewQuotePage() {
           <li>• You can convert accepted quotes to active policies from the quotes page</li>
         </ul>
       </div>
+
+      <IntegrationChatWidget topic="troubleshooting" />
     </div>
   )
 }

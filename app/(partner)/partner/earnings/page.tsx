@@ -14,6 +14,7 @@ import {
   Calculator,
 } from "lucide-react"
 import { EarningsChart } from "@/components/partner/EarningsChart"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import {
   formatCurrency,
   getCommissionTier,
@@ -550,6 +551,8 @@ export default function PartnerEarningsPage() {
           </motion.div>
         </div>
       )}
+
+      <IntegrationChatWidget topic="troubleshooting" />
     </div>
   )
 }

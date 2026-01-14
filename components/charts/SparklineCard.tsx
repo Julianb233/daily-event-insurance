@@ -22,6 +22,10 @@ interface SparklineCardProps {
   color?: string;
   delay?: number;
   className?: string;
+  // Comparison metrics for period-over-period
+  previousPeriodValue?: number;
+  showComparison?: boolean;
+  comparisonLabel?: string;
 }
 
 const SparklineCard: React.FC<SparklineCardProps> = ({
@@ -41,6 +45,9 @@ const SparklineCard: React.FC<SparklineCardProps> = ({
   color,
   delay = 0,
   className = '',
+  previousPeriodValue,
+  showComparison = false,
+  comparisonLabel = 'vs previous period',
 }) => {
   // Handle case where trend is passed as array (legacy pattern)
   const trendAsArray = Array.isArray(trend) ? trend : undefined;
@@ -90,6 +97,28 @@ const SparklineCard: React.FC<SparklineCardProps> = ({
       percentageChange: percentage,
     };
   }, [chartSourceData, trendDirection]);
+
+  // Calculate period comparison metrics
+  const comparisonMetrics = useMemo(() => {
+    if (!showComparison || previousPeriodValue === undefined || typeof value !== 'number') {
+      return null;
+    }
+
+    const currentValue = value as number;
+    const diff = currentValue - previousPeriodValue;
+    const percentChange = previousPeriodValue !== 0
+      ? (diff / previousPeriodValue) * 100
+      : 0;
+    const compTrend: 'up' | 'down' | 'neutral' =
+      diff > 0 ? 'up' : diff < 0 ? 'down' : 'neutral';
+
+    return {
+      previousValue: previousPeriodValue,
+      difference: diff,
+      percentChange,
+      trend: compTrend,
+    };
+  }, [showComparison, previousPeriodValue, value]);
 
   // Generate gradient ID
   const gradientId = useMemo(() => {
@@ -203,6 +232,47 @@ const SparklineCard: React.FC<SparklineCardProps> = ({
           {changeLabel && (
             <span className="text-gray-400">{changeLabel}</span>
           )}
+        </div>
+      )}
+
+      {/* Period Comparison Metrics */}
+      {comparisonMetrics && (
+        <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-gray-500">{comparisonLabel}</span>
+            <div className="flex items-center gap-1.5">
+              {comparisonMetrics.trend === 'up' ? (
+                <TrendingUp className="w-3 h-3 text-green-500" />
+              ) : comparisonMetrics.trend === 'down' ? (
+                <TrendingDown className="w-3 h-3 text-red-500" />
+              ) : (
+                <Minus className="w-3 h-3 text-gray-400" />
+              )}
+              <span className={`font-medium ${
+                comparisonMetrics.trend === 'up'
+                  ? 'text-green-600'
+                  : comparisonMetrics.trend === 'down'
+                  ? 'text-red-600'
+                  : 'text-gray-500'
+              }`}>
+                {comparisonMetrics.percentChange > 0 ? '+' : ''}
+                {comparisonMetrics.percentChange.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between text-xs mt-1">
+            <span className="text-gray-400">Previous: {formatValue(comparisonMetrics.previousValue)}</span>
+            <span className={`font-medium ${
+              comparisonMetrics.trend === 'up'
+                ? 'text-green-600'
+                : comparisonMetrics.trend === 'down'
+                ? 'text-red-600'
+                : 'text-gray-500'
+            }`}>
+              {comparisonMetrics.difference > 0 ? '+' : ''}
+              {formatValue(comparisonMetrics.difference)}
+            </span>
+          </div>
         </div>
       )}
     </div>

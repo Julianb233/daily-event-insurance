@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { useEffect, useState, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   DollarSign,
   Users,
@@ -11,9 +11,22 @@ import {
   ArrowRight,
   Sparkles,
   Target,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+  Bell,
+  X,
 } from "lucide-react"
 import Link from "next/link"
 import { EarningsChart } from "@/components/partner/EarningsChart"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
+import { DashboardHeader, DateRange, ExportFormat } from "@/components/shared"
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber"
+import {
+  useRealtimeDashboard,
+  getConnectionStatusInfo,
+  type RealtimeNotification,
+} from "@/lib/hooks/use-realtime-dashboard"
 import {
   formatCurrency,
   getNextTier,
@@ -39,31 +52,216 @@ interface EarningsData {
   }>
 }
 
+// Connection Status Indicator Component
+function ConnectionStatusIndicator({
+  connectionState,
+  lastUpdated,
+  onReconnect,
+}: {
+  connectionState: "connecting" | "connected" | "reconnecting" | "disconnected"
+  lastUpdated: Date | null
+  onReconnect: () => void
+}) {
+  const statusInfo = getConnectionStatusInfo(connectionState)
+
+  const formatLastUpdated = (date: Date | null) => {
+    if (!date) return "Never"
+    const now = new Date()
+    const diffSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+    if (diffSeconds < 5) return "Just now"
+    if (diffSeconds < 60) return `${diffSeconds}s ago`
+    if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)}m ago`
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  }
+
+  return (
+    <div className="flex items-center gap-3 text-sm">
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <div className={`w-2 h-2 rounded-full ${statusInfo.bgColor}`} />
+          {statusInfo.pulse && (
+            <div
+              className={`absolute inset-0 w-2 h-2 rounded-full ${statusInfo.bgColor} animate-ping`}
+            />
+          )}
+        </div>
+        <span className={`font-medium ${statusInfo.color}`}>
+          {statusInfo.label}
+        </span>
+      </div>
+
+      {lastUpdated && (
+        <span className="text-slate-400">
+          Updated {formatLastUpdated(lastUpdated)}
+        </span>
+      )}
+
+      {connectionState === "disconnected" && (
+        <button
+          onClick={onReconnect}
+          className="flex items-center gap-1 text-teal-600 hover:text-teal-700 transition-colors"
+        >
+          <RefreshCw className="w-3 h-3" />
+          Reconnect
+        </button>
+      )}
+    </div>
+  )
+}
+
+// Notification Toast Component
+function NotificationToast({
+  notification,
+  onDismiss,
+}: {
+  notification: RealtimeNotification
+  onDismiss: (id: string) => void
+}) {
+  const getNotificationIcon = () => {
+    switch (notification.type) {
+      case "insert":
+        return <Bell className="w-4 h-4 text-green-500" />
+      case "update":
+        return <RefreshCw className="w-4 h-4 text-blue-500" />
+      case "delete":
+        return <X className="w-4 h-4 text-red-500" />
+      default:
+        return <Bell className="w-4 h-4 text-slate-500" />
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 100, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 100, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      className="bg-white rounded-lg shadow-lg border border-slate-200 p-3 flex items-center gap-3 max-w-sm"
+    >
+      <div className="flex-shrink-0">{getNotificationIcon()}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-slate-900 truncate">
+          {notification.message}
+        </p>
+        <p className="text-xs text-slate-500">
+          {notification.timestamp.toLocaleTimeString()}
+        </p>
+      </div>
+      <button
+        onClick={() => onDismiss(notification.id)}
+        className="flex-shrink-0 text-slate-400 hover:text-slate-600"
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </motion.div>
+  )
+}
+
 export default function PartnerDashboardPage() {
   const [earningsData, setEarningsData] = useState<EarningsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [dateRange, setDateRange] = useState<DateRange>({
+    start: null,
+    end: null,
+  })
+
+  // Real-time dashboard hook
+  const {
+    connectionState,
+    lastUpdated: realtimeLastUpdated,
+    notifications,
+    clearNotifications,
+    reconnect,
+    isSubscribed,
+  } = useRealtimeDashboard({
+    enabled: true,
+    onNotification: (notification) => {
+      // Trigger a data refresh when we receive a notification
+      fetchEarnings()
+    },
+  })
+
+  // Track local last updated time
+  const [localLastUpdated, setLocalLastUpdated] = useState<Date | null>(null)
+  const effectiveLastUpdated = realtimeLastUpdated || localLastUpdated
+
+  const fetchEarnings = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch("/api/partner/earnings")
+      if (!response.ok) {
+        throw new Error("Failed to fetch earnings data")
+      }
+      const data = await response.json()
+      setEarningsData(data)
+      setLocalLastUpdated(new Date())
+    } catch (err) {
+      console.error("Error fetching earnings:", err)
+      // Use demo data if API fails
+      const demoData = generateDemoData()
+      setEarningsData(demoData)
+      setLocalLastUpdated(new Date())
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    async function fetchEarnings() {
-      try {
-        const response = await fetch("/api/partner/earnings")
-        if (!response.ok) {
-          throw new Error("Failed to fetch earnings data")
-        }
-        const data = await response.json()
-        setEarningsData(data)
-      } catch (err) {
-        console.error("Error fetching earnings:", err)
-        // Use demo data if API fails
-        const demoData = generateDemoData()
-        setEarningsData(demoData)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     fetchEarnings()
+  }, [fetchEarnings])
+
+  const handleDateRangeChange = useCallback((range: DateRange) => {
+    setDateRange(range)
+    // In a real implementation, this would trigger a data fetch with the new date range
+    console.log("Date range changed:", range)
+  }, [])
+
+  const handleExport = useCallback(async (format: ExportFormat) => {
+    // Simulate export delay
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    const data = earningsData || generateDemoData()
+
+    if (format === "csv") {
+      // Generate CSV
+      const headers = ["Month", "Participants", "Opted In", "Earnings"]
+      const rows = data.chartData.map((row) => [
+        row.month,
+        row.participants.toString(),
+        row.optedIn.toString(),
+        row.earnings.toFixed(2),
+      ])
+      const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n")
+      const blob = new Blob([csvContent], { type: "text/csv" })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `partner-earnings-${new Date().toISOString().split("T")[0]}.csv`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } else if (format === "pdf") {
+      // In a real implementation, this would generate a PDF
+      console.log("PDF export - would generate PDF report")
+      alert("PDF export functionality would be implemented here")
+    } else if (format === "excel") {
+      // In a real implementation, this would generate an Excel file
+      console.log("Excel export - would generate Excel spreadsheet")
+      alert("Excel export functionality would be implemented here")
+    }
+  }, [earningsData])
+
+  const handleRefresh = useCallback(async () => {
+    await fetchEarnings()
+  }, [fetchEarnings])
+
+  // Handle notification dismissal
+  const handleDismissNotification = useCallback((id: string) => {
+    // The useRealtimeDashboard hook handles auto-dismissal,
+    // but we can trigger early dismissal if needed
   }, [])
 
   // Generate demo data for display
@@ -125,17 +323,47 @@ export default function PartnerDashboardPage() {
   const tierInfo = getNextTier(currentMonthData.participants)
 
   return (
-    <div className="p-6 lg:p-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="mb-8"
-      >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-600 mt-1">Welcome back! Here&apos;s your earnings overview.</p>
-      </motion.div>
+    <div className="p-6 lg:p-8 relative">
+      {/* Notification Toasts */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        <AnimatePresence mode="popLayout">
+          {notifications.map((notification) => (
+            <NotificationToast
+              key={notification.id}
+              notification={notification}
+              onDismiss={handleDismissNotification}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* Header with Date Range Picker, Export, and Refresh */}
+      <DashboardHeader
+        title="Dashboard"
+        subtitle="Welcome back! Here's your earnings overview."
+        breadcrumbs={[
+          { label: "Partner Portal", href: "/partner" },
+          { label: "Dashboard" },
+        ]}
+        showDateRangePicker
+        dateRange={dateRange}
+        onDateRangeChange={handleDateRangeChange}
+        showExport
+        exportFormats={["csv", "pdf", "excel"]}
+        onExport={handleExport}
+        showRefresh
+        onRefresh={handleRefresh}
+        isLoading={isLoading}
+      />
+
+      {/* Connection Status Indicator */}
+      <div className="flex items-center justify-end mb-4 -mt-2">
+        <ConnectionStatusIndicator
+          connectionState={connectionState}
+          lastUpdated={effectiveLastUpdated}
+          onReconnect={reconnect}
+        />
+      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -158,7 +386,14 @@ export default function PartnerDashboardPage() {
             )}
           </div>
           <p className="text-sm text-slate-500 mb-1">This Month</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(currentMonthData.earnings)}</p>
+          <div className="text-2xl font-bold text-slate-900">
+            <AnimatedNumber
+              value={currentMonthData.earnings}
+              format="currency"
+              decimals={0}
+              duration={800}
+            />
+          </div>
         </motion.div>
 
         {/* Total YTD Earnings */}
@@ -174,7 +409,14 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
           <p className="text-sm text-slate-500 mb-1">Year-to-Date</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(data.summary.totalCommission)}</p>
+          <div className="text-2xl font-bold text-slate-900">
+            <AnimatedNumber
+              value={data.summary.totalCommission}
+              format="currency"
+              decimals={0}
+              duration={800}
+            />
+          </div>
         </motion.div>
 
         {/* Participants */}
@@ -190,7 +432,14 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
           <p className="text-sm text-slate-500 mb-1">Participants (This Month)</p>
-          <p className="text-2xl font-bold text-slate-900">{currentMonthData.participants.toLocaleString()}</p>
+          <div className="text-2xl font-bold text-slate-900">
+            <AnimatedNumber
+              value={currentMonthData.participants}
+              format="number"
+              decimals={0}
+              duration={800}
+            />
+          </div>
         </motion.div>
 
         {/* Commission Tier */}
@@ -206,7 +455,15 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
           <p className="text-sm text-slate-500 mb-1">Commission Rate</p>
-          <p className="text-2xl font-bold text-slate-900">{tierInfo.currentTier.percentage}%</p>
+          <div className="text-2xl font-bold text-slate-900">
+            <AnimatedNumber
+              value={tierInfo.currentTier.percentage}
+              format="number"
+              decimals={0}
+              duration={800}
+              suffix="%"
+            />
+          </div>
           <p className="text-xs text-slate-500">${tierInfo.currentTier.perParticipant}/participant</p>
         </motion.div>
       </div>
@@ -351,6 +608,13 @@ export default function PartnerDashboardPage() {
           </div>
         </Link>
       </motion.div>
+
+      {/* Integration Support Chat Widget */}
+      <IntegrationChatWidget
+        topic="widget_install"
+        position="bottom-right"
+        primaryColor="#14B8A6"
+      />
     </div>
   )
 }

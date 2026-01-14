@@ -1,5 +1,10 @@
 // Partner Integration Support Agent - Core Services
 export * from "./realtime-chat"
 export * from "./types"
+export * from "./ticket-types"
 export * from "./use-support-chat"
 export * from "./integration-agent"
+export * from "./use-onboarding-recording"
+export * from "./faq-data"
+export * from "./use-proactive-chat"
+export { searchArticles, getSuggestedArticles, getArticleById, getArticleBySlug, getArticlesByCategory, getPopularArticles, getRelatedArticles, trackArticleView, trackArticleHelpful, type SearchResult } from "./knowledge-base"

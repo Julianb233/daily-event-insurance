@@ -30,6 +30,7 @@ import {
 } from "lucide-react"
 import { RevenueCalculator } from "@/components/revenue-calculator"
 import { VoiceContextSetter } from "@/components/voice"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import type { ScreenType } from "@/lib/voice/voice-context"
 
 // Shared form data interface
@@ -90,13 +91,12 @@ function Stepper({ currentStep, totalSteps }: StepperProps) {
             return (
               <div key={step.number} className="flex flex-col items-center gap-2 relative z-10">
                 <motion.div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                    isCompleted
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isCompleted
                       ? "bg-[#14B8A6] text-white"
                       : isCurrent
-                      ? "bg-[#14B8A6] text-white ring-4 ring-[#14B8A6]/20"
-                      : "bg-white border-2 border-gray-300 text-gray-400"
-                  }`}
+                        ? "bg-[#14B8A6] text-white ring-4 ring-[#14B8A6]/20"
+                        : "bg-white border-2 border-gray-300 text-gray-400"
+                    }`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: step.number * 0.1 }}
@@ -107,9 +107,8 @@ function Stepper({ currentStep, totalSteps }: StepperProps) {
                     <Icon className="w-5 h-5" />
                   )}
                 </motion.div>
-                <span className={`text-xs font-medium hidden sm:block ${
-                  isCurrent ? "text-[#14B8A6]" : "text-gray-500"
-                }`}>
+                <span className={`text-xs font-medium hidden sm:block ${isCurrent ? "text-[#14B8A6]" : "text-gray-500"
+                  }`}>
                   {step.title}
                 </span>
               </div>
@@ -181,9 +180,27 @@ function Step1BusinessInfo({ formData, setFormData, onNext }: Step1Props) {
                 aria-describedby="businessType-hint"
               >
                 <option value="">Select type</option>
-                <option value="gym">Gym</option>
-                <option value="climbing">Climbing Facility</option>
-                <option value="rental">Equipment Rental</option>
+                <optgroup label="Fitness & Facilities">
+                  <option value="gyms-fitness">Gyms & Fitness Centers</option>
+                  <option value="rock-climbing">Rock Climbing Facilities</option>
+                  <option value="wellness-recovery">Wellness & Recovery</option>
+                  <option value="medispas">MediSpas & Aesthetic Centers</option>
+                  <option value="schools-universities">Schools & Universities</option>
+                </optgroup>
+                <optgroup label="Races & Events">
+                  <option value="race-directors">Race Directors / Running Events</option>
+                  <option value="marathons">Marathons & Fun Runs</option>
+                  <option value="obstacle-courses">Obstacle Course Races (OCR)</option>
+                  <option value="cycling-events">Cycling Events / Bike Races</option>
+                  <option value="triathlons">Triathlons / Multi-Sport</option>
+                  <option value="corporate-wellness">Corporate Wellness Events</option>
+                </optgroup>
+                <optgroup label="Adventure & Outdoors">
+                  <option value="ski-resorts">Ski Resorts & Snow Sports</option>
+                  <option value="skydiving">Skydiving & Aerial Sports</option>
+                  <option value="water-sports">Water Sports & Adventure</option>
+                  <option value="equipment-rentals">Equipment Rentals</option>
+                </optgroup>
                 <option value="other">Other</option>
               </select>
               <span id="businessType-hint" className="sr-only">Select your business type from the dropdown</span>
@@ -414,11 +431,10 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
               role="radio"
               aria-checked={selectedIntegration === option.id}
               tabIndex={selectedIntegration === option.id ? 0 : -1}
-              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
-                selectedIntegration === option.id
+              className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${selectedIntegration === option.id
                   ? "border-[#14B8A6] bg-[#14B8A6]/5"
                   : "border-gray-200 hover:border-[#14B8A6]/50"
-              }`}
+                }`}
             >
               {option.recommended && (
                 <div className="absolute -top-3 right-4 px-3 py-1 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] text-white text-xs font-bold rounded-full">
@@ -441,11 +457,10 @@ function Step2Integration({ formData, setFormData, onNext, onBack }: Step2Props)
                 </div>
 
                 <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedIntegration === option.id
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedIntegration === option.id
                       ? "border-[#14B8A6] bg-[#14B8A6]"
                       : "border-gray-300"
-                  }`}
+                    }`}
                   aria-hidden="true"
                 >
                   {selectedIntegration === option.id && (
@@ -633,11 +648,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
               <motion.div
                 key={product.id}
                 whileHover={{ scale: 1.01 }}
-                className={`p-6 border-2 rounded-xl transition-all ${
-                  isSelected
+                className={`p-6 border-2 rounded-xl transition-all ${isSelected
                     ? "border-[#14B8A6] bg-[#14B8A6]/5"
                     : "border-gray-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3">
@@ -646,11 +660,10 @@ function Step3Customize({ formData, setFormData, onNext, onBack }: Step3Props) {
                       role="checkbox"
                       aria-checked={isSelected}
                       aria-label={`${isSelected ? "Deselect" : "Select"} ${product.name}`}
-                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${
-                        isSelected
+                      className={`mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-[#14B8A6] focus:ring-offset-2 ${isSelected
                           ? "border-[#14B8A6] bg-[#14B8A6]"
                           : "border-gray-300"
-                      }`}
+                        }`}
                     >
                       {isSelected && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                     </button>
@@ -875,19 +888,16 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
               <motion.div
                 key={item.id}
                 whileHover={{ scale: 1.01 }}
-                className={`p-6 border-2 rounded-xl transition-all ${
-                  isCompleted
+                className={`p-6 border-2 rounded-xl transition-all ${isCompleted
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${
-                    isCompleted ? "bg-green-500" : "bg-gray-100"
-                  }`}>
-                    <Icon className={`w-6 h-6 ${
-                      isCompleted ? "text-white" : "text-gray-600"
-                    }`} />
+                  <div className={`p-3 rounded-lg ${isCompleted ? "bg-green-500" : "bg-gray-100"
+                    }`}>
+                    <Icon className={`w-6 h-6 ${isCompleted ? "text-white" : "text-gray-600"
+                      }`} />
                   </div>
 
                   <div className="flex-1">
@@ -902,11 +912,10 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
                         role="checkbox"
                         aria-checked={isCompleted}
                         aria-label={`Mark ${item.title} as ${isCompleted ? "incomplete" : "complete"}`}
-                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
-                          isCompleted
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${isCompleted
                             ? "border-green-500 bg-green-500"
                             : "border-gray-300"
-                        }`}
+                          }`}
                       >
                         {isCompleted && <Check className="w-4 h-4 text-white" aria-hidden="true" />}
                       </button>
@@ -1309,6 +1318,19 @@ export default function OnboardingForm() {
       </div>
 
       <Footer />
+
+      {/* Integration Support Chat Widget - provides step-aware support during onboarding */}
+      {!isComplete && (
+        <IntegrationChatWidget
+          topic="onboarding"
+          onboardingStep={currentStep}
+          partnerName={formData.contactName || undefined}
+          partnerEmail={formData.email || undefined}
+          pageUrl="/onboarding"
+          position="bottom-right"
+          primaryColor="#14B8A6"
+        />
+      )}
     </main>
   )
 }

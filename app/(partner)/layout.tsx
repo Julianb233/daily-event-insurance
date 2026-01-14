@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { PartnerSidebar } from "@/components/partner/PartnerSidebar"
+import { PartnerChatWidget } from "@/components/partner/PartnerChatWidget"
 
 // Development mode - bypass auth when NextAuth isn't configured
 const isDevMode = !process.env.AUTH_SECRET
@@ -46,6 +47,8 @@ export default async function PartnerLayout({
           {children}
         </div>
       </main>
+      {/* Integration support chat widget - available on all partner pages */}
+      <PartnerChatWidget />
     </div>
   )
 }

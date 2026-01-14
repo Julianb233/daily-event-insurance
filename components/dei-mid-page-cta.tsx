@@ -21,7 +21,7 @@ export function MidPageCTA() {
               Join 247 Facilities Already Earning
             </h3>
             <p className="text-slate-600 text-base md:text-lg mb-4">
-              15-Minute Demo • Start Earning in 48 Hours
+              15-Minute Setup • Start Earning in 48 Hours
             </p>
             <div className="flex items-center justify-center md:justify-start gap-4 text-sm text-slate-500">
               <div className="flex items-center gap-2">
@@ -36,11 +36,10 @@ export function MidPageCTA() {
           {/* Right side - CTA Button */}
           <div className="flex flex-col gap-3">
             <a
-              href="#apply"
-              onClick={handleClick}
+              href="/onboarding"
               className="px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold rounded-lg text-base whitespace-nowrap transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Schedule Demo
+              Start Earning Now
             </a>
 
             <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">

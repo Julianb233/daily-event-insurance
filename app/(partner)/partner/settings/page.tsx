@@ -14,6 +14,7 @@ import {
   Shield,
   CheckCircle2,
 } from "lucide-react"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 interface PartnerProfile {
   id: string
@@ -467,6 +468,13 @@ export default function SettingsPage() {
           )}
         </button>
       </div>
+
+      <IntegrationChatWidget
+        topic="api_integration"
+        partnerId={profile?.id}
+        partnerEmail={profile?.contact_email}
+        partnerName={profile?.contact_name}
+      />
     </div>
   )
 }

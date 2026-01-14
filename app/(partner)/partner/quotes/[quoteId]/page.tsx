@@ -18,6 +18,7 @@ import {
 import { QuoteToPolicyConverter } from "@/components/partner/QuoteToPolicyConverter"
 import { RiskAssessmentCard } from "@/components/partner/RiskAssessmentCard"
 import { formatCurrency } from "@/lib/commission-tiers"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import type { RiskAssessment } from "@/lib/pricing"
 
 interface QuoteDetails {
@@ -317,6 +318,8 @@ export default function QuoteDetailsPage() {
           </div>
         </div>
       </div>
+
+      <IntegrationChatWidget topic="troubleshooting" />
     </div>
   )
 }

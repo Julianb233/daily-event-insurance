@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
   DollarSign,
@@ -15,6 +15,7 @@ import {
   RefreshCw,
   CheckCircle,
   Clock,
+  Bell,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -28,13 +29,16 @@ import {
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber'
 import { SparklineCard } from '@/components/charts/SparklineCard'
 import { SkeletonStatsRow, SkeletonChart } from '@/components/shared/Skeleton'
+import { RefreshIndicator } from '@/components/shared/RefreshIndicator'
+import { BadgeContainer } from '@/components/shared/NotificationBadge'
+import { useDashboardData } from '@/lib/hooks/useDashboardData'
 
 interface DashboardData {
   income: {
-    today: { amount: number; change: number; policies: number; sparkline: number[] }
-    week: { amount: number; change: number; policies: number; sparkline: number[] }
-    month: { amount: number; change: number; policies: number; sparkline: number[] }
-    ytd: { amount: number; change: number; sparkline: number[] }
+    today: { amount: number; change: number; policies: number; sparkline: number[]; previousAmount: number }
+    week: { amount: number; change: number; policies: number; sparkline: number[]; previousAmount: number }
+    month: { amount: number; change: number; policies: number; sparkline: number[]; previousAmount: number }
+    ytd: { amount: number; change: number; sparkline: number[]; previousAmount: number }
   }
   chartData: Array<{ date: string; premium: number; policies: number }>
   stats: {
@@ -56,15 +60,20 @@ interface DashboardData {
     status: string
     recordsProcessed: number
   }
+  notifications: {
+    newClaims: number
+    pendingApprovals: number
+    alerts: number
+  }
 }
 
 // Mock data for development
 const mockData: DashboardData = {
   income: {
-    today: { amount: 3450, change: 8, policies: 12, sparkline: [2800, 3100, 2900, 3300, 3000, 3200, 3450] },
-    week: { amount: 18230, change: 5, policies: 67, sparkline: [16500, 17200, 17800, 17500, 18000, 17900, 18230] },
-    month: { amount: 72540, change: 12, policies: 243, sparkline: [64000, 66500, 68200, 70100, 69800, 71200, 72540] },
-    ytd: { amount: 687540, change: 32, sparkline: [520000, 560000, 595000, 620000, 645000, 665000, 687540] },
+    today: { amount: 3450, change: 8, policies: 12, sparkline: [2800, 3100, 2900, 3300, 3000, 3200, 3450], previousAmount: 3195 },
+    week: { amount: 18230, change: 5, policies: 67, sparkline: [16500, 17200, 17800, 17500, 18000, 17900, 18230], previousAmount: 17362 },
+    month: { amount: 72540, change: 12, policies: 243, sparkline: [64000, 66500, 68200, 70100, 69800, 71200, 72540], previousAmount: 64768 },
+    ytd: { amount: 687540, change: 32, sparkline: [520000, 560000, 595000, 620000, 645000, 665000, 687540], previousAmount: 520863 },
   },
   chartData: Array.from({ length: 30 }, (_, i) => ({
     date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
@@ -89,29 +98,40 @@ const mockData: DashboardData = {
     status: 'success',
     recordsProcessed: 1234,
   },
+  notifications: {
+    newClaims: 5,
+    pendingApprovals: 3,
+    alerts: 2,
+  },
 }
 
 export default function HiqorDashboardPage() {
   const [period, setPeriod] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [showComparison, setShowComparison] = useState(true)
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // In production, fetch from /api/hiqor/dashboard
-        // For now, use mock data
-        await new Promise(resolve => setTimeout(resolve, 500))
-        setData(mockData)
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
+  // Fetch function for dashboard data
+  const fetchDashboardData = useCallback(async (): Promise<DashboardData> => {
+    // In production, fetch from /api/hiqor/dashboard?period=${period}
+    // For now, simulate API call with mock data
+    await new Promise(resolve => setTimeout(resolve, 500))
+    return mockData
   }, [period])
+
+  // Use the dashboard data hook
+  const {
+    data,
+    isLoading: loading,
+    isRefreshing,
+    lastUpdated,
+    autoRefreshInterval,
+    setAutoRefreshInterval,
+    refresh,
+  } = useDashboardData({
+    fetchFn: fetchDashboardData,
+    autoRefreshInterval: 60, // Default to 1 minute
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  })
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -157,17 +177,58 @@ export default function HiqorDashboardPage() {
           <p className="text-gray-500">Track policies, premiums, and performance</p>
         </div>
         <div className="flex items-center gap-4">
-          {/* Sync Status */}
-          <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-100">
-            {data?.syncStatus.status === 'success' ? (
-              <CheckCircle className="w-4 h-4 text-green-500" />
-            ) : (
-              <Clock className="w-4 h-4 text-yellow-500" />
-            )}
-            <span className="text-sm text-gray-600">
-              Synced {data?.syncStatus.lastSync ? new Date(data.syncStatus.lastSync).toLocaleTimeString() : 'never'}
-            </span>
+          {/* Notification Badges */}
+          <div className="flex items-center gap-2">
+            <BadgeContainer
+              count={data?.notifications.newClaims || 0}
+              variant="warning"
+              pulse={data?.notifications.newClaims ? data.notifications.newClaims > 0 : false}
+            >
+              <button className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
+                <FileText className="w-5 h-5 text-gray-600" />
+              </button>
+            </BadgeContainer>
+
+            <BadgeContainer
+              count={data?.notifications.pendingApprovals || 0}
+              variant="info"
+            >
+              <button className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
+                <Clock className="w-5 h-5 text-gray-600" />
+              </button>
+            </BadgeContainer>
+
+            <BadgeContainer
+              count={data?.notifications.alerts || 0}
+              variant="error"
+              pulse={data?.notifications.alerts ? data.notifications.alerts > 0 : false}
+            >
+              <button className="p-2 bg-white rounded-lg shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
+                <Bell className="w-5 h-5 text-gray-600" />
+              </button>
+            </BadgeContainer>
           </div>
+
+          {/* Refresh Indicator */}
+          <RefreshIndicator
+            lastUpdated={lastUpdated}
+            isRefreshing={isRefreshing}
+            onRefresh={refresh}
+            autoRefreshInterval={autoRefreshInterval}
+            onAutoRefreshChange={setAutoRefreshInterval}
+          />
+
+          {/* Comparison Toggle */}
+          <button
+            onClick={() => setShowComparison(!showComparison)}
+            className={`px-3 py-2 text-sm font-medium rounded-lg border shadow-sm transition-colors ${
+              showComparison
+                ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            {showComparison ? 'Hide' : 'Show'} Comparison
+          </button>
 
           {/* Period Selector */}
           <div className="flex items-center gap-2 bg-white rounded-lg p-1 shadow-sm border">
@@ -201,6 +262,9 @@ export default function HiqorDashboardPage() {
           gradient="from-indigo-500 to-indigo-600"
           icon={<DollarSign className="w-5 h-5" />}
           delay={0}
+          showComparison={showComparison}
+          previousPeriodValue={data?.income.today.previousAmount}
+          comparisonLabel="vs same day last week"
         />
 
         <SparklineCard
@@ -214,6 +278,9 @@ export default function HiqorDashboardPage() {
           gradient="from-blue-500 to-blue-600"
           icon={<TrendingUp className="w-5 h-5" />}
           delay={0.1}
+          showComparison={showComparison}
+          previousPeriodValue={data?.income.week.previousAmount}
+          comparisonLabel="vs previous week"
         />
 
         <SparklineCard
@@ -227,6 +294,9 @@ export default function HiqorDashboardPage() {
           gradient="from-purple-500 to-purple-600"
           icon={<Calendar className="w-5 h-5" />}
           delay={0.2}
+          showComparison={showComparison}
+          previousPeriodValue={data?.income.month.previousAmount}
+          comparisonLabel="vs previous month"
         />
 
         <SparklineCard
@@ -240,6 +310,9 @@ export default function HiqorDashboardPage() {
           gradient="from-violet-500 to-violet-600"
           icon={<Wallet className="w-5 h-5" />}
           delay={0.3}
+          showComparison={showComparison}
+          previousPeriodValue={data?.income.ytd.previousAmount}
+          comparisonLabel="vs same period last year"
         />
       </div>
 

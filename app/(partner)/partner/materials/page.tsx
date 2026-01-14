@@ -14,6 +14,7 @@ import {
   GraduationCap,
   BookOpen,
 } from "lucide-react"
+import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 
 interface Resource {
   id: string
@@ -360,6 +361,8 @@ export default function PartnerMaterialsPage() {
           </div>
         )}
       </div>
+
+      <IntegrationChatWidget topic="onboarding" />
     </div>
   )
 }
