@@ -13,10 +13,10 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
       min-height: 100vh;
       padding: 40px;
-      color: white;
+      color: #0f172a;
     }
 
     .container {
@@ -36,9 +36,8 @@
 
     .badge {
       display: inline-block;
-      background: rgba(20, 184, 166, 0.2);
-      border: 1px solid rgba(20, 184, 166, 0.4);
-      color: #5eead4;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      color: white;
       font-size: 12px;
       font-weight: 600;
       padding: 8px 20px;
@@ -52,15 +51,12 @@
       font-size: 42px;
       font-weight: 700;
       margin-bottom: 16px;
-      background: linear-gradient(90deg, #ffffff, #94a3b8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #0f172a;
     }
 
     .header p {
       font-size: 18px;
-      color: #94a3b8;
+      color: #64748b;
       max-width: 600px;
       margin: 0 auto;
     }
@@ -73,14 +69,14 @@
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
       padding: 32px;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .feature-card::before {
@@ -90,19 +86,13 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #14b8a6, #10b981, #06b6d4);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
     }
 
     .feature-card:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(20, 184, 166, 0.3);
+      border-color: #14b8a6;
       transform: translateY(-4px);
-    }
-
-    .feature-card:hover::before {
-      opacity: 1;
+      box-shadow: 0 12px 40px rgba(20, 184, 166, 0.15);
     }
 
     .feature-card.large {
@@ -113,24 +103,24 @@
       width: 56px;
       height: 56px;
       background: linear-gradient(135deg, #14b8a6, #10b981);
-      border-radius: 16px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 28px;
       margin-bottom: 20px;
-      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.3);
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.25);
     }
 
     .feature-card h3 {
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 12px;
-      color: white;
+      color: #0f172a;
     }
 
     .feature-card p {
-      color: #94a3b8;
+      color: #64748b;
       font-size: 15px;
       line-height: 1.7;
       margin-bottom: 20px;
@@ -145,8 +135,13 @@
       align-items: flex-start;
       gap: 12px;
       padding: 10px 0;
-      color: #cbd5e1;
+      color: #475569;
       font-size: 14px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
     }
 
     .feature-list li::before {
@@ -156,88 +151,195 @@
       flex-shrink: 0;
     }
 
-    .mock-ui {
-      background: rgba(0, 0, 0, 0.3);
+    /* Dashboard Mock UI */
+    .mock-dashboard {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .mock-dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .mock-dashboard-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .mock-dashboard-date {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .mock-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .mock-stat {
+      background: white;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .mock-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #14b8a6;
+    }
+
+    .mock-stat-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* Conversion Funnel Mock */
+    .mock-funnel {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .funnel-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .funnel-step:last-child {
+      border-bottom: none;
+    }
+
+    .funnel-bar {
+      height: 24px;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .funnel-label {
+      font-size: 12px;
+      color: #64748b;
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    .funnel-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: #0f172a;
+      width: 50px;
+      text-align: right;
+    }
+
+    /* Chat UI */
+    .mock-chat-container {
+      background: #f8fafc;
       border-radius: 12px;
       padding: 16px;
       margin-top: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #e2e8f0;
     }
 
-    .mock-browser {
-      background: #1e293b;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .mock-browser-header {
-      background: #0f172a;
-      padding: 8px 12px;
+    .mock-chat-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 12px;
     }
 
-    .mock-dot {
-      width: 10px;
-      height: 10px;
+    .mock-chat-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #14b8a6, #10b981);
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
     }
 
-    .mock-dot.red { background: #ef4444; }
-    .mock-dot.yellow { background: #eab308; }
-    .mock-dot.green { background: #22c55e; }
+    .mock-chat-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f172a;
+    }
 
-    .mock-content {
-      padding: 20px;
+    .mock-chat-status {
+      font-size: 11px;
+      color: #10b981;
     }
 
     .mock-chat {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .mock-message {
       max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 16px;
+      padding: 10px 14px;
+      border-radius: 14px;
       font-size: 13px;
+      line-height: 1.4;
     }
 
     .mock-message.incoming {
-      background: rgba(20, 184, 166, 0.2);
-      color: #5eead4;
+      background: white;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
       border-bottom-left-radius: 4px;
       align-self: flex-start;
     }
 
     .mock-message.outgoing {
-      background: rgba(100, 116, 139, 0.3);
-      color: #e2e8f0;
+      background: linear-gradient(90deg, #14b8a6, #10b981);
+      color: white;
       border-bottom-right-radius: 4px;
       align-self: flex-end;
     }
 
-    .mock-input {
+    .mock-chat-input {
       display: flex;
       gap: 8px;
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid #e2e8f0;
     }
 
-    .mock-input input {
+    .mock-chat-input input {
       flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: white;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 10px 14px;
-      color: white;
+      color: #0f172a;
       font-size: 13px;
     }
 
-    .mock-input button {
+    .mock-chat-input button {
       background: linear-gradient(90deg, #14b8a6, #10b981);
       border: none;
       border-radius: 8px;
@@ -248,41 +350,48 @@
       cursor: pointer;
     }
 
+    /* QR Code Demo */
     .qr-demo {
       display: flex;
       align-items: center;
       gap: 24px;
       margin-top: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
     }
 
     .qr-placeholder {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
       background: white;
-      border-radius: 12px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      border: 1px solid #e2e8f0;
     }
 
     .qr-placeholder svg {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
     }
 
     .qr-info h4 {
-      color: white;
-      font-size: 16px;
-      margin-bottom: 8px;
+      color: #0f172a;
+      font-size: 15px;
+      margin-bottom: 6px;
     }
 
     .qr-info p {
-      color: #94a3b8;
+      color: #64748b;
       font-size: 13px;
       margin: 0;
     }
 
+    /* Microsite Preview */
     .microsite-preview {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -291,11 +400,11 @@
     }
 
     .microsite-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
+      background: #f8fafc;
+      border-radius: 10px;
       padding: 16px;
       text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #e2e8f0;
     }
 
     .microsite-item .icon {
@@ -304,57 +413,63 @@
     }
 
     .microsite-item span {
-      font-size: 11px;
-      color: #94a3b8;
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
     }
 
+    /* Screen Recording Demo */
     .screen-record-demo {
       display: flex;
       align-items: center;
-      gap: 16px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 12px;
-      padding: 16px;
+      gap: 14px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 14px 18px;
       margin-top: 20px;
     }
 
     .record-dot {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       background: #ef4444;
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
     }
 
     .screen-record-demo span {
-      color: #fca5a5;
-      font-size: 14px;
+      color: #991b1b;
+      font-size: 13px;
       font-weight: 600;
     }
 
+    /* CTA Section */
     .cta-section {
       text-align: center;
       margin-top: 60px;
-      padding: 40px;
-      background: rgba(255, 255, 255, 0.03);
+      padding: 48px;
+      background: white;
       border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .cta-section h2 {
       font-size: 28px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      color: #0f172a;
     }
 
     .cta-section p {
-      color: #94a3b8;
+      color: #64748b;
       margin-bottom: 24px;
+      font-size: 16px;
     }
 
     .cta-button {
@@ -366,13 +481,13 @@
       font-weight: 600;
       text-decoration: none;
       border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.4);
+      box-shadow: 0 8px 30px rgba(20, 184, 166, 0.3);
       transition: all 0.3s ease;
     }
 
     .cta-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 15px 50px rgba(20, 184, 166, 0.5);
+      box-shadow: 0 12px 40px rgba(20, 184, 166, 0.4);
     }
 
     @media (max-width: 768px) {
@@ -388,28 +503,27 @@
         flex-direction: column;
         text-align: center;
       }
+
+      .mock-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media print {
       body {
         background: white;
-        color: #0f172a;
         padding: 20px;
       }
 
       .feature-card {
-        background: #f8fafc;
-        border-color: #e2e8f0;
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
         page-break-inside: avoid;
       }
 
-      .feature-card h3 {
-        color: #0f172a;
-      }
-
-      .feature-card p,
-      .feature-list li {
-        color: #475569;
+      .cta-button {
+        box-shadow: none;
+        border: 2px solid #14b8a6;
       }
     }
   </style>
@@ -424,6 +538,82 @@
     </div>
 
     <div class="features-grid">
+
+      <!-- Partner Dashboard -->
+      <div class="feature-card large">
+        <div class="feature-icon">📊</div>
+        <h3>Partner Dashboard</h3>
+        <p>A comprehensive dashboard that gives you complete visibility into your insurance program's performance, policies, and revenue in real-time.</p>
+        <ul class="feature-list">
+          <li>Real-time policy tracking and status updates</li>
+          <li>Revenue and commission reporting</li>
+          <li>Partner-level and location-level views</li>
+          <li>Exportable reports (CSV, PDF)</li>
+          <li>Customizable date ranges and filters</li>
+        </ul>
+        <div class="mock-dashboard">
+          <div class="mock-dashboard-header">
+            <span class="mock-dashboard-title">Partner Overview</span>
+            <span class="mock-dashboard-date">Last 30 Days</span>
+          </div>
+          <div class="mock-stats-row">
+            <div class="mock-stat">
+              <div class="mock-stat-value">1,247</div>
+              <div class="mock-stat-label">Policies Sold</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-value">$84.2K</div>
+              <div class="mock-stat-label">Premium</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-value">$58.9K</div>
+              <div class="mock-stat-label">Your Revenue</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-value">23.4%</div>
+              <div class="mock-stat-label">Conversion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversion Metrics -->
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Conversion Metrics</h3>
+        <p>Track your funnel performance from page views to completed purchases with detailed conversion analytics.</p>
+        <ul class="feature-list">
+          <li>Step-by-step funnel visualization</li>
+          <li>Drop-off analysis at each stage</li>
+          <li>A/B test performance tracking</li>
+          <li>Location and source comparisons</li>
+        </ul>
+        <div class="mock-dashboard" style="padding: 16px;">
+          <div class="mock-funnel">
+            <div class="funnel-step">
+              <span class="funnel-label">Page Views</span>
+              <div class="funnel-bar" style="width: 100%;"></div>
+              <span class="funnel-value">5,842</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">Started Quote</span>
+              <div class="funnel-bar" style="width: 65%;"></div>
+              <span class="funnel-value">3,798</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">Quote Complete</span>
+              <div class="funnel-bar" style="width: 42%;"></div>
+              <span class="funnel-value">2,454</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">Purchased</span>
+              <div class="funnel-bar" style="width: 21%;"></div>
+              <span class="funnel-value">1,247</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Live Chat Support -->
       <div class="feature-card">
         <div class="feature-icon">💬</div>
@@ -435,24 +625,22 @@
           <li>Full conversation history tracking</li>
           <li>Available 7 days a week</li>
         </ul>
-        <div class="mock-ui">
-          <div class="mock-browser">
-            <div class="mock-browser-header">
-              <span class="mock-dot red"></span>
-              <span class="mock-dot yellow"></span>
-              <span class="mock-dot green"></span>
+        <div class="mock-chat-container">
+          <div class="mock-chat-header">
+            <div class="mock-chat-avatar">S</div>
+            <div>
+              <div class="mock-chat-name">Support Agent</div>
+              <div class="mock-chat-status">● Online</div>
             </div>
-            <div class="mock-content">
-              <div class="mock-chat">
-                <div class="mock-message incoming">Hi! I need help with my event insurance policy.</div>
-                <div class="mock-message outgoing">Of course! I can help you with that. What's your event date?</div>
-                <div class="mock-message incoming">It's next Saturday at the community center.</div>
-              </div>
-              <div class="mock-input">
-                <input type="text" placeholder="Type your message...">
-                <button>Send</button>
-              </div>
-            </div>
+          </div>
+          <div class="mock-chat">
+            <div class="mock-message incoming">Hi! I need help with my event insurance policy.</div>
+            <div class="mock-message outgoing">Of course! I can help you with that. What's your event date?</div>
+            <div class="mock-message incoming">It's next Saturday at the community center.</div>
+          </div>
+          <div class="mock-chat-input">
+            <input type="text" placeholder="Type your message...">
+            <button>Send</button>
           </div>
         </div>
       </div>
@@ -468,17 +656,12 @@
           <li>Appointment reminders</li>
           <li>Claim status notifications</li>
         </ul>
-        <div class="mock-ui">
-          <div style="background: #0f172a; border-radius: 20px; padding: 12px; max-width: 280px; margin: 0 auto;">
-            <div style="background: #1e293b; border-radius: 16px; padding: 16px;">
-              <div style="text-align: center; font-size: 11px; color: #64748b; margin-bottom: 12px;">Today 2:34 PM</div>
-              <div style="background: #14b8a6; color: white; padding: 10px 14px; border-radius: 16px 16px 16px 4px; font-size: 13px; margin-bottom: 8px;">
-                Your policy #DEI-28471 is now active for Saturday's event. Reply HELP for assistance.
-              </div>
-              <div style="background: #334155; color: white; padding: 10px 14px; border-radius: 16px 16px 4px 16px; font-size: 13px; margin-left: auto; max-width: 80%; text-align: right;">
-                Thanks! What's covered?
-              </div>
-            </div>
+        <div class="mock-chat-container">
+          <div style="text-align: center; font-size: 11px; color: #64748b; margin-bottom: 10px;">Today 2:34 PM</div>
+          <div class="mock-chat">
+            <div class="mock-message outgoing">Your policy #DEI-28471 is now active for Saturday's event. Reply HELP for assistance.</div>
+            <div class="mock-message incoming">Thanks! What's covered?</div>
+            <div class="mock-message outgoing">Your policy covers general liability up to $1M. View details at dei.link/28471</div>
           </div>
         </div>
       </div>
@@ -496,7 +679,7 @@
         </ul>
         <div class="screen-record-demo">
           <div class="record-dot"></div>
-          <span>Recording in progress - Helping customer complete checkout...</span>
+          <span>Recording in progress — Helping customer complete checkout...</span>
         </div>
       </div>
 
@@ -532,8 +715,6 @@
               <rect fill="#0f172a" x="35" y="0" width="10" height="10"/>
               <rect fill="#0f172a" x="55" y="0" width="10" height="10"/>
               <rect fill="#0f172a" x="70" y="0" width="30" height="30"/>
-              <rect fill="#0f172a" x="5" y="5" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
-              <rect fill="#0f172a" x="75" y="5" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
               <rect fill="#14b8a6" x="10" y="10" width="10" height="10"/>
               <rect fill="#14b8a6" x="80" y="10" width="10" height="10"/>
               <rect fill="#0f172a" x="0" y="35" width="10" height="10"/>
@@ -545,7 +726,6 @@
               <rect fill="#0f172a" x="55" y="50" width="20" height="10"/>
               <rect fill="#0f172a" x="90" y="50" width="10" height="10"/>
               <rect fill="#0f172a" x="0" y="70" width="30" height="30"/>
-              <rect fill="#0f172a" x="5" y="75" width="20" height="20" fill="none" stroke="#0f172a" stroke-width="4"/>
               <rect fill="#14b8a6" x="10" y="80" width="10" height="10"/>
               <rect fill="#0f172a" x="40" y="70" width="10" height="10"/>
               <rect fill="#0f172a" x="60" y="70" width="10" height="10"/>
