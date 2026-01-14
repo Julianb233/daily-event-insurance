@@ -1,326 +1,663 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Insurance Broker Research Portal | HiQor & Daily Event Insurance",
-  description: "Comprehensive research on becoming an Insurance Broker of Record. 50-state licensing analysis, West Coast expansion strategy, compliance frameworks, and partnership opportunities.",
-  keywords: "insurance broker, broker of record, insurance licensing, BOR requirements, multi-state insurance",
-};
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import {
+  FileText,
+  GraduationCap,
+  DollarSign,
+  Map,
+  Shield,
+  Users,
+  TrendingUp,
+  Clock,
+  Target,
+  ArrowRight,
+  Zap,
+  CheckCircle2,
+  Building2
+} from "lucide-react";
 
 const researchModules = [
   {
     title: "Executive Summary",
-    description: "Strategic overview of the 50-state insurance broker initiative with investment requirements, ROI projections, and implementation roadmap.",
+    description: "Strategic overview with investment requirements, ROI projections, and implementation roadmap for the 50-state initiative.",
     href: "/insurance-broker-research/executive-summary",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
-      </svg>
-    ),
+    icon: FileText,
     stats: { label: "ROI Projection", value: "624%+" },
     badge: "Start Here",
+    color: "teal",
   },
   {
     title: "BOR Requirements",
-    description: "Complete guide to Broker of Record licensing including education requirements, examination process, and state-by-state variations.",
+    description: "Complete licensing guide including education, examinations, and state-by-state variations for Broker of Record status.",
     href: "/insurance-broker-research/bor-requirements",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-      </svg>
-    ),
+    icon: GraduationCap,
     stats: { label: "License Types", value: "3" },
+    color: "sky",
   },
   {
     title: "50-State Licensing Costs",
-    description: "Comprehensive cost analysis for insurance licensing across all 50 states, including fees, education costs, and multi-state strategies.",
+    description: "Comprehensive cost analysis across all states with fees, education expenses, and multi-state optimization strategies.",
     href: "/insurance-broker-research/licensing-costs",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    stats: { label: "50-State Total", value: "$20K-$55K" },
+    icon: DollarSign,
+    stats: { label: "Total Range", value: "$20K-$55K" },
+    color: "emerald",
   },
   {
-    title: "West Coast Expansion Strategy",
-    description: "Strategic playbook for establishing insurance brokerage operations across California, Oregon, Washington, Nevada, and Arizona.",
+    title: "West Coast Strategy",
+    description: "Strategic playbook for California, Oregon, Washington, Nevada, and Arizona market expansion.",
     href: "/insurance-broker-research/west-coast-strategy",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
-      </svg>
-    ),
+    icon: Map,
     stats: { label: "Target Market", value: "$48B+" },
     badge: "Regional Focus",
+    color: "violet",
   },
   {
     title: "Compliance Guide",
-    description: "Comprehensive compliance framework covering federal requirements, state regulations, NAIC standards, and record-keeping requirements.",
+    description: "Federal requirements, state regulations, NAIC standards, and comprehensive record-keeping requirements.",
     href: "/insurance-broker-research/compliance",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-      </svg>
-    ),
+    icon: Shield,
     stats: { label: "Regulations", value: "4 Levels" },
+    color: "amber",
   },
   {
     title: "Partnership Opportunity",
-    description: "Explore how partnering with Daily Event Insurance and HiQor as your Broker of Record can accelerate your market entry.",
+    description: "Partner with Daily Event Insurance and HiQor as your Broker of Record. Skip licensing and launch in 30 days.",
     href: "/insurance-broker-research/partnership",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-      </svg>
-    ),
+    icon: Users,
     stats: { label: "Time to Market", value: "30 Days" },
-    badge: "New",
+    badge: "Fast Track",
     highlight: true,
+    color: "teal",
   },
 ];
 
 const keyMetrics = [
-  { label: "Total Investment", value: "$75K-$150K", description: "Full 50-state coverage" },
-  { label: "West Coast Entry", value: "$45K", description: "CA, NV initial markets" },
-  { label: "Year 3 Revenue", value: "$7.2M", description: "Projected GCI" },
-  { label: "Breakeven", value: "14-18 mo", description: "Time to profitability" },
+  { icon: DollarSign, label: "Total Investment", value: "$75K-$150K", description: "Full 50-state coverage" },
+  { icon: Target, label: "West Coast Entry", value: "$45K", description: "CA + NV initial markets" },
+  { icon: TrendingUp, label: "Year 3 Revenue", value: "$7.2M", description: "Projected GCI" },
+  { icon: Clock, label: "Breakeven", value: "14-18 mo", description: "Time to profitability" },
 ];
+
+const phases = [
+  { phase: "Phase 1", markets: "California + Nevada", investment: "$45,000", timeline: "Months 1-12" },
+  { phase: "Phase 2", markets: "Arizona", investment: "$15,000", timeline: "Months 13-18" },
+  { phase: "Phase 3", markets: "Oregon + Washington", investment: "$20,000", timeline: "Months 19-24" },
+  { phase: "Phase 4", markets: "National Expansion", investment: "$70,000", timeline: "Months 25-36+" },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.46, 0.45, 0.94],
+    },
+  },
+};
+
+function ModuleCard({ module, index }: { module: typeof researchModules[0]; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const colorClasses: Record<string, { bg: string; bgLight: string; border: string; text: string; glow: string }> = {
+    teal: {
+      bg: 'bg-teal-500',
+      bgLight: 'bg-teal-50',
+      border: 'border-teal-200',
+      text: 'text-teal-600',
+      glow: 'from-teal-500/30 via-teal-400/40 to-teal-500/30',
+    },
+    sky: {
+      bg: 'bg-sky-500',
+      bgLight: 'bg-sky-50',
+      border: 'border-sky-200',
+      text: 'text-sky-600',
+      glow: 'from-sky-500/30 via-sky-400/40 to-sky-500/30',
+    },
+    emerald: {
+      bg: 'bg-emerald-500',
+      bgLight: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      text: 'text-emerald-600',
+      glow: 'from-emerald-500/30 via-emerald-400/40 to-emerald-500/30',
+    },
+    violet: {
+      bg: 'bg-violet-500',
+      bgLight: 'bg-violet-50',
+      border: 'border-violet-200',
+      text: 'text-violet-600',
+      glow: 'from-violet-500/30 via-violet-400/40 to-violet-500/30',
+    },
+    amber: {
+      bg: 'bg-amber-500',
+      bgLight: 'bg-amber-50',
+      border: 'border-amber-200',
+      text: 'text-amber-600',
+      glow: 'from-amber-500/30 via-amber-400/40 to-amber-500/30',
+    },
+  };
+
+  const colors = colorClasses[module.color] || colorClasses.teal;
+
+  return (
+    <motion.div
+      variants={cardVariants}
+      className="group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Link href={module.href}>
+        <motion.div
+          whileHover={{ y: -8, scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+          className="relative h-full"
+        >
+          {/* Glow effect on hover */}
+          <motion.div
+            className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-r ${colors.glow} blur-xl`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Card */}
+          <div className={`relative h-full bg-white rounded-2xl p-6 md:p-8 shadow-lg border-2 transition-all duration-500 overflow-hidden ${
+            module.highlight
+              ? 'border-teal-400 ring-2 ring-teal-500/20'
+              : `${colors.border} hover:border-teal-400`
+          }`}>
+            {/* Badge */}
+            {module.badge && (
+              <div className="absolute -top-0 right-4">
+                <motion.span
+                  className={`px-4 py-1.5 text-xs font-bold rounded-b-xl shadow-lg ${
+                    module.highlight
+                      ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white'
+                      : 'bg-slate-900 text-white'
+                  }`}
+                  animate={{ y: isHovered ? 2 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {module.badge}
+                </motion.span>
+              </div>
+            )}
+
+            {/* Icon */}
+            <motion.div
+              className={`w-16 h-16 ${colors.bg} rounded-2xl flex items-center justify-center mb-5 shadow-lg`}
+              animate={{
+                scale: isHovered ? 1.1 : 1,
+                rotate: isHovered ? [0, -5, 5, 0] : 0
+              }}
+              transition={{ duration: 0.4 }}
+            >
+              <module.icon className="w-8 h-8 text-white" strokeWidth={2} />
+            </motion.div>
+
+            {/* Content */}
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
+              {module.title}
+            </h3>
+            <p className="text-slate-600 mb-5 leading-relaxed">
+              {module.description}
+            </p>
+
+            {/* Stats */}
+            {module.stats && (
+              <div className={`flex items-center justify-between pt-5 border-t ${colors.border}`}>
+                <span className="text-sm text-slate-500 font-medium">{module.stats.label}</span>
+                <span className={`text-lg font-bold ${colors.text}`}>{module.stats.value}</span>
+              </div>
+            )}
+
+            {/* Hover Arrow */}
+            <motion.div
+              className="absolute bottom-6 right-6"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ArrowRight className={`w-6 h-6 ${colors.text}`} />
+            </motion.div>
+          </div>
+        </motion.div>
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function InsuranceBrokerResearchPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-hidden">
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/30" />
-
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #14B8A6 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
+      <section className="relative min-h-[90vh] flex items-center py-20 md:py-28 overflow-hidden">
+        {/* Animated background gradient */}
+        <motion.div
+          className="absolute inset-0 z-0"
+          animate={{
+            background: [
+              "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.08) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
+              "radial-gradient(ellipse at 70% 30%, rgba(20,184,166,0.12) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(13,148,136,0.08) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
+              "radial-gradient(ellipse at 30% 20%, rgba(20,184,166,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(13,148,136,0.08) 0%, transparent 50%), linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)",
+            ],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-          {/* Badge */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full border border-teal-200">
-              <span className="text-teal-600 font-semibold text-sm">HiQor Research Portal</span>
-            </div>
-          </div>
+        {/* Animated grid pattern */}
+        <div
+          className="absolute inset-0 z-[1] opacity-30"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(20,184,166,0.15) 1px, transparent 0)`,
+            backgroundSize: '48px 48px'
+          }}
+        />
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 text-center mb-6">
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute top-20 left-10 w-72 h-72 bg-teal-500/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+            x: [0, 30, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-10 w-96 h-96 bg-teal-600/15 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.6, 0.4],
+            y: [0, -40, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8 w-full">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex justify-center mb-8"
+          >
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/80 backdrop-blur-sm rounded-full border border-teal-200 shadow-lg shadow-teal-500/10">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
+              </span>
+              <span className="text-teal-700 font-semibold text-sm">HiQor Research Portal</span>
+            </div>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 text-center mb-6"
+            style={{
+              textShadow: "0 0 80px rgba(20,184,166,0.3)",
+            }}
+          >
             Insurance Broker{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-teal-600 to-teal-500">
               Research Portal
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-lg md:text-xl text-slate-600 text-center max-w-3xl mx-auto mb-10">
-            Comprehensive research and analysis for establishing a multi-state Insurance Broker of Record operation with a focus on West Coast market expansion.
-          </p>
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-xl md:text-2xl text-slate-600 text-center max-w-4xl mx-auto mb-12 leading-relaxed"
+          >
+            Comprehensive research for establishing a multi-state Insurance Broker of Record operation
+            with strategic West Coast market expansion.
+          </motion.p>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {keyMetrics.map((metric) => (
-              <div
+          {/* Key Metrics */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto"
+          >
+            {keyMetrics.map((metric, i) => (
+              <motion.div
                 key={metric.label}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 shadow-lg shadow-teal-500/5 text-center"
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="relative group"
               >
-                <p className="text-2xl md:text-3xl font-bold text-teal-600 mb-1">{metric.value}</p>
-                <p className="text-sm font-medium text-slate-900">{metric.label}</p>
-                <p className="text-xs text-slate-500 mt-1">{metric.description}</p>
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-teal-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-5 md:p-6 border border-slate-200 shadow-xl shadow-teal-500/5 text-center hover:border-teal-300 transition-colors">
+                  <metric.icon className="w-6 h-6 text-teal-500 mx-auto mb-2" />
+                  <p className="text-2xl md:text-3xl font-black text-teal-600 mb-1">{metric.value}</p>
+                  <p className="text-sm font-bold text-slate-900">{metric.label}</p>
+                  <p className="text-xs text-slate-500 mt-1">{metric.description}</p>
+                </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
+
+        {/* Bottom gradient fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent z-10 pointer-events-none" />
       </section>
 
       {/* Research Modules */}
-      <section className="py-16 md:py-24 bg-slate-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Research Modules
+      <section className="py-20 md:py-28 bg-slate-50 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 opacity-[0.02]">
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `linear-gradient(to right, #14B8A6 1px, transparent 1px), linear-gradient(to bottom, #14B8A6 1px, transparent 1px)`,
+              backgroundSize: '60px 60px',
+            }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-teal-200 shadow-lg mb-6"
+            >
+              <Zap className="w-4 h-4 text-teal-500" />
+              <span className="text-sm font-semibold text-teal-700">Research Modules</span>
+            </motion.div>
+
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4">
+              Navigate the{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
+                Complete Guide
+              </span>
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Navigate through comprehensive research covering every aspect of becoming a licensed insurance broker.
+              Every aspect of becoming a licensed insurance broker, from requirements to strategy.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {researchModules.map((module) => (
-              <Link
-                key={module.title}
-                href={module.href}
-                className={`group relative bg-white rounded-2xl p-6 border transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 ${
-                  module.highlight
-                    ? 'border-teal-300 ring-2 ring-teal-500/20'
-                    : 'border-slate-200 hover:border-teal-300'
-                }`}
-              >
-                {/* Badge */}
-                {module.badge && (
-                  <div className="absolute -top-3 right-4">
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                      module.highlight
-                        ? 'bg-teal-500 text-white'
-                        : 'bg-slate-100 text-slate-700 border border-slate-200'
-                    }`}>
-                      {module.badge}
-                    </span>
-                  </div>
-                )}
-
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                  module.highlight
-                    ? 'bg-teal-500 text-white'
-                    : 'bg-teal-50 text-teal-600 group-hover:bg-teal-500 group-hover:text-white'
-                } transition-colors`}>
-                  {module.icon}
-                </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">
-                  {module.title}
-                </h3>
-                <p className="text-slate-600 text-sm mb-4 line-clamp-2">
-                  {module.description}
-                </p>
-
-                {/* Stats */}
-                {module.stats && (
-                  <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
-                    <span className="text-xs text-slate-500">{module.stats.label}:</span>
-                    <span className="text-sm font-bold text-teal-600">{module.stats.value}</span>
-                  </div>
-                )}
-
-                {/* Arrow */}
-                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-5 h-5 text-teal-500" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                  </svg>
-                </div>
-              </Link>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          >
+            {researchModules.map((module, index) => (
+              <ModuleCard key={module.title} module={module} index={index} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Strategic Overview */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+      <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+        <motion.div
+          className="absolute top-0 right-0 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.5, 0.7, 0.5],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-full border border-teal-200 mb-6">
-                <span className="text-teal-600 font-semibold text-sm">Strategic Recommendation</span>
+                <Target className="w-4 h-4 text-teal-600" />
+                <span className="text-teal-700 font-semibold text-sm">Strategic Recommendation</span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                Phased West Coast Expansion
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6">
+                Phased West Coast{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
+                  Expansion
+                </span>
               </h2>
 
-              <p className="text-lg text-slate-600 mb-8">
+              <p className="text-lg text-slate-600 mb-10 leading-relaxed">
                 Our research recommends a strategic phased approach starting with California as the anchor market.
-                This approach minimizes risk while maximizing market penetration and revenue potential.
+                This minimizes risk while maximizing market penetration and revenue potential.
               </p>
 
               <div className="space-y-4">
-                {[
-                  { phase: "Phase 1", markets: "California + Nevada", investment: "$45,000", timeline: "Months 1-12" },
-                  { phase: "Phase 2", markets: "Arizona", investment: "$15,000", timeline: "Months 13-18" },
-                  { phase: "Phase 3", markets: "Oregon + Washington", investment: "$20,000", timeline: "Months 19-24" },
-                  { phase: "Phase 4", markets: "National Expansion", investment: "$70,000", timeline: "Months 25-36+" },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                    <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white font-bold text-sm">{i + 1}</span>
+                {phases.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                    whileHover={{ x: 5 }}
+                    className="flex items-center gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-200 hover:border-teal-300 hover:shadow-lg hover:shadow-teal-500/10 transition-all cursor-pointer"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <span className="text-white font-bold text-lg">{i + 1}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-1">
                         <p className="font-bold text-slate-900">{item.phase}: {item.markets}</p>
-                        <p className="text-teal-600 font-semibold">{item.investment}</p>
+                        <p className="text-teal-600 font-bold">{item.investment}</p>
                       </div>
                       <p className="text-sm text-slate-500">{item.timeline}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Market Opportunity Card */}
-            <div className="bg-slate-900 rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-6">Market Opportunity</h3>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-teal-600/20 rounded-3xl blur-2xl" />
+              <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-8 md:p-10 text-white overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-600/10 rounded-full blur-3xl" />
 
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                {[
-                  { value: "$48B+", label: "West Coast Market" },
-                  { value: "65-70%", label: "Broker Share" },
-                  { value: "5-7%", label: "Annual Growth" },
-                  { value: "$7.2M", label: "Year 3 Target" },
-                ].map((stat) => (
-                  <div key={stat.label} className="bg-white/10 rounded-xl p-4 text-center">
-                    <p className="text-2xl font-bold text-teal-400">{stat.value}</p>
-                    <p className="text-sm text-slate-300">{stat.label}</p>
+                <div className="relative z-10">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-8">Market Opportunity</h3>
+
+                  <div className="grid grid-cols-2 gap-4 mb-10">
+                    {[
+                      { value: "$48B+", label: "West Coast Market" },
+                      { value: "65-70%", label: "Broker Share" },
+                      { value: "5-7%", label: "Annual Growth" },
+                      { value: "$7.2M", label: "Year 3 Target" },
+                    ].map((stat, i) => (
+                      <motion.div
+                        key={stat.label}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 + i * 0.1 }}
+                        className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/10"
+                      >
+                        <p className="text-2xl md:text-3xl font-black text-teal-400">{stat.value}</p>
+                        <p className="text-sm text-slate-300">{stat.label}</p>
+                      </motion.div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              <div className="space-y-3">
-                {[
-                  "California: Largest state market nationally",
-                  "Digital transformation disrupting traditional distribution",
-                  "Remote work enables cost-effective operations",
-                  "Regulatory complexity favors organized operations",
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-slate-300">{item}</span>
+                  <div className="space-y-4 mb-8">
+                    {[
+                      "California: Largest state market nationally",
+                      "Digital transformation disrupting distribution",
+                      "Remote work enables cost-effective operations",
+                      "Regulatory complexity favors organization",
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.5 + i * 0.1 }}
+                        className="flex items-start gap-3"
+                      >
+                        <CheckCircle2 className="w-5 h-5 text-teal-400 flex-shrink-0 mt-0.5" />
+                        <span className="text-slate-300">{item}</span>
+                      </motion.div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <Link
-                  href="/insurance-broker-research/executive-summary"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-full transition-colors"
-                >
-                  Read Full Executive Summary
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                  </svg>
-                </Link>
+                  <Link
+                    href="/insurance-broker-research/executive-summary"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-400 text-white font-bold rounded-full transition-colors shadow-lg shadow-teal-500/30"
+                  >
+                    Read Full Executive Summary
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-teal-500 to-teal-600">
-        <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Partner with HiQor?
-          </h2>
-          <p className="text-lg text-teal-100 mb-8 max-w-2xl mx-auto">
-            Skip the licensing complexity. Partner with Daily Event Insurance and HiQor as your Broker of Record and get to market in 30 days instead of 18+ months.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Animated gradient background */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            background: [
+              "linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)",
+              "linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #14b8a6 100%)",
+              "linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)",
+            ],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute top-10 left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-10 right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1.3, 1, 1.3],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 mb-8"
+          >
+            <Building2 className="w-4 h-4 text-white" />
+            <span className="text-white font-semibold text-sm">Partnership Opportunity</span>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6"
+          >
+            Skip the Licensing.<br />
+            <span className="text-teal-200">Partner with HiQor.</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-teal-100 mb-10 max-w-3xl mx-auto"
+          >
+            Get to market in 30 days instead of 18+ months. Let Daily Event Insurance and HiQor be your Broker of Record.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
             <Link
               href="/insurance-broker-research/partnership"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-teal-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-teal-600 font-bold rounded-full shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
             >
               Explore Partnership
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-              </svg>
+              <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/#apply"
@@ -328,14 +665,14 @@ export default function InsuranceBrokerResearchPage() {
             >
               Apply Now
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Disclaimer */}
-      <section className="py-8 bg-slate-50">
+      <section className="py-8 bg-slate-100">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <p className="text-xs text-slate-500">
+          <p className="text-sm text-slate-500">
             <strong>Disclaimer:</strong> This research portal is for informational purposes only and does not constitute legal, financial, or regulatory advice.
             Consult with qualified professionals for advice specific to your business operations.
           </p>
