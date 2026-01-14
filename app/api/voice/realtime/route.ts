@@ -36,16 +36,20 @@ export async function POST(request: NextRequest) {
 
     // Create room service client to create the room
     const httpUrl = wsUrl.replace('wss://', 'https://').replace('ws://', 'http://')
+    console.log('LiveKit HTTP URL:', httpUrl)
+    console.log('API Key prefix:', apiKey?.slice(0, 5) + '...')
+
     const roomService = new RoomServiceClient(httpUrl, apiKey, apiSecret)
 
     // Create the room first
+    console.log('Creating room:', roomName)
     await roomService.createRoom({
       name: roomName,
       emptyTimeout: 300, // 5 minutes
       maxParticipants: 2, // user + agent
     })
 
-    console.log(`Created room: ${roomName}`)
+    console.log(`Created room successfully: ${roomName}`)
 
     // Dispatch the named agent to the room
     try {
@@ -86,10 +90,20 @@ export async function POST(request: NextRequest) {
       participantId,
       systemPrompt,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Voice token generation error:', error)
+    console.error('Error details:', {
+      message: error?.message,
+      code: error?.code,
+      status: error?.status,
+      stack: error?.stack?.slice(0, 500)
+    })
     return NextResponse.json(
-      { error: 'Failed to initialize voice session' },
+      {
+        error: 'Failed to initialize voice session',
+        details: error?.message || 'Unknown error',
+        code: error?.code
+      },
       { status: 500 }
     )
   }
