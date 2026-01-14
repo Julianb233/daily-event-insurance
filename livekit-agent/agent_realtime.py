@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import logging
+import asyncio
 from livekit.agents import (
     Agent,
     AgentSession,
@@ -22,6 +23,7 @@ from livekit.agents import (
     cli,
     llm,
 )
+from livekit.plugins import openai
 from openai.types.realtime import realtime_audio_input_turn_detection
 from workflow import SalesWorkflow
 

@@ -39,9 +39,14 @@ const publicRoutes = [
   "/sign-in",
   "/sign-up",
   "/checkout",
+  "/talk", // Voice AI chat page
+  "/call-center", // Call center support page
+  "/support", // Support pages
+  "/demo", // Demo pages
   "/api/auth",
   "/api/webhook", // Webhooks need to be public
   "/api/stripe", // Stripe webhooks and checkout need to be accessible
+  "/api/voice", // Voice agent API
   "/events", // Public microsites
 ]
 
