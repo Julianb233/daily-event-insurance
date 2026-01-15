@@ -148,9 +148,9 @@ export async function getScriptsByBusinessType(
     return scripts.map(s => ({
       id: s.id,
       name: s.name,
-      content: s.scriptContent,
+      content: s.openingScript,
       objectionHandlers: s.objectionHandlers ? JSON.parse(s.objectionHandlers) : [],
-      closingTechniques: s.closingTechniques ? JSON.parse(s.closingTechniques) : [],
+      closingTechniques: s.closingScript ? [s.closingScript] : [],
     }))
   } catch (error) {
     console.error("[ScriptSelector] Error:", error)
