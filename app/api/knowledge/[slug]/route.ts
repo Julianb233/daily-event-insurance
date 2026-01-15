@@ -33,39 +33,43 @@ export async function GET(
       try {
         const supabase = createAdminClient()
 
-        const { data: doc, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: doc, error } = await (supabase as any)
           .from("integration_docs")
           .select("*")
           .eq("slug", slug)
           .eq("is_published", true)
-          .single()
+          .single() as { data: Record<string, unknown> | null; error: unknown }
 
         if (!error && doc) {
           // Get related articles from same category
-          const { data: relatedDocs } = await supabase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: relatedDocs } = await (supabase as any)
             .from("integration_docs")
             .select("id, title, slug, category, content")
             .eq("category", doc.category)
             .eq("is_published", true)
             .neq("id", doc.id)
-            .limit(3)
+            .limit(3) as { data: Record<string, unknown>[] | null; error: unknown }
 
           // Track view (async, don't block response)
-          supabase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(supabase as any)
             .rpc("increment_doc_views", { doc_id: doc.id })
             .then(() => {})
             .catch(() => {})
 
+          const docContent = doc.content as string | undefined
           const article = {
             id: doc.id,
             title: doc.title,
             slug: doc.slug,
-            summary: doc.content?.substring(0, 200) + "...",
+            summary: docContent?.substring(0, 200) + "...",
             content: doc.content,
             category: doc.category,
             posSystem: doc.pos_system,
             framework: doc.framework,
-            codeExamples: doc.code_examples ? JSON.parse(doc.code_examples) : [],
+            codeExamples: doc.code_examples ? JSON.parse(doc.code_examples as string) : [],
             tags: [],
             createdAt: doc.created_at,
             updatedAt: doc.updated_at,
@@ -76,7 +80,7 @@ export async function GET(
             title: r.title,
             slug: r.slug,
             category: r.category,
-            summary: r.content?.substring(0, 150) + "...",
+            summary: (r.content as string | undefined)?.substring(0, 150) + "...",
           }))
 
           return NextResponse.json({

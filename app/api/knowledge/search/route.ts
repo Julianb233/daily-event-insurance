@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
         const supabase = createAdminClient()
 
         // Use Postgres full-text search
-        let searchQuery = supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let searchQuery = (supabase as any)
           .from("integration_docs")
           .select("*")
           .eq("is_published", true)
@@ -51,17 +52,18 @@ export async function POST(request: NextRequest) {
 
         searchQuery = searchQuery.limit(maxLimit)
 
-        const { data: titleResults, error: titleError } = await searchQuery
+        const { data: titleResults, error: titleError } = await searchQuery as { data: Record<string, unknown>[] | null; error: unknown }
 
         // Also search content if title search returns few results
-        let contentResults: typeof titleResults = []
+        let contentResults: Record<string, unknown>[] = []
         if (!titleError && (!titleResults || titleResults.length < maxLimit)) {
-          const { data: contentData } = await supabase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: contentData } = await (supabase as any)
             .from("integration_docs")
             .select("*")
             .eq("is_published", true)
             .textSearch("content", query, { type: "websearch" })
-            .limit(maxLimit - (titleResults?.length || 0))
+            .limit(maxLimit - (titleResults?.length || 0)) as { data: Record<string, unknown>[] | null; error: unknown }
 
           contentResults = contentData || []
         }
@@ -78,13 +80,13 @@ export async function POST(request: NextRequest) {
               id: doc.id,
               title: doc.title,
               slug: doc.slug,
-              summary: doc.content?.substring(0, 200) + "...",
+              summary: (doc.content as string | undefined)?.substring(0, 200) + "...",
               category: doc.category,
               posSystem: doc.pos_system,
               framework: doc.framework,
             },
             relevanceScore: 1, // DB doesn't provide score
-            snippet: generateSnippet(doc.content || "", query),
+            snippet: generateSnippet((doc.content as string) || "", query),
             matchedTerms: query.split(/\s+/),
           }))
 

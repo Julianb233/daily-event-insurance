@@ -40,11 +40,12 @@ export async function GET(
     if (isSupabaseServerConfigured()) {
       const supabase = createAdminClient()
 
-      const { data, error } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
         .from("policies")
         .select("*")
         .eq("id", id)
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
       if (error || !data) {
         return NextResponse.json(
@@ -54,17 +55,17 @@ export async function GET(
       }
 
       policy = {
-        policyNumber: data.policy_number,
-        eventType: data.event_type,
-        eventDate: data.event_date,
-        participants: data.participants,
-        coverageType: data.coverage_type,
-        premium: data.premium,
-        effectiveDate: data.effective_date,
-        expirationDate: data.expiration_date,
-        customerName: data.customer_name,
-        customerEmail: data.customer_email,
-        location: data.location,
+        policyNumber: data.policy_number as string,
+        eventType: data.event_type as string,
+        eventDate: data.event_date as string,
+        participants: data.participants as number,
+        coverageType: data.coverage_type as string,
+        premium: data.premium as string,
+        effectiveDate: data.effective_date as string,
+        expirationDate: data.expiration_date as string,
+        customerName: data.customer_name as string,
+        customerEmail: data.customer_email as string,
+        location: data.location as string | undefined,
       }
     } else {
       // Mock policy for demo
