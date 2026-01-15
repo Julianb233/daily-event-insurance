@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Create a pending recording record in the database
-    const { error: dbError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: dbError } = await (supabase as any)
       .from("onboarding_recordings")
       .insert({
         id: sessionId,
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
         recording_url: null, // Will be set on complete
         duration: 0,
         created_at: timestamp,
-      })
+      }) as { error: unknown }
 
     if (dbError) {
       console.error("[Recordings Start] Database error:", dbError)
