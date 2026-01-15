@@ -28,11 +28,12 @@ export async function GET(
 
     const supabase = createAdminClient()
 
-    const { data: doc, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: doc, error } = await (supabase as any)
       .from("integration_docs")
       .select("*")
       .eq("id", id)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (error || !doc) {
       return NextResponse.json(
@@ -50,7 +51,7 @@ export async function GET(
         category: doc.category,
         posSystem: doc.pos_system,
         framework: doc.framework,
-        codeExamples: doc.code_examples ? JSON.parse(doc.code_examples) : [],
+        codeExamples: doc.code_examples ? JSON.parse(doc.code_examples as string) : [],
         embedding: doc.embedding ? true : false, // Just indicate if embedding exists
         isPublished: doc.is_published,
         createdAt: doc.created_at,
@@ -105,11 +106,12 @@ export async function PATCH(
     const supabase = createAdminClient()
 
     // Check if article exists
-    const { data: existing } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabase as any)
       .from("integration_docs")
       .select("id")
       .eq("id", id)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (!existing) {
       return NextResponse.json(
@@ -147,12 +149,13 @@ export async function PATCH(
 
     // If slug is being updated, check for uniqueness
     if (body.slug) {
-      const { data: slugExists } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: slugExists } = await (supabase as any)
         .from("integration_docs")
         .select("id")
         .eq("slug", body.slug)
         .neq("id", id)
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
       if (slugExists) {
         return NextResponse.json(
@@ -181,14 +184,15 @@ export async function PATCH(
     }
 
     // Update article
-    const { data: updated, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: updated, error } = await (supabase as any)
       .from("integration_docs")
       .update(updateData)
       .eq("id", id)
       .select()
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
-    if (error) {
+    if (error || !updated) {
       console.error("[Admin Knowledge] Update error:", error)
       return NextResponse.json(
         { error: "Failed to update article" },
@@ -206,7 +210,7 @@ export async function PATCH(
         category: updated.category,
         posSystem: updated.pos_system,
         framework: updated.framework,
-        codeExamples: updated.code_examples ? JSON.parse(updated.code_examples) : [],
+        codeExamples: updated.code_examples ? JSON.parse(updated.code_examples as string) : [],
         isPublished: updated.is_published,
         createdAt: updated.created_at,
         updatedAt: updated.updated_at,
@@ -258,11 +262,12 @@ export async function DELETE(
     const supabase = createAdminClient()
 
     // Check if article exists
-    const { data: existing } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabase as any)
       .from("integration_docs")
       .select("id, title")
       .eq("id", id)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (!existing) {
       return NextResponse.json(
@@ -272,10 +277,11 @@ export async function DELETE(
     }
 
     // Delete the article
-    const { error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
       .from("integration_docs")
       .delete()
-      .eq("id", id)
+      .eq("id", id) as { error: unknown }
 
     if (error) {
       console.error("[Admin Knowledge] Delete error:", error)
