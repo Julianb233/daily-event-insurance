@@ -22,8 +22,8 @@ import type {
 // ============= Constants =============
 
 // Widget iframe URL - uses Next.js app route
-const WIDGET_URL = typeof window !== 'undefined' && (window as Record<string, string>).__DEI_WIDGET_URL__
-  ? (window as Record<string, string>).__DEI_WIDGET_URL__
+const WIDGET_URL = typeof window !== 'undefined' && (window as unknown as Record<string, string>).__DEI_WIDGET_URL__
+  ? (window as unknown as Record<string, string>).__DEI_WIDGET_URL__
   : 'https://app.dailyevent.com/embed/widget'
 const WIDGET_NAMESPACE = 'DailyEventWidget'
 

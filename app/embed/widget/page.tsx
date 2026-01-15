@@ -7,7 +7,7 @@
  * insurance quote and purchase flow for partner websites.
  */
 
-import { useEffect, useState, useCallback, useMemo } from "react"
+import { Suspense, useEffect, useState, useCallback, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { format, addDays } from "date-fns"
@@ -94,7 +94,29 @@ const EVENT_TYPES = [
 
 // ============= Widget Component =============
 
-export default function EmbeddableWidget() {
+// Suspense wrapper for the widget
+export default function EmbeddableWidgetPage() {
+  return (
+    <Suspense fallback={<WidgetLoadingFallback />}>
+      <EmbeddableWidget />
+    </Suspense>
+  )
+}
+
+// Loading fallback component
+function WidgetLoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="animate-pulse flex flex-col items-center gap-2">
+        <div className="w-12 h-12 rounded-full bg-gray-200" />
+        <div className="w-24 h-4 bg-gray-200 rounded" />
+      </div>
+    </div>
+  )
+}
+
+// Main widget component
+function EmbeddableWidget() {
   const searchParams = useSearchParams()
 
   // Parse config from URL
