@@ -170,7 +170,7 @@ export default function SupportHubPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {quickActions.map((action, index) => (
             <Link key={index} href={action.href}>
-              <GlassCard hover glow>
+              <GlassCard hoverEffect gradientBorder>
                 <div className="p-6 group">
                   <div className="w-14 h-14 mb-4 rounded-2xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center">
                     <action.icon className="w-7 h-7 text-white" />
@@ -217,7 +217,7 @@ export default function SupportHubPage() {
 
       {/* Popular Articles */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-slate-900">
@@ -265,7 +265,7 @@ export default function SupportHubPage() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <GlassCard hover glow>
+              <GlassCard hoverEffect gradientBorder>
                 <div className="p-6 text-center">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center">
                     <stat.icon className="w-6 h-6 text-white" />
@@ -285,7 +285,7 @@ export default function SupportHubPage() {
 
       {/* Contact CTA */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-12 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -149,7 +149,7 @@ export default function RevenuePage() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <GlassCard hover glow={tier.popular}>
+              <GlassCard hoverEffect gradientBorder={tier.popular}>
                 <div className="p-8 relative">
                   {tier.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -182,7 +182,7 @@ export default function RevenuePage() {
 
       {/* Revenue Streams */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <TrendingUp className="w-8 h-8 text-teal-600" />
@@ -223,7 +223,7 @@ export default function RevenuePage() {
 
       {/* Payout Schedule */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <Calendar className="w-8 h-8 text-teal-600" />
@@ -276,7 +276,7 @@ export default function RevenuePage() {
 
       {/* Multi-Location Payouts */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <Building2 className="w-8 h-8 text-teal-600" />
@@ -327,7 +327,7 @@ export default function RevenuePage() {
 
       {/* Revenue Growth Tips */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
               Strategies to Increase Revenue
@@ -390,7 +390,7 @@ export default function RevenuePage() {
 
       {/* Next Steps */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
               Related Resources

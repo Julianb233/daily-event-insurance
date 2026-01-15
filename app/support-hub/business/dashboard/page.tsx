@@ -54,19 +54,19 @@ export default function DashboardPage() {
   const navigationSteps = [
     {
       title: "Access Dashboard",
-      content: "Log in to your partner portal at dashboard.dailyeventinsurance.com"
+      description: "Log in to your partner portal at dashboard.dailyeventinsurance.com"
     },
     {
       title: "Main Navigation",
-      content: "Use the left sidebar to access different sections: Overview, Reports, Billing, Settings"
+      description: "Use the left sidebar to access different sections: Overview, Reports, Billing, Settings"
     },
     {
       title: "Quick Actions",
-      content: "Top right corner has quick access to: Add Member, View Reports, Download Invoice"
+      description: "Top right corner has quick access to: Add Member, View Reports, Download Invoice"
     },
     {
       title: "Customize Layout",
-      content: "Click the gear icon to customize which widgets appear on your dashboard"
+      description: "Click the gear icon to customize which widgets appear on your dashboard"
     }
   ];
 

@@ -166,7 +166,7 @@ export default function BusinessPage() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <GlassCard hover glow>
+            <GlassCard hoverEffect gradientBorder>
               <div className="p-6 text-center">
                 <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center">
                   <item.icon className="w-6 h-6 text-white" />
@@ -184,7 +184,7 @@ export default function BusinessPage() {
 
       {/* How Payment Works */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <Wallet className="w-8 h-8 text-teal-600" />
@@ -227,7 +227,7 @@ export default function BusinessPage() {
 
       {/* Revenue Calculator Example */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <TrendingUp className="w-8 h-8 text-teal-600" />
@@ -327,7 +327,7 @@ export default function BusinessPage() {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -4 }}
               >
-                <GlassCard hover glow={category.highlight}>
+                <GlassCard hoverEffect gradientBorder={category.highlight}>
                   <div className="p-6 group">
                     {category.highlight && (
                       <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-semibold mb-3">
@@ -356,7 +356,7 @@ export default function BusinessPage() {
 
       {/* Quick Facts */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
               Payment Quick Facts
@@ -395,7 +395,7 @@ export default function BusinessPage() {
 
       {/* CTA */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-12 text-center bg-gradient-to-br from-teal-50/50 to-blue-50/50">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

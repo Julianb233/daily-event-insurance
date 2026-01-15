@@ -15,6 +15,7 @@ import {
   Mail,
   Phone,
   AlertCircle,
+  AlertTriangle,
   TrendingUp,
   Users,
   Calendar,

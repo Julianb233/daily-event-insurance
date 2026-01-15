@@ -52,23 +52,23 @@ export default function InvoicingPage() {
   const downloadSteps = [
     {
       title: "Access Invoice Center",
-      content: "Navigate to Dashboard → Billing → Invoices"
+      description: "Navigate to Dashboard → Billing → Invoices"
     },
     {
       title: "Select Time Period",
-      content: "Use the date picker to select month, quarter, or custom range"
+      description: "Use the date picker to select month, quarter, or custom range"
     },
     {
       title: "Apply Filters (Optional)",
-      content: "Filter by location, payment status, or transaction type"
+      description: "Filter by location, payment status, or transaction type"
     },
     {
       title: "Preview Invoice",
-      content: "Click 'View Details' to preview before downloading"
+      description: "Click 'View Details' to preview before downloading"
     },
     {
       title: "Download",
-      content: "Choose format (PDF for records, CSV for accounting software) and click Download"
+      description: "Choose format (PDF for records, CSV for accounting software) and click Download"
     }
   ];
 

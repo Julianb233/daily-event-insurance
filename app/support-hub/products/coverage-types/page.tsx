@@ -202,7 +202,7 @@ export default function CoverageTypesPage() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <GlassCard hover={false}>
+            <GlassCard hoverEffect={false}>
               <div className="p-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                   {/* Header */}
@@ -314,7 +314,7 @@ export default function CoverageTypesPage() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <GlassCard hover>
+              <GlassCard hoverEffect>
                 <div className="p-6">
                   <div className="w-14 h-14 mb-4 rounded-2xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center">
                     <activity.icon className="w-7 h-7 text-white" />
@@ -372,7 +372,7 @@ export default function CoverageTypesPage() {
 
       {/* FAQs */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <HelpCircle className="w-8 h-8 text-teal-600" />
@@ -402,7 +402,7 @@ export default function CoverageTypesPage() {
 
       {/* Next Steps */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
               Explore More

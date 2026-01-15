@@ -154,7 +154,7 @@ export default function ProductsPage() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <GlassCard hover>
+            <GlassCard hoverEffect>
               <div className="p-6 text-center">
                 <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-teal-500 to-blue-500 flex items-center justify-center">
                   <benefit.icon className="w-6 h-6 text-white" />
@@ -193,7 +193,7 @@ export default function ProductsPage() {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -4 }}
               >
-                <GlassCard hover glow={category.highlight}>
+                <GlassCard hoverEffect gradientBorder={category.highlight}>
                   <div className="p-6 group">
                     {category.highlight && (
                       <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-semibold mb-3">
@@ -222,7 +222,7 @@ export default function ProductsPage() {
 
       {/* Quick Comparison Table */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <div className="flex items-center gap-3 mb-8">
               <Shield className="w-8 h-8 text-teal-600" />
@@ -277,7 +277,7 @@ export default function ProductsPage() {
 
       {/* How It Works */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-8">
             <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
               How Coverage Works for Your Members
@@ -312,7 +312,7 @@ export default function ProductsPage() {
 
       {/* CTA Section */}
       <section>
-        <GlassCard hover={false}>
+        <GlassCard hoverEffect={false}>
           <div className="p-12 text-center bg-gradient-to-br from-teal-50/50 to-blue-50/50">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

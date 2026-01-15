@@ -85,27 +85,27 @@ export default function TeamPage() {
   const addMemberSteps = [
     {
       title: "Navigate to Team Settings",
-      content: "Go to Dashboard → Settings → Team Management"
+      description: "Go to Dashboard → Settings → Team Management"
     },
     {
       title: "Click 'Add Team Member'",
-      content: "Click the blue 'Add Team Member' button in the top right"
+      description: "Click the blue 'Add Team Member' button in the top right"
     },
     {
       title: "Enter User Details",
-      content: "Provide email address, first name, and last name"
+      description: "Provide email address, first name, and last name"
     },
     {
       title: "Assign Role",
-      content: "Select appropriate role: Owner, Admin, Manager, or Staff"
+      description: "Select appropriate role: Owner, Admin, Manager, or Staff"
     },
     {
       title: "Set Location Access",
-      content: "Choose which locations this user can access (if multi-location)"
+      description: "Choose which locations this user can access (if multi-location)"
     },
     {
       title: "Send Invitation",
-      content: "Click 'Send Invite' - user receives email with setup instructions"
+      description: "Click 'Send Invite' - user receives email with setup instructions"
     }
   ];
 

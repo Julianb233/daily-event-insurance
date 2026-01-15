@@ -92,23 +92,23 @@ export default function ReportingPage() {
   const exportSteps = [
     {
       title: "Select Report Type",
-      content: "Choose from Sales, Engagement, Coverage, or Financial reports"
+      description: "Choose from Sales, Engagement, Coverage, or Financial reports"
     },
     {
       title: "Set Date Range",
-      content: "Pick preset periods (This Month, Last Quarter) or custom date range"
+      description: "Pick preset periods (This Month, Last Quarter) or custom date range"
     },
     {
       title: "Apply Filters",
-      content: "Filter by location, member type, product category, or payment method"
+      description: "Filter by location, member type, product category, or payment method"
     },
     {
       title: "Choose Format",
-      content: "Select PDF (visual reports), CSV (data analysis), or Excel (advanced)"
+      description: "Select PDF (visual reports), CSV (data analysis), or Excel (advanced)"
     },
     {
       title: "Generate & Download",
-      content: "Click 'Generate Report' and download when ready (30-60 seconds)"
+      description: "Click 'Generate Report' and download when ready (30-60 seconds)"
     }
   ];
 
