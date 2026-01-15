@@ -9,6 +9,7 @@ import Stripe from "stripe"
 import { stripe, stripeConfig, isStripeError } from "./client"
 import { db, quotes, policies, payments, webhookEvents, NewPolicy, NewPayment } from "@/lib/db"
 import { eq } from "drizzle-orm"
+import { sendPolicyConfirmationEmail, PolicyConfirmationData } from "@/lib/email"
 
 export interface WebhookEvent {
   id: string
@@ -270,9 +271,34 @@ async function handleCheckoutSessionCompleted(
 
   console.log("[Webhook] Quote updated to accepted:", quote.quoteNumber)
 
-  // TODO: Send policy confirmation email
-  // TODO: Generate policy PDF document
-  // TODO: Trigger policy activation workflow
+  // Send policy confirmation email
+  try {
+    const emailData: PolicyConfirmationData = {
+      customerName: policy.customerName,
+      customerEmail: policy.customerEmail,
+      policyNumber: policy.policyNumber,
+      quoteNumber: quote.quoteNumber || `Q-${quoteId.substring(0, 8)}`,
+      eventType: policy.eventType,
+      eventDate: policy.eventDate.toISOString(),
+      eventLocation: policy.location || undefined,
+      participants: policy.participants,
+      coverageType: policy.coverageType,
+      premium: policy.premium,
+      effectiveDate: policy.effectiveDate.toISOString(),
+      expirationDate: policy.expirationDate.toISOString(),
+      receiptUrl: charge?.receipt_url || undefined,
+      supportEmail: "support@dailyeventinsurance.com",
+    }
+
+    await sendPolicyConfirmationEmail(emailData)
+    console.log("[Webhook] Policy confirmation email sent to:", policy.customerEmail)
+  } catch (emailError) {
+    // Log error but don't fail the webhook - policy is already created
+    console.error("[Webhook] Failed to send policy confirmation email:", emailError)
+  }
+
+  // Note: Policy documents are provided by Mutual of Omaha (carrier)
+  // This platform handles distribution and commission tracking only
 }
 
 /**

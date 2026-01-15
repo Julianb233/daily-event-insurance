@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -26,8 +26,12 @@ import {
   TrendingUp,
   BookOpen,
   Mail,
-  Loader2
+  Loader2,
+  Video,
+  AlertCircle,
+  X
 } from "lucide-react"
+import { useOnboardingTracker, type OnboardingIssue } from "@/lib/hooks/useOnboardingTracker"
 import { RevenueCalculator } from "@/components/revenue-calculator"
 import { VoiceContextSetter } from "@/components/voice"
 import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
@@ -1006,6 +1010,138 @@ function Step4GoLive({ formData, onBack, onComplete, isSubmitting }: Step4Props)
   )
 }
 
+// Recording consent banner component
+interface RecordingConsentBannerProps {
+  onAccept: () => void
+  onDecline: () => void
+  isVisible: boolean
+}
+
+function RecordingConsentBanner({ onAccept, onDecline, isVisible }: RecordingConsentBannerProps) {
+  if (!isVisible) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg mx-4"
+    >
+      <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-[#14B8A6]/10 rounded-lg">
+            <Video className="w-5 h-5 text-[#14B8A6]" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 text-sm">Help us improve your experience</h3>
+            <p className="text-xs text-gray-600 mt-1">
+              Enable screen recording to help us understand how to make onboarding easier.
+              All data is encrypted and used only for improving our product.
+            </p>
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={onAccept}
+                className="px-3 py-1.5 bg-[#14B8A6] text-white text-xs font-medium rounded-lg hover:bg-[#0D9488] transition-colors"
+              >
+                Enable Recording
+              </button>
+              <button
+                onClick={onDecline}
+                className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                No Thanks
+              </button>
+            </div>
+          </div>
+          <button
+            onClick={onDecline}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// Recording indicator component
+interface RecordingIndicatorProps {
+  isRecording: boolean
+}
+
+function RecordingIndicator({ isRecording }: RecordingIndicatorProps) {
+  if (!isRecording) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="fixed top-24 right-4 z-40 flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 rounded-full"
+    >
+      <span className="relative flex h-2 w-2">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+      </span>
+      <span className="text-xs font-medium text-red-700">Recording</span>
+    </motion.div>
+  )
+}
+
+// Issue tip component for showing helpful suggestions
+interface IssueTipProps {
+  issues: OnboardingIssue[]
+  onDismiss: () => void
+}
+
+function IssueTip({ issues, onDismiss }: IssueTipProps) {
+  // Get the most recent high-priority issue
+  const relevantIssue = issues
+    .filter(i => i.severity === "medium" || i.severity === "high")
+    .sort((a, b) => b.timestamp - a.timestamp)[0]
+
+  if (!relevantIssue) return null
+
+  const getTipMessage = (issue: OnboardingIssue): string => {
+    switch (issue.type) {
+      case "stuck_too_long":
+        return "Taking your time? Need help with this step? Use our chat widget or click the help button."
+      case "multiple_validation_errors":
+        return "Having trouble with the form? Make sure all required fields are filled correctly."
+      case "excessive_back_navigation":
+        return "Looking for something? Feel free to use our support chat if you have questions."
+      default:
+        return "Need assistance? Our support team is here to help."
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      className="fixed bottom-24 right-4 z-40 w-80"
+    >
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-lg">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm text-amber-800">{getTipMessage(relevantIssue)}</p>
+          </div>
+          <button
+            onClick={onDismiss}
+            className="text-amber-400 hover:text-amber-600 transition-colors"
+            aria-label="Dismiss tip"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 function SuccessState() {
   return (
     <motion.div
@@ -1090,10 +1226,14 @@ function SuccessState() {
 export default function OnboardingForm() {
   const router = useRouter()
   const { data: session, update: updateSession } = useSession()
-  const [currentStep, setCurrentStep] = useState(1)
   const [isComplete, setIsComplete] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Recording consent state
+  const [showRecordingConsent, setShowRecordingConsent] = useState(true)
+  const [recordingEnabled, setRecordingEnabled] = useState(false)
+  const [showIssueTip, setShowIssueTip] = useState(true)
 
   // Shared form data across all steps
   const [formData, setFormData] = useState<OnboardingFormData>({
@@ -1114,19 +1254,65 @@ export default function OnboardingForm() {
     primaryColor: "#14B8A6",
   })
 
-  const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, 4))
-  }
+  // Step names for the tracker (using 0-indexed internally, displayed as 1-indexed)
+  const stepNames = ['Business Information', 'Integration Setup', 'Customize Products', 'Go Live']
 
-  const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1))
-  }
+  // Initialize the onboarding tracker with screen recording
+  const tracker = useOnboardingTracker({
+    totalSteps: 4,
+    stepNames,
+    partnerId: session?.user?.id,
+    enableRecording: recordingEnabled,
+    onStepChange: (step, stepName) => {
+      console.log(`[Onboarding] Step changed to ${step + 1}: ${stepName}`)
+    },
+    onIssueDetected: (issue) => {
+      console.warn(`[Onboarding] Issue detected:`, issue)
+      setShowIssueTip(true)
+    },
+    persistToServer: true,
+  })
+
+  // Convert 0-indexed tracker step to 1-indexed display step
+  const currentStep = tracker.currentStep + 1
+
+  // Handle recording consent
+  const handleAcceptRecording = useCallback(() => {
+    setRecordingEnabled(true)
+    setShowRecordingConsent(false)
+    // Start recording after consent
+    tracker.startRecordingForStep(tracker.currentStep)
+  }, [tracker])
+
+  const handleDeclineRecording = useCallback(() => {
+    setRecordingEnabled(false)
+    setShowRecordingConsent(false)
+  }, [])
+
+  // Navigation handlers that use the tracker
+  const handleNext = useCallback(() => {
+    // Mark current step as complete before moving
+    tracker.markStepComplete(tracker.currentStep)
+    tracker.nextStep()
+  }, [tracker])
+
+  const handleBack = useCallback(() => {
+    tracker.previousStep()
+  }, [tracker])
+
+  // Validation error tracking helper
+  const trackValidationError = useCallback((fieldName: string, errorMessage: string) => {
+    tracker.trackValidationError(`${fieldName}: ${errorMessage}`)
+  }, [tracker])
 
   const handleComplete = async () => {
     setIsSubmitting(true)
     setError(null)
 
     try {
+      // Mark final step as complete
+      tracker.markStepComplete(tracker.currentStep)
+
       // 1. Create partner in database via API
       const response = await fetch("/api/partner", {
         method: "POST",
@@ -1176,7 +1362,20 @@ export default function OnboardingForm() {
         await new Promise(resolve => setTimeout(resolve, 500))
       }
 
-      // 3. Show success state briefly then redirect
+      // 3. Upload screen recording if enabled and has events
+      if (recordingEnabled && tracker.isRecordingActive) {
+        try {
+          console.log('[Onboarding] Uploading screen recording...')
+          await tracker.stopRecordingForStep(tracker.currentStep)
+          // Save final progress with recording data
+          await tracker.saveProgress()
+        } catch (recordingErr) {
+          // Don't fail onboarding if recording upload fails
+          console.error('[Onboarding] Failed to upload recording:', recordingErr)
+        }
+      }
+
+      // 4. Show success state briefly then redirect
       setIsComplete(true)
 
       // Redirect to partner dashboard after 2 seconds
@@ -1235,6 +1434,32 @@ export default function OnboardingForm() {
           currentStep === 4 ? "What happens after I submit?" : undefined,
         ].filter(Boolean) as string[]}
       />
+
+      {/* Recording consent banner - shown at start of onboarding */}
+      <AnimatePresence>
+        {!isComplete && showRecordingConsent && (
+          <RecordingConsentBanner
+            isVisible={showRecordingConsent}
+            onAccept={handleAcceptRecording}
+            onDecline={handleDeclineRecording}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Recording indicator - shown when recording is active */}
+      {!isComplete && recordingEnabled && (
+        <RecordingIndicator isRecording={tracker.isRecordingActive} />
+      )}
+
+      {/* Issue tip - shown when issues are detected */}
+      <AnimatePresence>
+        {!isComplete && showIssueTip && tracker.issues.length > 0 && (
+          <IssueTip
+            issues={tracker.issues}
+            onDismiss={() => setShowIssueTip(false)}
+          />
+        )}
+      </AnimatePresence>
 
       <Header />
 
