@@ -109,7 +109,14 @@ export async function sendSms(params: SendSmsParams): Promise<SendSmsResult> {
     const client = getClient()
     const formattedTo = formatPhoneNumber(params.to)
 
-    const messageParams: twilio.MessageListInstanceCreateOptions = {
+    const messageParams: {
+      to: string
+      body: string
+      from?: string
+      messagingServiceSid?: string
+      mediaUrl?: string[]
+      statusCallback?: string
+    } = {
       to: formattedTo,
       body: params.body,
     }
