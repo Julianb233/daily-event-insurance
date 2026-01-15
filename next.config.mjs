@@ -3,6 +3,35 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/support',
+        destination: '/support-hub',
+        permanent: true,
+      },
+      {
+        source: '/support/contact',
+        destination: '/support-hub/contact',
+        permanent: true,
+      },
+      {
+        source: '/support/tickets',
+        destination: '/support-hub/tickets',
+        permanent: true,
+      },
+      {
+        source: '/support/knowledge-base',
+        destination: '/support-hub/faq',
+        permanent: true,
+      },
+      {
+        source: '/support/knowledge-base/:slug',
+        destination: '/support-hub/faq',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
