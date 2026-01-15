@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import useSWR from 'swr'
 import {
   Phone,
   PhoneIncoming,
@@ -25,7 +26,11 @@ import {
   User,
   Building2,
   MapPin,
+  Loader2,
 } from 'lucide-react'
+
+// SWR fetcher
+const fetcher = (url: string) => fetch(url).then(res => res.json())
 
 // TypeScript interfaces
 interface CallRecord {
@@ -63,8 +68,8 @@ interface DailyStat {
   completed: number
 }
 
-// Mock data for development
-const mockCallStats: CallStats = {
+// Mock data for development (fallback when API unavailable)
+const MOCK_CALL_STATS: CallStats = {
   todayTotal: 87,
   todayCompleted: 81,
   todayMissed: 6,
@@ -156,7 +161,7 @@ const mockRecentCalls: CallRecord[] = [
   },
 ]
 
-const mockWeeklyData: DailyStat[] = [
+const MOCK_WEEKLY_DATA: DailyStat[] = [
   { day: 'Mon', calls: 89, completed: 84 },
   { day: 'Tue', calls: 102, completed: 96 },
   { day: 'Wed', calls: 95, completed: 89 },
@@ -166,12 +171,87 @@ const mockWeeklyData: DailyStat[] = [
   { day: 'Sun', calls: 23, completed: 20 },
 ]
 
+// Helper to format relative time
+function formatRelativeTime(isoString: string): string {
+  const date = new Date(isoString)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMins / 60)
+  const diffDays = Math.floor(diffHours / 24)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins} min ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+  return date.toLocaleDateString()
+}
+
 export default function HiqorCallCenterPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'call-history' | 'settings'>('overview')
   const [timeFilter, setTimeFilter] = useState<'today' | 'week' | 'month'>('today')
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'missed' | 'escalated'>('all')
 
-  const filteredCalls = mockRecentCalls.filter(call => {
+  // Fetch call center stats from API
+  const { data: statsResponse, isLoading: statsLoading } = useSWR(
+    `/api/admin/call-center/stats?period=${timeFilter}`,
+    fetcher,
+    { refreshInterval: 30000 } // Refresh every 30 seconds
+  )
+
+  // Fetch recent calls from API
+  const { data: callsResponse, isLoading: callsLoading } = useSWR(
+    `/api/admin/call-center/calls?period=${timeFilter}&status=${statusFilter === 'all' ? '' : statusFilter}`,
+    fetcher,
+    { refreshInterval: 30000 }
+  )
+
+  // Fetch volume data for charts
+  const { data: volumeResponse, isLoading: volumeLoading } = useSWR(
+    '/api/admin/call-center/volume?days=7',
+    fetcher,
+    { refreshInterval: 60000 } // Refresh every minute
+  )
+
+  // Transform API data to match existing interfaces, with fallback to mock data
+  const callStats: CallStats = statsResponse?.data ? {
+    todayTotal: statsResponse.data.totalCalls,
+    todayCompleted: statsResponse.data.completedCalls,
+    todayMissed: statsResponse.data.missedCalls,
+    weekTotal: statsResponse.data.totalCalls,
+    weekCompleted: statsResponse.data.completedCalls,
+    weekMissed: statsResponse.data.missedCalls,
+    avgDuration: statsResponse.data.avgDuration,
+    avgWaitTime: statsResponse.data.avgWaitTime,
+    escalationRate: statsResponse.data.escalationRate,
+    satisfactionScore: statsResponse.data.satisfactionScore,
+    peakHours: statsResponse.data.peakHours,
+    answerRate: statsResponse.data.answerRate,
+  } : MOCK_CALL_STATS
+
+  // Transform calls data
+  const recentCalls: CallRecord[] = callsResponse?.data?.map((call: any) => ({
+    id: call.id,
+    callerName: call.callerName,
+    callerPhone: call.callerPhone,
+    callerType: call.callerType === 'Partner' ? 'Partner' : call.callerType === 'Lead' ? 'Agent' : 'Policyholder',
+    duration: call.durationFormatted,
+    status: call.status as CallRecord['status'],
+    sentiment: call.sentiment as CallRecord['sentiment'],
+    topics: call.topics || [],
+    timestamp: formatRelativeTime(call.timestamp),
+    location: call.location,
+    policyNumber: undefined,
+  })) || mockRecentCalls
+
+  // Transform volume data
+  const weeklyData: DailyStat[] = volumeResponse?.data?.data?.map((day: any) => ({
+    day: day.day,
+    calls: day.totalCalls,
+    completed: day.completedCalls,
+  })) || MOCK_WEEKLY_DATA
+
+  const filteredCalls = recentCalls.filter(call => {
     if (statusFilter === 'all') return true
     return call.status === statusFilter
   })
@@ -305,8 +385,13 @@ export default function HiqorCallCenterPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl p-6 shadow-sm border border-indigo-100"
+                className="bg-white rounded-xl p-6 shadow-sm border border-indigo-100 relative"
               >
+                {statsLoading && (
+                  <div className="absolute inset-0 bg-white/70 rounded-xl flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-indigo-600 animate-spin" />
+                  </div>
+                )}
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                     <Phone className="w-5 h-5 text-indigo-600" />
@@ -317,7 +402,7 @@ export default function HiqorCallCenterPage() {
                   </div>
                 </div>
                 <p className="text-3xl font-bold text-gray-900 mb-1">
-                  {timeFilter === 'today' ? mockCallStats.todayTotal : mockCallStats.weekTotal}
+                  {timeFilter === 'today' ? callStats.todayTotal : callStats.weekTotal}
                 </p>
                 <p className="text-gray-600 text-sm">Total Calls</p>
                 <p className="text-xs text-gray-500 mt-2">
@@ -336,11 +421,11 @@ export default function HiqorCallCenterPage() {
                     <CheckCircle className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
-                    {mockCallStats.answerRate}
+                    {callStats.answerRate}
                   </div>
                 </div>
                 <p className="text-3xl font-bold text-gray-900 mb-1">
-                  {timeFilter === 'today' ? mockCallStats.todayCompleted : mockCallStats.weekCompleted}
+                  {timeFilter === 'today' ? callStats.todayCompleted : callStats.weekCompleted}
                 </p>
                 <p className="text-gray-600 text-sm">Completed Calls</p>
                 <p className="text-xs text-gray-500 mt-2">Answer rate</p>
@@ -357,9 +442,9 @@ export default function HiqorCallCenterPage() {
                     <Clock className="w-5 h-5 text-blue-600" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900 mb-1">{mockCallStats.avgDuration}</p>
+                <p className="text-3xl font-bold text-gray-900 mb-1">{callStats.avgDuration}</p>
                 <p className="text-gray-600 text-sm">Avg Duration</p>
-                <p className="text-xs text-gray-500 mt-2">Wait time: {mockCallStats.avgWaitTime}</p>
+                <p className="text-xs text-gray-500 mt-2">Wait time: {callStats.avgWaitTime}</p>
               </motion.div>
 
               <motion.div
@@ -377,7 +462,7 @@ export default function HiqorCallCenterPage() {
                     2.1%
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-gray-900 mb-1">{mockCallStats.escalationRate}</p>
+                <p className="text-3xl font-bold text-gray-900 mb-1">{callStats.escalationRate}</p>
                 <p className="text-gray-600 text-sm">Escalation Rate</p>
                 <p className="text-xs text-gray-500 mt-2">Down from last {timeFilter}</p>
               </motion.div>
@@ -399,8 +484,8 @@ export default function HiqorCallCenterPage() {
                 </div>
               </div>
               <div className="flex items-end justify-between gap-4 h-48">
-                {mockWeeklyData.map((stat, index) => {
-                  const maxCalls = Math.max(...mockWeeklyData.map(d => d.calls))
+                {weeklyData.map((stat, index) => {
+                  const maxCalls = Math.max(...weeklyData.map(d => d.calls))
                   const totalHeight = (stat.calls / maxCalls) * 100
                   const completedHeight = (stat.completed / maxCalls) * 100
 
@@ -569,21 +654,21 @@ export default function HiqorCallCenterPage() {
                     <span className="text-sm text-gray-600">Peak Call Time</span>
                     <TrendingUp className="w-4 h-4 text-indigo-600" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">{mockCallStats.peakHours}</p>
+                  <p className="text-2xl font-bold text-gray-900">{callStats.peakHours}</p>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg border border-green-100">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">Satisfaction Score</span>
                     <CheckCircle className="w-4 h-4 text-green-600" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">{mockCallStats.satisfactionScore}/5.0</p>
+                  <p className="text-2xl font-bold text-gray-900">{callStats.satisfactionScore}/5.0</p>
                 </div>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">Avg Wait Time</span>
                     <Clock className="w-4 h-4 text-blue-600" />
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">{mockCallStats.avgWaitTime}</p>
+                  <p className="text-2xl font-bold text-gray-900">{callStats.avgWaitTime}</p>
                 </div>
               </div>
               <div className="h-64 flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">

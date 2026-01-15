@@ -1,0 +1,24 @@
+http:
+  routers:
+    novnc:
+      rule: "Host(`dashboard-daddy.com`)"
+      entryPoints:
+        - web
+        - websecure
+      service: novnc
+      tls:
+        certResolver: mytlschallenge
+      middlewares:
+        - novnc-redirect
+
+  services:
+    novnc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:6080"
+
+  middlewares:
+    novnc-redirect:
+      redirectRegex:
+        regex: "^https?://dashboard-daddy\\.com/$"
+        replacement: "https://dashboard-daddy.com/vnc.html"
