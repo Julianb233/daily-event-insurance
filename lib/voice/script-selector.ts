@@ -90,7 +90,7 @@ export async function selectScript(
       return MOCK_SCRIPTS[0]
     }
 
-    // Score each script
+    // Score each script based on lead characteristics
     const scored = scripts.map(script => {
       let score = 0
 
@@ -102,15 +102,16 @@ export async function selectScript(
       if (script.interestLevel === lead.interestLevel) score += 30
       else if (script.interestLevel === "warm" && lead.interestLevel === "hot") score += 15
 
-      // Call type match (20 points)
-      if (script.callType === callType) score += 20
+      // Geographic region match (20 points)
+      if (script.geographicRegion === lead.state) score += 20
+      else if (!script.geographicRegion) score += 10
 
       return {
         id: script.id,
         name: script.name,
-        content: script.scriptContent,
+        content: script.openingScript, // Use openingScript as main content
         objectionHandlers: script.objectionHandlers ? JSON.parse(script.objectionHandlers) : [],
-        closingTechniques: script.closingTechniques ? JSON.parse(script.closingTechniques) : [],
+        closingTechniques: script.closingScript ? [script.closingScript] : [],
         score
       }
     })
