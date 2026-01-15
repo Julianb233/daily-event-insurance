@@ -1,0 +1,34 @@
+{
+  "mode": "yolo",
+  "depth": "standard",
+  "parallelization": {
+    "enabled": true,
+    "plan_level": true,
+    "task_level": false,
+    "skip_checkpoints": true,
+    "max_concurrent_agents": 3,
+    "min_plans_for_parallel": 2
+  },
+  "gates": {
+    "confirm_project": false,
+    "confirm_phases": false,
+    "confirm_roadmap": false,
+    "confirm_breakdown": false,
+    "confirm_plan": false,
+    "execute_next_plan": false,
+    "issues_review": true,
+    "confirm_transition": false
+  },
+  "safety": {
+    "always_confirm_destructive": true,
+    "always_confirm_external_services": true
+  },
+  "project": {
+    "name": "Daily Event Insurance - AI Call Center",
+    "prd_files": [
+      "docs/PRD-LIVEKIT-CALL-CENTER.md",
+      "docs/PRD-CALL-CENTER.json",
+      "docs/PRD-CUSTOMER-SUPPORT-AGENT.md"
+    ]
+  }
+}
