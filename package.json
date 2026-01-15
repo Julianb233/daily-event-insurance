@@ -9,7 +9,11 @@
     "dev:voice": "cd livekit-agent && python3 -m venv venv && source venv/bin/activate && python3 agent_realtime.py dev",
     "install:voice": "cd livekit-agent && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "db:migrate": "npx tsx scripts/run-migrations.ts",
+    "db:migrate:status": "npx tsx scripts/run-migrations.ts --status",
+    "db:migrate:dry-run": "npx tsx scripts/run-migrations.ts --dry-run --verbose",
+    "db:seed-knowledge": "npx tsx scripts/seed-knowledge-base.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
@@ -100,6 +104,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "three": "latest",
+    "twilio": "^5.11.2",
     "vaul": "^0.9.9",
     "zod": "3.25.76"
   },
@@ -120,6 +125,7 @@
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vue": "^3.4.0"
   }
 }

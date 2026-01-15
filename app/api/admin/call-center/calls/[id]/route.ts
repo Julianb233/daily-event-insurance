@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, leadCommunications, leads } from "@/lib/db"
+import { db, isDbConfigured, leadCommunications } from "@/lib/db"
 import { eq } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 import { successResponse, notFoundError, serverError } from "@/lib/api-responses"
@@ -117,10 +117,9 @@ export async function GET(request: NextRequest, context: RouteContext) {
         return successResponse(mockCall)
       }
 
-      // Get call with lead info
+      // Get call data (without leads JOIN due to schema mismatch)
       const [callData] = await db!
         .select({
-          // Communication fields
           id: leadCommunications.id,
           leadId: leadCommunications.leadId,
           channel: leadCommunications.channel,
@@ -138,23 +137,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
           livekitRoomId: leadCommunications.livekitRoomId,
           livekitSessionId: leadCommunications.livekitSessionId,
           createdAt: leadCommunications.createdAt,
-          // Lead fields
-          firstName: leads.firstName,
-          lastName: leads.lastName,
-          email: leads.email,
-          phone: leads.phone,
-          businessType: leads.businessType,
-          businessName: leads.businessName,
-          city: leads.city,
-          state: leads.state,
-          leadStatus: leads.status,
-          interestLevel: leads.interestLevel,
-          interestScore: leads.interestScore,
-          leadSource: leads.source,
-          leadCreatedAt: leads.createdAt,
         })
         .from(leadCommunications)
-        .leftJoin(leads, eq(leadCommunications.leadId, leads.id))
         .where(eq(leadCommunications.id, id))
         .limit(1)
 
@@ -184,13 +168,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
       const callDetail = {
         id: callData.id,
         leadId: callData.leadId,
-        callerName: callData.firstName && callData.lastName
-          ? `${callData.firstName} ${callData.lastName}`
-          : "Unknown Caller",
-        callerPhone: callData.phone || "Unknown",
-        callerEmail: callData.email,
-        businessType: callData.businessType,
-        businessName: callData.businessName,
+        callerName: "Unknown Caller", // Lead info not available due to schema mismatch
+        callerPhone: "Unknown",
+        callerEmail: null,
+        businessType: null,
+        businessName: null,
         duration,
         durationFormatted: formatDuration(duration),
         status: callData.outcome === "escalate"
@@ -209,9 +191,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
           : "neutral",
         sentimentScore,
         outcome: callData.outcome,
-        location: callData.city && callData.state
-          ? `${callData.city}, ${callData.state}`
-          : "Unknown",
+        location: "Unknown",
         agentId: callData.agentId,
         agentScriptUsed: callData.agentScriptUsed,
         agentConfidenceScore: confidenceScore,
@@ -219,18 +199,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
         recordingUrl: callData.callRecordingUrl,
         transcript,
         summary: callData.callSummary || "No summary available",
-        analysisNotes: [], // Could be parsed from summary or stored separately
-        nextSteps: null, // Could be stored in a separate field
+        analysisNotes: [],
+        nextSteps: null,
         livekitRoomId: callData.livekitRoomId,
         livekitSessionId: callData.livekitSessionId,
-        leadInfo: callData.leadId ? {
-          id: callData.leadId,
-          status: callData.leadStatus,
-          interestLevel: callData.interestLevel,
-          interestScore: callData.interestScore,
-          source: callData.leadSource,
-          createdAt: callData.leadCreatedAt?.toISOString(),
-        } : null,
+        leadInfo: null, // Lead info not available due to schema mismatch
       }
 
       return successResponse(callDetail)

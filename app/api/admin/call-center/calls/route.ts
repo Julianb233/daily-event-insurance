@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { requireAdmin, withAuth } from "@/lib/api-auth"
-import { db, isDbConfigured, leadCommunications, leads } from "@/lib/db"
+import { db, isDbConfigured, leadCommunications } from "@/lib/db"
 import { eq, and, gte, desc, count, sql } from "drizzle-orm"
 import { isDevMode } from "@/lib/mock-data"
 import { paginatedResponse, serverError, validationError } from "@/lib/api-responses"
@@ -267,7 +267,7 @@ export async function GET(request: NextRequest) {
         .from(leadCommunications)
         .where(whereClause)
 
-      // Get calls with lead info
+      // Get calls (without leads JOIN due to schema mismatch - lead info will show as Unknown)
       const offset = (page - 1) * pageSize
       const callsData = await db!
         .select({
@@ -284,19 +284,8 @@ export async function GET(request: NextRequest) {
           outcome: leadCommunications.outcome,
           agentId: leadCommunications.agentId,
           createdAt: leadCommunications.createdAt,
-          // Lead fields
-          firstName: leads.firstName,
-          lastName: leads.lastName,
-          email: leads.email,
-          phone: leads.phone,
-          businessType: leads.businessType,
-          businessName: leads.businessName,
-          city: leads.city,
-          state: leads.state,
-          leadStatus: leads.status,
         })
         .from(leadCommunications)
-        .leftJoin(leads, eq(leadCommunications.leadId, leads.id))
         .where(whereClause)
         .orderBy(desc(leadCommunications.createdAt))
         .limit(pageSize)
@@ -312,14 +301,12 @@ export async function GET(request: NextRequest) {
         return {
           id: call.id,
           leadId: call.leadId,
-          callerName: call.firstName && call.lastName
-            ? `${call.firstName} ${call.lastName}`
-            : "Unknown Caller",
-          callerPhone: call.phone || "Unknown",
-          callerEmail: call.email,
-          callerType: call.leadStatus === "converted" ? "Partner" : "Lead",
-          businessType: call.businessType,
-          businessName: call.businessName,
+          callerName: "Unknown Caller", // Lead info not available due to schema mismatch
+          callerPhone: "Unknown",
+          callerEmail: null,
+          callerType: "Lead",
+          businessType: null,
+          businessName: null,
           duration,
           durationFormatted: formatDuration(duration),
           status: call.outcome === "escalate"
@@ -331,9 +318,7 @@ export async function GET(request: NextRequest) {
           outcome: call.outcome,
           topics: [], // Would need to parse from transcript/summary
           timestamp: call.createdAt?.toISOString() || new Date().toISOString(),
-          location: call.city && call.state
-            ? `${call.city}, ${call.state}`
-            : "Unknown",
+          location: "Unknown",
           agentId: call.agentId,
           hasRecording: !!call.callRecordingUrl,
           hasTranscript: !!call.callTranscript,

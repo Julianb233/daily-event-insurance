@@ -582,6 +582,41 @@ Need help? I can walk you through any of these steps.`
     const partnerId = args.partnerId as string
     const integrationType = args.integrationType as string | undefined
 
+    // Try to fetch real integration status from database
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ''}/api/admin/partner-integrations?partnerId=${partnerId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.integrations && data.integrations.length > 0) {
+          const integrations = data.integrations
+          const status: Record<string, unknown> = { partnerId }
+
+          for (const integration of integrations) {
+            status[integration.integrationType] = {
+              status: integration.status,
+              configured: integration.status !== 'pending',
+              lastTestedAt: integration.lastTestedAt,
+              testResult: integration.testResult,
+              wentLiveAt: integration.wentLiveAt,
+            }
+          }
+
+          if (integrationType && status[integrationType]) {
+            return { result: JSON.stringify({ [integrationType]: status[integrationType] }, null, 2) }
+          }
+
+          return { result: JSON.stringify(status, null, 2) }
+        }
+      }
+    } catch (error) {
+      console.warn('[IntegrationAgent] Failed to fetch real integration status:', error)
+    }
+
+    // Fallback to mock data for demo/development
     const status = {
       partnerId,
       widget: { installed: true, lastPing: "2 hours ago", version: "1.2.3" },
@@ -602,26 +637,31 @@ Need help? I can walk you through any of these steps.`
     const query = args.query as string
     const category = args.category as string | undefined
 
-    const mockResults = [
-      {
-        title: "Widget Installation Guide",
-        excerpt: "Step-by-step guide to installing the insurance widget on your website...",
-        url: "/docs/widget/installation",
-      },
-      {
-        title: "API Authentication",
-        excerpt: "Learn how to authenticate API requests using your partner API key...",
-        url: "/docs/api/authentication",
-      },
-      {
-        title: "Webhook Events Reference",
-        excerpt: "Complete list of webhook events and their payloads...",
-        url: "/docs/webhooks/events",
-      },
-    ]
+    // Use the real knowledge base search
+    const { searchArticles } = await import("./knowledge-base")
+    const results = searchArticles(query, 5)
 
+    if (results.length > 0) {
+      const formattedResults = results
+        .filter(r => !category || r.article.category === category)
+        .map((r) => ({
+          title: r.article.title,
+          excerpt: r.snippet,
+          url: `/docs/${r.article.slug}`,
+          category: r.article.category,
+          relevance: r.relevanceScore,
+        }))
+
+      if (formattedResults.length > 0) {
+        return {
+          result: `Found ${formattedResults.length} results for "${query}"${category ? ` in ${category}` : ""}:\n\n${formattedResults.map((r) => `- **${r.title}** (${r.category}): ${r.excerpt}\n  URL: ${r.url}`).join("\n\n")}`,
+        }
+      }
+    }
+
+    // Fallback message if no results
     return {
-      result: `Found ${mockResults.length} results for "${query}"${category ? ` in ${category}` : ""}:\n\n${mockResults.map((r) => `- **${r.title}**: ${r.excerpt}`).join("\n\n")}`,
+      result: `No documentation found for "${query}"${category ? ` in ${category}` : ""}. Try:\n- Broader search terms\n- Different category\n- Contact support for help`,
     }
   }
 
