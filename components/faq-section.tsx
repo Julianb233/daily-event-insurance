@@ -6,28 +6,36 @@ import { ChevronDown } from "lucide-react"
 
 const faqs = [
   {
+    question: "Does this cost me anything?",
+    answer: "Absolutely not. There is zero cost to you as a partner. We pay for the insurance coverage AND we pay you. You get paid for every participant who purchases coverage - it's pure revenue with zero expense on your end.",
+  },
+  {
+    question: "Do I need to raise my prices?",
+    answer: "No. Your pricing stays exactly the same. Insurance is an optional add-on that participants can choose when they check in or register. You earn money without changing anything about your current business model or pricing structure.",
+  },
+  {
+    question: "How do partners get paid?",
+    answer: "You earn money for every person that walks through your door and purchases coverage. We handle all the costs - the insurance, the technology, the claims - you just collect revenue. Payments are made monthly directly to your account.",
+  },
+  {
     question: "How quickly can members get coverage?",
     answer: "Members can purchase and activate coverage instantly - same day, same moment. No waiting periods. They receive digital proof of coverage immediately via email.",
   },
   {
     question: "What types of businesses can partner with you?",
-    answer: "We work with Race Directors, Gyms & Fitness Centers, Climbing Facilities, Ski Resorts, and Corporate Event Organizers. Our platform supports virtually any active event type.",
+    answer: "We work with Gyms & Fitness Centers, Climbing Facilities, Equipment Rental businesses, Adventure Sports operators, and more. Our platform supports virtually any active experience type.",
   },
   {
     question: "How do I integrate with my existing systems?",
-    answer: "We offer seamless integration with major platforms like RunSignup, BikeReg, MindBody, and Zen Planner. Most partners are live within 24-48 hours.",
-  },
-  {
-    question: "What's the revenue sharing model?",
-    answer: "Partners earn 20-40% commission on every policy sold. Commission rates are volume-based - the more participants you cover, the higher your rate.",
+    answer: "We offer seamless integration with major platforms like MindBody, Zen Planner, and others. Most partners are live within 24 hours with zero technical work required on your end.",
   },
   {
     question: "What specifically does the insurance cover?",
-    answer: "Policies are sector-specific but generally cover medical expenses, emergency transport, trip cancellation, and activity-related injuries. We fill the gaps that general liability misses.",
+    answer: "Policies are sector-specific but generally cover medical expenses, emergency transport, and activity-related injuries. We fill the gaps that general liability misses - protecting your members when they need it most.",
   },
   {
-    question: "Is there a minimum commitment?",
-    answer: "No minimums required. Pay only for the coverage your members purchase.",
+    question: "Is there any commitment or contract?",
+    answer: "No minimums, no long-term contracts, no setup fees. You can start earning immediately with zero risk. If it's not working for you, you can stop anytime - but partners typically see it as free money.",
   },
 ]
 

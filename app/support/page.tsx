@@ -6,34 +6,11 @@ import Footer from "@/components/footer"
 import { FAQSection } from "@/components/faq-section"
 import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import { motion } from "framer-motion"
-import { LifeBuoy, FileText, MessageSquare, Phone, Mail, BookOpen, Download } from "lucide-react"
-import Link from "next/link"
+import { MessageSquare, Phone, Mail } from "lucide-react"
+import Image from "next/image"
 
 export default function SupportPage() {
     const [isChatOpen, setIsChatOpen] = useState(false)
-    const resources = [
-        {
-            title: "Partner Guide",
-            description: "Complete documentation on how to integrate and maximize your partnership.",
-            icon: BookOpen,
-            action: "Read Guide",
-            href: "/support/docs"
-        },
-        {
-            title: "Marketing Assets",
-            description: "Logos, banners, and templates to help you promote insurance to your members.",
-            icon: Download,
-            action: "Download Kit",
-            href: "/support/resources"
-        },
-        {
-            title: "API Documentation",
-            description: "Technical specifications for integrating our insurance engine directly into your platform.",
-            icon: FileText,
-            action: "View Docs",
-            href: "/support/docs"
-        }
-    ]
 
     const contactMethods = [
         {
@@ -73,9 +50,16 @@ export default function SupportPage() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
-                        className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 mb-8"
+                        className="mb-8"
                     >
-                        <LifeBuoy className="w-8 h-8" />
+                        <Image
+                            src="/images/logo-color.png"
+                            alt="Daily Event Insurance"
+                            width={240}
+                            height={96}
+                            className="mx-auto h-auto"
+                            priority
+                        />
                     </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -142,30 +126,6 @@ export default function SupportPage() {
                                 </motion.a>
                             )
                         })}
-                    </div>
-                </div>
-            </section>
-
-            {/* Resources Section */}
-            <section className="py-20">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Partner Resources</h2>
-                        <p className="text-slate-600">Essential tools and guides for your business.</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                        {resources.map((resource, index) => (
-                            <div key={index} className="bg-white p-8 rounded-2xl border border-slate-200 hover:border-teal-200 transition-colors">
-                                <resource.icon className="w-10 h-10 text-teal-600 mb-6" />
-                                <h3 className="text-xl font-bold text-slate-900 mb-3">{resource.title}</h3>
-                                <p className="text-slate-600 mb-6 min-h-[3rem]">{resource.description}</p>
-                                <Link href={resource.href} className="text-teal-600 font-semibold hover:text-teal-700 inline-flex items-center gap-2">
-                                    {resource.action}
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                </Link>
-                            </div>
-                        ))}
                     </div>
                 </div>
             </section>

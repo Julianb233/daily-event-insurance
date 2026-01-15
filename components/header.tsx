@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Menu, X, ChevronDown, Dumbbell, Mountain, Sparkles, Trophy, Building2, Handshake } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter, usePathname } from "next/navigation"
@@ -336,15 +337,16 @@ export default function Header() {
                 Log In
               </motion.a>
 
-              {/* CTA Button - Opens Voice Chat */}
-              <motion.button
-                onClick={openVoiceAgent}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="hidden sm:flex items-center px-5 py-2 bg-[#14B8A6] text-white font-medium text-[15px] rounded-md hover:bg-[#0F9F90] transition-all"
-              >
-                Get Started
-              </motion.button>
+              {/* CTA Button - Links to Get Started Page */}
+              <Link href="/get-started">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="hidden sm:flex items-center px-5 py-2 bg-[#14B8A6] text-white font-medium text-[15px] rounded-md hover:bg-[#0F9F90] transition-all"
+                >
+                  Get Started
+                </motion.button>
+              </Link>
 
               {/* Mobile Menu Button */}
               <button
@@ -506,15 +508,13 @@ export default function Header() {
                 }}
                 className="mt-8 space-y-4"
               >
-                <button
-                  onClick={() => {
-                    setMenuOpen(false)
-                    openVoiceAgent()
-                  }}
+                <Link
+                  href="/get-started"
+                  onClick={() => setMenuOpen(false)}
                   className="block w-full px-6 py-3 bg-[#14B8A6] text-white font-medium text-base rounded-md hover:bg-[#0F9F90] transition-all text-center"
                 >
                   Get Started
-                </button>
+                </Link>
               </motion.div>
 
               {/* Professional Tagline */}

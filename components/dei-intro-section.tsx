@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link"
 
 export function DEIIntroSection() {
   const [showContent, setShowContent] = useState(false)
@@ -70,7 +71,7 @@ export function DEIIntroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-6 md:mb-8"
         >
-          <div className="relative w-48 h-20 md:w-72 md:h-28 lg:w-96 lg:h-36">
+          <div className="relative w-72 h-28 md:w-[480px] md:h-44 lg:w-[600px] lg:h-56">
             <Image
               src="/images/logo-color.png"
               alt="Daily Event Insurance - Events-based insurance platform"
@@ -137,14 +138,15 @@ export function DEIIntroSection() {
           className="flex flex-col sm:flex-row gap-4 md:gap-6 mt-8 md:mt-10 w-full max-w-2xl px-4 pointer-events-auto z-30"
         >
           {/* Primary CTA */}
-          <motion.a
-            href="#get-started"
-            className="flex-1 bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all duration-300 text-center text-base md:text-lg pointer-events-auto"
-            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(20,184,166,0.4)" }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Start Earning Now
-          </motion.a>
+          <Link href="/get-started" className="flex-1">
+            <motion.div
+              className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg shadow-teal-500/50 hover:shadow-teal-400/60 transition-all duration-300 text-center text-base md:text-lg"
+              whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(20,184,166,0.4)" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Start Earning Now
+            </motion.div>
+          </Link>
 
           {/* Secondary CTA */}
           <motion.a
