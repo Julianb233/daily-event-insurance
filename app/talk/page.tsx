@@ -22,10 +22,25 @@ export default function TalkPage() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [errorCode, setErrorCode] = useState<string>('')
+  const [showFallback, setShowFallback] = useState(false)
 
   const startCall = async () => {
     setIsConnecting(true)
     setError(null)
+    setErrorCode('')
+    setShowFallback(false)
+
+    // Set connection timeout
+    const timeoutId = setTimeout(() => {
+      if (!token && isConnecting) {
+        console.error('[Talk Page] Connection timeout')
+        setError('Connection is taking too long. Voice service may be unavailable.')
+        setErrorCode('TIMEOUT')
+        setShowFallback(true)
+        setIsConnecting(false)
+      }
+    }, 15000)
 
     try {
       const response = await fetch('/api/voice/realtime', {
@@ -40,17 +55,33 @@ export default function TalkPage() {
         }),
       })
 
+      const data = await response.json().catch(() => ({}))
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.details || errorData.error || 'Failed to start call')
+        clearTimeout(timeoutId)
+        console.error('[Talk Page] Call start failed:', response.status, data)
+
+        // Check if service is unavailable
+        if (response.status === 503 || data.fallbackAvailable) {
+          setShowFallback(true)
+        }
+
+        setError(data.error || data.details || 'Failed to start call')
+        setErrorCode(data.code || 'CONNECTION_ERROR')
+        setIsConnecting(false)
+        return
       }
 
-      const data = await response.json()
+      clearTimeout(timeoutId)
       setToken(data.token)
       setIsConnected(true)
+      setError(null)
     } catch (err: any) {
-      console.error('Call start error:', err)
-      setError(err.message || 'Failed to connect')
+      clearTimeout(timeoutId)
+      console.error('[Talk Page] Call start error:', err)
+      setError(err.message || 'Failed to connect to voice service')
+      setErrorCode('NETWORK_ERROR')
+      setShowFallback(true)
     } finally {
       setIsConnecting(false)
     }
@@ -59,6 +90,9 @@ export default function TalkPage() {
   const endCall = () => {
     setToken('')
     setIsConnected(false)
+    setError(null)
+    setErrorCode('')
+    setShowFallback(false)
   }
 
   return (
@@ -162,7 +196,43 @@ export default function TalkPage() {
 
                   {error && (
                     <div className="mb-4 p-3 bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-xl text-red-200 text-sm">
-                      {error}
+                      <div className="font-semibold mb-1">{error}</div>
+                      {errorCode && <div className="text-xs opacity-75">Error code: {errorCode}</div>}
+                    </div>
+                  )}
+
+                  {showFallback && (
+                    <div className="mb-4 p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white text-sm space-y-3">
+                      <p className="font-semibold text-amber-300">Alternative Support Options:</p>
+                      <div className="space-y-2 text-xs">
+                        <a
+                          href="mailto:support@dailyeventinsurance.com"
+                          className="flex items-center gap-2 p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <span>Email: support@dailyeventinsurance.com</span>
+                        </a>
+                        <a
+                          href="tel:+18005551234"
+                          className="flex items-center gap-2 p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <span>Phone: 1-800-555-1234</span>
+                        </a>
+                        <Link
+                          href="/support-hub"
+                          className="flex items-center gap-2 p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>Visit Help Center</span>
+                        </Link>
+                      </div>
                     </div>
                   )}
 

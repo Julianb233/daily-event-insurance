@@ -14,17 +14,23 @@ export async function POST(request: NextRequest) {
     const apiSecret = process.env.LIVEKIT_API_SECRET
     const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
+    // Check for missing configuration
     if (!apiKey || !apiSecret || !wsUrl) {
       const missing = []
       if (!apiKey) missing.push('LIVEKIT_API_KEY')
       if (!apiSecret) missing.push('LIVEKIT_API_SECRET')
       if (!wsUrl) missing.push('NEXT_PUBLIC_LIVEKIT_URL')
 
-      console.error('Missing LiveKit configuration:', missing.join(', '))
+      console.error('[Voice API] Missing LiveKit configuration:', missing.join(', '))
 
       return NextResponse.json(
-        { error: 'Voice service configuration error', details: `Missing: ${missing.join(', ')}` },
-        { status: 500 }
+        {
+          error: 'Voice service temporarily unavailable',
+          details: 'Voice agent configuration is incomplete. Please try again later or contact support.',
+          code: 'CONFIG_MISSING',
+          fallbackAvailable: true
+        },
+        { status: 503 }
       )
     }
 
@@ -36,30 +42,54 @@ export async function POST(request: NextRequest) {
 
     // Create room service client to create the room
     const httpUrl = wsUrl.replace('wss://', 'https://').replace('ws://', 'http://')
-    console.log('LiveKit HTTP URL:', httpUrl)
-    console.log('API Key prefix:', apiKey?.slice(0, 5) + '...')
+    console.log('[Voice API] LiveKit HTTP URL:', httpUrl)
+    console.log('[Voice API] API Key prefix:', apiKey?.slice(0, 5) + '...')
+    console.log('[Voice API] Creating room:', roomName)
 
     const roomService = new RoomServiceClient(httpUrl, apiKey, apiSecret)
 
-    // Create the room first
-    console.log('Creating room:', roomName)
-    await roomService.createRoom({
-      name: roomName,
-      emptyTimeout: 300, // 5 minutes
-      maxParticipants: 2, // user + agent
-    })
+    // Create the room with timeout protection
+    const roomCreationTimeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Room creation timeout')), 10000)
+    )
 
-    console.log(`Created room successfully: ${roomName}`)
+    try {
+      await Promise.race([
+        roomService.createRoom({
+          name: roomName,
+          emptyTimeout: 300, // 5 minutes
+          maxParticipants: 2, // user + agent
+        }),
+        roomCreationTimeout
+      ])
+      console.log(`[Voice API] Created room successfully: ${roomName}`)
+    } catch (roomError: any) {
+      console.error('[Voice API] Room creation failed:', roomError?.message)
+      throw new Error(`Unable to create voice room: ${roomError?.message || 'Connection timeout'}`)
+    }
 
     // Dispatch the named agent to the room
+    let agentDispatched = false
     try {
       const agentDispatch = new AgentDispatchClient(httpUrl, apiKey, apiSecret)
-      await agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
-        metadata: JSON.stringify({ context }),
-      })
-      console.log(`Dispatched agent daily-event-insurance to room: ${roomName}`)
-    } catch (dispatchError) {
-      console.warn('Agent dispatch error:', dispatchError)
+      const dispatchTimeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Agent dispatch timeout')), 8000)
+      )
+
+      await Promise.race([
+        agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
+          metadata: JSON.stringify({ context }),
+        }),
+        dispatchTimeout
+      ])
+
+      agentDispatched = true
+      console.log(`[Voice API] Dispatched agent daily-event-insurance to room: ${roomName}`)
+    } catch (dispatchError: any) {
+      console.warn('[Voice API] Agent dispatch error:', dispatchError?.message)
+      // Note: Agent dispatch failing is not fatal - user can still join the room
+      // The Python agent service might not be running
+      console.warn('[Voice API] Voice agent service may not be running. User can join but agent might not be available.')
     }
 
     // Create access token for the user
@@ -89,22 +119,43 @@ export async function POST(request: NextRequest) {
       roomName,
       participantId,
       systemPrompt,
+      agentDispatched, // Let the client know if agent was successfully dispatched
+      warning: !agentDispatched ? 'Voice agent may not be available' : undefined
     })
   } catch (error: any) {
-    console.error('Voice token generation error:', error)
-    console.error('Error details:', {
+    console.error('[Voice API] Voice token generation error:', error)
+    console.error('[Voice API] Error details:', {
       message: error?.message,
       code: error?.code,
       status: error?.status,
+      name: error?.name,
       stack: error?.stack?.slice(0, 500)
     })
+
+    // Determine user-friendly error message
+    let userMessage = 'Unable to connect to voice service'
+    let errorCode = 'CONNECTION_ERROR'
+
+    if (error?.message?.includes('timeout')) {
+      userMessage = 'Voice service is not responding. Please try again.'
+      errorCode = 'TIMEOUT'
+    } else if (error?.message?.includes('authentication') || error?.message?.includes('unauthorized')) {
+      userMessage = 'Voice service authentication failed. Please try again later.'
+      errorCode = 'AUTH_ERROR'
+    } else if (error?.message?.includes('network') || error?.code === 'ENOTFOUND') {
+      userMessage = 'Unable to reach voice service. Please check your connection.'
+      errorCode = 'NETWORK_ERROR'
+    }
+
     return NextResponse.json(
       {
-        error: 'Failed to initialize voice session',
-        details: error?.message || 'Unknown error',
-        code: error?.code
+        error: userMessage,
+        details: error?.message || 'Unknown error occurred',
+        code: errorCode,
+        fallbackAvailable: true,
+        timestamp: new Date().toISOString()
       },
-      { status: 500 }
+      { status: 503 }
     )
   }
 }
