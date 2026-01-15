@@ -36,7 +36,8 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from("integration_docs")
       .select("*", { count: "exact" })
 
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       .order(orderBy, { ascending: order })
       .range(offset, offset + limit - 1)
 
-    const { data: articles, error, count } = await query
+    const { data: articles, error, count } = await query as { data: Record<string, unknown>[] | null; error: unknown; count: number | null }
 
     if (error) {
       console.error("[Admin Knowledge] Query error:", error)
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
       category: doc.category,
       posSystem: doc.pos_system,
       framework: doc.framework,
-      codeExamples: doc.code_examples ? JSON.parse(doc.code_examples) : [],
+      codeExamples: doc.code_examples ? JSON.parse(doc.code_examples as string) : [],
       isPublished: doc.is_published,
       createdAt: doc.created_at,
       updatedAt: doc.updated_at,
@@ -178,11 +179,12 @@ export async function POST(request: NextRequest) {
       .replace(/^-|-$/g, "")
 
     // Check if slug already exists
-    const { data: existing } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabase as any)
       .from("integration_docs")
       .select("id")
       .eq("slug", slug)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (existing) {
       return NextResponse.json(
@@ -195,7 +197,8 @@ export async function POST(request: NextRequest) {
     const articleId = nanoid()
     const timestamp = new Date().toISOString()
 
-    const { data: article, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: article, error } = await (supabase as any)
       .from("integration_docs")
       .insert({
         id: articleId,
@@ -211,9 +214,9 @@ export async function POST(request: NextRequest) {
         updated_at: timestamp,
       })
       .select()
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
-    if (error) {
+    if (error || !article) {
       console.error("[Admin Knowledge] Create error:", error)
       return NextResponse.json(
         { error: "Failed to create article" },
@@ -231,7 +234,7 @@ export async function POST(request: NextRequest) {
         category: article.category,
         posSystem: article.pos_system,
         framework: article.framework,
-        codeExamples: article.code_examples ? JSON.parse(article.code_examples) : [],
+        codeExamples: article.code_examples ? JSON.parse(article.code_examples as string) : [],
         isPublished: article.is_published,
         createdAt: article.created_at,
         updatedAt: article.updated_at,
