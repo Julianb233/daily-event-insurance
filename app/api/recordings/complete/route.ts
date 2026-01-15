@@ -46,11 +46,12 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Get the current recording record
-    const { data: recording, error: fetchError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: recording, error: fetchError } = await (supabase as any)
       .from("onboarding_recordings")
       .select("*")
       .eq("id", sessionId)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (fetchError || !recording) {
       console.error("[Recordings Complete] Recording not found:", fetchError)
@@ -85,10 +86,11 @@ export async function POST(request: NextRequest) {
       updateData.issues_detected = JSON.stringify(metadata.issues || [])
     }
 
-    const { error: updateError } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (supabase as any)
       .from("onboarding_recordings")
       .update(updateData)
-      .eq("id", sessionId)
+      .eq("id", sessionId) as { error: unknown }
 
     if (updateError) {
       console.error("[Recordings Complete] Update error:", updateError)
@@ -99,11 +101,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the updated recording
-    const { data: updatedRecording } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: updatedRecording } = await (supabase as any)
       .from("onboarding_recordings")
       .select("*")
       .eq("id", sessionId)
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     return NextResponse.json({
       success: true,

@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createAdminClient, isSupabaseServerConfigured } from "@/lib/supabase/server"
 
+interface OnboardingRecording {
+  id: string
+  partner_id: string | null
+  conversation_id: string | null
+  recording_url: string | null
+  duration: number
+  onboarding_step: number | null
+  step_name: string | null
+  status: string
+  issues_detected: string | Record<string, unknown>[] | null
+  created_at: string
+}
+
 /**
  * GET /api/recordings/[id]
  * Get details for a specific recording
@@ -54,7 +67,7 @@ export async function GET(
       .from("onboarding_recordings")
       .select("*")
       .eq("id", id)
-      .single()
+      .single() as { data: OnboardingRecording | null; error: Error | null }
 
     if (error || !recording) {
       return NextResponse.json(
@@ -124,11 +137,12 @@ export async function DELETE(
     const supabase = createAdminClient()
 
     // Get the recording to find the storage path
-    const { data: recording } = await supabase
+    const result = await supabase
       .from("onboarding_recordings")
       .select("recording_url")
       .eq("id", id)
       .single()
+    const recording = result.data as { recording_url: string | null } | null
 
     // Delete from storage if URL exists
     if (recording?.recording_url) {
@@ -147,10 +161,11 @@ export async function DELETE(
     }
 
     // Delete the database record
-    const { error } = await supabase
+    const deleteResult = await supabase
       .from("onboarding_recordings")
       .delete()
       .eq("id", id)
+    const error = deleteResult.error
 
     if (error) {
       console.error("[Recordings DELETE] Error:", error)
@@ -217,12 +232,13 @@ export async function PATCH(
       }
     }
 
-    const { data: updated, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: updated, error } = await (supabase as any)
       .from("onboarding_recordings")
       .update(updateData)
       .eq("id", id)
       .select()
-      .single()
+      .single() as { data: Record<string, unknown> | null; error: unknown }
 
     if (error) {
       console.error("[Recordings PATCH] Error:", error)

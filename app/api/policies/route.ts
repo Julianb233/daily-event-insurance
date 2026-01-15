@@ -29,7 +29,8 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from("policies")
       .select("*", { count: "exact" })
 
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     const { data: policies, error, count } = await query
       .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1)
+      .range(offset, offset + limit - 1) as { data: Record<string, unknown>[] | null; error: unknown; count: number | null }
 
     if (error) {
       console.error("[Policies API] Query error:", error)

@@ -123,11 +123,12 @@ export async function POST(request: NextRequest) {
       const supabase = createAdminClient()
 
       // Verify partner exists
-      const { data: partner } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: partner } = await (supabase as any)
         .from("partners")
         .select("id, company_name")
         .eq("id", partnerId)
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
       if (!partner) {
         return NextResponse.json(
@@ -137,7 +138,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Create quote in database
-      const { data: savedQuote, error: dbError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: savedQuote, error: dbError } = await (supabase as any)
         .from("quotes")
         .insert({
           partner_id: partnerId,
@@ -155,7 +157,7 @@ export async function POST(request: NextRequest) {
           expires_at: expiresAt.toISOString(),
         })
         .select()
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
       if (dbError) {
         console.error("[Quotes API] Database error:", dbError)
@@ -240,7 +242,8 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
 
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from("quotes")
       .select("*", { count: "exact" })
 
@@ -253,7 +256,7 @@ export async function GET(request: NextRequest) {
 
     const { data: quotes, error, count } = await query
       .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1)
+      .range(offset, offset + limit - 1) as { data: Record<string, unknown>[] | null; error: unknown; count: number | null }
 
     if (error) {
       console.error("[Quotes API] Query error:", error)

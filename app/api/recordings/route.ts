@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createAdminClient, isSupabaseServerConfigured } from "@/lib/supabase/server"
 
+interface RecordingRow {
+  id: string
+  partner_id: string | null
+  conversation_id: string | null
+  recording_url: string | null
+  duration: number
+  onboarding_step: number | null
+  step_name: string | null
+  status: string
+  issues_detected: string | Record<string, unknown>[] | null
+  created_at: string
+}
+
 /**
  * GET /api/recordings
  * List recordings with filtering and pagination
@@ -51,7 +64,8 @@ export async function GET(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Build query
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query = (supabase as any)
       .from("onboarding_recordings")
       .select("*", { count: "exact" })
 
@@ -74,7 +88,8 @@ export async function GET(request: NextRequest) {
       .order(orderBy, { ascending: order })
       .range(offset, offset + limit - 1)
 
-    const { data: recordings, error, count } = await query
+    const { data, error, count } = await query as { data: Record<string, unknown>[] | null; error: unknown; count: number | null }
+    const recordings = data
 
     if (error) {
       console.error("[Recordings List] Query error:", error)
@@ -94,7 +109,7 @@ export async function GET(request: NextRequest) {
       onboardingStep: r.onboarding_step,
       stepName: r.step_name,
       status: r.status,
-      issuesDetected: r.issues_detected ? JSON.parse(r.issues_detected) : null,
+      issuesDetected: r.issues_detected ? JSON.parse(r.issues_detected as string) : null,
       createdAt: r.created_at,
     }))
 
