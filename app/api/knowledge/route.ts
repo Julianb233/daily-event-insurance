@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
 
         if (!error && articles && articles.length > 0) {
           // Transform to API response format
-          const transformedArticles = articles.map((doc) => ({
+          const transformedArticles = articles.map((doc: any) => ({
             id: doc.id,
             title: doc.title,
             slug: doc.slug,

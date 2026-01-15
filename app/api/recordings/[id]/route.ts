@@ -50,7 +50,7 @@ export async function GET(
 
     const supabase = createAdminClient()
 
-    const { data: recording, error } = await supabase
+    const { data: recording, error } = await (supabase as any)
       .from("onboarding_recordings")
       .select("*")
       .eq("id", id)
@@ -124,7 +124,7 @@ export async function DELETE(
     const supabase = createAdminClient()
 
     // Get the recording to find the storage path
-    const { data: recording } = await supabase
+    const { data: recording } = await (supabase as any)
       .from("onboarding_recordings")
       .select("recording_url")
       .eq("id", id)
@@ -147,7 +147,7 @@ export async function DELETE(
     }
 
     // Delete the database record
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("onboarding_recordings")
       .delete()
       .eq("id", id)
@@ -217,7 +217,7 @@ export async function PATCH(
       }
     }
 
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await (supabase as any)
       .from("onboarding_recordings")
       .update(updateData)
       .eq("id", id)

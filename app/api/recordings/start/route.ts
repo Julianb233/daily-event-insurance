@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Create a pending recording record in the database
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
       .from("onboarding_recordings")
       .insert({
         id: sessionId,

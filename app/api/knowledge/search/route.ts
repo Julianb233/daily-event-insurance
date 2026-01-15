@@ -67,13 +67,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Combine and deduplicate results
-        const allResults = [...(titleResults || []), ...contentResults]
+        const allResults = [...(titleResults || []), ...contentResults] as any[]
         const uniqueResults = Array.from(
-          new Map(allResults.map((r) => [r.id, r])).values()
-        ).slice(0, maxLimit)
+          new Map(allResults.map((r: any) => [r.id, r])).values()
+        ).slice(0, maxLimit) as any[]
 
         if (uniqueResults.length > 0) {
-          const results = uniqueResults.map((doc) => ({
+          const results = uniqueResults.map((doc: any) => ({
             article: {
               id: doc.id,
               title: doc.title,

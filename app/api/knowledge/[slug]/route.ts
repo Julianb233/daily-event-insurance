@@ -33,16 +33,18 @@ export async function GET(
       try {
         const supabase = createAdminClient()
 
-        const { data: doc, error } = await supabase
+        const { data: docData, error } = await (supabase as any)
           .from("integration_docs")
           .select("*")
           .eq("slug", slug)
           .eq("is_published", true)
           .single()
 
+        const doc = docData as any
+
         if (!error && doc) {
           // Get related articles from same category
-          const { data: relatedDocs } = await supabase
+          const { data: relatedDocs } = await (supabase as any)
             .from("integration_docs")
             .select("id, title, slug, category, content")
             .eq("category", doc.category)
@@ -51,7 +53,7 @@ export async function GET(
             .limit(3)
 
           // Track view (async, don't block response)
-          supabase
+          ;(supabase as any)
             .rpc("increment_doc_views", { doc_id: doc.id })
             .then(() => {})
             .catch(() => {})
@@ -71,7 +73,7 @@ export async function GET(
             updatedAt: doc.updated_at,
           }
 
-          const related = (relatedDocs || []).map((r) => ({
+          const related = (relatedDocs || []).map((r: any) => ({
             id: r.id,
             title: r.title,
             slug: r.slug,

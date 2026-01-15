@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createAdminClient, isSupabaseServerConfigured } from "@/lib/supabase/server"
 
+interface IntegrationDoc {
+  id: string
+  title: string
+  slug: string
+  content: string
+  category: string
+  pos_system: string | null
+  framework: string | null
+  code_examples: string | null
+  embedding: unknown
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
 /**
  * GET /api/admin/knowledge/[id]
  * Get a single knowledge base article by ID (admin view)
@@ -28,18 +43,20 @@ export async function GET(
 
     const supabase = createAdminClient()
 
-    const { data: doc, error } = await supabase
+    const { data, error } = await supabase
       .from("integration_docs")
       .select("*")
       .eq("id", id)
       .single()
 
-    if (error || !doc) {
+    if (error || !data) {
       return NextResponse.json(
         { error: "Article not found" },
         { status: 404 }
       )
     }
+
+    const doc = data as IntegrationDoc
 
     return NextResponse.json({
       article: {
@@ -118,8 +135,9 @@ export async function PATCH(
       )
     }
 
-    // Build update object
-    const updateData: Record<string, unknown> = {
+    // Build update object - using any for dynamic field mapping
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = {
       updated_at: new Date().toISOString(),
     }
 
@@ -180,21 +198,25 @@ export async function PATCH(
       }
     }
 
-    // Update article
-    const { data: updated, error } = await supabase
+    // Update article - cast entire chain to any due to missing Supabase types
+    const updateResult = await (supabase as any)
       .from("integration_docs")
       .update(updateData)
       .eq("id", id)
       .select()
       .single()
+    const updatedData = updateResult.data
+    const updateError = updateResult.error
 
-    if (error) {
-      console.error("[Admin Knowledge] Update error:", error)
+    if (updateError || !updatedData) {
+      console.error("[Admin Knowledge] Update error:", updateError)
       return NextResponse.json(
         { error: "Failed to update article" },
         { status: 500 }
       )
     }
+
+    const updated = updatedData as IntegrationDoc
 
     return NextResponse.json({
       success: true,
@@ -258,27 +280,29 @@ export async function DELETE(
     const supabase = createAdminClient()
 
     // Check if article exists
-    const { data: existing } = await supabase
+    const { data: existingData } = await (supabase
       .from("integration_docs")
       .select("id, title")
       .eq("id", id)
-      .single()
+      .single() as any)
 
-    if (!existing) {
+    if (!existingData) {
       return NextResponse.json(
         { error: "Article not found" },
         { status: 404 }
       )
     }
 
+    const existing = existingData as { id: string; title: string }
+
     // Delete the article
-    const { error } = await supabase
+    const { error: deleteError } = await (supabase
       .from("integration_docs")
       .delete()
-      .eq("id", id)
+      .eq("id", id) as any)
 
-    if (error) {
-      console.error("[Admin Knowledge] Delete error:", error)
+    if (deleteError) {
+      console.error("[Admin Knowledge] Delete error:", deleteError)
       return NextResponse.json(
         { error: "Failed to delete article" },
         { status: 500 }

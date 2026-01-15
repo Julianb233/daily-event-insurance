@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
 
-    let query = supabase
+    let query = (supabase as any)
       .from("integration_docs")
       .select("*", { count: "exact" })
 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform to API response format
-    const transformedArticles = (articles || []).map((doc) => ({
+    const transformedArticles = ((articles || []) as any[]).map((doc) => ({
       id: doc.id,
       title: doc.title,
       slug: doc.slug,
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
       .replace(/^-|-$/g, "")
 
     // Check if slug already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await (supabase as any)
       .from("integration_docs")
       .select("id")
       .eq("slug", slug)
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
     const articleId = nanoid()
     const timestamp = new Date().toISOString()
 
-    const { data: article, error } = await supabase
+    const { data: article, error } = await (supabase as any)
       .from("integration_docs")
       .insert({
         id: articleId,

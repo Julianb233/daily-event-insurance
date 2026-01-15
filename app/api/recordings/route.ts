@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Build query
-    let query = supabase
+    let query = (supabase as any)
       .from("onboarding_recordings")
       .select("*", { count: "exact" })
 
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform recordings to camelCase for API response
-    const transformedRecordings = (recordings || []).map((r) => ({
+    const transformedRecordings = ((recordings || []) as any[]).map((r) => ({
       id: r.id,
       partnerId: r.partner_id,
       conversationId: r.conversation_id,

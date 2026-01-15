@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Get the current recording record
-    const { data: recording, error: fetchError } = await supabase
+    const { data: recording, error: fetchError } = await (supabase as any)
       .from("onboarding_recordings")
       .select("*")
       .eq("id", sessionId)
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       updateData.issues_detected = JSON.stringify(metadata.issues || [])
     }
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await (supabase as any)
       .from("onboarding_recordings")
       .update(updateData)
       .eq("id", sessionId)
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the updated recording
-    const { data: updatedRecording } = await supabase
+    const { data: updatedRecording } = await (supabase as any)
       .from("onboarding_recordings")
       .select("*")
       .eq("id", sessionId)
