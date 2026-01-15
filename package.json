@@ -12,7 +12,8 @@
     "start": "next start",
     "db:migrate": "npx tsx scripts/run-migrations.ts",
     "db:migrate:status": "npx tsx scripts/run-migrations.ts --status",
-    "db:migrate:dry-run": "npx tsx scripts/run-migrations.ts --dry-run --verbose"
+    "db:migrate:dry-run": "npx tsx scripts/run-migrations.ts --dry-run --verbose",
+    "db:seed-knowledge": "npx tsx scripts/seed-knowledge-base.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
