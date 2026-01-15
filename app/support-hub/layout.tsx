@@ -16,7 +16,9 @@ import {
   Menu,
   X,
   Home,
-  ChevronRight
+  ChevronRight,
+  MessageSquare,
+  Ticket
 } from "lucide-react"
 
 const navigation = [
@@ -61,6 +63,18 @@ const navigation = [
     href: "/support-hub/training",
     icon: GraduationCap,
     description: "Agent resources"
+  },
+  {
+    name: "Contact Support",
+    href: "/support-hub/contact",
+    icon: MessageSquare,
+    description: "Get help from our team"
+  },
+  {
+    name: "My Tickets",
+    href: "/support-hub/tickets",
+    icon: Ticket,
+    description: "View support tickets"
   }
 ]
 
@@ -148,7 +162,7 @@ export default function SupportHubLayout({
                       Our team is here to assist you
                     </p>
                     <Link
-                      href="/support"
+                      href="/support-hub/contact"
                       className="
                         block w-full px-4 py-2.5 text-center
                         bg-gradient-to-r from-teal-500 to-blue-500
@@ -253,7 +267,7 @@ export default function SupportHubLayout({
 
                     <div className="p-6 border-t border-slate-100">
                       <Link
-                        href="/support"
+                        href="/support-hub/contact"
                         className="
                           block w-full px-4 py-2.5 text-center
                           bg-gradient-to-r from-teal-500 to-blue-500

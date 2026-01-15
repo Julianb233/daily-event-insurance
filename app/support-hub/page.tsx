@@ -20,7 +20,8 @@ import {
   Users,
   Clock,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Ticket
 } from "lucide-react"
 
 const categories = [
@@ -91,7 +92,13 @@ const quickActions = [
     title: "Contact Support",
     description: "Get help from our team",
     icon: MessageSquare,
-    href: "/support"
+    href: "/support-hub/contact"
+  },
+  {
+    title: "My Tickets",
+    description: "View your support tickets",
+    icon: Ticket,
+    href: "/support-hub/tickets"
   }
 ]
 
@@ -167,7 +174,7 @@ export default function SupportHubPage() {
 
       {/* Quick Actions */}
       <section>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {quickActions.map((action, index) => (
             <Link key={index} href={action.href}>
               <GlassCard hoverEffect gradientBorder>
@@ -301,7 +308,7 @@ export default function SupportHubPage() {
                 Our support team is available 24/7 to help you with any questions or issues
               </p>
               <Link
-                href="/support"
+                href="/support-hub/contact"
                 className="
                   inline-flex items-center gap-2 px-8 py-4
                   bg-gradient-to-r from-teal-500 to-blue-500
