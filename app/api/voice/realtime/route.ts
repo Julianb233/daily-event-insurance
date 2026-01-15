@@ -78,7 +78,10 @@ export async function POST(request: NextRequest) {
 
       await Promise.race([
         agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
-          metadata: JSON.stringify({ context }),
+          metadata: JSON.stringify({
+            ...context,
+            direction: 'inbound',
+          }),
         }),
         dispatchTimeout
       ])
