@@ -43,7 +43,7 @@ export async function GET(
 
     const supabase = createAdminClient()
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("integration_docs")
       .select("*")
       .eq("id", id)
@@ -122,7 +122,7 @@ export async function PATCH(
     const supabase = createAdminClient()
 
     // Check if article exists
-    const { data: existing } = await supabase
+    const { data: existing } = await (supabase as any)
       .from("integration_docs")
       .select("id")
       .eq("id", id)
@@ -165,7 +165,7 @@ export async function PATCH(
 
     // If slug is being updated, check for uniqueness
     if (body.slug) {
-      const { data: slugExists } = await supabase
+      const { data: slugExists } = await (supabase as any)
         .from("integration_docs")
         .select("id")
         .eq("slug", body.slug)

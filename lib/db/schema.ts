@@ -1070,3 +1070,201 @@ export type SupportTicket = typeof supportTickets.$inferSelect
 export type NewSupportTicket = typeof supportTickets.$inferInsert
 export type SupportTicketReply = typeof supportTicketReplies.$inferSelect
 export type NewSupportTicketReply = typeof supportTicketReplies.$inferInsert
+
+// ================= Custom CRM Pipeline Tables =================
+
+// Pipeline stages - Customizable lead pipeline stages
+export const pipelineStages = pgTable("pipeline_stages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Stage identity
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(), // URL-safe identifier
+  description: text("description"),
+  color: text("color").default("#6366F1"), // Hex color for UI
+
+  // Position in pipeline
+  sortOrder: integer("sort_order").notNull().default(0),
+
+  // Stage behavior
+  isDefault: boolean("is_default").default(false), // New leads go here
+  isTerminal: boolean("is_terminal").default(false), // End of pipeline (won/lost)
+  stageType: text("stage_type").default("active"), // active, won, lost
+
+  // Auto-actions
+  autoAssignTo: text("auto_assign_to"), // Agent ID for auto-assignment
+  slaHours: integer("sla_hours"), // Hours before SLA breach
+
+  // Tracking
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  slugIdx: index("idx_pipeline_stages_slug").on(table.slug),
+  sortOrderIdx: index("idx_pipeline_stages_sort_order").on(table.sortOrder),
+  activeIdx: index("idx_pipeline_stages_active").on(table.isActive),
+  stageTypeIdx: index("idx_pipeline_stages_type").on(table.stageType),
+}))
+
+// Lead stage history - Audit trail of stage changes
+export const leadStageHistory = pgTable("lead_stage_history", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }).notNull(),
+
+  // Stage transition
+  fromStageId: uuid("from_stage_id").references(() => pipelineStages.id),
+  toStageId: uuid("to_stage_id").references(() => pipelineStages.id).notNull(),
+
+  // Context
+  changedBy: text("changed_by"), // User/agent who changed it
+  reason: text("reason"),
+
+  // Timing
+  timeInPreviousStage: integer("time_in_previous_stage"), // seconds
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  leadIdIdx: index("idx_lead_stage_history_lead_id").on(table.leadId),
+  toStageIdIdx: index("idx_lead_stage_history_to_stage_id").on(table.toStageId),
+  createdAtIdx: index("idx_lead_stage_history_created_at").on(table.createdAt),
+}))
+
+// Workflows - Automated actions based on triggers
+export const workflows = pgTable("workflows", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Workflow identity
+  name: text("name").notNull(),
+  description: text("description"),
+
+  // Trigger configuration
+  triggerType: text("trigger_type").notNull(), // stage_change, time_based, manual, event
+  triggerConfig: text("trigger_config"), // JSON: { fromStage, toStage, delayMinutes, event }
+
+  // Conditions (all must be true)
+  conditions: text("conditions"), // JSON array: [{ field, operator, value }]
+
+  // Actions to execute
+  actions: text("actions").notNull(), // JSON array: [{ type, config }]
+
+  // Execution settings
+  isActive: boolean("is_active").default(true),
+  runOnce: boolean("run_once").default(false), // Only trigger once per lead
+  priority: integer("priority").default(0), // Higher runs first
+
+  // Stats
+  executionCount: integer("execution_count").default(0),
+  lastExecutedAt: timestamp("last_executed_at"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  triggerTypeIdx: index("idx_workflows_trigger_type").on(table.triggerType),
+  activeIdx: index("idx_workflows_active").on(table.isActive),
+}))
+
+// Workflow executions - Log of workflow runs
+export const workflowExecutions = pgTable("workflow_executions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  workflowId: uuid("workflow_id").references(() => workflows.id, { onDelete: "cascade" }).notNull(),
+  leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }).notNull(),
+
+  // Execution details
+  status: text("status").notNull().default("pending"), // pending, running, completed, failed
+  triggerData: text("trigger_data"), // JSON: what triggered this execution
+  actionsExecuted: text("actions_executed"), // JSON: results of each action
+  error: text("error"),
+
+  // Timing
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  workflowIdIdx: index("idx_workflow_executions_workflow_id").on(table.workflowId),
+  leadIdIdx: index("idx_workflow_executions_lead_id").on(table.leadId),
+  statusIdx: index("idx_workflow_executions_status").on(table.status),
+  createdAtIdx: index("idx_workflow_executions_created_at").on(table.createdAt),
+}))
+
+// Email templates - Reusable email templates
+export const emailTemplates = pgTable("email_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // Template identity
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  category: text("category").default("general"), // outreach, follow_up, nurture, onboarding, notification
+
+  // Email content
+  subject: text("subject").notNull(),
+  htmlContent: text("html_content").notNull(),
+  textContent: text("text_content"), // Plain text fallback
+
+  // Variables available: {{firstName}}, {{businessName}}, {{agentName}}, etc.
+  availableVariables: text("available_variables"), // JSON array of variable names
+
+  // Settings
+  isActive: boolean("is_active").default(true),
+
+  // Usage stats
+  sentCount: integer("sent_count").default(0),
+  openRate: decimal("open_rate", { precision: 5, scale: 2 }),
+  clickRate: decimal("click_rate", { precision: 5, scale: 2 }),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  slugIdx: index("idx_email_templates_slug").on(table.slug),
+  categoryIdx: index("idx_email_templates_category").on(table.category),
+  activeIdx: index("idx_email_templates_active").on(table.isActive),
+}))
+
+// Email sends - Track individual email sends
+export const emailSends = pgTable("email_sends", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  // References
+  templateId: uuid("template_id").references(() => emailTemplates.id),
+  leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }),
+  workflowExecutionId: uuid("workflow_execution_id").references(() => workflowExecutions.id),
+
+  // Email details
+  toEmail: text("to_email").notNull(),
+  toName: text("to_name"),
+  subject: text("subject").notNull(),
+
+  // Status
+  status: text("status").default("pending"), // pending, sent, delivered, opened, clicked, bounced, failed
+
+  // Provider tracking
+  providerMessageId: text("provider_message_id"), // Resend/SendGrid message ID
+
+  // Events
+  sentAt: timestamp("sent_at"),
+  deliveredAt: timestamp("delivered_at"),
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
+  bouncedAt: timestamp("bounced_at"),
+  bounceReason: text("bounce_reason"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  templateIdIdx: index("idx_email_sends_template_id").on(table.templateId),
+  leadIdIdx: index("idx_email_sends_lead_id").on(table.leadId),
+  statusIdx: index("idx_email_sends_status").on(table.status),
+  createdAtIdx: index("idx_email_sends_created_at").on(table.createdAt),
+}))
+
+// Type exports for CRM pipeline tables
+export type PipelineStage = typeof pipelineStages.$inferSelect
+export type NewPipelineStage = typeof pipelineStages.$inferInsert
+export type LeadStageHistory = typeof leadStageHistory.$inferSelect
+export type NewLeadStageHistory = typeof leadStageHistory.$inferInsert
+export type Workflow = typeof workflows.$inferSelect
+export type NewWorkflow = typeof workflows.$inferInsert
+export type WorkflowExecution = typeof workflowExecutions.$inferSelect
+export type NewWorkflowExecution = typeof workflowExecutions.$inferInsert
+export type EmailTemplate = typeof emailTemplates.$inferSelect
+export type NewEmailTemplate = typeof emailTemplates.$inferInsert
+export type EmailSend = typeof emailSends.$inferSelect
+export type NewEmailSend = typeof emailSends.$inferInsert
