@@ -295,7 +295,7 @@ export function useScreenRecording(
         },
       })
 
-      stopFnRef.current = stopFn
+      stopFnRef.current = stopFn ?? null
 
       // Start duration tracking
       durationIntervalRef.current = setInterval(() => {

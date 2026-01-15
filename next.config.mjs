@@ -1,5 +1,15 @@
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Fix Turbopack workspace root inference issue with multiple lockfiles
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     unoptimized: true,
   },
