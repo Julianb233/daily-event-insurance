@@ -129,7 +129,8 @@ export async function POST(request: NextRequest) {
               .from(RECORDINGS_BUCKET)
               .getPublicUrl(fileName)
 
-            await supabase
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (supabase as any)
               .from("onboarding_recordings")
               .update({
                 recording_url: urlData?.publicUrl || null,
