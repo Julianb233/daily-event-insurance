@@ -13,7 +13,9 @@
     "db:migrate": "npx tsx scripts/run-migrations.ts",
     "db:migrate:status": "npx tsx scripts/run-migrations.ts --status",
     "db:migrate:dry-run": "npx tsx scripts/run-migrations.ts --dry-run --verbose",
-    "db:seed-knowledge": "npx tsx scripts/seed-knowledge-base.ts"
+    "db:seed-knowledge": "npx tsx scripts/seed-knowledge-base.ts",
+    "widget:build": "npx tsx scripts/build-widget.ts",
+    "widget:dev": "npx tsx scripts/build-widget.ts --watch"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
@@ -117,6 +119,7 @@
     "@types/sharp": "^0.32.0",
     "@types/three": "^0.181.0",
     "drizzle-kit": "^0.31.8",
+    "esbuild": "^0.27.2",
     "eslint": "8.57.0",
     "eslint-config-next": "^13.5.11",
     "postcss": "^8.5",
