@@ -1,103 +1,76 @@
 """
 Daily Event Insurance Voice Agent
-A LiveKit Agent that handles voice conversations for insurance support.
+Using LiveKit Agents SDK v1.x with OpenAI Realtime API
 """
 
-import asyncio
-import logging
-from livekit.agents import (
-    AutoSubscribe,
-    JobContext,
-    JobProcess,
-    WorkerOptions,
-    cli,
-    llm,
-)
-from livekit.agents.voice_assistant import VoiceAssistant
-from livekit.plugins import openai, silero
+from dotenv import load_dotenv
+load_dotenv()
 
+import logging
+from livekit import agents
+from livekit.agents import AgentSession, Agent, RoomInputOptions
+from livekit.plugins import openai
 
 logger = logging.getLogger("voice-agent")
+logging.basicConfig(level=logging.INFO)
 
-# System prompt for the insurance assistant
-SYSTEM_PROMPT = """You are a friendly and knowledgeable insurance specialist for Daily Event Insurance.
-You help partners and potential partners understand our event insurance platform.
+SYSTEM_PROMPT = """You are Sarah, a high-energy sales representative for Mutual, the official insurance partner for race events.
 
-Key facts about Daily Event Insurance:
-- We provide liability insurance for event operators, gyms, climbing facilities, and adventure businesses
-- Partners earn commissions by offering our insurance to their customers
-- Commission rates range from 25% to 37.5% based on volume ($10-$15 per participant)
-- Our platform offers instant quotes and same-day coverage
-- We handle all claims and customer support
-- 100% of participants are covered (coverage is required)
+Your approach:
+- Be confident, friendly, and assumptive
+- Don't ask "if" - tell them the next step
+- Get them saying "yes" to build momentum
+- Keep responses SHORT (1-2 sentences max)
 
-Commission tiers:
-- 0-999 participants: 25% ($10/participant)
-- 1,000-2,499: 27.5% ($11/participant)
-- 2,500-4,999: 30% ($12/participant)
-- 5,000-9,999: 32.5% ($13/participant)
-- 10,000-24,999: 35% ($14/participant)
-- 25,000+: 37.5% ($15/participant)
+Your script flow:
+1. Greet: "Hey! This is Sarah from Mutual - we're the official coverage provider for the race. Did you see the text to activate your coverage?"
+2. If they haven't: "No stress! I'll shoot you a fresh link. You need that active before race day."
+3. Build rapport: "Do you race a few times a year? Work out regularly?"
+4. Pitch: "Since you're active, you qualify for ActiveGuard - covers ALL your training and races for the year. Want me to upgrade you real quick?"
+5. Close: "Perfect, takes like 10 seconds. What's your email?"
 
-Multi-location bonuses:
-- 2-5 locations: +$0.50/participant
-- 6-10 locations: +$1.00/participant
-- 11-25 locations: +$1.50/participant
-- 25+ locations: +$2.00/participant
-
-Communication style:
-- Be conversational, warm, and professional
-- Keep responses concise (2-3 sentences) since this is a voice conversation
-- Ask clarifying questions when needed
-- Be helpful and solution-oriented
-- Start by greeting the user warmly"""
+Be natural - use "gotcha", "totally", "for sure". Match their energy.
+"""
 
 
-def prewarm(proc: JobProcess):
-    """Preload models for faster response time"""
-    proc.userdata["vad"] = silero.VAD.load()
+async def entrypoint(ctx: agents.JobContext):
+    """Voice agent entry point"""
+    logger.info(f"Agent starting for room: {ctx.room.name}")
 
+    # Connect to the room
+    await ctx.connect()
+    logger.info("Connected to LiveKit room")
 
-async def entrypoint(ctx: JobContext):
-    """Main entry point for the voice agent"""
-    logger.info(f"Connecting to room: {ctx.room.name}")
-
-    # Wait for a participant to connect
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-
-    # Wait for a participant
-    participant = await ctx.wait_for_participant()
-    logger.info(f"Participant joined: {participant.identity}")
-
-    # Initialize the voice assistant with OpenAI
-    initial_ctx = llm.ChatContext().append(
-        role="system",
-        text=SYSTEM_PROMPT,
+    # Create the agent session with OpenAI Realtime
+    session = AgentSession(
+        llm=openai.realtime.RealtimeModel(
+            voice="coral",
+            temperature=0.8,
+        )
     )
 
-    assistant = VoiceAssistant(
-        vad=ctx.proc.userdata["vad"],
-        stt=openai.STT(),
-        llm=openai.LLM(model="gpt-4o-mini"),
-        tts=openai.TTS(voice="nova"),
-        chat_ctx=initial_ctx,
+    # Start the session with our agent
+    await session.start(
+        room=ctx.room,
+        agent=Agent(instructions=SYSTEM_PROMPT),
     )
 
-    # Start the assistant
-    assistant.start(ctx.room, participant)
+    logger.info("Voice agent session started")
 
-    # Greet the user
-    await assistant.say(
-        "Hello! Welcome to Daily Event Insurance. "
-        "I'm your insurance specialist. How can I help you today?",
-        allow_interruptions=True,
+    # Generate initial greeting
+    await session.generate_reply(
+        instructions="Greet the user with your opening line about being Sarah from Mutual and ask if they saw the text to activate their coverage."
     )
 
 
 if __name__ == "__main__":
-    cli.run_app(
-        WorkerOptions(
+    print("=" * 50)
+    print("Daily Event Insurance Voice Agent")
+    print("=" * 50)
+
+    agents.cli.run_app(
+        agents.WorkerOptions(
             entrypoint_fnc=entrypoint,
-            prewarm_fnc=prewarm,
+            agent_name="daily-event-insurance",
         ),
     )

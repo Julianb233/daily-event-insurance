@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       await agentDispatch.createDispatch(roomName, 'daily-event-insurance', {
         metadata: JSON.stringify({ context }),
       })
-      console.log(`Dispatched agent Quinn-521 to room: ${roomName}`)
+      console.log(`Dispatched agent daily-event-insurance to room: ${roomName}`)
     } catch (dispatchError) {
       console.warn('Agent dispatch error:', dispatchError)
     }

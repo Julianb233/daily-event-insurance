@@ -241,7 +241,7 @@ export default function TalkPage() {
 
         {/* Footer */}
         <footer className="p-6 text-center text-white/30 text-xs">
-          Powered by Daily Event Insurance • LiveKit • OpenAI
+          Powered by Daily Event Insurance
         </footer>
       </div>
     </div>
