@@ -53,11 +53,12 @@ export async function POST(request: NextRequest) {
       const supabase = createAdminClient()
 
       // Get quote
-      const { data: quote, error: quoteError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: quote, error: quoteError } = await (supabase as any)
         .from("quotes")
         .select("*")
         .eq("id", quoteId)
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
       if (quoteError || !quote) {
         return NextResponse.json(
@@ -75,9 +76,10 @@ export async function POST(request: NextRequest) {
       }
 
       // Check expiration
-      if (quote.expires_at && new Date(quote.expires_at) < new Date()) {
+      if (quote.expires_at && new Date(quote.expires_at as string) < new Date()) {
         // Update quote status
-        await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (supabase as any)
           .from("quotes")
           .update({ status: "expired" })
           .eq("id", quoteId)
@@ -93,10 +95,11 @@ export async function POST(request: NextRequest) {
 
       // Create policy
       const effectiveDate = new Date()
-      const eventDate = new Date(quote.event_date)
+      const eventDate = new Date(quote.event_date as string)
       const expirationDate = addDays(eventDate, 1) // Coverage until day after event
 
-      const { data: policy, error: policyError } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: policy, error: policyError } = await (supabase as any)
         .from("policies")
         .insert({
           partner_id: quote.partner_id,
@@ -119,9 +122,9 @@ export async function POST(request: NextRequest) {
           risk_multiplier: quote.risk_multiplier,
         })
         .select()
-        .single()
+        .single() as { data: Record<string, unknown> | null; error: unknown }
 
-      if (policyError) {
+      if (policyError || !policy) {
         console.error("[Purchase API] Policy creation error:", policyError)
         return NextResponse.json(
           { error: "Failed to create policy" },
@@ -130,7 +133,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Update quote status
-      await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
         .from("quotes")
         .update({
           status: "accepted",
@@ -144,7 +148,8 @@ export async function POST(request: NextRequest) {
       const certificateUrl = `/api/policies/${policy.id}/certificate`
 
       // Update policy with certificate URL
-      await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
         .from("policies")
         .update({
           policy_document: certificateUrl,

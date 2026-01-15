@@ -10,6 +10,8 @@ import {
   Filter,
   ChevronDown,
   Phone,
+  PhoneCall,
+  MessageSquare,
   Mail,
   Building2,
   Calendar,
@@ -20,6 +22,7 @@ import {
   Eye,
   TrendingUp,
   DollarSign,
+  Loader2,
 } from "lucide-react"
 import { DataTable, Column } from "@/components/admin/DataTable"
 
@@ -133,6 +136,49 @@ export default function LeadsPage() {
   const [interestFilter, setInterestFilter] = useState("all")
   const [sourceFilter, setSourceFilter] = useState("all")
   const [businessTypeFilter, setBusinessTypeFilter] = useState("all")
+  const [callingLeadId, setCallingLeadId] = useState<string | null>(null)
+  const [sendingSmsToId, setSendingSmsToId] = useState<string | null>(null)
+
+  async function initiateCall(leadId: string) {
+    setCallingLeadId(leadId)
+    try {
+      const response = await fetch(`/api/admin/leads/${leadId}/call`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ callType: "outbound_followup" }),
+      })
+      if (response.ok) {
+        // Navigate to lead detail to see the call
+        router.push(`/admin/leads/${leadId}`)
+      }
+    } catch (err) {
+      console.error("Error initiating call:", err)
+    } finally {
+      setCallingLeadId(null)
+    }
+  }
+
+  async function sendQuickSms(leadId: string) {
+    setSendingSmsToId(leadId)
+    const message = prompt("Enter SMS message:")
+    if (!message) {
+      setSendingSmsToId(null)
+      return
+    }
+    try {
+      await fetch(`/api/admin/leads/${leadId}/sms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      })
+      alert("SMS sent successfully!")
+    } catch (err) {
+      console.error("Error sending SMS:", err)
+      alert("Failed to send SMS")
+    } finally {
+      setSendingSmsToId(null)
+    }
+  }
 
   useEffect(() => {
     fetchLeads()
@@ -257,13 +303,42 @@ export default function LeadsPage() {
           >
             <Eye className="w-4 h-4" />
           </Link>
-          <a
-            href={`tel:${row.phone}`}
-            className="p-2 rounded-lg hover:bg-green-100 text-green-600 transition-colors"
-            title="Call"
+          <button
+            onClick={() => initiateCall(row.id)}
+            disabled={callingLeadId === row.id || row.status === "dnc"}
+            className={`p-2 rounded-lg transition-colors ${
+              callingLeadId === row.id
+                ? "bg-green-100 text-green-600"
+                : row.status === "dnc"
+                ? "opacity-50 cursor-not-allowed text-slate-400"
+                : "hover:bg-green-100 text-green-600"
+            }`}
+            title="AI Call"
           >
-            <Phone className="w-4 h-4" />
-          </a>
+            {callingLeadId === row.id ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <PhoneCall className="w-4 h-4" />
+            )}
+          </button>
+          <button
+            onClick={() => sendQuickSms(row.id)}
+            disabled={sendingSmsToId === row.id || row.status === "dnc"}
+            className={`p-2 rounded-lg transition-colors ${
+              sendingSmsToId === row.id
+                ? "bg-violet-100 text-violet-600"
+                : row.status === "dnc"
+                ? "opacity-50 cursor-not-allowed text-slate-400"
+                : "hover:bg-violet-100 text-violet-600"
+            }`}
+            title="Send SMS"
+          >
+            {sendingSmsToId === row.id ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <MessageSquare className="w-4 h-4" />
+            )}
+          </button>
           <a
             href={`mailto:${row.email}`}
             className="p-2 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
