@@ -93,7 +93,7 @@ function InteractiveRevenueChart() {
       { period: "Year 5", value: 200000, display: "200K", color: "from-pink-500 to-purple-600" }
     ],
     partners: [
-      { period: "6 Mo", value: 50, display: "50", color: "from-orange-400 to-amber-400" },
+      { period: "6 Mo", value: 1000, display: "1,000", color: "from-orange-400 to-amber-400" },
       { period: "Year 1", value: 500, display: "500", color: "from-orange-500 to-amber-500" },
       { period: "Year 2", value: 2000, display: "2K", color: "from-amber-500 to-orange-500" },
       { period: "Year 3", value: 5000, display: "5K", color: "from-orange-600 to-red-500" },
@@ -172,15 +172,52 @@ function InteractiveRevenueChart() {
   )
 }
 
-// Platform Showcase (Light Theme)
+// Onboarding Progress Component
+function OnboardingSteps() {
+  const steps = [
+    {
+      title: "Connect",
+      description: "Embed our widget or use our API",
+      icon: Network
+    },
+    {
+      title: "Activate",
+      description: "Instant access to insurance products",
+      icon: Zap
+    },
+    {
+      title: "Scale",
+      description: "We handle support & claims",
+      icon: TrendingUp
+    }
+  ]
+
+  return (
+    <div className="flex items-center justify-between relative mt-8">
+      {/* Connecting Line */}
+      <div className="absolute left-0 right-0 top-1/2 h-1 bg-slate-100 -z-10" />
+
+      {steps.map((step, i) => (
+        <div key={i} className="flex flex-col items-center bg-white p-4 rounded-xl border border-slate-100 shadow-sm relative z-10 w-32 text-center">
+          <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-3">
+            <step.icon className="w-6 h-6" />
+          </div>
+          <div className="font-bold text-slate-900 text-sm">{step.title}</div>
+          <div className="text-xs text-slate-500 mt-1">{step.description}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function PlatformShowcase() {
   const [activeFeature, setActiveFeature] = useState(0)
 
   const features = [
     {
-      title: "Comprehensive Partner Dashboard",
-      description: "A centralized hub to track policies, monitor revenue, and manage customer interactions in real-time.",
-      icon: LayoutDashboard,
+      title: "Seamless Onboarding",
+      description: "Get your customers protected in minutes, not days. checking out is all it takes.",
+      icon: Rocket,
       color: "from-teal-500 to-emerald-600"
     },
     {
@@ -190,13 +227,13 @@ function PlatformShowcase() {
       color: "from-blue-500 to-cyan-600"
     },
     {
-      title: "Automated Claims Processing",
+      title: "Automated Claims",
       description: "AI-driven workflows that handle 80% of claims automatically, reducing overhead.",
       icon: FileText,
       color: "from-purple-500 to-violet-600"
     },
     {
-      title: "Seamless API Integration",
+      title: "Full API Access",
       description: "Robust REST APIs to integrate insurance products directly into your existing checkout flow.",
       icon: Server,
       color: "from-orange-500 to-amber-600"
@@ -234,53 +271,40 @@ function PlatformShowcase() {
         ))}
       </div>
 
-      {/* Right: Actual Dashboard Image Preview */}
+      {/* Right: Onboarding Visualization (Replaces Dashboard Image) */}
       <div className="lg:col-span-8">
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xl">
-          {/* Browser Chrome */}
-          <div className="bg-slate-50 px-4 py-3 flex items-center gap-3 border-b border-slate-200">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-400" />
-              <div className="w-3 h-3 rounded-full bg-yellow-400" />
-              <div className="w-3 h-3 rounded-full bg-green-400" />
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-2xl h-full flex flex-col justify-center">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-bold uppercase tracking-wider mb-4">
+              <Zap className="w-3 h-3" />
+              Streamlined Setup
             </div>
-            <div className="flex-1 bg-white rounded-md px-4 py-1.5 flex items-center gap-2 text-xs text-slate-400 border border-slate-200 shadow-sm">
-              <Lock className="w-3 h-3" />
-              <span>dashboard.dailyeventinsurance.com</span>
-            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">Zero Friction Launch</h3>
+            <p className="text-slate-500 max-w-md mx-auto">
+              We've removed the complexity of insurance. Your partners can be up and running in less than 24 hours.
+            </p>
           </div>
 
-          {/* Actual Dashboard Image */}
-          <div className="relative aspect-video bg-slate-100">
-            <Image
-              src="/images/hero-desktop.png"
-              alt="Daily Event Insurance Dashboard"
-              fill
-              className="object-cover object-top"
-            />
+          <OnboardingSteps />
 
-            {/* Feature Overlay */}
-            <motion.div
-              key={activeFeature}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md border border-slate-200 p-4 rounded-xl flex items-center gap-4 shadow-xl"
-            >
-              <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${features[activeFeature].color} flex items-center justify-center flex-shrink-0`}>
-                {(() => {
-                  const Icon = features[activeFeature].icon
-                  return <Icon className="w-6 h-6 text-white" />
-                })()}
-              </div>
-              <div>
-                <h4 className="text-slate-900 font-bold">{features[activeFeature].title}</h4>
-                <p className="text-slate-500 text-sm">Active Module Preview</p>
-              </div>
-            </motion.div>
+          <div className="mt-12 p-6 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center text-center">
+            <div className="max-w-lg">
+              <Quote className="w-8 h-8 text-teal-300 mx-auto mb-4" />
+              <p className="text-slate-700 font-medium italic mb-4">"The onboarding process was incredibly simple. We generated our widget, embedded it, and sold our first policy the same afternoon."</p>
+              <div className="text-sm font-bold text-slate-900">- Partner Testimonial</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+function Quote({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.01697 21L5.01697 18C5.01697 16.8954 5.9124 16 7.01697 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H6.01697C5.46468 8 5.01697 8.44772 5.01697 9V11C5.01697 11.5523 4.56925 12 4.01697 12H3.01697V5H13.017V15C13.017 18.3137 10.3307 21 7.01697 21H5.01697Z" />
+    </svg>
   )
 }
 
@@ -295,8 +319,7 @@ const deiValueProps = [
       "Custom domain setup",
       "Mobile-optimized design",
       "Continuous updates & improvements"
-    ],
-    pricing: "$600/month per microsite"
+    ]
   },
   {
     icon: Headphones,
@@ -307,10 +330,7 @@ const deiValueProps = [
       "Claims assistance",
       "Policy questions",
       "Escalation management"
-    ],
-    pricing: "Included"
-  },
-  {
+    ]
     icon: GraduationCap,
     title: "Onboarding & Training",
     description: "Comprehensive onboarding to get your team up and running quickly",
@@ -319,54 +339,42 @@ const deiValueProps = [
       "Staff training materials",
       "Best practices guides",
       "Ongoing education"
-    ],
-    pricing: "Included"
+    ]
   },
   {
-    icon: Wrench,
-    title: "Sales Resources & Tools",
     description: "Everything your team needs to sell and promote insurance effectively",
     details: [
       "Marketing collateral",
       "Sales scripts & talking points",
       "Promotional materials",
       "Conversion optimization tips"
-    ],
-    pricing: "Included"
+    ]
   },
   {
     icon: Handshake,
-    title: "Strategic Partnerships",
-    description: "Introductions to key relationships that accelerate your growth",
-    details: [
+    title: "Mutual Growth Ecosystem",
       "Partner network access",
       "Industry connections",
       "Co-marketing opportunities",
       "Deal flow introductions"
-    ],
-    pricing: "Included"
+    ]
   },
   {
     icon: BarChart3,
-    title: "Analytics & Reporting",
-    description: "Real-time insights into your insurance program performance",
+    title: "Transparent Revenue Insights",
+    description: "Real-time dashboards tracking mutual success and revenue share.",
     details: [
-      "Revenue dashboards",
-      "Conversion tracking",
       "Customer analytics",
       "Monthly performance reports"
     ],
     pricing: "Included"
   }
 ]
-
-// 6-Month Plan
 const sixMonthPlan = {
   title: "Foundation Phase",
   subtitle: "Building the Infrastructure",
   goals: [
     {
-      icon: Rocket,
       title: "Platform Launch",
       items: [
         "Deploy HIQOR-branded microsites",
@@ -397,7 +405,7 @@ const sixMonthPlan = {
     }
   ],
   metrics: [
-    { label: "Partners Onboarded", target: "50+", icon: Building2 },
+    { label: "Partners Onboarded", target: "1,000", icon: Building2 },
     { label: "Monthly Policies", target: "500+", icon: FileText },
     { label: "Gross Premium", target: "$50K/mo", icon: DollarSign },
     { label: "Conversion Rate", target: "15%", icon: Percent }
@@ -443,8 +451,7 @@ const oneYearPlan = {
   metrics: [
     { label: "Partners", target: "500+", icon: Building2 },
     { label: "Monthly Policies", target: "5,000+", icon: FileText },
-    { label: "Gross Premium", target: "$500K/mo", icon: DollarSign },
-    { label: "Team Size", target: "25+", icon: Users }
+    { label: "Gross Premium", target: "$500K/mo", icon: DollarSign }
   ]
 }
 
@@ -487,8 +494,7 @@ const threeYearPlan = {
   metrics: [
     { label: "Partners", target: "5,000+", icon: Building2 },
     { label: "Annual Premium", target: "$8M+", icon: DollarSign },
-    { label: "Markets", target: "Multiple", icon: Globe },
-    { label: "Team Size", target: "50+", icon: Users }
+    { label: "Markets", target: "Multiple", icon: Globe }
   ]
 }
 
@@ -531,8 +537,7 @@ const fiveYearPlan = {
   metrics: [
     { label: "Partners", target: "15,000+", icon: Building2 },
     { label: "Annual Premium", target: "$25M+", icon: DollarSign },
-    { label: "Growth Rate", target: "40%+ YoY", icon: TrendingUp },
-    { label: "Team Size", target: "100+", icon: Users }
+    { label: "Growth Rate", target: "40%+ YoY", icon: TrendingUp }
   ]
 }
 
@@ -692,6 +697,7 @@ export default function HiqorPresentationPage() {
                 <a href="#roadmap" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Roadmap</a>
                 <a href="#financials" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Financials</a>
                 <a href="#team" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Team</a>
+                <a href="#deal-structure" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Deal Structure</a>
                 <button className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-teal-500/20">
                   Download Deck
                 </button>
@@ -758,9 +764,7 @@ export default function HiqorPresentationPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed"
             >
-              A strategic alliance to integrate comprehensive insurance solutions
-              directly into the HIQOR ecosystem, unlocking new revenue streams
-              and value for partners.
+              As your premier <strong>Technology Partner</strong>, HiQor acts as a powerful lead generator and software platform designed to seamlessly onboard new clients and members—unlocking new revenue streams with zero overhead.
             </motion.p>
 
             <motion.div
@@ -772,9 +776,12 @@ export default function HiqorPresentationPage() {
               <button className="px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-lg shadow-xl shadow-teal-500/20 transition-all hover:scale-105 active:scale-95">
                 View Proposal
               </button>
-              <button className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
-                Read Case Study
-              </button>
+              <a href="/support" className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
+                Support Documentation
+              </a>
+              <a href="https://sure.com" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
+                Insurance Brokerage
+              </a>
             </motion.div>
           </div>
         </section>
@@ -793,6 +800,67 @@ export default function HiqorPresentationPage() {
             </div>
 
             <PlatformShowcase />
+          </div>
+        </section>
+
+        {/* Infrastructure & Security Section */}
+        <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/images/grid-texture.svg')] opacity-10" />
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Enterprise-Grade Infrastructure</h2>
+                <p className="text-slate-400 mb-8 leading-relaxed">
+                  Built on a foundation of security and reliability. We ensure your partner data and customer information is protected by industry-leading standards from day one.
+                </p>
+
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <Shield className="w-8 h-8 text-teal-400 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">SOC 2 Ready Security</h4>
+                      <p className="text-sm text-slate-400">Our platform adheres to rigorous security controls and compliance standards.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Lock className="w-8 h-8 text-teal-400 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">End-to-End Encryption</h4>
+                      <p className="text-sm text-slate-400">All sensitive data is encrypted at rest and in transit using latest cryptographic standards.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Server className="w-8 h-8 text-teal-400 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">99.9% Uptime SLA</h4>
+                      <p className="text-sm text-slate-400">Reliable infrastructure scaling automatically to handle high-traffic events.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-slate-800/50 p-8 rounded-2xl border border-slate-700">
+                <h3 className="font-bold text-xl mb-6 flex items-center gap-3">
+                  <Database className="w-5 h-5 text-teal-400" />
+                  Onboarded Customer Support
+                </h3>
+                <div className="space-y-4">
+                  <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-4">
+                    <Headphones className="w-10 h-10 text-slate-500 bg-slate-900 p-2 rounded-lg" />
+                    <div>
+                      <div className="font-bold text-white text-sm">24/7 Member Claims Support</div>
+                      <div className="text-xs text-slate-400 mt-1">We handle all policyholder inquiries so you don't have to.</div>
+                    </div>
+                  </div>
+                  <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-4">
+                    <Users className="w-10 h-10 text-slate-500 bg-slate-900 p-2 rounded-lg" />
+                    <div>
+                      <div className="font-bold text-white text-sm">Dedicated Partner Success Team</div>
+                      <div className="text-xs text-slate-400 mt-1">Direct access to implementation specialists for your team.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

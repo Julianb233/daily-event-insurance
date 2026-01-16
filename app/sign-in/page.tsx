@@ -10,15 +10,16 @@ export default function SignInPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white overflow-hidden relative">
-      {/* Decorative Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-400/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-300/30 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white relative">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100">
+      <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Decorative Orbs - Sea Green Theme */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-teal-300/20 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+        <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100 relative z-10">
           <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">Welcome Back</h1>
           <Descope
             flowId="sign-up-or-in"
