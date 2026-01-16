@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import type { RealtimeChannel } from "@supabase/supabase-js"
 import {
   type QueueItem,
@@ -50,7 +50,7 @@ export function useCustomerServiceRealtime(
   const [error, setError] = useState<Error | null>(null)
 
   const channelRef = useRef<RealtimeChannel | null>(null)
-  const supabaseRef = useRef(createClient())
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null)
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   // Fetch initial data and refresh
@@ -124,32 +124,8 @@ export function useCustomerServiceRealtime(
 
   // Subscribe to realtime changes
   useEffect(() => {
-    const supabase = supabaseRef.current
-
-    // Initial fetch
+    // Initial fetch (works even without Supabase via API)
     fetchData()
-
-    // Set up realtime subscription
-    channelRef.current = supabase
-      .channel(CHANNEL_NAME)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "support_conversations",
-        },
-        (payload) => {
-          console.log("[CustomerService] Realtime update:", payload.eventType)
-
-          // Refresh data on any change
-          fetchData()
-        }
-      )
-      .subscribe((status) => {
-        console.log("[CustomerService] Channel status:", status)
-        setIsConnected(status === "SUBSCRIBED")
-      })
 
     // Update wait times every second
     const waitTimeInterval = setInterval(updateWaitTimes, 1000)
@@ -157,9 +133,38 @@ export function useCustomerServiceRealtime(
     // Refresh full data every 30 seconds as backup
     refreshIntervalRef.current = setInterval(fetchData, 30000)
 
+    // Only set up realtime if Supabase is configured
+    if (isSupabaseConfigured()) {
+      supabaseRef.current = createClient()
+      const supabase = supabaseRef.current
+
+      if (supabase) {
+        // Set up realtime subscription
+        channelRef.current = supabase
+          .channel(CHANNEL_NAME)
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "support_conversations",
+            },
+            (payload) => {
+              console.log("[CustomerService] Realtime update:", payload.eventType)
+              // Refresh data on any change
+              fetchData()
+            }
+          )
+          .subscribe((status) => {
+            console.log("[CustomerService] Channel status:", status)
+            setIsConnected(status === "SUBSCRIBED")
+          })
+      }
+    }
+
     return () => {
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current)
+      if (channelRef.current && supabaseRef.current) {
+        supabaseRef.current.removeChannel(channelRef.current)
       }
       clearInterval(waitTimeInterval)
       if (refreshIntervalRef.current) {
@@ -255,8 +260,8 @@ export function useQueueCount(): { count: number; isLoading: boolean } {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const supabase = createClient()
     let channel: RealtimeChannel | null = null
+    let supabase: ReturnType<typeof createClient> | null = null
 
     const fetchCount = async () => {
       try {
@@ -276,26 +281,32 @@ export function useQueueCount(): { count: number; isLoading: boolean } {
 
     fetchCount()
 
-    channel = supabase
-      .channel("queue-count")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "support_conversations",
-          filter: "status=eq.active",
-        },
-        () => {
-          fetchCount()
-        }
-      )
-      .subscribe()
+    // Only set up realtime if Supabase is configured
+    if (isSupabaseConfigured()) {
+      supabase = createClient()
+      if (supabase) {
+        channel = supabase
+          .channel("queue-count")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "support_conversations",
+              filter: "status=eq.active",
+            },
+            () => {
+              fetchCount()
+            }
+          )
+          .subscribe()
+      }
+    }
 
     const interval = setInterval(fetchCount, 60000)
 
     return () => {
-      if (channel) supabase.removeChannel(channel)
+      if (channel && supabase) supabase.removeChannel(channel)
       clearInterval(interval)
     }
   }, [])

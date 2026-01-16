@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession } from "next-auth/react"
+import { useSession, useUser } from "@descope/react-sdk"
 import { usePathname } from "next/navigation"
 import { IntegrationChatWidget } from "@/components/support/IntegrationChatWidget"
 import type { ConversationTopic } from "@/lib/support/types"
@@ -20,7 +20,8 @@ import type { ConversationTopic } from "@/lib/support/types"
  * - /profile -> onboarding (account setup)
  */
 export function PartnerChatWidget() {
-  const { data: session } = useSession()
+  const { isAuthenticated } = useSession()
+  const { user } = useUser()
   const pathname = usePathname()
 
   // Build the full page URL for context
@@ -48,9 +49,9 @@ export function PartnerChatWidget() {
 
   return (
     <IntegrationChatWidget
-      partnerId={session?.user?.id}
-      partnerEmail={session?.user?.email ?? undefined}
-      partnerName={session?.user?.name ?? undefined}
+      partnerId={isAuthenticated ? user?.userId : undefined}
+      partnerEmail={isAuthenticated ? user?.email : undefined}
+      partnerName={isAuthenticated ? user?.name : undefined}
       pageUrl={pageUrl}
       topic={getTopic()}
       position="bottom-right"

@@ -8,7 +8,7 @@ export async function PATCH(request: Request) {
   try {
     const session = await auth()
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -37,7 +37,7 @@ export async function PATCH(request: Request) {
     const [updatedUser] = await db
       .update(users)
       .set({ role, updatedAt: new Date() })
-      .where(eq(users.id, session.user.id))
+      .where(eq(users.id, (session as any).user.id))
       .returning()
 
     return NextResponse.json({

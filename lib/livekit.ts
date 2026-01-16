@@ -1,102 +1,157 @@
 /**
- * LiveKit Integration Library
- * Handles voice calls via LiveKit SIP and voice agents
+ * LiveKit Service
+ *
+ * Handles LiveKit room creation, SIP outbound calls, and agent dispatch
+ * for the AI voice call center.
  */
 
 import { AccessToken, RoomServiceClient, SipClient } from "livekit-server-sdk"
 
-// Configuration check
+// Environment variables
+const LIVEKIT_URL = process.env.LIVEKIT_URL || ""
+const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY || ""
+const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET || ""
+const SIP_TRUNK_ID = process.env.LIVEKIT_SIP_TRUNK_ID || ""
+const LIVEKIT_AGENT_URL = process.env.LIVEKIT_AGENT_URL || "http://localhost:8080"
+
+/**
+ * Check if LiveKit is configured
+ */
 export function isLiveKitConfigured(): boolean {
-  return Boolean(
-    process.env.LIVEKIT_API_KEY &&
-    process.env.LIVEKIT_API_SECRET &&
-    process.env.NEXT_PUBLIC_LIVEKIT_URL
-  )
+  return !!(LIVEKIT_URL && LIVEKIT_API_KEY && LIVEKIT_API_SECRET)
 }
 
-// Get LiveKit config
-function getConfig() {
-  const apiKey = process.env.LIVEKIT_API_KEY
-  const apiSecret = process.env.LIVEKIT_API_SECRET
-  const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
-  const sipTrunkId = process.env.LIVEKIT_SIP_TRUNK_ID
+/**
+ * Generate a unique room name for a lead call
+ */
+export function generateRoomName(leadId: string): string {
+  const timestamp = Date.now()
+  return `call-${leadId}-${timestamp}`
+}
 
-  if (!apiKey || !apiSecret || !wsUrl) {
-    throw new Error("LiveKit configuration incomplete")
+/**
+ * Create a LiveKit access token
+ */
+export async function createAccessToken(
+  identity: string,
+  roomName: string,
+  options: {
+    canPublish?: boolean
+    canSubscribe?: boolean
+    canPublishData?: boolean
+    metadata?: string
+  } = {}
+): Promise<string> {
+  if (!isLiveKitConfigured()) {
+    throw new Error("LiveKit is not configured")
   }
 
-  const httpUrl = wsUrl.replace("wss://", "https://").replace("ws://", "http://")
+  const token = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
+    identity,
+    metadata: options.metadata,
+  })
 
-  return { apiKey, apiSecret, wsUrl, httpUrl, sipTrunkId }
+  token.addGrant({
+    roomJoin: true,
+    room: roomName,
+    canPublish: options.canPublish ?? true,
+    canSubscribe: options.canSubscribe ?? true,
+    canPublishData: options.canPublishData ?? true,
+  })
+
+  return token.toJwt()
 }
 
-// Generate unique room name
-export function generateRoomName(prefix: string = "call"): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+/**
+ * Get the Room Service client
+ */
+function getRoomService(): RoomServiceClient {
+  if (!isLiveKitConfigured()) {
+    throw new Error("LiveKit is not configured")
+  }
+
+  return new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
 }
 
-// Create a room and return access token
-export async function createVoiceRoom(options: {
-  roomName?: string
-  participantId: string
-  participantName?: string
-  metadata?: Record<string, any>
-}): Promise<{
-  success: boolean
-  token?: string
-  roomName?: string
-  url?: string
-  error?: string
-}> {
+/**
+ * Get the SIP client for outbound calls
+ */
+function getSipClient(): SipClient {
+  if (!isLiveKitConfigured()) {
+    throw new Error("LiveKit is not configured")
+  }
+
+  return new SipClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
+}
+
+/**
+ * Create a new LiveKit room
+ */
+export async function createRoom(
+  roomName: string,
+  options: {
+    emptyTimeout?: number
+    maxParticipants?: number
+    metadata?: string
+  } = {}
+): Promise<{ success: boolean; room?: unknown; error?: string }> {
   try {
-    const config = getConfig()
-    const roomName = options.roomName || generateRoomName()
+    const roomService = getRoomService()
 
-    // Create room service client
-    const roomService = new RoomServiceClient(config.httpUrl, config.apiKey, config.apiSecret)
-
-    // Create the room
-    await roomService.createRoom({
+    const room = await roomService.createRoom({
       name: roomName,
-      emptyTimeout: 300, // 5 minutes
-      maxParticipants: 3, // user + agent + possible observer
-      metadata: options.metadata ? JSON.stringify(options.metadata) : undefined,
+      emptyTimeout: options.emptyTimeout ?? 300, // 5 minutes
+      maxParticipants: options.maxParticipants ?? 10,
+      metadata: options.metadata,
     })
 
-    console.log(`[LiveKit] Created room: ${roomName}`)
-
-    // Create access token
-    const at = new AccessToken(config.apiKey, config.apiSecret, {
-      identity: options.participantId,
-      name: options.participantName || "Admin User",
-    })
-
-    at.addGrant({
-      room: roomName,
-      roomJoin: true,
-      canPublish: true,
-      canSubscribe: true,
-      canPublishData: true,
-    })
-
-    const token = await at.toJwt()
-
-    return {
-      success: true,
-      token,
-      roomName,
-      url: config.wsUrl,
-    }
-  } catch (error: any) {
-    console.error("[LiveKit] Room creation failed:", error)
+    return { success: true, room }
+  } catch (error) {
+    console.error("[LiveKit] Create room error:", error)
     return {
       success: false,
-      error: error.message || "Failed to create voice room",
+      error: error instanceof Error ? error.message : "Failed to create room",
     }
   }
 }
 
-// Initiate outbound call via SIP
+/**
+ * Delete a LiveKit room
+ */
+export async function deleteRoom(roomName: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const roomService = getRoomService()
+    await roomService.deleteRoom(roomName)
+    return { success: true }
+  } catch (error) {
+    console.error("[LiveKit] Delete room error:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete room",
+    }
+  }
+}
+
+/**
+ * List all active rooms
+ */
+export async function listRooms(): Promise<{ success: boolean; rooms?: unknown[]; error?: string }> {
+  try {
+    const roomService = getRoomService()
+    const rooms = await roomService.listRooms()
+    return { success: true, rooms }
+  } catch (error) {
+    console.error("[LiveKit] List rooms error:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to list rooms",
+    }
+  }
+}
+
+/**
+ * Initiate an outbound call via LiveKit SIP
+ */
 export async function initiateOutboundCall(options: {
   leadId: string
   leadName: string
@@ -113,196 +168,304 @@ export async function initiateOutboundCall(options: {
   error?: string
 }> {
   try {
-    const config = getConfig()
-    const roomName = generateRoomName(`lead-${options.leadId}`)
+    if (!isLiveKitConfigured()) {
+      return { success: false, error: "LiveKit is not configured" }
+    }
 
-    // Create room service client
-    const roomService = new RoomServiceClient(config.httpUrl, config.apiKey, config.apiSecret)
+    // Generate room name
+    const roomName = generateRoomName(options.leadId)
 
-    // Create the room with metadata
-    const room = await roomService.createRoom({
-      name: roomName,
-      emptyTimeout: 600, // 10 minutes for calls
-      maxParticipants: 4,
-      metadata: JSON.stringify({
-        type: "lead-call",
-        leadId: options.leadId,
-        leadName: options.leadName,
-        businessName: options.businessName,
-        direction: options.direction,
-        scriptId: options.scriptId,
-        agentId: options.agentId,
-      }),
+    // Create room with metadata for the agent
+    const roomMetadata = JSON.stringify({
+      lead_id: options.leadId,
+      lead_name: options.leadName,
+      business_name: options.businessName,
+      direction: options.direction,
+      script_id: options.scriptId,
+      agent_id: options.agentId,
     })
 
-    console.log(`[LiveKit] Created call room: ${roomName}`)
+    const roomResult = await createRoom(roomName, {
+      emptyTimeout: 600, // 10 minutes
+      maxParticipants: 3, // Lead, Agent, possible supervisor
+      metadata: roomMetadata,
+    })
 
-    // If SIP trunk is configured, initiate outbound call
-    if (config.sipTrunkId) {
+    if (!roomResult.success) {
+      return { success: false, error: roomResult.error }
+    }
+
+    // Format phone number for SIP (E.164)
+    const formattedPhone = formatPhoneForSip(options.phone)
+
+    // If SIP trunk is configured, initiate the call
+    if (SIP_TRUNK_ID) {
       try {
-        const sipClient = new SipClient(config.httpUrl, config.apiKey, config.apiSecret)
+        const sipClient = getSipClient()
 
-        // Format phone number for SIP (E.164 format)
-        const formattedPhone = formatPhoneForSip(options.phone)
-
-        // Create outbound SIP participant
+        // Create SIP participant (outbound call)
         const sipParticipant = await sipClient.createSipParticipant(
-          config.sipTrunkId,
-          formattedPhone,
+          SIP_TRUNK_ID,
+          `sip:${formattedPhone}@sip.twilio.com`, // Adjust based on your SIP provider
           roomName,
           {
-            participantIdentity: `sip-${options.leadId}`,
+            participantIdentity: `phone-${options.leadId}`,
             participantName: options.leadName,
-            playDialtone: true,
+            participantMetadata: JSON.stringify({
+              type: "phone",
+              lead_id: options.leadId,
+            }),
           }
         )
 
-        console.log(`[LiveKit] SIP participant created: ${sipParticipant.sipCallId}`)
-
         return {
           success: true,
           roomName,
-          roomSid: room.sid,
-          sipParticipantId: sipParticipant.sipCallId,
+          roomSid: (roomResult.room as { sid?: string })?.sid,
+          sipParticipantId: sipParticipant.participantId,
         }
-      } catch (sipError: any) {
-        console.error("[LiveKit] SIP call failed:", sipError)
-        // Room was created, but SIP failed - still return room for web-based calling
-        return {
-          success: true,
-          roomName,
-          roomSid: room.sid,
-          error: `SIP unavailable: ${sipError.message}`,
-        }
+      } catch (sipError) {
+        console.error("[LiveKit] SIP call error:", sipError)
+        // Continue without SIP - agent can still join the room
       }
     }
 
-    // No SIP trunk - just return room for web-based calling
+    // Dispatch agent to the room (even if SIP fails)
+    await dispatchAgentToRoom(roomName, options)
+
     return {
       success: true,
       roomName,
-      roomSid: room.sid,
+      roomSid: (roomResult.room as { sid?: string })?.sid,
     }
-  } catch (error: any) {
-    console.error("[LiveKit] Outbound call failed:", error)
+  } catch (error) {
+    console.error("[LiveKit] Outbound call error:", error)
     return {
       success: false,
-      error: error.message || "Failed to initiate call",
+      error: error instanceof Error ? error.message : "Failed to initiate call",
     }
   }
 }
 
-// End a call by closing the room
-export async function endCall(roomName: string): Promise<{ success: boolean; error?: string }> {
+/**
+ * Dispatch an AI agent to a room
+ */
+async function dispatchAgentToRoom(
+  roomName: string,
+  options: {
+    leadId: string
+    leadName: string
+    businessName?: string
+    direction: string
+    scriptId?: string
+    agentId?: string
+  }
+): Promise<void> {
   try {
-    const config = getConfig()
-    const roomService = new RoomServiceClient(config.httpUrl, config.apiKey, config.apiSecret)
+    // Option 1: Send HTTP request to agent dispatcher
+    const response = await fetch(`${LIVEKIT_AGENT_URL}/dispatch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${LIVEKIT_API_SECRET}`,
+      },
+      body: JSON.stringify({
+        room_name: roomName,
+        lead_id: options.leadId,
+        lead_name: options.leadName,
+        business_name: options.businessName,
+        direction: options.direction,
+        script_id: options.scriptId,
+        agent_id: options.agentId || "sarah-voice-agent",
+      }),
+    })
 
-    await roomService.deleteRoom(roomName)
-    console.log(`[LiveKit] Room deleted: ${roomName}`)
-
-    return { success: true }
-  } catch (error: any) {
-    console.error("[LiveKit] End call failed:", error)
-    return {
-      success: false,
-      error: error.message || "Failed to end call",
+    if (!response.ok) {
+      console.warn(`[LiveKit] Agent dispatch returned ${response.status}`)
     }
+  } catch (error) {
+    // Agent dispatcher might not be running - that's OK
+    // The agent will pick up the room via the job queue
+    console.log("[LiveKit] Agent dispatch skipped:", error instanceof Error ? error.message : "Unknown error")
   }
 }
 
-// Get room recording URL (if recording was enabled)
-export async function getRecordingUrl(roomName: string): Promise<string | null> {
-  try {
-    const config = getConfig()
-    const roomService = new RoomServiceClient(config.httpUrl, config.apiKey, config.apiSecret)
-
-    // List recordings for the room
-    // Note: This requires LiveKit Cloud or Egress configured
-    // For self-hosted, recordings would be stored in configured S3/GCS bucket
-
-    // Placeholder - actual implementation depends on LiveKit setup
-    console.log(`[LiveKit] Recording URL requested for: ${roomName}`)
-    return null
-  } catch (error: any) {
-    console.error("[LiveKit] Get recording failed:", error)
-    return null
-  }
-}
-
-// Format phone number for SIP (E.164)
+/**
+ * Format phone number for SIP (E.164 format)
+ */
 function formatPhoneForSip(phone: string): string {
   // Remove all non-digit characters
   const digits = phone.replace(/\D/g, "")
 
-  // If starts with 1 (US country code), add +
-  if (digits.startsWith("1") && digits.length === 11) {
+  // Add country code if not present (assume US)
+  if (digits.length === 10) {
+    return `+1${digits}`
+  } else if (digits.length === 11 && digits.startsWith("1")) {
     return `+${digits}`
   }
 
-  // If 10 digits (US without country code), add +1
-  if (digits.length === 10) {
-    return `+1${digits}`
+  return `+${digits}`
+}
+
+/**
+ * Get room participants
+ */
+export async function getRoomParticipants(roomName: string): Promise<{
+  success: boolean
+  participants?: unknown[]
+  error?: string
+}> {
+  try {
+    const roomService = getRoomService()
+    const participants = await roomService.listParticipants(roomName)
+    return { success: true, participants }
+  } catch (error) {
+    console.error("[LiveKit] Get participants error:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to get participants",
+    }
   }
-
-  // Otherwise assume it's already properly formatted
-  return digits.startsWith("+") ? phone : `+${digits}`
 }
 
-// Create agent token for Python agent to join
-export async function createAgentToken(
+/**
+ * Remove a participant from a room
+ */
+export async function removeParticipant(
   roomName: string,
-  agentId: string = "sarah-voice-agent"
-): Promise<string> {
-  const config = getConfig()
-
-  const at = new AccessToken(config.apiKey, config.apiSecret, {
-    identity: agentId,
-    name: "Sarah - AI Voice Agent",
-  })
-
-  at.addGrant({
-    room: roomName,
-    roomJoin: true,
-    canPublish: true,
-    canSubscribe: true,
-    canPublishData: true,
-    agent: true,
-  })
-
-  return at.toJwt()
+  identity: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const roomService = getRoomService()
+    await roomService.removeParticipant(roomName, identity)
+    return { success: true }
+  } catch (error) {
+    console.error("[LiveKit] Remove participant error:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to remove participant",
+    }
+  }
 }
 
-// Handle inbound SIP call - creates room and returns room info
+/**
+ * Handle inbound SIP call - create room and dispatch agent
+ */
 export async function handleInboundCall(
   sipCallId: string,
   callerPhone: string,
   calledNumber: string
-): Promise<{ roomName: string } | null> {
+): Promise<{ roomName: string; success: boolean } | null> {
   try {
-    const roomName = generateRoomName("inbound")
-    const result = await createVoiceRoom({
-      roomName,
-      participantId: `inbound-${sipCallId}`,
-      participantName: callerPhone,
-      metadata: {
-        type: "inbound-call",
-        callDirection: "inbound",
-        callerPhone,
-        calledNumber,
-        sipCallId,
-      },
+    if (!isLiveKitConfigured()) {
+      console.warn("[LiveKit] Not configured for inbound call handling")
+      return null
+    }
+
+    // Generate unique room name for inbound call
+    const roomName = `inbound-${Date.now()}-${sipCallId.substring(0, 8)}`
+
+    // Create room with metadata
+    const roomMetadata = JSON.stringify({
+      direction: "inbound",
+      caller_phone: callerPhone,
+      called_number: calledNumber,
+      sip_call_id: sipCallId,
     })
 
-    if (result.success) {
-      return { roomName: result.roomName || roomName }
+    const roomResult = await createRoom(roomName, {
+      emptyTimeout: 600,
+      maxParticipants: 3,
+      metadata: roomMetadata,
+    })
+
+    if (!roomResult.success) {
+      console.error("[LiveKit] Failed to create room for inbound call:", roomResult.error)
+      return null
     }
-    return null
+
+    // Dispatch agent to handle the call
+    await dispatchAgentToRoom(roomName, {
+      leadId: `inbound-${sipCallId}`,
+      leadName: callerPhone,
+      direction: "inbound",
+    })
+
+    return { roomName, success: true }
   } catch (error) {
     console.error("[LiveKit] Error handling inbound call:", error)
     return null
   }
 }
 
-// Alias for createVoiceRoom for backwards compatibility
-export const createCallRoom = createVoiceRoom
+/**
+ * Create a call room for a specific lead
+ */
+export async function createCallRoom(
+  leadId: string,
+  metadata: Record<string, unknown> = {}
+): Promise<{ roomName: string; token: string } | null> {
+  try {
+    if (!isLiveKitConfigured()) {
+      return null
+    }
+
+    const roomName = generateRoomName(leadId)
+
+    const roomResult = await createRoom(roomName, {
+      emptyTimeout: 600,
+      maxParticipants: 3,
+      metadata: JSON.stringify({
+        lead_id: leadId,
+        ...metadata,
+      }),
+    })
+
+    if (!roomResult.success) {
+      return null
+    }
+
+    // Generate agent token
+    const token = await createAccessToken(`agent-${leadId}`, roomName, {
+      canPublish: true,
+      canSubscribe: true,
+      canPublishData: true,
+    })
+
+    return { roomName, token }
+  } catch (error) {
+    console.error("[LiveKit] Error creating call room:", error)
+    return null
+  }
+}
+
+/**
+ * Send data message to room
+ * TODO: Fix API signature mismatch with LiveKit SDK
+ */
+/*
+export async function sendDataToRoom(
+  roomName: string,
+  data: string | Uint8Array,
+  options: {
+    destinationIdentities?: string[]
+    topic?: string
+  } = {}
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const roomService = getRoomService()
+    const dataToSend = typeof data === 'string' ? new TextEncoder().encode(data) : data
+    await roomService.sendData(roomName, dataToSend, {
+      destinationIdentities: options.destinationIdentities,
+      topic: options.topic,
+    })
+    return { success: true }
+  } catch (error) {
+    console.error("[LiveKit] Send data error:", error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to send data",
+    }
+  }
+}
+*/

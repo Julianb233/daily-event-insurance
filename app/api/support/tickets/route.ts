@@ -75,15 +75,15 @@ export async function POST(request: NextRequest) {
 
     try {
       const session = await auth()
-      if (session?.user?.id) {
-        userId = session.user.id
+      if ((session as any)?.user?.id) {
+        userId = (session as any).user.id
 
         // Check if user is a partner
         if (db && isDbConfigured()) {
           const partnerResult = await db
             .select({ id: partners.id })
             .from(partners)
-            .where(eq(partners.userId, session.user.id))
+            .where(eq(partners.userId, (session as any).user.id))
             .limit(1)
 
           if (partnerResult.length > 0) {
@@ -189,9 +189,9 @@ export async function GET(request: NextRequest) {
 
     try {
       const session = await auth()
-      if (session?.user) {
-        userId = session.user.id || null
-        userEmail = session.user.email || null
+      if ((session as any)?.user) {
+        userId = (session as any).user.id || null
+        userEmail = (session as any).user.email || null
       }
     } catch {
       // Session not available

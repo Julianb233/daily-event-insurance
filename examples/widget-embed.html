@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Integration Example - Daily Event Insurance</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      color: #64748b;
+    }
+    .demo-section {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary {
+      background: #14b8a6;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0d9488;
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    .event-log {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.875rem;
+    }
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+    .log-entry.info {
+      background: #1e40af20;
+      color: #60a5fa;
+    }
+    .log-entry.success {
+      background: #16a34a20;
+      color: #4ade80;
+    }
+    .log-entry.error {
+      background: #dc262620;
+      color: #f87171;
+    }
+    .log-entry .timestamp {
+      color: #94a3b8;
+      margin-right: 10px;
+    }
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.875rem;
+      line-height: 1.7;
+    }
+    .code-block .comment {
+      color: #64748b;
+    }
+    .code-block .string {
+      color: #a5d6a7;
+    }
+    .code-block .keyword {
+      color: #90caf9;
+    }
+    .code-block .function {
+      color: #ce93d8;
+    }
+    .inline-widget {
+      border: 2px dashed #e2e8f0;
+      border-radius: 12px;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature {
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+    .feature h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    .feature p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Daily Event Insurance Widget</h1>
+      <p class="subtitle">Embed insurance quotes directly on your website</p>
+    </header>
+
+    <!-- Interactive Demo -->
+    <section class="demo-section">
+      <h2>Interactive Demo</h2>
+      <div class="button-group">
+        <button class="btn-primary" onclick="openWidget()">Open Widget</button>
+        <button class="btn-secondary" onclick="openWithCustomer()">Open with Customer</button>
+        <button class="btn-secondary" onclick="openWithEvent()">Open with Event</button>
+        <button class="btn-secondary" onclick="closeWidget()">Close Widget</button>
+        <button class="btn-secondary" onclick="toggleWidget()">Toggle Widget</button>
+      </div>
+
+      <h3 style="margin: 20px 0 10px;">Event Log</h3>
+      <div class="event-log" id="eventLog">
+        <div class="log-entry info">
+          <span class="timestamp">[--:--:--]</span>
+          Widget events will appear here...
+        </div>
+      </div>
+    </section>
+
+    <!-- Inline Widget Demo -->
+    <section class="demo-section">
+      <h2>Inline Widget Mode</h2>
+      <p style="margin-bottom: 20px; color: #64748b;">
+        Embed the widget directly in your page layout instead of floating.
+      </p>
+      <div class="inline-widget" id="inlineWidgetContainer">
+        Click "Enable Inline Mode" to embed widget here
+      </div>
+      <div class="button-group" style="margin-top: 20px;">
+        <button class="btn-primary" onclick="enableInlineMode()">Enable Inline Mode</button>
+        <button class="btn-secondary" onclick="destroyWidget()">Destroy Widget</button>
+      </div>
+    </section>
+
+    <!-- Integration Code -->
+    <section class="demo-section">
+      <h2>Integration Code</h2>
+
+      <h3 style="margin-bottom: 15px;">1. Add the Script Tag</h3>
+      <div class="code-block">
+<span class="comment">// Add this to your HTML &lt;head&gt; or before &lt;/body&gt;</span>
+&lt;script src="<span class="string">https://cdn.dailyevent.com/widget/v1/widget.min.js</span>"&gt;&lt;/script&gt;
+      </div>
+
+      <h3 style="margin: 30px 0 15px;">2. Initialize the Widget</h3>
+      <div class="code-block">
+<span class="comment">// Initialize with your partner ID</span>
+<span class="keyword">const</span> widget = DailyEventWidget.<span class="function">init</span>({
+  <span class="comment">// Required: Your partner ID</span>
+  partnerId: <span class="string">'YOUR_PARTNER_ID'</span>,
+
+  <span class="comment">// Optional: Customize appearance</span>
+  primaryColor: <span class="string">'#14B8A6'</span>,
+  position: <span class="string">'bottom-right'</span>,
+
+  <span class="comment">// Optional: Event callbacks</span>
+  <span class="function">onReady</span>: () => console.log(<span class="string">'Widget ready'</span>),
+  <span class="function">onQuoteComplete</span>: (quote) => console.log(<span class="string">'Quote:'</span>, quote),
+  <span class="function">onPolicyPurchased</span>: (policy) => console.log(<span class="string">'Policy:'</span>, policy),
+});
+      </div>
+
+      <h3 style="margin: 30px 0 15px;">3. Control the Widget</h3>
+      <div class="code-block">
+<span class="comment">// Open with pre-filled data</span>
+DailyEventWidget.<span class="function">open</span>({
+  customer: {
+    email: <span class="string">'customer@example.com'</span>,
+    name: <span class="string">'John Doe'</span>
+  },
+  event: {
+    eventType: <span class="string">'yoga-class'</span>,
+    eventDate: <span class="string">'2025-03-15'</span>,
+    participants: 20
+  }
+});
+
+<span class="comment">// Close the widget</span>
+DailyEventWidget.<span class="function">close</span>();
+
+<span class="comment">// Toggle visibility</span>
+DailyEventWidget.<span class="function">toggle</span>();
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="demo-section">
+      <h2>Widget Features</h2>
+      <div class="grid-2">
+        <div class="feature">
+          <h3>Instant Quotes</h3>
+          <p>Get real-time insurance quotes for any event type with dynamic pricing.</p>
+        </div>
+        <div class="feature">
+          <h3>Seamless Checkout</h3>
+          <p>Secure payment processing with Stripe integration and instant policy issuance.</p>
+        </div>
+        <div class="feature">
+          <h3>Customizable Design</h3>
+          <p>Match your brand with custom colors, themes, and positioning options.</p>
+        </div>
+        <div class="feature">
+          <h3>Event Callbacks</h3>
+          <p>Track user interactions with comprehensive event callbacks for analytics.</p>
+        </div>
+        <div class="feature">
+          <h3>Pre-fill Data</h3>
+          <p>Pass customer and event details to streamline the quote process.</p>
+        </div>
+        <div class="feature">
+          <h3>Multiple Modes</h3>
+          <p>Choose floating, inline, or modal display modes for your use case.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Widget Script (use local dev server or CDN in production) -->
+  <script>
+    // For local development, point to the Next.js app
+    const WIDGET_BASE_URL = 'http://localhost:3000';
+
+    // Initialize widget with demo partner ID
+    let widgetInstance = null;
+
+    function initWidget(options = {}) {
+      // Log initialization
+      logEvent('info', 'Initializing widget...');
+
+      // Create iframe manually for demo (in production, use the SDK)
+      const iframe = document.createElement('iframe');
+      const params = new URLSearchParams({
+        partnerId: 'demo-partner',
+        widgetId: 'demo-widget-' + Date.now(),
+        primaryColor: options.primaryColor || '#14B8A6',
+        mode: options.mode || 'floating',
+        position: options.position || 'bottom-right',
+        testMode: 'true',
+        ...options
+      });
+
+      iframe.src = `${WIDGET_BASE_URL}/embed/widget?${params.toString()}`;
+      iframe.style.cssText = options.mode === 'inline'
+        ? 'width: 100%; height: 600px; border: none; border-radius: 12px;'
+        : 'position: fixed; right: 20px; bottom: 20px; width: 400px; height: 600px; border: none; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 9999;';
+      iframe.allow = 'payment';
+      iframe.sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups';
+
+      if (options.mode === 'inline' && options.container) {
+        const container = document.querySelector(options.container);
+        container.innerHTML = '';
+        container.appendChild(iframe);
+      } else {
+        document.body.appendChild(iframe);
+      }
+
+      widgetInstance = { iframe, options };
+
+      // Listen for widget messages
+      window.addEventListener('message', handleWidgetMessage);
+
+      logEvent('success', 'Widget initialized');
+      return widgetInstance;
+    }
+
+    function handleWidgetMessage(event) {
+      if (!event.data?.widgetId) return;
+
+      const { type, payload } = event.data;
+
+      switch (type) {
+        case 'WIDGET_READY':
+          logEvent('success', 'Widget ready');
+          break;
+        case 'WIDGET_OPEN':
+          logEvent('info', 'Widget opened');
+          break;
+        case 'WIDGET_CLOSE':
+          logEvent('info', 'Widget closed');
+          break;
+        case 'QUOTE_START':
+          logEvent('info', 'Quote started: ' + JSON.stringify(payload?.eventDetails || {}));
+          break;
+        case 'QUOTE_COMPLETE':
+          logEvent('success', 'Quote complete: $' + payload?.premium);
+          break;
+        case 'QUOTE_ERROR':
+          logEvent('error', 'Quote error: ' + payload?.message);
+          break;
+        case 'PAYMENT_START':
+          logEvent('info', 'Payment started');
+          break;
+        case 'POLICY_PURCHASED':
+          logEvent('success', 'Policy purchased: ' + payload?.policyNumber);
+          break;
+        case 'PAYMENT_ERROR':
+          logEvent('error', 'Payment error: ' + payload?.message);
+          break;
+      }
+    }
+
+    function openWidget() {
+      if (!widgetInstance) {
+        initWidget();
+      }
+      sendWidgetMessage('WIDGET_OPEN');
+    }
+
+    function openWithCustomer() {
+      if (!widgetInstance) {
+        initWidget();
+      }
+      sendWidgetMessage('WIDGET_OPEN', {
+        customer: {
+          email: 'demo@example.com',
+          name: 'Demo User'
+        }
+      });
+      logEvent('info', 'Opening with pre-filled customer data');
+    }
+
+    function openWithEvent() {
+      if (!widgetInstance) {
+        initWidget();
+      }
+      sendWidgetMessage('WIDGET_OPEN', {
+        event: {
+          eventType: 'yoga-class',
+          eventDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          participants: 25
+        }
+      });
+      logEvent('info', 'Opening with pre-filled event data');
+    }
+
+    function closeWidget() {
+      sendWidgetMessage('WIDGET_CLOSE');
+    }
+
+    function toggleWidget() {
+      if (widgetInstance?.iframe?.style.display === 'none') {
+        widgetInstance.iframe.style.display = 'block';
+        logEvent('info', 'Widget shown');
+      } else if (widgetInstance) {
+        widgetInstance.iframe.style.display = 'none';
+        logEvent('info', 'Widget hidden');
+      } else {
+        openWidget();
+      }
+    }
+
+    function enableInlineMode() {
+      destroyWidget();
+      initWidget({
+        mode: 'inline',
+        container: '#inlineWidgetContainer'
+      });
+    }
+
+    function destroyWidget() {
+      if (widgetInstance) {
+        widgetInstance.iframe.remove();
+        widgetInstance = null;
+        window.removeEventListener('message', handleWidgetMessage);
+        logEvent('info', 'Widget destroyed');
+      }
+    }
+
+    function sendWidgetMessage(type, payload = null) {
+      if (widgetInstance?.iframe?.contentWindow) {
+        widgetInstance.iframe.contentWindow.postMessage(
+          { type, payload, widgetId: 'demo-widget' },
+          '*'
+        );
+      }
+    }
+
+    function logEvent(level, message) {
+      const log = document.getElementById('eventLog');
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${level}`;
+      entry.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      logEvent('info', 'Page loaded. Click "Open Widget" to start.');
+    });
+  </script>
+</body>
+</html>

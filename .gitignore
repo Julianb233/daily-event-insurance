@@ -13,4 +13,5 @@ reset_password.js
 livekit-agent/__pycache__/
 .env.production.check
 
-
+# Build artifacts
+dist/

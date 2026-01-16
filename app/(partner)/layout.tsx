@@ -20,12 +20,12 @@ export default async function PartnerLayout({
   if (!isDevMode) {
     const session = await auth()
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       redirect("/sign-in?callbackUrl=/partner/dashboard")
     }
 
     // Check for partner role
-    const userRole = session.user.role
+    const userRole = (session as any).user.role
 
     // Allow partner or admin roles
     if (userRole !== "partner" && userRole !== "admin") {

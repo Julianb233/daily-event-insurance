@@ -67,7 +67,8 @@ export async function GET(request: NextRequest) {
       try {
         const supabase = createAdminClient()
 
-        let query = supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let query = (supabase as any)
           .from("integration_docs")
           .select("*", { count: "exact" })
           .eq("is_published", true)
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
           .order("created_at", { ascending: false })
           .range(offset, offset + limit - 1)
 
-        const { data: articles, error, count } = await query
+        const { data: articles, error, count } = await query as { data: Record<string, unknown>[] | null; error: unknown; count: number | null }
 
         if (!error && articles && articles.length > 0) {
           // Transform to API response format
@@ -96,12 +97,12 @@ export async function GET(request: NextRequest) {
             id: doc.id,
             title: doc.title,
             slug: doc.slug,
-            summary: doc.content?.substring(0, 200) + "...",
+            summary: (doc.content as string | undefined)?.substring(0, 200) + "...",
             content: doc.content,
             category: doc.category,
             posSystem: doc.pos_system,
             framework: doc.framework,
-            codeExamples: doc.code_examples ? JSON.parse(doc.code_examples) : [],
+            codeExamples: doc.code_examples ? JSON.parse(doc.code_examples as string) : [],
             tags: [],
             createdAt: doc.created_at,
             updatedAt: doc.updated_at,

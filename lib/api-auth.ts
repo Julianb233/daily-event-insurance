@@ -30,7 +30,7 @@ export async function requireAuth(): Promise<{ userId: string }> {
     return { userId: MOCK_USER.id }
   }
 
-  const session = await auth()
+  const session = await auth() as any
 
   if (!session?.user?.id) {
     throw NextResponse.json(
@@ -53,7 +53,7 @@ export async function requireAdmin(): Promise<AuthenticatedUser> {
     return { userId: MOCK_USER.id, user: { ...MOCK_USER, role: "admin" } }
   }
 
-  const session = await auth()
+  const session = await auth() as any
 
   if (!session?.user?.id) {
     throw NextResponse.json(
@@ -93,7 +93,7 @@ export async function requirePartner(): Promise<AuthenticatedUser> {
     return { userId: MOCK_USER.id, user: MOCK_USER }
   }
 
-  const session = await auth()
+  const session = await auth() as any
 
   if (!session?.user?.id) {
     throw NextResponse.json(
@@ -130,7 +130,7 @@ export async function requirePartner(): Promise<AuthenticatedUser> {
  * Gets the authenticated user if available, returns null otherwise
  */
 export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> {
-  const session = await auth()
+  const session = await auth() as any
 
   if (!session?.user?.id) {
     return null
@@ -153,7 +153,7 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> 
  * Checks if current user has a specific role
  */
 export async function hasRole(role: string): Promise<boolean> {
-  const session = await auth()
+  const session = await auth() as any
 
   if (!session?.user) {
     return false

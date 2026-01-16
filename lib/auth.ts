@@ -1,135 +1,100 @@
-import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import Google from "next-auth/providers/google"
-import GitHub from "next-auth/providers/github"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db } from "@/lib/db"
-import { users, accounts, sessions, verificationTokens } from "@/lib/db/schema"
+import { users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
-import bcrypt from "bcryptjs"
-import { authConfig } from "./auth.config"
+import { session } from "@descope/nextjs-sdk/server"
+import { redirect } from "next/navigation"
 
-// Development mode check
-const isDevMode = !process.env.AUTH_SECRET
+// Descope Project ID
+const projectId = process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || "P37BNB6wE01ogq91wB5pfH08VPsA"
 
-// Create NextAuth instance
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  adapter: db ? DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as any : undefined, // Type assertion needed due to @auth/drizzle-adapter version mismatch
-  session: { strategy: "jwt" },
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
+// ================= Auth Core Functions =================
+
+/**
+ * Get the current session and ensure local DB user exists
+ */
+export async function auth() {
+  const s = await session() as any
+
+  if (!s || !s.isAuthenticated) {
+    return null
+  }
+
+  // Descope User Details
+  const descopeId = s.user?.userId
+  const email = s.user?.email || s.user?.loginIds?.[0]
+  const name = s.user?.name
+
+  if (!email) {
+    console.error("Descope session missing email", s)
+    return null
+  }
+
+  // Sync with local DB
+  // We try to find the user by email
+  if (db) {
+    try {
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1)
+
+      if (existingUser) {
+        // User exists, return combined data
+        return {
+          user: {
+            ...s.user,
+            id: existingUser.id, // Use our DB UUID
+            descopeId: descopeId,
+            role: existingUser.role,
+            name: existingUser.name,
+            email: existingUser.email,
+            image: existingUser.image,
+          },
+          ...s
         }
-      }
-    }),
-    GitHub({
-      clientId: process.env.GITHUB_ID || "",
-      clientSecret: process.env.GITHUB_SECRET || "",
-    }),
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        // Dev mode bypass
-        if (isDevMode) {
-          return {
-            id: "dev_user_001",
-            email: "demo@partner.dev",
-            name: "Demo Partner",
-            role: "partner",
-          }
-        }
-
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const email = credentials.email as string
-        const password = credentials.password as string
-
-        if (!db) {
-          console.error("Database not configured")
-          return null
-        }
-
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1)
-
-        if (!user || !user.passwordHash) {
-          return null
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.passwordHash)
-
-        if (!passwordMatch) {
-          return null
-        }
+      } else {
+        // User doesn't exist, create them
+        console.log(`Creating new user from Descope login: ${email}`)
+        const [newUser] = await db.insert(users).values({
+          name: name || email.split('@')[0],
+          email: email,
+          role: "user", // Default role
+          // We can store descopeId if we add a column, for now we rely on email
+        }).returning()
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role || "user",
-        }
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user, trigger }) {
-      // Initial sign-in: set user data from credentials
-      if (user && user.id) {
-        token.id = user.id
-        token.role = (user as any).role
-      }
-
-      // On session update or token refresh, refetch role from database
-      // This ensures role changes (e.g., after onboarding) are immediately reflected
-      if ((trigger === "update" || !user) && token.id && db) {
-        try {
-          const [dbUser] = await db
-            .select({ role: users.role })
-            .from(users)
-            .where(eq(users.id, token.id as string))
-            .limit(1)
-
-          if (dbUser) {
-            token.role = dbUser.role || "user"
-          }
-        } catch (error) {
-          console.error("Failed to refresh user role from database:", error)
-          // Keep existing role on error
+          user: {
+            ...s.user,
+            id: newUser.id,
+            descopeId: descopeId,
+            role: newUser.role,
+            name: newUser.name,
+            email: newUser.email,
+          },
+          ...s
         }
       }
-
-      return token
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
+    } catch (error) {
+      console.error("Database sync error in auth():", error)
+      // Fallback: return Descope session but without DB ID (might break things expecting UUID)
+      // In a strict environment, we might want to throw or return null
+      return {
+        user: {
+          ...s.user,
+          id: descopeId, // Fallback to Descope ID (might break UUID checks!)
+          role: "user"
+        },
+        ...s
       }
-      return session
-    },
-  },
-})
+    }
+  }
+
+  return s
+}
+
+export const signIn = () => redirect("/sign-in")
+export const signOut = () => redirect("/api/auth/logout")
 
 // ================= Auth Helper Functions =================
 
@@ -139,8 +104,8 @@ export type Role = "admin" | "user" | "partner" | "moderator" | "viewer"
  * Get current user's role
  */
 export async function getUserRole(): Promise<Role> {
-  const session = await auth()
-  return (session?.user?.role as Role) || "user"
+  const s = await auth()
+  return (s?.user?.role as Role) || "user"
 }
 
 /**
@@ -163,33 +128,32 @@ export async function hasAnyRole(roles: Role[]): Promise<boolean> {
  * Require authentication - redirect if not logged in
  */
 export async function requireAuth(redirectTo?: string): Promise<string> {
-  const session = await auth()
+  const s = await auth()
 
-  if (!session?.user?.id) {
+  if (!s?.user?.id) {
     if (redirectTo) {
-      const { redirect } = await import("next/navigation")
       redirect(redirectTo)
     }
     throw new Error("Unauthorized: Authentication required")
   }
 
-  return session.user.id
+  return s.user.id
 }
 
 /**
  * Check if user is authenticated
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const session = await auth()
-  return !!session?.user
+  const s = await session() as any
+  return !!s?.isAuthenticated
 }
 
 /**
  * Get current user ID
  */
 export async function getUserId(): Promise<string | null> {
-  const session = await auth()
-  return session?.user?.id || null
+  const s = await auth()
+  return s?.user?.id || null
 }
 
 /**
@@ -219,7 +183,6 @@ export async function requireRole(role: Role, redirectTo?: string): Promise<void
 
   if (!hasRole) {
     if (redirectTo) {
-      const { redirect } = await import("next/navigation")
       redirect(redirectTo)
     } else {
       throw new Error(`Unauthorized: Required role '${role}' not found`)
@@ -235,7 +198,6 @@ export async function requireAnyRole(roles: Role[], redirectTo?: string): Promis
 
   if (!hasRole) {
     if (redirectTo) {
-      const { redirect } = await import("next/navigation")
       redirect(redirectTo)
     } else {
       throw new Error(`Unauthorized: Required one of roles [${roles.join(", ")}]`)
@@ -283,4 +245,10 @@ export async function checkPermission(permission: string): Promise<boolean> {
   const userRole = await getUserRole()
   const allowedRoles = PERMISSIONS[permission] || []
   return allowedRoles.includes(userRole)
+}
+
+// Dummy 'handlers' export to keep imports from breaking, though middleware usage changes
+export const handlers = {
+  GET: () => { },
+  POST: () => { }
 }
