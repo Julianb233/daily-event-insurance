@@ -195,29 +195,29 @@ export default function DealStructurePage() {
                                 <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                                     Predictable, Scalable Revenue Models
                                 </h1>
-                                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                                <p className="text-lg text-slate-800 mb-8 leading-relaxed font-medium">
                                     Our partnership model is designed for mutual success, with
                                     transparent revenue sharing and clear growth trajectories
                                     based on conservative market penetration estimates.
                                 </p>
 
                                 <div className="space-y-6">
-                                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                        <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xl">
+                                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-300 shadow-sm">
+                                        <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xl ring-4 ring-emerald-50">
                                             70%
                                         </div>
                                         <div>
-                                            <div className="text-slate-900 font-bold">Partner Revenue Share</div>
-                                            <div className="text-slate-500 text-sm">Majority of margin goes to HIQOR</div>
+                                            <div className="text-slate-900 font-bold text-lg">Partner Revenue Share</div>
+                                            <div className="text-slate-600 font-medium text-sm">Majority of margin goes to HIQOR</div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+                                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-300 shadow-sm">
+                                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xl ring-4 ring-blue-50">
                                             30d
                                         </div>
                                         <div>
-                                            <div className="text-slate-900 font-bold">Fast Payouts</div>
-                                            <div className="text-slate-500 text-sm">Monthly ACH deposits with reporting</div>
+                                            <div className="text-slate-900 font-bold text-lg">Fast Payouts</div>
+                                            <div className="text-slate-600 font-medium text-sm">Monthly ACH deposits with reporting</div>
                                         </div>
                                     </div>
                                 </div>
@@ -268,3 +268,4 @@ export default function DealStructurePage() {
         </div>
     )
 }
+// triggering rebuild

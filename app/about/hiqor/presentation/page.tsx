@@ -722,25 +722,26 @@ export default function HiqorPresentationPage() {
               className="flex flex-col items-center mb-10"
             >
               {/* Logos Side by Side - STRICTLY EQUAL SIZING AND ALIGNMENT */}
-              <div className="flex items-center justify-center gap-10 mb-8">
-                {/* DEI Container - FLEX FIXED SIZE */}
-                <div className="h-24 flex items-center justify-center">
+              <div className="flex items-center justify-center gap-6 sm:gap-10 mb-8">
+                {/* DEI Container - FIXED HEIGHT 64px (h-16) */}
+                <div className="h-16 flex items-center justify-center">
                   <Image
                     src="/images/logo-color.png"
                     alt="Daily Event Insurance"
                     width={200}
-                    height={60}
+                    height={64}
                     className="w-auto h-16 object-contain"
+                    priority
                   />
                 </div>
 
                 {/* Plus Symbol */}
-                <div className="text-3xl text-slate-300 font-light">+</div>
+                <div className="text-3xl text-slate-400 font-light">+</div>
 
-                {/* HiQor Container - FLEX FIXED SIZE - MATCHING EXACTLY */}
-                <div className="h-24 flex items-center justify-center">
-                  {/* HIQOR Text sized to match DEI visual weight */}
-                  <span className="text-6xl font-black text-slate-900 tracking-tighter leading-none" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>HIQOR</span>
+                {/* HiQor Container - FIXED HEIGHT 64px matching DEI */}
+                <div className="h-16 flex items-center justify-center">
+                  {/* HIQOR Text - 60px/3.75rem line-height to cap-height match */}
+                  <span className="text-6xl font-black text-slate-900 tracking-tighter leading-none" style={{ fontSize: '3.75rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>HIQOR</span>
                 </div>
               </div>
 
@@ -766,7 +767,7 @@ export default function HiqorPresentationPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed"
+              className="text-xl text-slate-800 max-w-2xl mx-auto mb-12 leading-relaxed font-medium"
             >
               As your premier <strong>Technology Partner</strong>, HiQor acts as a powerful lead generator and software platform designed to seamlessly onboard new clients and members—unlocking new revenue streams with zero overhead.
             </motion.p>
@@ -899,13 +900,13 @@ export default function HiqorPresentationPage() {
                     <prop.icon className="w-6 h-6 text-teal-700" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-3">{prop.title}</h3>
-                  <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  <p className="text-slate-700 text-sm mb-6 leading-relaxed font-medium">
                     {prop.description}
                   </p>
                   <ul className="space-y-3 mb-6">
                     {prop.details.map((detail, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-500">
-                        <CheckCircle2 className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
+                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-700 font-medium">
+                        <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
                         <span>{detail}</span>
                       </li>
                     ))}
