@@ -18,21 +18,21 @@ const timelineSteps: TimelineStep[] = [
     icon: Calendar,
   },
   {
-    day: 'Day 2-3',
-    title: 'Onboarding',
-    description: 'Account setup and integration',
-    icon: Settings,
-  },
-  {
-    day: 'Day 4-5',
-    title: 'Training',
-    description: 'Team training and configuration',
+    day: '20-30 mins',
+    title: 'Product Knowledge',
+    description: 'Quick training session',
     icon: Users,
   },
   {
-    day: '48-72hrs',
+    day: '5-10 mins',
+    title: 'Test Transaction',
+    description: 'Verify system readiness',
+    icon: Settings,
+  },
+  {
+    day: '1 Hour',
     title: 'Go Live',
-    description: 'Start offering insurance to members',
+    description: 'Start offering insurance immediately',
     icon: Rocket,
   },
   {
@@ -86,10 +86,10 @@ export function TimelineSection() {
             What to Expect
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-            From first contact to full implementation in 48-72 hours (emphasizing 48 hours)
+            From first contact to full implementation in under an hour
           </p>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mt-3">
-            Timeline depends on contract signing and how quickly you return required documents
+            Streamlined process: Create account, train, test, and go live.
           </p>
         </div>
 
@@ -117,15 +117,15 @@ export function TimelineSection() {
                     key={index}
                     data-step-index={index}
                     className={`flex flex-col items-center text-center transition-all duration-500 ${visibleSteps[index]
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-4'
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-4'
                       }`}
                   >
                     {/* Icon Circle */}
                     <div
                       className={`w-[120px] h-[120px] rounded-full flex items-center justify-center mb-6 transition-all duration-500 ${visibleSteps[index]
-                          ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
-                          : 'bg-slate-200 scale-90'
+                        ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
+                        : 'bg-slate-200 scale-90'
                         }`}
                     >
                       <Icon
@@ -177,16 +177,16 @@ export function TimelineSection() {
                     key={index}
                     data-step-index={index}
                     className={`flex gap-6 transition-all duration-500 ${visibleSteps[index]
-                        ? 'opacity-100 translate-x-0'
-                        : 'opacity-0 -translate-x-4'
+                      ? 'opacity-100 translate-x-0'
+                      : 'opacity-0 -translate-x-4'
                       }`}
                   >
                     {/* Icon Circle */}
                     <div className="flex-shrink-0">
                       <div
                         className={`w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-500 ${visibleSteps[index]
-                            ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
-                            : 'bg-slate-200 scale-90'
+                          ? 'bg-teal-500 shadow-lg shadow-teal-500/30 scale-100'
+                          : 'bg-slate-200 scale-90'
                           }`}
                       >
                         <Icon

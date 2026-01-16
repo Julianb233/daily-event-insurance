@@ -1,19 +1,28 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
-import { Calculator, TrendingUp, DollarSign, Users, Building2, Sparkles } from "lucide-react"
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion"
+import { Calculator, TrendingUp, DollarSign, Users, Building2, Sparkles, Shield, Zap } from "lucide-react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 
-// Tiered commission structure - more volume = higher percentage
-// Base policy price: ~$40, commission tiers from 25% to 37.5%
-const commissionTiers = [
+// Standard Commission Tiers (Single Use) - $10-$15
+const standardTiers = [
   { minVolume: 0, maxVolume: 999, percentage: 25, perParticipant: 10 },
   { minVolume: 1000, maxVolume: 2499, percentage: 27.5, perParticipant: 11 },
   { minVolume: 2500, maxVolume: 4999, percentage: 30, perParticipant: 12 },
   { minVolume: 5000, maxVolume: 9999, percentage: 32.5, perParticipant: 13 },
   { minVolume: 10000, maxVolume: 24999, percentage: 35, perParticipant: 14 },
   { minVolume: 25000, maxVolume: Infinity, percentage: 37.5, perParticipant: 15 },
+]
+
+// ActiveGuard Commission Tiers (Monthly Recurring) - Higher Commission ($20-$30 effectively)
+const activeGuardTiers = [
+  { minVolume: 0, maxVolume: 999, percentage: 35, perParticipant: 20 },
+  { minVolume: 1000, maxVolume: 2499, percentage: 37.5, perParticipant: 22 },
+  { minVolume: 2500, maxVolume: 4999, percentage: 40, perParticipant: 24 },
+  { minVolume: 5000, maxVolume: 9999, percentage: 42.5, perParticipant: 26 },
+  { minVolume: 10000, maxVolume: 24999, percentage: 45, perParticipant: 28 },
+  { minVolume: 25000, maxVolume: Infinity, percentage: 47.5, perParticipant: 30 },
 ]
 
 const volumeTiers = [
@@ -33,13 +42,12 @@ const locationOptions = [
   { label: "25+ Locations", value: 30, bonus: 2 },
 ]
 
-// Get commission tier based on total volume
-function getCommissionTier(totalVolume: number) {
-  return commissionTiers.find(tier => totalVolume >= tier.minVolume && totalVolume <= tier.maxVolume) || commissionTiers[0]
+function getCommissionTier(totalVolume: number, mode: 'standard' | 'activeGuard') {
+  const tiers = mode === 'activeGuard' ? activeGuardTiers : standardTiers
+  return tiers.find(tier => totalVolume >= tier.minVolume && totalVolume <= tier.maxVolume) || tiers[0]
 }
 
-// Generate chart data points for visualization (100% coverage required)
-function generateChartData(locations: number = 1) {
+function generateChartData(locations: number = 1, mode: 'standard' | 'activeGuard') {
   const data = []
   const locationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
 
@@ -49,21 +57,20 @@ function generateChartData(locations: number = 1) {
   ]
 
   for (const participants of dataPoints) {
-    const tier = getCommissionTier(participants)
+    const tier = getCommissionTier(participants, mode)
     const effectiveRate = tier.perParticipant + locationOption.bonus
-    const monthlyEarnings = Math.round(participants * effectiveRate) // 100% coverage required
+    const earnings = Math.round(participants * effectiveRate)
 
     data.push({
       participants,
-      earnings: monthlyEarnings,
-      tier: `${tier.percentage}% tier ($${tier.perParticipant}/participant)`,
+      earnings: earnings,
+      tier: `${tier.percentage}% tier ($${tier.perParticipant}/pax)`,
     })
   }
 
   return data
 }
 
-// Custom tooltip for chart
 interface CustomTooltipProps {
   active?: boolean
   payload?: Array<{
@@ -87,7 +94,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
         <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">
           ${data.earnings.toLocaleString()}
         </p>
-        <p className="text-xs text-slate-500 mt-1">monthly earnings</p>
+        <p className="text-xs text-slate-500 mt-1">projected revenue</p>
         <p className="text-xs text-teal-600 font-medium mt-2 border-t border-slate-200 pt-2">
           {data.tier}
         </p>
@@ -98,42 +105,38 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 }
 
 export function RevenueCalculator() {
+  const [mode, setMode] = useState<'standard' | 'activeGuard'>('standard')
   const [monthlyVolume, setMonthlyVolume] = useState(5000)
   const [locations, setLocations] = useState(1)
   const [isHovered, setIsHovered] = useState(false)
 
-  // Generate chart data based on current location selection
-  const chartData = useMemo(() => generateChartData(locations), [locations])
+  const chartData = useMemo(() => generateChartData(locations, mode), [locations, mode])
 
-  // Calculate revenue with tiered commission (100% coverage required)
   const totalParticipants = monthlyVolume * locations
-  const coveredParticipants = totalParticipants // 100% coverage required
-  const commissionTier = getCommissionTier(totalParticipants)
+  const commissionTier = getCommissionTier(totalParticipants, mode)
   const locationOption = locationOptions.find(o => o.value === locations) || locationOptions[0]
   const effectivePerParticipant = commissionTier.perParticipant + locationOption.bonus
-  const monthlyRevenue = coveredParticipants * effectivePerParticipant
-  const annualRevenue = monthlyRevenue * 12
+  const revenue = totalParticipants * effectivePerParticipant
+  const annualRevenue = revenue * 12
 
-  // Animated values
-  const animatedMonthly = useSpring(monthlyRevenue, { stiffness: 100, damping: 20 })
+  const animatedRevenue = useSpring(revenue, { stiffness: 100, damping: 20 })
   const animatedAnnual = useSpring(annualRevenue, { stiffness: 100, damping: 20 })
-  const [displayMonthly, setDisplayMonthly] = useState(monthlyRevenue)
+  const [displayRevenue, setDisplayRevenue] = useState(revenue)
   const [displayAnnual, setDisplayAnnual] = useState(annualRevenue)
 
   useEffect(() => {
-    const unsubMonthly = animatedMonthly.on("change", (v) => setDisplayMonthly(Math.round(v)))
+    const unsubRev = animatedRevenue.on("change", (v) => setDisplayRevenue(Math.round(v)))
     const unsubAnnual = animatedAnnual.on("change", (v) => setDisplayAnnual(Math.round(v)))
     return () => {
-      unsubMonthly()
+      unsubRev()
       unsubAnnual()
     }
-  }, [animatedMonthly, animatedAnnual])
+  }, [animatedRevenue, animatedAnnual])
 
-  // Update animated values when calculations change
   useEffect(() => {
-    animatedMonthly.set(monthlyRevenue)
+    animatedRevenue.set(revenue)
     animatedAnnual.set(annualRevenue)
-  }, [monthlyRevenue, annualRevenue, animatedMonthly, animatedAnnual])
+  }, [revenue, annualRevenue, animatedRevenue, animatedAnnual])
 
   // 3D Card effects
   const mouseX = useMotionValue(0)
@@ -166,27 +169,20 @@ export function RevenueCalculator() {
 
   return (
     <section id="calculator" className="relative bg-gradient-to-b from-white to-slate-50 py-20 md:py-32 overflow-hidden">
-      {/* Animated background */}
+      {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-1/3 -left-20 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 40, 0],
-          }}
+          animate={{ scale: [1, 1.2, 1], x: [0, 40, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-1/3 -right-20 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            x: [0, -40, 0],
-          }}
+          animate={{ scale: [1.2, 1, 1.2], x: [0, -40, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
-      {/* Grid pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
         <div
           className="w-full h-full"
@@ -221,13 +217,45 @@ export function RevenueCalculator() {
             See What You <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Could Earn</span>
           </h2>
           <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
-            Calculate your potential monthly recurring revenue based on your participant volume.
-            Our tiered commission structure rewards volume: earn <strong className="text-teal-600">$10-15 per participant</strong> with
-            <strong className="text-teal-600"> bonus incentives for multi-location partners</strong>.
+            Calculate your potential revenue. <strong className="text-teal-600">Toggle 'ActiveGuard'</strong> to see how
+            monthly recurring commissions can significantly boost your bottom line.
           </p>
         </motion.div>
 
-        {/* Calculator Card with 3D effect */}
+        {/* Toggle Switch */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-slate-100 p-1 rounded-full flex relative">
+            <motion.div
+              className="absolute top-1 bottom-1 bg-white rounded-full shadow-sm"
+              animate={{
+                left: mode === 'standard' ? '4px' : '50%',
+                width: 'calc(50% - 4px)',
+                x: mode === 'standard' ? 0 : 0
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            />
+            <button
+              onClick={() => setMode('standard')}
+              className={`relative z-10 px-6 py-3 rounded-full text-sm font-bold transition-colors ${mode === 'standard' ? 'text-teal-600' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                Standard
+              </div>
+            </button>
+            <button
+              onClick={() => setMode('activeGuard')}
+              className={`relative z-10 px-6 py-3 rounded-full text-sm font-bold transition-colors ${mode === 'activeGuard' ? 'text-teal-600' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                ActiveGuard (Recurring)
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Calculator Card */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -239,14 +267,9 @@ export function RevenueCalculator() {
           onMouseLeave={handleMouseLeave}
         >
           <motion.div
-            style={{
-              rotateX,
-              rotateY,
-              transformStyle: "preserve-3d",
-            }}
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
             className="relative"
           >
-            {/* Glow effect */}
             <motion.div
               className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-teal-500/20 via-cyan-400/15 to-teal-500/20 blur-xl"
               initial={{ opacity: 0 }}
@@ -255,18 +278,9 @@ export function RevenueCalculator() {
             />
 
             <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl border border-teal-100 p-8 md:p-12 shadow-premium hover:shadow-premium-hover transition-shadow duration-500">
-              {/* Shimmer effect */}
-              <motion.div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                initial={{ x: "-100%" }}
-                animate={isHovered ? { x: "200%" } : { x: "-100%" }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-              />
-
               <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-                {/* Left side - Inputs */}
+                {/* Inputs */}
                 <div className="space-y-8">
-                  {/* Monthly Volume Selector */}
                   <div>
                     <label className="flex items-center gap-2 text-slate-700 font-semibold mb-4">
                       <Users className="w-5 h-5 text-teal-600" />
@@ -277,11 +291,10 @@ export function RevenueCalculator() {
                         <motion.button
                           key={tier.value}
                           onClick={() => setMonthlyVolume(tier.value)}
-                          className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                            monthlyVolume === tier.value
+                          className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${monthlyVolume === tier.value
                               ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/25"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                          }`}
+                            }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -291,7 +304,6 @@ export function RevenueCalculator() {
                     </div>
                   </div>
 
-                  {/* Location Selector */}
                   <div>
                     <label className="flex items-center gap-2 text-slate-700 font-semibold mb-4">
                       <Building2 className="w-5 h-5 text-teal-600" />
@@ -302,11 +314,10 @@ export function RevenueCalculator() {
                         <motion.button
                           key={option.value}
                           onClick={() => setLocations(option.value)}
-                          className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                            locations === option.value
+                          className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${locations === option.value
                               ? "bg-gradient-to-r from-teal-500 to-teal-600 text-white shadow-lg shadow-teal-500/25"
                               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                          }`}
+                            }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -316,15 +327,11 @@ export function RevenueCalculator() {
                     </div>
                   </div>
 
-                  {/* Stats Summary */}
-                  <div className="bg-slate-50 rounded-2xl p-6 space-y-3">
+                  {/* Summary Box */}
+                  <div className={`rounded-2xl p-6 space-y-3 transition-colors duration-300 ${mode === 'activeGuard' ? 'bg-teal-50 border border-teal-100' : 'bg-slate-50'}`}>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-500">Total monthly participants</span>
-                      <span className="font-semibold text-slate-700">{totalParticipants.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-500">Covered participants</span>
-                      <span className="font-semibold text-teal-600">{coveredParticipants.toLocaleString()}</span>
+                      <span className="text-slate-500">Plan Type</span>
+                      <span className="font-bold uppercase text-teal-700">{mode === 'standard' ? 'Standard' : 'ActiveGuard'}</span>
                     </div>
                     <div className="border-t border-slate-200 pt-3 mt-3">
                       <div className="flex justify-between items-center text-sm">
@@ -335,19 +342,13 @@ export function RevenueCalculator() {
                         <span className="text-slate-500">Per participant</span>
                         <span className="font-semibold text-teal-600">${effectivePerParticipant.toFixed(2)}</span>
                       </div>
-                      {locationOption.bonus > 0 && (
-                        <div className="text-xs text-teal-600 mt-2 text-right">
-                          +${locationOption.bonus.toFixed(2)} multi-location bonus
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Right side - Results */}
+                {/* Results */}
                 <div className="flex flex-col justify-center">
                   <div className="relative">
-                    {/* Sparkle decorations */}
                     <motion.div
                       className="absolute -top-4 -right-4 text-teal-400"
                       animate={{ rotate: 360 }}
@@ -356,25 +357,23 @@ export function RevenueCalculator() {
                       <Sparkles className="w-6 h-6" />
                     </motion.div>
 
-                    {/* Monthly Revenue */}
                     <div className="mb-8">
                       <div className="text-slate-500 text-sm font-medium mb-2 uppercase tracking-wide">
-                        Start Earning Today
+                        {mode === 'activeGuard' ? 'Monthly Recurring Revenue' : 'Projected Monthly Revenue'}
                       </div>
                       <motion.div
                         className="text-5xl md:text-6xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600"
                         animate={{ scale: [1, 1.02, 1] }}
                         transition={{ duration: 0.3 }}
-                        key={displayMonthly}
+                        key={displayRevenue}
                       >
-                        {formatCurrency(displayMonthly)}
+                        {formatCurrency(displayRevenue)}
                       </motion.div>
                       <div className="text-slate-500 text-sm mt-2">
-                        per month in recurring commission
+                        {mode === 'activeGuard' ? 'recurring commission every month' : 'based on estimated volume'}
                       </div>
                     </div>
 
-                    {/* Annual Revenue */}
                     <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
                       <div className="flex items-center gap-2 text-slate-600 text-sm font-medium mb-2">
                         <TrendingUp className="w-4 h-4 text-teal-600" />
@@ -383,12 +382,8 @@ export function RevenueCalculator() {
                       <div className="text-3xl md:text-4xl font-black text-teal-600">
                         {formatCurrency(displayAnnual)}
                       </div>
-                      <div className="text-slate-500 text-sm mt-2">
-                        added to your bottom line every year
-                      </div>
                     </div>
 
-                    {/* CTA */}
                     <motion.a
                       href="#apply"
                       className="mt-8 w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/40 transition-all duration-300"
@@ -402,7 +397,6 @@ export function RevenueCalculator() {
                 </div>
               </div>
 
-              {/* Bottom accent line */}
               <motion.div
                 className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-400 rounded-b-3xl"
                 initial={{ scaleX: 0 }}
@@ -427,7 +421,7 @@ export function RevenueCalculator() {
               Earnings Growth <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600">Potential</span>
             </h3>
             <p className="text-slate-600 text-sm md:text-base">
-              See how your earnings scale with participant volume across commission tiers
+              See how your earnings scale with participant volume ({mode === 'activeGuard' ? 'ActiveGuard' : 'Standard'} rates)
             </p>
           </div>
 
@@ -440,8 +434,8 @@ export function RevenueCalculator() {
                 >
                   <defs>
                     <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#14B8A6" stopOpacity={0.05}/>
+                      <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#14B8A6" stopOpacity={0.05} />
                     </linearGradient>
                   </defs>
 
@@ -478,47 +472,11 @@ export function RevenueCalculator() {
               </ResponsiveContainer>
             </div>
 
-            {/* Tier breakpoints legend */}
-            <div className="mt-6 pt-6 border-t border-slate-200">
-              <p className="text-xs text-slate-500 mb-3 uppercase tracking-wider font-semibold">Commission Tiers</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                {commissionTiers.map((tier, idx) => (
-                  <div key={idx} className="text-center p-2 bg-slate-50 rounded-lg">
-                    <div className="text-xs text-slate-600 font-semibold">{tier.percentage}%</div>
-                    <div className="text-xs text-slate-500 mt-1">
-                      {tier.minVolume.toLocaleString()}{tier.maxVolume === Infinity ? '+' : `-${tier.maxVolume.toLocaleString()}`}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Trust indicators */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-500">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              No setup fees
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              Get paid monthly
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              48 hours to go live (timeline depends on contract signing)
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              Zero overhead
+            {/* Legend for active mode */}
+            <div className="mt-4 flex justify-center">
+              <span className={`text-xs font-semibold px-2 py-1 rounded bg-teal-50 text-teal-700`}>
+                Showing rates for: {mode === 'activeGuard' ? 'ActiveGuard (Recurring)' : 'Standard (One-Time)'}
+              </span>
             </div>
           </div>
         </motion.div>

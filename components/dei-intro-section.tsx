@@ -104,10 +104,7 @@ export function DEIIntroSection() {
             textShadow: "0 0 60px rgba(20,184,166,0.4), 0 4px 20px rgba(0,0,0,0.1)",
           }}
         >
-          Insurance That Activates{" "}
-          <span className="text-teal-500">
-            Only When Events Happen
-          </span>
+          Get paid to protect your business
         </motion.h1>
 
         {/* Tagline */}
@@ -189,7 +186,7 @@ export function DEIIntroSection() {
 
       {/* Scroll indicator - enhanced visibility */}
       <motion.div
-        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
+        className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 20 }}
         transition={{ delay: 1.2, duration: 0.8 }}

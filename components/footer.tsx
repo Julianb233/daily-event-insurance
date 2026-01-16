@@ -71,8 +71,8 @@ export default function Footer() {
                 { name: "Benefits", href: "/#benefits" },
                 { name: "About Us", href: "/about" },
                 { name: "For Carriers", href: "/carriers" },
-                { name: "Support Hub", href: "/support" },
-                { name: "Support Documents", href: "/support#resources" },
+                { name: "Support Hub", href: "/support-hub" },
+                { name: "Work with HiQor", href: "/support-hub/partner-program" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -105,6 +105,7 @@ export default function Footer() {
                 { name: "Marathons & Fun Runs", href: "/industries/marathons" },
                 { name: "Corporate Wellness", href: "/industries/corporate-wellness" },
                 { name: "Schools & Universities", href: "/industries/schools-universities" },
+                { name: "Gem Shows", href: "/industries/gem-shows" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link

@@ -215,9 +215,9 @@ function BenefitsSection({ sector }: { sector: IndustrySector }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="relative bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition-shadow duration-300"
+                className="relative bg-slate-50 rounded-2xl p-8 hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
               >
-                <div className="w-14 h-14 bg-teal-600 rounded-xl flex items-center justify-center mb-6">
+                <div className="w-14 h-14 bg-teal-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
                   <BenefitIcon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-2xl font-black uppercase text-slate-900 mb-4">

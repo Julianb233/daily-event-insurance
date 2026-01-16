@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     siteName: "Daily Event Insurance",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/logo-color.png",
         width: 1200,
         height: 630,
         alt: "Daily Event Insurance - Same-Day Coverage for Active Businesses",
@@ -82,21 +82,7 @@ export const metadata: Metadata = {
     images: ["/images/og-image.png"],
   },
   icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
+    icon: "/favicon.png", // Simplified to use standard favicon
   },
 }
 

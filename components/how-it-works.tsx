@@ -45,13 +45,13 @@ const steps: Step[] = [
     title: 'Earn on Every Sale',
     description: 'Get paid commission for each policy your customers purchase.',
     details: [
-      'Earn $2-5 per policy sold',
+      'Earn $10-15 per policy sold',
       'Automatic monthly payouts',
       'Real-time dashboard tracking',
       'No caps on earnings'
     ],
     icon: <DollarSign className="w-8 h-8" />,
-    highlight: 'Avg. $2,400/mo'
+    highlight: 'Avg. $5,700+/mo'
   },
 ];
 
@@ -351,9 +351,9 @@ export function HowItWorks() {
 
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { value: '$2-5', label: 'Per Policy Sold' },
+                  { value: '$10-15', label: 'Per Policy Sold' },
                   { value: '100%', label: 'Coverage Rate' },
-                  { value: '$2,400', label: 'Avg. Monthly Revenue' },
+                  { value: '$5,700+', label: 'Avg. Monthly Revenue' },
                   { value: '24hrs', label: 'To Go Live' },
                 ].map((stat, i) => (
                   <motion.div
