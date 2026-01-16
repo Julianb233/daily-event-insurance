@@ -121,8 +121,8 @@ function InteractiveRevenueChart() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${selectedMetric === metric
-                ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
-                : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+              ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+              : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
               }`}
           >
             {metricLabels[metric]}
@@ -212,8 +212,8 @@ function PlatformShowcase() {
             key={feature.title}
             onClick={() => setActiveFeature(index)}
             className={`w-full text-left p-5 rounded-xl border transition-all ${activeFeature === index
-                ? 'bg-white border-teal-500 shadow-lg shadow-teal-500/10'
-                : 'bg-white border-slate-200 hover:border-teal-300'
+              ? 'bg-white border-teal-500 shadow-lg shadow-teal-500/10'
+              : 'bg-white border-slate-200 hover:border-teal-300'
               }`}
             whileHover={{ x: 4 }}
           >
@@ -712,25 +712,25 @@ export default function HiqorPresentationPage() {
               className="flex flex-col items-center mb-10"
             >
               {/* Logos Side by Side - STRICTLY EQUAL SIZING AND ALIGNMENT */}
-              <div className="flex items-center justify-center gap-8 mb-8">
+              <div className="flex items-center justify-center gap-10 mb-8">
                 {/* DEI Container - FLEX FIXED SIZE */}
-                <div className="h-20 w-52 flex items-center justify-center p-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div className="h-24 flex items-center justify-center">
                   <Image
                     src="/images/logo-color.png"
                     alt="Daily Event Insurance"
-                    width={180}
-                    height={40}
-                    className="w-auto max-h-12 object-contain"
+                    width={200}
+                    height={60}
+                    className="w-auto h-16 object-contain"
                   />
                 </div>
 
                 {/* Plus Symbol */}
-                <div className="text-2xl text-slate-400 font-light">+</div>
+                <div className="text-3xl text-slate-300 font-light">+</div>
 
                 {/* HiQor Container - FLEX FIXED SIZE - MATCHING EXACTLY */}
-                <div className="h-20 w-52 flex items-center justify-center p-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div className="h-24 flex items-center justify-center">
                   {/* HIQOR Text sized to match DEI visual weight */}
-                  <span className="text-4xl font-extrabold text-[#000000] tracking-tight" style={{ fontFamily: 'sans-serif' }}>HIQOR</span>
+                  <span className="text-6xl font-black text-slate-900 tracking-tighter leading-none" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>HIQOR</span>
                 </div>
               </div>
 
