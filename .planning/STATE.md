@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2025-01-15)
 
 **Core value:** Convert leads to partners through AI-powered voice engagement
-**Current focus:** Phase 4 - GHL CRM Integration (ready to plan)
+**Current focus:** Phase 5 - Scheduled Actions Processor (ready to plan)
 
 ## Completed Phases
 
@@ -49,11 +49,29 @@ See: .planning/PROJECT.md (updated 2025-01-15)
 - `lib/twilio.ts` (280+ lines)
 - `app/api/webhooks/twilio/status/route.ts`
 
+### ✅ Phase 4: Custom Pipeline & Workflows (COMPLETE)
+
+**Completed:** 2026-01-15 | **Plans:** 4/4
+
+| Plan | Name | Status | Output |
+|------|------|--------|--------|
+| 04-01 | CRM database tables | ✅ Complete | pipeline_stages, workflows, email_templates tables |
+| 04-02 | Pipeline Board UI | ✅ Complete | Kanban view at /admin/pipeline |
+| 04-03 | Pipeline API routes | ✅ Complete | /api/admin/pipeline/stages, /api/admin/pipeline/leads |
+| 04-04 | Email templates API | ✅ Complete | /api/admin/email-templates with defaults |
+
+**Deliverables:**
+- `lib/db/schema.ts` - 6 new CRM tables
+- `app/(admin)/admin/pipeline/page.tsx` - Kanban board
+- `app/api/admin/pipeline/stages/route.ts`
+- `app/api/admin/pipeline/leads/route.ts`
+- `app/api/admin/email-templates/route.ts`
+
 ## Current Phase
 
-**Phase 4: GHL CRM Integration** - NOT STARTED
+**Phase 5: Scheduled Actions Processor** - NOT STARTED
 
-Run `/gsd:plan-phase 4` to begin.
+Run `/gsd:plan-phase 5` to begin.
 
 ## Execution Log
 
@@ -66,6 +84,8 @@ Run `/gsd:plan-phase 4` to begin.
 | 2025-01-15 13:15 | Phase 2 executed | Scripts UI built |
 | 2025-01-15 14:30 | Phase 3 planned | 4 plans created |
 | 2025-01-15 15:00 | Phase 3 executed | Lead management complete |
+| 2026-01-15 22:00 | Phase 4 planned | Custom CRM (replaced GHL) |
+| 2026-01-15 22:30 | Phase 4 executed | Pipeline board + email templates |
 
 ## Phase Readiness
 
@@ -74,10 +94,10 @@ Run `/gsd:plan-phase 4` to begin.
 | 1. Infrastructure Verification | ✅ Complete | - |
 | 2. Admin Scripts UI | ✅ Complete | Phase 1 ✅ |
 | 3. Lead Management Enhancement | ✅ Complete | Phase 1 ✅, Phase 2 ✅ |
-| 4. GHL CRM Integration | 🟢 Ready to plan | Phase 3 ✅ |
-| 5. Scheduled Actions Processor | 🟡 Waiting | Phase 3 ✅, Phase 4 |
+| 4. Custom Pipeline & Workflows | ✅ Complete | Phase 3 ✅ |
+| 5. Scheduled Actions Processor | 🟢 Ready to plan | Phase 3 ✅, Phase 4 ✅ |
 | 6. Partner Support Agent | 🟢 Ready to plan | Phase 1 ✅ (independent) |
-| 7. Analytics Dashboard | 🟡 Waiting | Phase 3 ✅, 4, 5 |
+| 7. Analytics Dashboard | 🟡 Waiting | Phase 3 ✅, 4 ✅, 5 |
 
 ---
-*Last updated: 2025-01-15 after Phase 3 completion*
+*Last updated: 2026-01-15 after Phase 4 completion*

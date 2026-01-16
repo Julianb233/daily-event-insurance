@@ -13,7 +13,7 @@ Build a complete AI-powered call center system that converts leads to partners t
 - [x] **Phase 1: Infrastructure Verification** - Verify existing schema and LiveKit setup ✅
 - [x] **Phase 2: Admin Scripts UI** - Build script management interface ✅
 - [x] **Phase 3: Lead Management Enhancement** - Lead detail page with calling/SMS ✅
-- [ ] **Phase 4: GHL CRM Integration** - Workflows, pipelines, and email templates
+- [x] **Phase 4: Custom Pipeline & Workflows** - Internal CRM with Kanban board, workflows, email templates ✅
 - [ ] **Phase 5: Scheduled Actions** - Cron processor for automated follow-ups
 - [ ] **Phase 6: Partner Support Agent** - Chat widget and integration assistance
 - [ ] **Phase 7: Analytics Dashboard** - Conversion tracking and reporting
@@ -71,25 +71,24 @@ Plans:
 - [x] 03-03: Integrate Twilio SMS send/receive ✅
 - [x] 03-04: Add call recording player component ✅
 
-### Phase 4: GHL CRM Integration
-**Goal**: Connect GoHighLevel CRM with automated workflows and pipelines
+### Phase 4: Custom Pipeline & Workflows
+**Goal**: Build internal CRM with Kanban pipeline, workflows, and email templates (replacing GHL)
 **Depends on**: Phase 3
-**Requirements**: REQ-06
+**Requirements**: REQ-06 (internal implementation)
 **Success Criteria** (what must be TRUE):
-  1. New leads automatically sync to GHL with proper tags
-  2. Call dispositions trigger correct GHL workflow actions
-  3. Partner Acquisition pipeline stages update based on lead status
-  4. Email templates (Welcome, Onboarding, Outreach) configured and sending
-  5. SLA tracking workflows alerting on missed response times
-**Research**: Likely (GHL API integration)
-**Research topics**: GHL API authentication, webhook setup, workflow triggers
+  1. Kanban-style pipeline board for visual lead management
+  2. Custom pipeline stages with drag-and-drop lead movement
+  3. Email templates for outreach, follow-up, nurturing
+  4. Database schema for workflows and automation
+  5. Stage history tracking for audit trail
+**Research**: None (internal build)
 **Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: Set up GHL API connection and lead sync
-- [ ] 04-02: Configure pipelines and tags
-- [ ] 04-03: Build workflow triggers for call dispositions
-- [ ] 04-04: Create and test email templates
+- [x] 04-01: Create CRM database tables (pipeline_stages, workflows, email_templates) ✅
+- [x] 04-02: Build Pipeline Board UI with Kanban view ✅
+- [x] 04-03: Create pipeline stages and leads API routes ✅
+- [x] 04-04: Build email templates API with defaults ✅
 
 ### Phase 5: Scheduled Actions Processor
 **Goal**: Implement cron-based processor for automated follow-ups and reminders
@@ -154,7 +153,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Infrastructure Verification | 2/2 | ✅ Complete | 2025-01-15 |
 | 2. Admin Scripts UI | 2/2 | ✅ Complete | 2025-01-15 |
 | 3. Lead Management Enhancement | 4/4 | ✅ Complete | 2025-01-15 |
-| 4. GHL CRM Integration | 0/4 | Not started | - |
+| 4. Custom Pipeline & Workflows | 4/4 | ✅ Complete | 2026-01-15 |
 | 5. Scheduled Actions Processor | 0/2 | Not started | - |
 | 6. Partner Support Agent | 0/4 | Not started | - |
 | 7. Analytics Dashboard | 0/2 | Not started | - |
