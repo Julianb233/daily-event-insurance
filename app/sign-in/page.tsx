@@ -30,7 +30,7 @@ export default function SignInPage() {
             <a href="/hiqor/dashboard" className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-teal-500">
               HiQor Platform
             </a>
-            <a href="/partner/dashboard" className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-blue-500">
+            <a href="/onboarding" className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-blue-500">
               Partner Platform
             </a>
             <a href="/sures/dashboard" className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-indigo-500">

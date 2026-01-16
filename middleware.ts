@@ -59,6 +59,7 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     '/admin',   // Emergency Demo Bypass
     '/hiqor',   // Emergency Demo Bypass
     '/sures',   // Emergency Demo Bypass (Broker Portal)
+    '/onboarding', // Emergency Demo Bypass (Partner Onboarding)
     '/api/admin', // Emergency API Bypass
     '/api/partner', // Emergency API Bypass
     '/api/hiqor',   // Emergency API Bypass
