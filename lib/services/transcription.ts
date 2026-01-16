@@ -38,7 +38,7 @@ export async function transcribeAudio(
   // Try OpenAI Whisper first
   if (openai) {
     try {
-      const file = new File([Buffer.from(audioData)], `recording.${format}`, {
+      const file = new File([new Uint8Array(Buffer.from(audioData as any))], `recording.${format}`, {
         type: `audio/${format}`
       })
 
@@ -75,7 +75,7 @@ export async function transcribeAudio(
           "Authorization": `Token ${DEEPGRAM_API_KEY}`,
           "Content-Type": `audio/${format}`
         },
-        body: Buffer.from(audioData)
+        body: new Uint8Array(Buffer.from(audioData as any))
       })
 
       const data = await response.json()

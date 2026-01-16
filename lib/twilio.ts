@@ -346,6 +346,34 @@ export async function lookupPhoneNumber(phoneNumber: string): Promise<{
 }
 
 /**
+ * Validate Twilio webhook signature (alias for verifyWebhookSignature compatibility)
+ */
+export function verifyWebhookSignature(
+  signature: string,
+  url: string,
+  params: Record<string, string>
+): boolean {
+  return validateWebhookSignature(signature, url, params)
+}
+
+/**
+ * Parse delivery status webhook
+ */
+export function parseDeliveryStatus(body: Record<string, string>): {
+  messageSid: string
+  status: string
+  errorCode?: string
+  errorMessage?: string
+} {
+  return {
+    messageSid: body.MessageSid || "",
+    status: body.MessageStatus || body.SmsStatus || "",
+    errorCode: body.ErrorCode,
+    errorMessage: body.ErrorMessage,
+  }
+}
+
+/**
  * Alias for parseIncomingSms (for backward compatibility)
  */
 export function parseInboundSms(body: Record<string, string>) {

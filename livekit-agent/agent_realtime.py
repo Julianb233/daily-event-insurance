@@ -193,6 +193,14 @@ async def entrypoint(ctx: JobContext):
 
     # Extract lead context from job metadata
     room_metadata = ctx.job.metadata if ctx.job.metadata else {}
+    
+    # Ensure metadata is specific dictionary not string
+    if isinstance(room_metadata, str):
+        try:
+            room_metadata = json.loads(room_metadata)
+        except json.JSONDecodeError:
+            logger.warning(f"Failed to parse metadata JSON: {room_metadata}")
+            room_metadata = {}
     lead_id = room_metadata.get("lead_id")
     lead_name = room_metadata.get("lead_name", "there")
     business_name = room_metadata.get("business_name", "your business")

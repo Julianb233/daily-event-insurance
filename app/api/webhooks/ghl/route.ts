@@ -9,7 +9,8 @@ const GHL_WEBHOOK_SECRET = process.env.GHL_WEBHOOK_SECRET || ""
 function verifySignature(payload: string, signature: string): boolean {
   if (!GHL_WEBHOOK_SECRET) return true // Skip in dev
   const expected = crypto.createHmac("sha256", GHL_WEBHOOK_SECRET).update(payload).digest("hex")
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+  // Cast to any to avoid "Type 'Buffer' is not assignable to type 'ArrayBufferView'" error in some environments
+  return crypto.timingSafeEqual(Buffer.from(signature) as any, Buffer.from(expected) as any)
 }
 
 export async function POST(request: NextRequest) {
