@@ -331,6 +331,8 @@ const deiValueProps = [
       "Policy questions",
       "Escalation management"
     ]
+  },
+  {
     icon: GraduationCap,
     title: "Onboarding & Training",
     description: "Comprehensive onboarding to get your team up and running quickly",
@@ -342,6 +344,8 @@ const deiValueProps = [
     ]
   },
   {
+    icon: Target,
+    title: "Sales Enablement",
     description: "Everything your team needs to sell and promote insurance effectively",
     details: [
       "Marketing collateral",
@@ -353,6 +357,8 @@ const deiValueProps = [
   {
     icon: Handshake,
     title: "Mutual Growth Ecosystem",
+    description: "Strategic networking and business development opportunities",
+    details: [
       "Partner network access",
       "Industry connections",
       "Co-marketing opportunities",
@@ -366,8 +372,7 @@ const deiValueProps = [
     details: [
       "Customer analytics",
       "Monthly performance reports"
-    ],
-    pricing: "Included"
+    ]
   }
 ]
 const sixMonthPlan = {
@@ -782,6 +787,9 @@ export default function HiqorPresentationPage() {
               <a href="https://sure.com" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
                 Insurance Brokerage
               </a>
+              <a href="https://sure.com" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
+                Insurance Brokerage
+              </a>
             </motion.div>
           </div>
         </section>
@@ -903,12 +911,7 @@ export default function HiqorPresentationPage() {
                       </li>
                     ))}
                   </ul>
-                  <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pricing</span>
-                    <span className={`text-sm font-bold ${prop.pricing === 'Included' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                      {prop.pricing}
-                    </span>
-                  </div>
+
                 </motion.div>
               ))}
             </div>
