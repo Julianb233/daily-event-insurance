@@ -99,27 +99,25 @@ export const industryCategories: IndustryCategory[] = [
       { label: 'Coverage', value: '100%' },
       { label: 'Setup Time', value: '5 minutes' }
     ]
-      { label: 'Setup Time', value: '5 minutes' }
-]
   },
-{
-  id: 'gem-shows',
+  {
+    id: 'gem-shows',
     slug: 'gem-shows',
-      title: 'Gem & Mineral Shows',
-        shortTitle: 'Gem Shows',
-          description: 'Specialized coverage for gem, mineral, and jewelry exhibitions',
-            longDescription: 'Protect your valuable inventory and liability during exhibitions. Coverage spans from setup to takedown, ensuring dealers and showrunners are fully protected against liability claims.',
-              heroImage: '/images/categories/gem-show-hero.jpg',
-                icon: 'Diamond', // This will need to be mapped in SectorPageContent or use a fallback
-                  productType: 'single-use',
-                    sectors: ['gem-shows', 'jewelry-exhibitions'],
-                      color: 'teal',
-                        stats: [
-                          { label: 'Liability Limit', value: '$2M' },
-                          { label: 'Dealers Covered', value: '100%' },
-                          { label: 'Certificate', value: 'Instant' }
-                        ]
-}
+    title: 'Gem & Mineral Shows',
+    shortTitle: 'Gem Shows',
+    description: 'Specialized coverage for gem, mineral, and jewelry exhibitions',
+    longDescription: 'Protect your valuable inventory and liability during exhibitions. Coverage spans from setup to takedown, ensuring dealers and showrunners are fully protected against liability claims.',
+    heroImage: '/images/categories/gem-show-hero.jpg',
+    icon: 'Diamond',
+    productType: 'single-use',
+    sectors: ['gem-shows', 'jewelry-exhibitions'],
+    color: 'teal',
+    stats: [
+      { label: 'Liability Limit', value: '$2M' },
+      { label: 'Dealers Covered', value: '100%' },
+      { label: 'Certificate', value: 'Instant' }
+    ]
+  }
 ]
 
 // Helper function to get category by ID
