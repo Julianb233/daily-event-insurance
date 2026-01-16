@@ -19,20 +19,23 @@ export default function SignInPage() {
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-teal-300/20 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100 relative z-10">
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">Welcome Back</h1>
-          <Descope
-            flowId="sign-up-or-in"
-            theme="light"
-            onSuccess={(e) => {
-              console.log("Logged in!", e.detail.user);
-              // Force hard reload or router push to ensure session state updates
-              window.location.href = '/partner/dashboard';
-            }}
-            onError={(e) => console.log("Error!", e)}
-          />
+        <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100 relative z-10 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Demo Mode Access</h1>
+          <p className="text-gray-600 mb-6">Redirecting you to the dashboard...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-6"></div>
+
+          <button
+            onClick={() => window.location.href = '/partner/dashboard'}
+            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+          >
+            Go to Dashboard Now
+          </button>
         </div>
       </main>
+
+      <script dangerouslySetInnerHTML={{
+        __html: `window.location.href = "/partner/dashboard"`
+      }} />
 
       <Footer />
     </div>
