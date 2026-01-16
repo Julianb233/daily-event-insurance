@@ -22,6 +22,9 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
+    "@descope/nextjs-sdk": "^0.15.7",
+    "@descope/react-sdk": "^2.25.7",
+    "@descope/web-component": "^3.53.4",
     "@emotion/is-prop-valid": "latest",
     "@expo/dom-webview": "latest",
     "@expo/metro-runtime": "latest",

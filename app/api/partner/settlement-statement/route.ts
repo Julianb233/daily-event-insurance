@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user?.id) {
+    if (!(session as any)?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -52,10 +52,10 @@ export async function GET(request: NextRequest) {
 
     // Use mock data in dev mode or if DB not configured
     if (!isDbConfigured() || !db) {
-      statementData = generateMockStatement(session.user, periodStart, periodEnd)
+      statementData = generateMockStatement((session as any).user, periodStart, periodEnd)
     } else {
       statementData = await generateDatabaseStatement(
-        session.user.id,
+        (session as any).user.id,
         periodStart,
         periodEnd
       )

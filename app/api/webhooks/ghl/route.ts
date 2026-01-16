@@ -55,9 +55,9 @@ async function handleContactEvent(payload: any) {
   const contact = payload.contact || payload.data
   const ghlContactId = contact.id
 
-  // Find existing lead by GHL ID or email
+  // Find existing lead by email (ghlContactId field not yet in schema)
   const [existing] = await db!.select().from(leads)
-    .where(eq(leads.ghlContactId, ghlContactId)).limit(1)
+    .where(eq(leads.email, contact.email || "")).limit(1)
 
   if (existing) {
     await db!.update(leads).set({
@@ -74,7 +74,7 @@ async function handleContactEvent(payload: any) {
       email: contact.email || "",
       phone: contact.phone || "",
       source: "ghl_sync",
-      ghlContactId: ghlContactId,
+      // ghlContactId: ghlContactId, // TODO: Add this field to schema
       status: "new"
     })
     console.log("[GHL] Created lead from contact:", ghlContactId)

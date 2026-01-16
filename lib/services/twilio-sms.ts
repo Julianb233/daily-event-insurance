@@ -86,7 +86,7 @@ export async function lookupPhoneNumber(phone: string): Promise<{
     return {
       valid: lookup.valid,
       type: lookup.lineTypeIntelligence?.type,
-      carrier: lookup.lineTypeIntelligence?.carrier_name
+      carrier: lookup.lineTypeIntelligence?.carrierName
     }
   } catch (error) {
     console.error("[Twilio] Lookup error:", error)

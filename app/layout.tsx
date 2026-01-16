@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Roboto, Libre_Baskerville, Alex_Brush, Oswald } from "next/font/google"
 import SmoothScroll from "@/components/smooth-scroll"
-import { SessionProvider } from "@/components/providers/session-provider"
+import { DescopeProvider } from "@/components/providers/descope-provider"
 import { VoiceAgentProvider } from "@/lib/voice/voice-context"
 import { VoiceAgentGlobal } from "@/components/voice"
 import "./globals.css"
@@ -162,12 +162,12 @@ export default function RootLayout({
       <body
         className={`font-sans antialiased overflow-x-hidden bg-white ${roboto.variable} ${libreBaskerville.variable} ${alexBrush.variable} ${oswald.variable}`}
       >
-        <SessionProvider>
+        <DescopeProvider>
           <VoiceAgentProvider>
             <SmoothScroll>{children}</SmoothScroll>
             <VoiceAgentGlobal />
           </VoiceAgentProvider>
-        </SessionProvider>
+        </DescopeProvider>
         <Analytics />
       </body>
     </html>

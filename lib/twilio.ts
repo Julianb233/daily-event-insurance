@@ -75,7 +75,7 @@ export async function sendSms(options: {
     // Format phone number
     const formattedPhone = formatPhoneNumber(options.to)
 
-    const messageOptions: twilio.Twilio.MessageListInstanceCreateOptions = {
+    const messageOptions: any = {
       to: formattedPhone,
       body: options.body,
     }
@@ -205,7 +205,7 @@ export async function getMessageHistory(
     const client = getTwilioClient()
     const formattedPhone = formatPhoneNumber(phoneNumber)
 
-    const fetchOptions: twilio.Twilio.MessageListInstanceOptions = {
+    const fetchOptions: any = {
       to: formattedPhone,
     }
 
@@ -344,3 +344,56 @@ export async function lookupPhoneNumber(phoneNumber: string): Promise<{
     }
   }
 }
+
+/**
+ * Alias for parseIncomingSms (for backward compatibility)
+ */
+export function parseInboundSms(body: Record<string, string>) {
+  return parseIncomingSms(body)
+}
+
+/**
+ * Generate TwiML response
+ */
+export function generateTwimlResponse(message?: string): string {
+  if (!message) {
+    return '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
+  }
+
+  return `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${escapeXml(message)}</Message></Response>`
+}
+
+/**
+ * Escape XML special characters
+ */
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case '<': return '&lt;'
+      case '>': return '&gt;'
+      case '&': return '&amp;'
+      case "'": return '&apos;'
+      case '"': return '&quot;'
+      default: return c
+    }
+  })
+}
+
+/**
+ * Check if message is an opt-out request
+ */
+export function isOptOutMessage(message: string): boolean {
+  const normalized = message.toLowerCase().trim()
+  const optOutKeywords = ['stop', 'stopall', 'unsubscribe', 'cancel', 'end', 'quit']
+  return optOutKeywords.includes(normalized)
+}
+
+/**
+ * Check if message is an opt-in request
+ */
+export function isOptInMessage(message: string): boolean {
+  const normalized = message.toLowerCase().trim()
+  const optInKeywords = ['start', 'yes', 'unstop', 'subscribe']
+  return optInKeywords.includes(normalized)
+}
+

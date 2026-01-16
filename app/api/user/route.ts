@@ -25,7 +25,7 @@ export async function GET() {
 
   const session = await auth();
 
-  if (!session?.user) {
+  if (!(session as any)?.user) {
     return NextResponse.json(
       { error: 'Not authenticated' },
       { status: 401 }
@@ -38,7 +38,7 @@ export async function GET() {
       const userResult = await db
         .select()
         .from(users)
-        .where(eq(users.id, session.user.id))
+        .where(eq(users.id, (session as any).user.id))
         .limit(1);
 
       if (userResult.length > 0) {
@@ -60,11 +60,11 @@ export async function GET() {
 
   // Fallback to session data
   return NextResponse.json({
-    id: session.user.id,
-    email: session.user.email,
-    name: session.user.name,
-    image: session.user.image,
-    role: session.user.role,
+    id: (session as any).user.id,
+    email: (session as any).user.email,
+    name: (session as any).user.name,
+    image: (session as any).user.image,
+    role: (session as any).user.role,
   });
 }
 
@@ -87,7 +87,7 @@ export async function PATCH(request: Request) {
 
   const session = await auth();
 
-  if (!session?.user) {
+  if (!(session as any)?.user) {
     return NextResponse.json(
       { error: 'Not authenticated' },
       { status: 401 }
@@ -122,7 +122,7 @@ export async function PATCH(request: Request) {
     const updated = await db
       .update(users)
       .set(updateData)
-      .where(eq(users.id, session.user.id))
+      .where(eq(users.id, (session as any).user.id))
       .returning();
 
     if (updated.length === 0) {
