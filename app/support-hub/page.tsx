@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import { SearchBar } from "@/components/support-hub/SearchBar"
 import { CategoryCard } from "@/components/support-hub/CategoryCard"
 import { GlassCard } from "@/components/support-hub/GlassCard"
@@ -138,6 +139,17 @@ export default function SupportHubPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-teal-500/10 to-blue-500/10 border border-teal-500/20 text-teal-600 font-semibold text-sm mb-4">
             <Sparkles className="w-4 h-4" />
             Partner Support Hub
+          </div>
+
+          <div className="flex justify-center mb-8">
+            <Image
+              src="/images/logo-color.png"
+              alt="Daily Event Insurance"
+              width={300}
+              height={80}
+              priority
+              className="h-16 w-auto"
+            />
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight">

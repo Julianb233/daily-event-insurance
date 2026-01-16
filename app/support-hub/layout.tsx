@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -111,6 +112,15 @@ export default function SupportHubLayout({
                   overflow-hidden
                 ">
                   <div className="p-6 border-b border-slate-100">
+                    <div className="mb-4">
+                      <Image
+                        src="/images/logo-color.png"
+                        alt="Daily Event Insurance"
+                        width={160}
+                        height={40}
+                        className="h-8 w-auto"
+                      />
+                    </div>
                     <h2 className="text-xl font-bold text-slate-900">
                       Support Hub
                     </h2>

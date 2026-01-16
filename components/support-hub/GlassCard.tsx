@@ -29,8 +29,8 @@ export function GlassCard({
     if (!enable3D) return
 
     const rect = e.currentTarget.getBoundingClientRect()
-    const x = (e.clientX - rect.left - rect.width / 2) / 20
-    const y = (e.clientY - rect.top - rect.height / 2) / 20
+    const x = (e.clientX - rect.left - rect.width / 2) / 60
+    const y = (e.clientY - rect.top - rect.height / 2) / 60
 
     setMousePosition({ x, y })
   }
