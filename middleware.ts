@@ -55,7 +55,9 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     '/for-climbing',
     '/for-rentals',
     '/for-adventure',
-    '/partner' // Emergency Demo Bypass
+    '/partner', // Emergency Demo Bypass
+    '/admin',   // Emergency Demo Bypass
+    '/hiqor'    // Emergency Demo Bypass
   ]
 
   const pathname = req.nextUrl.pathname

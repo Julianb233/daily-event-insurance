@@ -20,22 +20,22 @@ export default function SignInPage() {
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg border border-gray-100 relative z-10 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Demo Mode Access</h1>
-          <p className="text-gray-600 mb-6">Redirecting you to the dashboard...</p>
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-6"></div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Select Dashboard</h1>
+          <p className="text-gray-600 mb-6">Choose a platform to demo access:</p>
 
-          <button
-            onClick={() => window.location.href = '/partner/dashboard'}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-          >
-            Go to Dashboard Now
-          </button>
+          <div className="space-y-3">
+            <a href="/admin/dashboard" className="block w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-slate-700">
+              Admin Platform
+            </a>
+            <a href="/hiqor/dashboard" className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-teal-500">
+              HiQor Platform
+            </a>
+            <a href="/partner/dashboard" className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-blue-500">
+              Partner Platform
+            </a>
+          </div>
         </div>
       </main>
-
-      <script dangerouslySetInnerHTML={{
-        __html: `window.location.href = "/partner/dashboard"`
-      }} />
 
       <Footer />
     </div>
