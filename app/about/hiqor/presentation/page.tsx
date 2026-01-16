@@ -312,8 +312,8 @@ function Quote({ className }: { className?: string }) {
 const deiValueProps = [
   {
     icon: Monitor,
-    title: "Microsite Development",
-    description: "Custom-branded insurance microsites built specifically for your business",
+    title: "Partner Microsite Development",
+    description: "Custom-branded insurance microsites built specifically for your partners",
     details: [
       "Fully managed hosting & maintenance",
       "Custom domain setup",
@@ -323,13 +323,13 @@ const deiValueProps = [
   },
   {
     icon: Headphones,
-    title: "Customer Support",
-    description: "Dedicated support team handling all customer inquiries and issues",
+    title: "Full-Service Customer Support",
+    description: "We handle all support so you don't have to",
     details: [
-      "Email & chat support",
-      "Claims assistance",
-      "Policy questions",
-      "Escalation management"
+      "DEI handles all inquiries",
+      "Zero overhead for your team",
+      "Claims & Policy management",
+      "24/7 Customer assistance"
     ]
   },
   {
@@ -381,6 +381,7 @@ const sixMonthPlan = {
   goals: [
     {
       title: "Platform Launch",
+      icon: Rocket,
       items: [
         "Deploy HIQOR-branded microsites",
         "Launch white-label insurance widget",
@@ -700,9 +701,7 @@ export default function HiqorPresentationPage() {
               <div className="hidden md:flex items-center gap-8">
                 <a href="#vision" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Vision</a>
                 <a href="#roadmap" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Roadmap</a>
-                <a href="#financials" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Financials</a>
-                <a href="#team" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Team</a>
-                <a href="#deal-structure" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Deal Structure</a>
+                <a href="/about/hiqor/deal-structure" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors">Deal Structure</a>
                 <button className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-teal-500/20">
                   Download Deck
                 </button>
@@ -893,11 +892,11 @@ export default function HiqorPresentationPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  // EXACT Match of Home Page Card Style
-                  className="bg-white rounded-xl p-8 border border-slate-200 hover:border-teal-300 transition-all duration-300 group shadow-sm hover:shadow-lg hover:shadow-teal-500/10"
+                  // EXACT Match of Home Page Card Style - INCREASED CONTRAST
+                  className="bg-white rounded-xl p-8 border border-slate-300 hover:border-teal-400 transition-all duration-300 group shadow-md hover:shadow-xl hover:shadow-teal-500/10"
                 >
-                  <div className="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-teal-100">
-                    <prop.icon className="w-6 h-6 text-teal-600" />
+                  <div className="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-teal-200">
+                    <prop.icon className="w-6 h-6 text-teal-700" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-3">{prop.title}</h3>
                   <p className="text-slate-600 text-sm mb-6 leading-relaxed">
@@ -918,71 +917,27 @@ export default function HiqorPresentationPage() {
           </div>
         </section>
 
-        {/* Financial Projections */}
-        <section id="financials" className="py-24 relative overflow-hidden bg-white border-y border-slate-100">
-          <div className="max-w-7xl mx-auto px-6 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-6">
-                  <TrendingUp className="w-3 h-3" />
-                  Revenue Growth
-                </div>
-                <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-                  Predictable, Scalable Revenue Models
-                </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  Our partnership model is designed for mutual success, with
-                  transparent revenue sharing and clear growth trajectories
-                  based on conservative market penetration estimates.
-                </p>
 
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xl">
-                      70%
-                    </div>
-                    <div>
-                      <div className="text-slate-900 font-bold">Partner Revenue Share</div>
-                      <div className="text-slate-500 text-sm">Majority of margin goes to HIQOR</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
-                      30d
-                    </div>
-                    <div>
-                      <div className="text-slate-900 font-bold">Fast Payouts</div>
-                      <div className="text-slate-500 text-sm">Monthly ACH deposits with reporting</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-3xl p-1 border border-slate-200 shadow-xl">
-                <div className="bg-slate-50 rounded-[22px] p-8 border border-white/50">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-6">Projected Metrics</h3>
-                  <InteractiveRevenueChart />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Roadmap Timeline */}
-        <section id="roadmap" className="py-24 bg-slate-50 relative">
+        {/* Roadmap Timeline - INCREASED VISIBILITY */}
+        <section id="roadmap" className="py-24 bg-slate-100 relative border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 text-purple-800 text-sm font-bold uppercase tracking-wider mb-6 shadow-sm">
+                <Target className="w-4 h-4" />
+                Strategic Timeline
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 drop-shadow-sm">
                 Strategic Roadmap
               </h2>
-              <p className="text-slate-600 max-w-2xl mx-auto">
+              <p className="text-xl text-slate-700 max-w-2xl mx-auto font-medium">
                 A phased approach to building market dominance in the events insurance sector.
               </p>
             </div>
 
             <div className="space-y-24 relative">
-              {/* Connector Line */}
-              <div className="absolute left-1/2 top-24 bottom-24 w-px bg-gradient-to-b from-teal-200 via-purple-200 to-orange-200 hidden md:block" />
+              {/* Connector Line - Darker for visibility */}
+              <div className="absolute left-1/2 top-24 bottom-24 w-1 bg-gradient-to-b from-teal-300 via-purple-300 to-orange-300 hidden md:block opacity-70" />
 
               <TimelineMilestone plan={sixMonthPlan} index={0} accentColor="teal" />
               <TimelineMilestone plan={oneYearPlan} index={1} accentColor="purple" />
