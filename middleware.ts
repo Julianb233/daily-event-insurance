@@ -64,7 +64,7 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     return NextResponse.next()
   }
 
-  return descopeMiddleware(req, ev)
+  return descopeMiddleware(req)
 }
 
 export const config = {

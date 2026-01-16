@@ -1,6 +1,7 @@
 "use client";
 
-import { Descope } from '@descope/react-sdk';
+import dynamic from 'next/dynamic';
+const Descope = dynamic(() => import('@descope/react-sdk').then((mod) => mod.Descope), { ssr: false });
 import { useRouter } from 'next/navigation';
 import Header from "@/components/header"
 import Footer from "@/components/footer"

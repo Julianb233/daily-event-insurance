@@ -13,7 +13,7 @@ const projectId = process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || "P37BNB6wE01ogq9
  * Get the current session and ensure local DB user exists
  */
 export async function auth() {
-  const s = await session()
+  const s = await session() as any
 
   if (!s || !s.isAuthenticated) {
     return null
@@ -144,7 +144,7 @@ export async function requireAuth(redirectTo?: string): Promise<string> {
  * Check if user is authenticated
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const s = await session()
+  const s = await session() as any
   return !!s?.isAuthenticated
 }
 
