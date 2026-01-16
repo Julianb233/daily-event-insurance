@@ -57,7 +57,12 @@ export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
     '/for-adventure',
     '/partner', // Emergency Demo Bypass
     '/admin',   // Emergency Demo Bypass
-    '/hiqor'    // Emergency Demo Bypass
+    '/hiqor',   // Emergency Demo Bypass
+    '/sures',   // Emergency Demo Bypass (Broker Portal)
+    '/api/admin', // Emergency API Bypass
+    '/api/partner', // Emergency API Bypass
+    '/api/hiqor',   // Emergency API Bypass
+    '/api/sures',   // Emergency API Bypass
   ]
 
   const pathname = req.nextUrl.pathname

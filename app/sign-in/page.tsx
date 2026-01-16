@@ -33,6 +33,12 @@ export default function SignInPage() {
             <a href="/partner/dashboard" className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-blue-500">
               Partner Platform
             </a>
+            <a href="/sures/dashboard" className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-indigo-500">
+              Insurance Broker Portal
+            </a>
+            <a href="/admin/dashboard" className="block w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-colors border border-orange-500">
+              DEI Sales Rep Portal
+            </a>
           </div>
         </div>
       </main>
