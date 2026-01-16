@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useSession, useUser } from "@descope/react-sdk"
 import { motion } from "framer-motion"
 import {
   User,
@@ -59,7 +59,8 @@ const integrationTypes = [
 ]
 
 export default function PartnerProfilePage() {
-  const { data: session } = useSession()
+  const { isAuthenticated } = useSession()
+  const { user } = useUser()
   const [data, setData] = useState<ProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -103,8 +104,8 @@ export default function PartnerProfilePage() {
         id: "demo",
         business_name: "Demo Fitness Studio",
         business_type: "gym",
-        contact_name: session?.user?.name || "Partner",
-        contact_email: session?.user?.email || "partner@example.com",
+        contact_name: user?.name || "Partner",
+        contact_email: user?.email || "partner@example.com",
         contact_phone: "",
         integration_type: "widget",
         primary_color: "#14B8A6",
@@ -192,13 +193,12 @@ export default function PartnerProfilePage() {
           <p className="text-slate-600 mt-1">Manage your business information and integration settings.</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-            data?.partner.status === "active" ? "bg-green-100 text-green-700" :
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${data?.partner.status === "active" ? "bg-green-100 text-green-700" :
             data?.partner.status === "pending" ? "bg-amber-100 text-amber-700" :
-            "bg-red-100 text-red-700"
-          }`}>
+              "bg-red-100 text-red-700"
+            }`}>
             {data?.partner.status === "active" ? "Active" :
-             data?.partner.status === "pending" ? "Pending Approval" : "Suspended"}
+              data?.partner.status === "pending" ? "Pending Approval" : "Suspended"}
           </span>
         </div>
       </motion.div>
@@ -318,11 +318,10 @@ export default function PartnerProfilePage() {
                   {integrationTypes.map((type) => (
                     <label
                       key={type.value}
-                      className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
-                        formData.integrationType === type.value
-                          ? "border-teal-500 bg-teal-50"
-                          : "border-slate-200 hover:border-slate-300"
-                      }`}
+                      className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors ${formData.integrationType === type.value
+                        ? "border-teal-500 bg-teal-50"
+                        : "border-slate-200 hover:border-slate-300"
+                        }`}
                     >
                       <input
                         type="radio"
@@ -449,11 +448,11 @@ export default function PartnerProfilePage() {
             <div className="p-6">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-xl font-bold">
-                  {session?.user?.name?.[0] || "P"}
+                  {user?.name?.[0] || "P"}
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">{session?.user?.name || "Partner"}</p>
-                  <p className="text-sm text-slate-500">{session?.user?.email}</p>
+                  <p className="font-semibold text-slate-900">{user?.name || "Partner"}</p>
+                  <p className="text-sm text-slate-500">{user?.email}</p>
                 </div>
               </div>
               <div className="pt-4 border-t border-slate-200 space-y-3">
@@ -488,9 +487,8 @@ export default function PartnerProfilePage() {
                     <p className="font-medium text-slate-900 capitalize">{product.product_type}</p>
                     <p className="text-sm text-slate-500">${product.customer_price.toFixed(2)}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    product.is_enabled ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
-                  }`}>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.is_enabled ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
+                    }`}>
                     {product.is_enabled ? "Enabled" : "Disabled"}
                   </span>
                 </div>
