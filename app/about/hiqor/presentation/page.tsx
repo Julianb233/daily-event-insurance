@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import {
@@ -173,190 +173,113 @@ function InteractiveRevenueChart() {
   )
 }
 
-// Platform Screenshots Carousel
+// Rewritten Platform Showcase to use Actual Images/Layout from Gym Demo
 function PlatformShowcase() {
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [activeFeature, setActiveFeature] = useState(0)
 
-  const screenshots = [
+  const features = [
     {
-      title: "Partner Dashboard",
-      description: "Real-time analytics, policy tracking, and revenue insights all in one place",
+      title: "Comprehensive Partner Dashboard",
+      description: "A centralized hub to track policies, monitor revenue, and manage customer interactions in real-time.",
       icon: LayoutDashboard,
-      features: ["Live conversion metrics", "Revenue tracking", "Policy management", "Customer insights"]
+      color: "from-teal-500 to-emerald-600"
     },
     {
-      title: "Insurance Widget Builder",
-      description: "Customizable widgets that integrate seamlessly with any platform",
+      title: "Instant Widget Generation",
+      description: "Create and deploy branded insurance widgets to your site with zero coding required.",
       icon: Layers,
-      features: ["Drag-and-drop builder", "Brand customization", "Mobile responsive", "Instant deployment"]
+      color: "from-blue-500 to-cyan-600"
     },
     {
-      title: "Claims Management",
-      description: "Streamlined claims processing with automated workflows",
+      title: "Automated Claims Processing",
+      description: "AI-driven workflows that handle 80% of claims automatically, reducing overhead.",
       icon: FileText,
-      features: ["Automated claim intake", "Status tracking", "Document management", "Fast resolution"]
+      color: "from-purple-500 to-violet-600"
     },
     {
-      title: "API Integration Hub",
-      description: "Powerful APIs for deep platform integration",
+      title: "Seamless API Integration",
+      description: "Robust REST APIs to integrate insurance products directly into your existing checkout flow.",
       icon: Server,
-      features: ["RESTful endpoints", "Webhook events", "SDK libraries", "Sandbox testing"]
-    },
-    {
-      title: "Reporting & Analytics",
-      description: "Comprehensive reporting for data-driven decisions",
-      icon: BarChart3,
-      features: ["Custom reports", "Export capabilities", "Trend analysis", "Performance metrics"]
-    },
-    {
-      title: "Partner Portal",
-      description: "Self-service tools for partners to manage their business",
-      icon: Settings,
-      features: ["Account management", "Resource library", "Support tickets", "Training modules"]
+      color: "from-orange-500 to-amber-600"
     }
   ]
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % screenshots.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + screenshots.length) % screenshots.length)
-
   return (
-    <div className="relative">
-      {/* Main Display */}
-      <motion.div
-        key={currentSlide}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        transition={{ duration: 0.5 }}
-        className="relative bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl"
-      >
-        {/* Mock Browser Chrome */}
-        <div className="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-          </div>
-          <div className="flex-1 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-950 rounded-md text-xs text-slate-500 border border-slate-700">
+    <div className="grid lg:grid-cols-12 gap-8 items-start">
+      {/* Left: Feature List */}
+      <div className="lg:col-span-4 space-y-4">
+        {features.map((feature, index) => (
+          <motion.button
+            key={feature.title}
+            onClick={() => setActiveFeature(index)}
+            className={`w-full text-left p-5 rounded-xl border transition-all ${activeFeature === index
+                ? 'bg-slate-800 border-teal-500 shadow-lg shadow-teal-500/10'
+                : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+              }`}
+            whileHover={{ x: 4 }}
+          >
+            <div className="flex items-start gap-4">
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                <feature.icon className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h4 className={`font-semibold text-sm mb-1 ${activeFeature === index ? 'text-white' : 'text-slate-300'}`}>
+                  {feature.title}
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  {feature.description}
+                </p>
+              </div>
+            </div>
+          </motion.button>
+        ))}
+      </div>
+
+      {/* Right: Actual Dashboard Image Preview */}
+      <div className="lg:col-span-8">
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+          {/* Browser Chrome */}
+          <div className="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+            </div>
+            <div className="flex-1 bg-slate-950 rounded-md px-4 py-1.5 flex items-center gap-2 text-xs text-slate-500">
               <Lock className="w-3 h-3" />
-              <span className="opacity-75">partner.dailyeventinsurance.com</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex flex-col md:flex-row h-[500px]">
-          {/* Left: Info */}
-          <div className="w-full md:w-1/3 bg-slate-900 p-8 border-r border-slate-800 flex flex-col justify-center">
-            <div className="inline-flex self-start items-center gap-2 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20 mb-6">
-              {(() => {
-                const IconComponent = screenshots[currentSlide].icon
-                return <IconComponent className="w-4 h-4 text-teal-400" />
-              })()}
-              <span className="text-xs text-teal-300 font-medium tracking-wide uppercase">Core Feature</span>
-            </div>
-
-            <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
-              {screenshots[currentSlide].title}
-            </h3>
-            <p className="text-slate-400 mb-8 leading-relaxed">
-              {screenshots[currentSlide].description}
-            </p>
-
-            <div className="space-y-4">
-              {screenshots[currentSlide].features.map((feature, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + idx * 0.1 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-teal-400" />
-                  </div>
-                  <span className="text-sm text-slate-300">{feature}</span>
-                </motion.div>
-              ))}
+              <span>dashboard.dailyeventinsurance.com</span>
             </div>
           </div>
 
-          {/* Right: Mock UI Preview */}
-          <div className="flex-1 bg-slate-950 relative overflow-hidden group">
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #334155 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-
-            {/* Dashboard Mockup Container */}
-            <div className="absolute inset-8 bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden flex flex-col">
-              {/* Dashboard Header */}
-              <div className="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm z-10">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
-                    <Waves className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="h-4 w-24 bg-slate-800 rounded animate-pulse" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-800" />
-                  <div className="w-24 h-8 rounded-lg bg-teal-600" />
-                </div>
-              </div>
-
-              {/* Dashboard Body */}
-              <div className="flex-1 p-6 relative">
-                {/* This simulates different UI layouts based on the slide index to feel "alive" */}
-                <div className="grid grid-cols-12 gap-6 h-full">
-                  <div className="col-span-3 h-full hidden lg:block">
-                    <div className="h-full w-full rounded-lg bg-slate-800/50 border border-slate-700/50" />
-                  </div>
-                  <div className="col-span-12 lg:col-span-9 space-y-4">
-                    <div className="h-32 rounded-xl bg-gradient-to-r from-teal-900/40 to-emerald-900/40 border border-teal-500/20" />
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="h-40 rounded-xl bg-slate-800/50 border border-slate-700/50" />
-                      <div className="h-40 rounded-xl bg-slate-800/50 border border-slate-700/50" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Navigation Controls */}
-      <div className="flex items-center justify-center gap-6 mt-8">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={prevSlide}
-          className="p-3 bg-slate-800 rounded-full hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </motion.button>
-
-        {/* Dots */}
-        <div className="flex gap-2">
-          {screenshots.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${currentSlide === idx
-                  ? 'bg-teal-500 w-8'
-                  : 'bg-slate-700 w-2 hover:bg-slate-600'
-                }`}
+          {/* Actual Dashboard Image */}
+          <div className="relative aspect-video bg-slate-950">
+            <Image
+              src="/images/hero-desktop.png"
+              alt="Daily Event Insurance Dashboard"
+              fill
+              className="object-cover object-top opacity-90"
             />
-          ))}
-        </div>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={nextSlide}
-          className="p-3 bg-slate-800 rounded-full hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </motion.button>
+            {/* Feature Overlay */}
+            <motion.div
+              key={activeFeature}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute bottom-6 left-6 right-6 bg-slate-900/90 backdrop-blur-md border border-slate-700 p-4 rounded-xl flex items-center gap-4 shadow-2xl"
+            >
+              <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${features[activeFeature].color} flex items-center justify-center flex-shrink-0`}>
+                {(() => {
+                  const Icon = features[activeFeature].icon
+                  return <Icon className="w-6 h-6 text-white" />
+                })()}
+              </div>
+              <div>
+                <h4 className="text-white font-bold">{features[activeFeature].title}</h4>
+                <p className="text-slate-400 text-sm">Active Module Preview</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -728,7 +651,7 @@ function TimelineMilestone({
             className="group relative"
           >
             <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300`} />
-            <div className="relative bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-slate-700 transition-all h-full">
+            <div className="relative bg-slate-900/50 rounded-xl p-6 border border-slate-800 hover:border-slate-700 transition-all h-full">
               <div className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-xl flex items-center justify-center mb-4`}>
                 <goal.icon className="w-6 h-6 text-white" />
               </div>
@@ -758,10 +681,10 @@ function TimelineMilestone({
           <motion.div
             key={metric.label}
             whileHover={{ scale: 1.05 }}
-            className="relative bg-slate-900 rounded-xl p-4 border border-slate-800 text-center group"
+            className="relative bg-slate-900/50 rounded-xl p-4 border border-slate-800 text-center group"
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-10 transition-opacity rounded-xl`} />
-            <div className={`w-10 h-10 mx-auto bg-slate-800 rounded-full flex items-center justify-center mb-3 group-hover:bg-slate-700 transition-colors`}>
+            <div className={`w-10 h-10 mx-auto bg-slate-900 rounded-full flex items-center justify-center mb-3 group-hover:bg-slate-800 transition-colors`}>
               <metric.icon className="w-5 h-5 text-teal-400" />
             </div>
             <div className="text-2xl font-bold text-white mb-1">{metric.target}</div>
@@ -774,6 +697,11 @@ function TimelineMilestone({
 }
 
 export default function HiqorPresentationPage() {
+  // Fix for "scroll to bottom on load" issue
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 overflow-x-hidden selection:bg-teal-500/30">
       {/* Background Elements */}
@@ -921,7 +849,7 @@ export default function HiqorPresentationPage() {
         </section>
 
         {/* Value Proposition Grid */}
-        <section className="py-24 bg-slate-900/50 border-y border-white/5">
+        <section className="py-24 bg-slate-950 border-y border-slate-900">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -941,9 +869,9 @@ export default function HiqorPresentationPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-slate-950 rounded-2xl p-8 border border-slate-800 hover:border-slate-700 transition-colors group"
+                  className="bg-slate-900/50 rounded-xl p-8 border border-slate-800 hover:border-slate-700 transition-colors group"
                 >
-                  <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-slate-800">
                     <prop.icon className="w-6 h-6 text-teal-500" />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-3">{prop.title}</h3>
@@ -958,7 +886,7 @@ export default function HiqorPresentationPage() {
                       </li>
                     ))}
                   </ul>
-                  <div className="pt-6 border-t border-slate-900 flex items-center justify-between">
+                  <div className="pt-6 border-t border-slate-800 flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pricing</span>
                     <span className={`text-sm font-bold ${prop.pricing === 'Included' ? 'text-emerald-400' : 'text-white'}`}>
                       {prop.pricing}
