@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 export const DescopeProvider = ({ children }: { children: ReactNode }) => {
     return (
-        <AuthProvider projectId={process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || 'P37BNB6wE01ogq91wB5pfH08VPsA'}>
+        <AuthProvider projectId={process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || 'P38Ce5ELumb4fUCTq5JnhlpDTdd9'}>
             {children}
         </AuthProvider>
     );

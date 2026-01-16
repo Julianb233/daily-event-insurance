@@ -5,7 +5,7 @@ import { session } from "@descope/nextjs-sdk/server"
 import { redirect } from "next/navigation"
 
 // Descope Project ID
-const projectId = process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || "P37BNB6wE01ogq91wB5pfH08VPsA"
+const projectId = process.env.NEXT_PUBLIC_DESCOPE_PROJECT_ID || "P38Ce5ELumb4fUCTq5JnhlpDTdd9"
 
 // ================= Auth Core Functions =================
 
