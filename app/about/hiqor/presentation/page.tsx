@@ -1,10 +1,8 @@
 "use client"
 
-import Header from "@/components/header"
-import Footer from "@/components/footer"
+import { useState } from "react"
+import { motion } from "framer-motion"
 import Image from "next/image"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef, useState } from "react"
 import {
   Clock,
   Shield,
@@ -50,7 +48,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Play,
-  Pause
+  Pause,
+  Waves
 } from "lucide-react"
 
 // Floating orb component for background decoration
@@ -70,28 +69,6 @@ function FloatingOrb({ className, delay = 0 }: { className: string; delay?: numb
         ease: "easeInOut",
       }}
     />
-  )
-}
-
-// Animated counter component
-function AnimatedCounter({ value, suffix = "", prefix = "" }: { value: number; suffix?: string; prefix?: string }) {
-  return (
-    <motion.span
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-    >
-      {prefix}
-      <motion.span
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        {value.toLocaleString()}
-      </motion.span>
-      {suffix}
-    </motion.span>
   )
 }
 
@@ -143,11 +120,10 @@ function InteractiveRevenueChart() {
             onClick={() => setSelectedMetric(metric)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${
-              selectedMetric === metric
+            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all ${selectedMetric === metric
                 ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
-                : 'bg-white/10 text-slate-300 hover:bg-white/20 border border-white/10'
-            }`}
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+              }`}
           >
             {metricLabels[metric]}
           </motion.button>
@@ -155,7 +131,7 @@ function InteractiveRevenueChart() {
       </div>
 
       {/* Chart */}
-      <div className="relative h-72 flex items-end justify-around gap-4 px-4">
+      <div className="relative h-72 flex items-end justify-around gap-4 px-4 bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
         {currentData.map((item, index) => (
           <motion.div
             key={`${selectedMetric}-${item.period}`}
@@ -170,11 +146,11 @@ function InteractiveRevenueChart() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: hoveredBar === index ? 1 : 0, y: hoveredBar === index ? 0 : 10 }}
-              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-20 shadow-xl border border-white/20"
+              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap z-20 shadow-xl border border-slate-700"
             >
               <div className="font-bold text-teal-400">{item.display}</div>
               <div className="text-xs text-slate-400">{metricLabels[selectedMetric]}</div>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-slate-800 border-r border-b border-white/20" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-slate-800 border-r border-b border-slate-700" />
             </motion.div>
 
             {/* Bar */}
@@ -183,19 +159,16 @@ function InteractiveRevenueChart() {
 
             {/* Value on bar */}
             <div className="absolute top-2 left-0 right-0 text-center">
-              <span className="text-xs font-bold text-white/90">{item.display}</span>
+              <span className="text-[10px] md:text-xs font-bold text-white/90 drop-shadow-md">{item.display}</span>
             </div>
 
             {/* Label */}
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-center whitespace-nowrap">
-              <div className="text-sm font-semibold text-white">{item.period}</div>
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center whitespace-nowrap">
+              <div className="text-xs md:text-sm font-semibold text-slate-300">{item.period}</div>
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* Bottom spacing for labels */}
-      <div className="h-8" />
     </div>
   )
 }
@@ -203,7 +176,6 @@ function InteractiveRevenueChart() {
 // Platform Screenshots Carousel
 function PlatformShowcase() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
 
   const screenshots = [
     {
@@ -256,121 +228,111 @@ function PlatformShowcase() {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -50 }}
         transition={{ duration: 0.5 }}
-        className="relative backdrop-blur-xl bg-white/5 rounded-3xl border border-white/10 overflow-hidden"
+        className="relative bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl"
       >
-        {/* Mock Screen Header */}
-        <div className="bg-slate-800/80 px-4 py-3 flex items-center gap-2 border-b border-white/10">
+        {/* Mock Browser Chrome */}
+        <div className="bg-slate-800 px-4 py-3 flex items-center gap-3 border-b border-slate-700">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
           <div className="flex-1 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1 bg-slate-900/50 rounded-lg text-xs text-slate-400">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-950 rounded-md text-xs text-slate-500 border border-slate-700">
               <Lock className="w-3 h-3" />
-              partner.dailyeventinsurance.com
+              <span className="opacity-75">partner.dailyeventinsurance.com</span>
             </div>
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="p-8 md:p-12">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Left: Info */}
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/20 rounded-full border border-teal-500/30 mb-4">
-                  {(() => {
-                    const IconComponent = screenshots[currentSlide].icon
-                    return <IconComponent className="w-4 h-4 text-teal-400" />
-                  })()}
-                  <span className="text-sm text-teal-300 font-medium">Platform Feature</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                  {screenshots[currentSlide].title}
-                </h3>
-                <p className="text-slate-300 text-lg mb-6">
-                  {screenshots[currentSlide].description}
-                </p>
-                <ul className="space-y-3">
-                  {screenshots[currentSlide].features.map((feature, idx) => (
-                    <motion.li
-                      key={idx}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + idx * 0.1 }}
-                      className="flex items-center gap-3 text-slate-300"
-                    >
-                      <CheckCircle2 className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                      {feature}
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
+        <div className="flex flex-col md:flex-row h-[500px]">
+          {/* Left: Info */}
+          <div className="w-full md:w-1/3 bg-slate-900 p-8 border-r border-slate-800 flex flex-col justify-center">
+            <div className="inline-flex self-start items-center gap-2 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20 mb-6">
+              {(() => {
+                const IconComponent = screenshots[currentSlide].icon
+                return <IconComponent className="w-4 h-4 text-teal-400" />
+              })()}
+              <span className="text-xs text-teal-300 font-medium tracking-wide uppercase">Core Feature</span>
             </div>
 
-            {/* Right: Mock UI */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="relative"
-            >
-              <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 rounded-2xl blur-2xl" />
-              <div className="relative bg-slate-900/80 rounded-2xl p-6 border border-white/10">
-                {/* Mock Dashboard UI */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="h-3 w-32 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full" />
-                    <div className="flex gap-2">
-                      <div className="h-8 w-8 bg-white/10 rounded-lg" />
-                      <div className="h-8 w-8 bg-white/10 rounded-lg" />
-                    </div>
+            <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
+              {screenshots[currentSlide].title}
+            </h3>
+            <p className="text-slate-400 mb-8 leading-relaxed">
+              {screenshots[currentSlide].description}
+            </p>
+
+            <div className="space-y-4">
+              {screenshots[currentSlide].features.map((feature, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + idx * 0.1 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="w-6 h-6 rounded-full bg-teal-500/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-teal-400" />
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <div className="h-2 w-12 bg-slate-600 rounded mb-2" />
-                        <div className="h-6 w-16 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded" />
-                      </div>
-                    ))}
+                  <span className="text-sm text-slate-300">{feature}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Mock UI Preview */}
+          <div className="flex-1 bg-slate-950 relative overflow-hidden group">
+            {/* Background Grid Pattern */}
+            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #334155 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+
+            {/* Dashboard Mockup Container */}
+            <div className="absolute inset-8 bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden flex flex-col">
+              {/* Dashboard Header */}
+              <div className="h-14 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm z-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center">
+                    <Waves className="w-5 h-5 text-white" />
                   </div>
-                  <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="flex gap-2 mb-4">
-                      {[60, 80, 45, 90, 70, 85, 55].map((h, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 bg-gradient-to-t from-teal-500 to-emerald-500 rounded-t"
-                          style={{ height: `${h}px` }}
-                        />
-                      ))}
-                    </div>
-                    <div className="flex justify-between">
-                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                        <span key={i} className="text-[10px] text-slate-500">{d}</span>
-                      ))}
+                  <div className="h-4 w-24 bg-slate-800 rounded animate-pulse" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-800" />
+                  <div className="w-24 h-8 rounded-lg bg-teal-600" />
+                </div>
+              </div>
+
+              {/* Dashboard Body */}
+              <div className="flex-1 p-6 relative">
+                {/* This simulates different UI layouts based on the slide index to feel "alive" */}
+                <div className="grid grid-cols-12 gap-6 h-full">
+                  <div className="col-span-3 h-full hidden lg:block">
+                    <div className="h-full w-full rounded-lg bg-slate-800/50 border border-slate-700/50" />
+                  </div>
+                  <div className="col-span-12 lg:col-span-9 space-y-4">
+                    <div className="h-32 rounded-xl bg-gradient-to-r from-teal-900/40 to-emerald-900/40 border border-teal-500/20" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-40 rounded-xl bg-slate-800/50 border border-slate-700/50" />
+                      <div className="h-40 rounded-xl bg-slate-800/50 border border-slate-700/50" />
                     </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </motion.div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-center gap-4 mt-6">
+      <div className="flex items-center justify-center gap-6 mt-8">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={prevSlide}
-          className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/10"
+          className="p-3 bg-slate-800 rounded-full hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
         >
-          <ChevronLeft className="w-5 h-5 text-white" />
+          <ChevronLeft className="w-5 h-5" />
         </motion.button>
 
         {/* Dots */}
@@ -379,11 +341,10 @@ function PlatformShowcase() {
             <button
               key={idx}
               onClick={() => setCurrentSlide(idx)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${
-                currentSlide === idx
+              className={`h-2 rounded-full transition-all duration-300 ${currentSlide === idx
                   ? 'bg-teal-500 w-8'
-                  : 'bg-white/30 hover:bg-white/50'
-              }`}
+                  : 'bg-slate-700 w-2 hover:bg-slate-600'
+                }`}
             />
           ))}
         </div>
@@ -392,9 +353,9 @@ function PlatformShowcase() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={nextSlide}
-          className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/10"
+          className="p-3 bg-slate-800 rounded-full hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
         >
-          <ChevronRight className="w-5 h-5 text-white" />
+          <ChevronRight className="w-5 h-5" />
         </motion.button>
       </div>
     </div>
@@ -477,7 +438,7 @@ const deiValueProps = [
   }
 ]
 
-// Agreement Structure Data - Updated
+// Agreement Structure Data
 const agreementTerms = [
   {
     icon: CircleDollarSign,
@@ -529,7 +490,7 @@ const agreementTerms = [
   }
 ]
 
-// 6-Month Plan - Updated
+// 6-Month Plan
 const sixMonthPlan = {
   title: "Foundation Phase",
   subtitle: "Building the Infrastructure",
@@ -573,7 +534,7 @@ const sixMonthPlan = {
   ]
 }
 
-// 1-Year Plan - Updated
+// 1-Year Plan
 const oneYearPlan = {
   title: "Growth Phase",
   subtitle: "Scaling the Business",
@@ -617,7 +578,7 @@ const oneYearPlan = {
   ]
 }
 
-// 3-Year Plan - Updated
+// 3-Year Plan
 const threeYearPlan = {
   title: "Scale Phase",
   subtitle: "Market Leadership",
@@ -661,7 +622,7 @@ const threeYearPlan = {
   ]
 }
 
-// 5-Year Plan - Updated
+// 5-Year Plan
 const fiveYearPlan = {
   title: "Leadership Phase",
   subtitle: "Industry Transformation",
@@ -746,12 +707,12 @@ function TimelineMilestone({
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className={`inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-sm bg-gradient-to-r ${bgGradient} rounded-full border border-white/20 mb-4`}
+          className={`inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-sm bg-gradient-to-r ${bgGradient} rounded-full border border-teal-500/20 mb-4`}
         >
-          <Calendar className="w-4 h-4" />
-          <span className="text-sm font-semibold">{plan.title}</span>
+          <Calendar className="w-4 h-4 text-teal-400" />
+          <span className="text-sm font-semibold text-teal-300">{plan.title}</span>
         </motion.div>
-        <h3 className="text-2xl md:text-3xl font-bold mb-2">{plan.subtitle}</h3>
+        <h3 className="text-2xl md:text-3xl font-bold mb-2 text-white">{plan.subtitle}</h3>
       </div>
 
       {/* Goals Grid */}
@@ -767,15 +728,15 @@ function TimelineMilestone({
             className="group relative"
           >
             <div className={`absolute -inset-0.5 bg-gradient-to-r ${gradient} rounded-2xl blur opacity-0 group-hover:opacity-30 transition-all duration-300`} />
-            <div className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all h-full">
+            <div className="relative bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-slate-700 transition-all h-full">
               <div className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-xl flex items-center justify-center mb-4`}>
                 <goal.icon className="w-6 h-6 text-white" />
               </div>
               <h4 className="font-bold text-white mb-3">{goal.title}</h4>
               <ul className="space-y-2">
                 {goal.items.map((item, itemIndex) => (
-                  <li key={itemIndex} className="flex items-start gap-2 text-sm text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+                  <li key={itemIndex} className="flex items-start gap-2 text-sm text-slate-400">
+                    <CheckCircle2 className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -797,11 +758,14 @@ function TimelineMilestone({
           <motion.div
             key={metric.label}
             whileHover={{ scale: 1.05 }}
-            className={`relative backdrop-blur-xl bg-gradient-to-br ${bgGradient} rounded-xl p-4 border border-white/10 text-center`}
+            className="relative bg-slate-900 rounded-xl p-4 border border-slate-800 text-center group"
           >
-            <metric.icon className="w-6 h-6 mx-auto mb-2 text-white/80" />
-            <div className="text-2xl font-bold text-white">{metric.target}</div>
-            <div className="text-xs text-slate-400">{metric.label}</div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-10 transition-opacity rounded-xl`} />
+            <div className={`w-10 h-10 mx-auto bg-slate-800 rounded-full flex items-center justify-center mb-3 group-hover:bg-slate-700 transition-colors`}>
+              <metric.icon className="w-5 h-5 text-teal-400" />
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">{metric.target}</div>
+            <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">{metric.label}</div>
           </motion.div>
         ))}
       </motion.div>
@@ -810,529 +774,311 @@ function TimelineMilestone({
 }
 
 export default function HiqorPresentationPage() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  })
-
-  const heroY = useTransform(scrollYProgress, [0, 0.1], [0, -30])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.9])
-
   return (
-    <main ref={containerRef} className="relative overflow-x-hidden max-w-full bg-gradient-to-b from-slate-50 to-white">
-      <Header />
-
-      {/* Hero Section - LIGHTER & UPDATED */}
-      <section className="pt-32 pb-24 bg-gradient-to-br from-white via-teal-50/30 to-emerald-50/40 text-slate-900 relative overflow-hidden min-h-[80vh] flex items-center">
-        {/* Subtle animated background orbs */}
+    <div className="min-h-screen bg-slate-950 text-slate-200 overflow-x-hidden selection:bg-teal-500/30">
+      {/* Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <FloatingOrb
-          className="absolute top-20 left-[10%] w-72 h-72 bg-gradient-to-br from-teal-200/50 to-emerald-200/30 rounded-full blur-[100px]"
+          className="absolute top-[10%] left-[10%] w-96 h-96 bg-teal-500/10 rounded-full blur-[100px]"
           delay={0}
         />
         <FloatingOrb
-          className="absolute bottom-20 right-[10%] w-96 h-96 bg-gradient-to-br from-cyan-200/40 to-teal-200/30 rounded-full blur-[120px]"
+          className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px]"
           delay={2}
         />
-        <FloatingOrb
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-emerald-100/30 to-teal-100/20 rounded-full blur-[150px]"
-          delay={1}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, #334155 1px, transparent 0)`,
+            backgroundSize: `40px 40px`,
+          }}
         />
+      </div>
 
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `linear-gradient(rgba(20,184,166,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(20,184,166,0.3) 1px, transparent 1px)`,
-              backgroundSize: '50px 50px',
-            }}
-          />
-        </div>
-
-        <motion.div
-          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full"
-          style={{ y: heroY, opacity: heroOpacity }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center"
-          >
-            {/* Logos Side by Side */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex justify-center items-center gap-6 mb-8"
-            >
-              <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-5 border border-slate-200 shadow-xl">
+      {/* Main Content */}
+      <div className="relative z-10">
+        {/* Navigation */}
+        <nav className="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-white/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16 items-center">
+              <div className="flex items-center gap-3">
                 <Image
                   src="/images/logo-color.png"
                   alt="Daily Event Insurance"
-                  width={180}
-                  height={45}
-                  className="h-auto w-auto"
+                  width={140}
+                  height={35}
+                  className="h-8 w-auto"
                 />
+                <span className="text-slate-600">|</span>
+                <span className="text-sm font-medium text-slate-300">Investor Relations</span>
               </div>
-              <div className="text-3xl font-bold text-teal-500">+</div>
-              <div className="backdrop-blur-xl bg-white/80 rounded-2xl p-5 border border-slate-200 shadow-xl">
-                <span className="text-2xl font-bold text-slate-800">HIQOR</span>
+              <div className="hidden md:flex items-center gap-8">
+                <a href="#vision" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Vision</a>
+                <a href="#roadmap" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Roadmap</a>
+                <a href="#financials" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Financials</a>
+                <a href="#team" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Team</a>
+                <button className="px-5 py-2 bg-teal-500 hover:bg-teal-400 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-teal-500/20">
+                  Download Deck
+                </button>
               </div>
-            </motion.div>
+            </div>
+          </div>
+        </nav>
 
-            {/* Badge */}
+        {/* Hero Section */}
+        <section className="relative pt-20 pb-32 overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 relative text-center">
+
+            {/* Logos & Partner Badge */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-teal-50 rounded-full border border-teal-200 mb-8 shadow-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex flex-col items-center mb-10"
             >
-              <Briefcase className="w-4 h-4 text-teal-600" />
-              <span className="text-teal-700 font-medium text-sm">Strategic Partnership Roadmap</span>
-              <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+              {/* Logos Side by Side - STRICTLY SIZED */}
+              <div className="flex items-center justify-center gap-8 mb-8">
+                {/* DEI Container */}
+                <div className="h-20 w-52 bg-slate-900 rounded-2xl border border-slate-800 flex items-center justify-center p-4">
+                  <Image
+                    src="/images/logo-color.png"
+                    alt="Daily Event Insurance"
+                    width={160}
+                    height={40}
+                    className="w-auto h-8 object-contain"
+                  />
+                </div>
+
+                {/* Plus Symbol */}
+                <div className="text-2xl text-slate-600 font-light">+</div>
+
+                {/* HiQor Container */}
+                <div className="h-20 w-52 bg-slate-900 rounded-2xl border border-slate-800 flex items-center justify-center p-4">
+                  <span className="text-3xl font-extrabold text-white tracking-tight">HIQOR</span>
+                </div>
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm font-medium">
+                <Sparkles className="w-4 h-4" />
+                <span>Strategic Partnership Proposal</span>
+              </div>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight tracking-tight"
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight"
             >
-              Daily Event Insurance
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500">
-                + HIQOR Partnership
+              Revolutionizing
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
+                Events-Based Insurance
               </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed"
             >
-              A strategic partnership to bring events-based insurance
-              <br />
-              <span className="text-teal-600 font-semibold">to the HIQOR ecosystem.</span>
+              A strategic alliance to integrate comprehensive insurance solutions
+              directly into the HIQOR ecosystem, unlocking new revenue streams
+              and value for partners.
             </motion.p>
 
-            {/* Quick Stats */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              {[
-                { label: "Revenue Share", value: "70/30", sublabel: "HIQOR / DEI" },
-                { label: "Microsite Cost", value: "$600", sublabel: "Per Month" },
-                { label: "Support", value: "Full", sublabel: "Included" },
-                { label: "Partnership", value: "Win-Win", sublabel: "Aligned Goals" }
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="backdrop-blur-xl bg-white/70 rounded-2xl p-4 border border-slate-200 shadow-lg"
-                >
-                  <div className="text-2xl md:text-3xl font-bold text-slate-800">{stat.value}</div>
-                  <div className="text-xs text-teal-600 font-medium">{stat.label}</div>
-                  <div className="text-xs text-slate-500 mt-1">{stat.sublabel}</div>
-                </motion.div>
-              ))}
+              <button className="px-8 py-4 bg-teal-500 hover:bg-teal-400 text-white rounded-xl font-bold text-lg shadow-xl shadow-teal-500/20 transition-all hover:scale-105 active:scale-95">
+                View Proposal
+              </button>
+              <button className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold text-lg border border-slate-700 transition-all hover:scale-105 active:scale-95">
+                Read Case Study
+              </button>
             </motion.div>
-          </motion.div>
-        </motion.div>
-
-        {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
-      </section>
-
-      {/* What DEI Provides Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-teal-100/50 to-transparent rounded-full blur-3xl" />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-sm bg-teal-50 rounded-full border border-teal-200 mb-6 shadow-sm"
-            >
-              <Sparkles className="w-4 h-4 text-teal-600" />
-              <span className="text-sm font-semibold text-teal-700">What We Provide</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-              The Daily Event Insurance{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
-                Advantage
-              </span>
-            </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Everything HIQOR needs to launch and scale events-based insurance, fully managed by our team.
-            </p>
-          </motion.div>
-
-          {/* Value Props Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {deiValueProps.map((prop, index) => (
-              <motion.div
-                key={prop.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative"
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
-
-                <div className="relative h-full backdrop-blur-sm bg-white rounded-3xl p-6 border border-slate-200 shadow-lg hover:shadow-2xl hover:border-teal-300 transition-all duration-500">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-xl flex items-center justify-center group-hover:from-teal-500 group-hover:to-emerald-500 transition-all">
-                      <prop.icon className="w-6 h-6 text-teal-600 group-hover:text-white transition-colors" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-slate-900">{prop.title}</h3>
-                      <span className="inline-block mt-1 px-3 py-1 bg-teal-100 text-teal-700 text-xs font-semibold rounded-full">
-                        {prop.pricing}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-slate-600 text-sm mb-4">{prop.description}</p>
-
-                  <ul className="space-y-2">
-                    {prop.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-2 text-sm text-slate-600">
-                        <CheckCircle2 className="w-4 h-4 text-teal-500 flex-shrink-0 mt-0.5" />
-                        {detail}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Agreement Structure Section - Updated */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-20 right-[20%] w-64 h-64 bg-gradient-to-br from-teal-500/30 to-emerald-500/20 rounded-full blur-[80px]"
-          delay={0.5}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
-            >
-              <FileText className="w-4 h-4 text-teal-400" />
-              <span className="text-sm font-semibold text-teal-300">Partnership Terms</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Agreement{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                Structure
-              </span>
-            </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Clear, transparent terms designed for a successful long-term partnership.
-            </p>
-          </motion.div>
-
-          {/* Agreement Terms Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {agreementTerms.map((term, index) => (
-              <motion.div
-                key={term.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative"
-              >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500/50 to-emerald-500/50 rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
-
-                <div className="relative h-full backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10 hover:border-teal-500/50 transition-all duration-500">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center">
-                      <term.icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-1">{term.title}</h3>
-                      <span className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 text-sm font-semibold rounded-full border border-teal-500/30">
-                        {term.highlight}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-slate-300 mb-4">{term.description}</p>
-
-                  <ul className="space-y-2">
-                    {term.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-2 text-sm text-slate-300">
-                        <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                        {detail}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Platform Showcase Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-800 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute bottom-20 left-[15%] w-80 h-80 bg-gradient-to-br from-purple-500/20 to-teal-500/20 rounded-full blur-[100px]"
-          delay={1.5}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
-            >
-              <Monitor className="w-4 h-4 text-teal-400" />
-              <span className="text-sm font-semibold text-teal-300">Platform Preview</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              The Platform{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                You&apos;ll Get
-              </span>
-            </h2>
-            <p className="text-xl text-slate-300">Explore the features we&apos;ve built for partners like HIQOR</p>
-          </motion.div>
-
-          <PlatformShowcase />
-        </div>
-      </section>
-
-      {/* Interactive Revenue Chart Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-20 left-[20%] w-64 h-64 bg-gradient-to-br from-emerald-500/30 to-teal-500/20 rounded-full blur-[80px]"
-          delay={0.5}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl bg-white/10 rounded-full border border-white/20 mb-6"
-            >
-              <PieChart className="w-4 h-4 text-teal-400" />
-              <span className="text-sm font-semibold text-teal-300">Growth Projections</span>
-            </motion.div>
-
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Revenue{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400">
-                Growth Trajectory
-              </span>
-            </h2>
-            <p className="text-xl text-slate-300">Interactive projections - click to explore different metrics</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative backdrop-blur-xl bg-white/5 rounded-3xl p-8 border border-white/10"
-          >
-            <InteractiveRevenueChart />
-
-            <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: "Avg. Policy Value", value: "$15" },
-                { label: "Conversion Rate", value: "15-20%" },
-                { label: "DEI Revenue Share", value: "30%" },
-                { label: "HIQOR Retention", value: "70%" }
-              ].map((metric) => (
-                <div key={metric.label} className="text-center">
-                  <div className="text-2xl font-bold text-teal-400">{metric.value}</div>
-                  <div className="text-xs text-slate-400">{metric.label}</div>
-                </div>
-              ))}
+        {/* Platform Showcase Section */}
+        <section className="py-24 relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Powered by Intelligent Technology
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">
+                Our platform delivers an end-to-end insurance experience,
+                from instant quotes to automated claims processing.
+              </p>
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* 6-Month Plan Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.02]">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, #14B8A6 1px, transparent 0)`,
-              backgroundSize: '40px 40px',
-            }}
-          />
-        </div>
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-              Strategic{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">
-                Roadmap
-              </span>
-            </h2>
-            <p className="text-xl text-slate-600">Our journey from foundation to market leadership</p>
-          </motion.div>
-
-          <div className="text-slate-900">
-            <TimelineMilestone plan={sixMonthPlan} index={0} accentColor="teal" />
+            <PlatformShowcase />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 1-Year Plan Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute top-20 right-[20%] w-64 h-64 bg-gradient-to-br from-purple-500/30 to-indigo-500/20 rounded-full blur-[80px]"
-          delay={0.5}
-        />
+        {/* Value Proposition Grid */}
+        <section className="py-24 bg-slate-900/50 border-y border-white/5">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Complete Ecosystem Value
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">
+                We provide everything needed to launch, scale, and manage
+                a profitable insurance vertical.
+              </p>
+            </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <TimelineMilestone plan={oneYearPlan} index={1} accentColor="purple" />
-        </div>
-      </section>
-
-      {/* 3-Year Plan Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-slate-900">
-            <TimelineMilestone plan={threeYearPlan} index={2} accentColor="orange" />
-          </div>
-        </div>
-      </section>
-
-      {/* 5-Year Plan Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        <FloatingOrb
-          className="absolute bottom-10 right-[15%] w-64 h-64 bg-gradient-to-br from-blue-500/30 to-cyan-500/20 rounded-full blur-[80px]"
-          delay={1}
-        />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <TimelineMilestone plan={fiveYearPlan} index={3} accentColor="blue" />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-28 bg-gradient-to-b from-white to-teal-50/50 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/10 to-emerald-500/10 rounded-3xl blur-2xl" />
-              <div className="relative backdrop-blur-sm bg-white/90 rounded-3xl p-12 border border-slate-200 shadow-2xl">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {deiValueProps.map((prop, index) => (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-50 rounded-full border border-teal-200 mb-6"
-                >
-                  <Sparkles className="w-4 h-4 text-teal-600" />
-                  <span className="text-sm font-semibold text-teal-700">Let&apos;s Build Together</span>
-                </motion.div>
-
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                  Ready to Partner?
-                </h2>
-                <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-                  Daily Event Insurance is excited to bring events-based insurance to the HIQOR ecosystem.
-                  Together, we&apos;ll create value for your partners and their customers.
-                </p>
-
-                <motion.div
-                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                  key={prop.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-slate-950 rounded-2xl p-8 border border-slate-800 hover:border-slate-700 transition-colors group"
                 >
-                  <motion.a
-                    href="/#apply"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-bold text-lg rounded-2xl hover:from-teal-400 hover:to-emerald-400 transition-all shadow-2xl shadow-teal-500/30"
-                  >
-                    Start Partnership Discussion
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.a>
-                  <motion.a
-                    href="/"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-slate-100 text-slate-900 font-bold text-lg rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all"
-                  >
-                    Learn More About Daily Event Insurance
-                  </motion.a>
+                  <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <prop.icon className="w-6 h-6 text-teal-500" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{prop.title}</h3>
+                  <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                    {prop.description}
+                  </p>
+                  <ul className="space-y-3 mb-6">
+                    {prop.details.map((detail, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-500">
+                        <CheckCircle2 className="w-4 h-4 text-teal-500/50 flex-shrink-0 mt-0.5" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="pt-6 border-t border-slate-900 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pricing</span>
+                    <span className={`text-sm font-bold ${prop.pricing === 'Included' ? 'text-emerald-400' : 'text-white'}`}>
+                      {prop.pricing}
+                    </span>
+                  </div>
                 </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Financial Projections */}
+        <section id="financials" className="py-24 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
+                  <TrendingUp className="w-3 h-3" />
+                  Revenue Growth
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                  Predictable, Scalable Revenue Models
+                </h2>
+                <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                  Our partnership model is designed for mutual success, with
+                  transparent revenue sharing and clear growth trajectories
+                  based on conservative market penetration estimates.
+                </p>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xl">
+                      70%
+                    </div>
+                    <div>
+                      <div className="text-white font-bold">Partner Revenue Share</div>
+                      <div className="text-slate-500 text-sm">Majority of margin goes to HIQOR</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                    <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xl">
+                      30d
+                    </div>
+                    <div>
+                      <div className="text-white font-bold">Fast Payouts</div>
+                      <div className="text-slate-500 text-sm">Monthly ACH deposits with reporting</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-950 rounded-3xl p-1 border border-slate-800 shadow-2xl">
+                <div className="bg-slate-900 rounded-[22px] p-8 border border-white/5">
+                  <h3 className="text-lg font-semibold text-white mb-6">Projected Metrics</h3>
+                  <InteractiveRevenueChart />
+                </div>
               </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      <Footer />
-    </main>
+        {/* Roadmap Timeline */}
+        <section id="roadmap" className="py-24 bg-slate-950 relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Strategic Roadmap
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">
+                A phased approach to building market dominance in the events insurance sector.
+              </p>
+            </div>
+
+            <div className="space-y-24 relative">
+              {/* Connector Line */}
+              <div className="absolute left-1/2 top-24 bottom-24 w-px bg-gradient-to-b from-teal-500/50 via-purple-500/50 to-orange-500/50 hidden md:block" />
+
+              <TimelineMilestone plan={sixMonthPlan} index={0} accentColor="teal" />
+              <TimelineMilestone plan={oneYearPlan} index={1} accentColor="purple" />
+              <TimelineMilestone plan={threeYearPlan} index={2} accentColor="blue" />
+              <TimelineMilestone plan={fiveYearPlan} index={3} accentColor="orange" />
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-32 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950 to-teal-950/20" />
+          <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
+              Ready to Transform the Market?
+            </h2>
+            <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto">
+              Join us in building the future of events-based insurance.
+              The infrastructure is ready, the market is waiting.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <button className="w-full sm:w-auto px-8 py-4 bg-teal-500 hover:bg-teal-400 text-white rounded-xl font-bold text-lg shadow-lg shadow-teal-500/25 transition-all">
+                Initialize Partnership
+              </button>
+              <button className="w-full sm:w-auto px-8 py-4 bg-transparent hover:bg-white/5 text-white rounded-xl font-bold text-lg border border-white/10 transition-all">
+                Schedule Executive Briefing
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-slate-950 border-t border-slate-900 py-12">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <Image src="/images/logo-color.png" width={120} height={30} alt="DEI" className="opacity-50 grayscale hover:grayscale-0 transition-all" />
+            </div>
+            <div className="text-slate-600 text-sm">
+              &copy; 2024 Daily Event Insurance. Confidential & Proprietary.
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
   )
 }
